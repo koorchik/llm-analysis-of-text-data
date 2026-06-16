@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { existsSync } from "fs";
-import { NormalizedData } from "../utils/validationUtils";
+import { UnifiedData } from "../utils/validationUtils";
 
 import TSNE from "tsne-js";
 
@@ -28,7 +28,7 @@ export class DataAnalyzer {
     for (const file of files) {
       console.log(`FILE=${file}`);
       const content = await fs.readFile(`${this.inputDir}/${file}`);
-      const data = JSON.parse(content.toString()) as NormalizedData;
+      const data = JSON.parse(content.toString()) as UnifiedData;
       allData.push(data);
     }
     await this.#analyzeData(allData);
@@ -36,46 +36,48 @@ export class DataAnalyzer {
     // await this.#saveResponse(file, JSON.stringify(response, undefined, 2));
   }
 
-  async #analyzeData(data: NormalizedData[]): Promise<any | {}> {
+  async #analyzeData(data: UnifiedData[]): Promise<any | {}> {
     // const countriesStats = this.#countriesStats(data);
     this.#computeTsne(data);
     // console.log(countriesStats);
   }
 
-  #countriesStats(data: NormalizedData[]) {
+  #countriesStats(data: UnifiedData[]) {
     const countriesStats: {
-      attacker: Record<string, number>;
-      target: Record<string, number>;
-      neutral: Record<string, number>;
+      Attacker: Record<string, number>;
+      Target: Record<string, number>;
+      Neutral: Record<string, number>;
     } = {
-      attacker: {},
-      target: {},
-      neutral: {},
+      Attacker: {},
+      Target: {},
+      Neutral: {},
     };
 
     for (const item of data) {
-      if (!item.countries) continue;
-      for (const country of item.countries) {
-        if (!country.code) continue;
-        if (country.relation === "attacker") {
-          countriesStats.attacker[country.code] =
-            (countriesStats.attacker[country.code] || 0) + 1;
-        } else if (country.relation === "target") {
-          countriesStats.target[country.code] =
-            (countriesStats.target[country.code] || 0) + 1;
-        } else {
-          countriesStats.neutral[country.code] =
-            (countriesStats.neutral[country.code] || 0) + 1;
-        }
+      if (!item.entities) continue;
+      for (const entity of item.entities) {
+        if (entity.category !== 'Country' || !entity.code) continue;
+        countriesStats[entity.role][entity.code] =
+          (countriesStats[entity.role][entity.code] || 0) + 1;
       }
     }
 
     return countriesStats;
   }
 
-  async #computeTsne(records: NormalizedData[]) {
-    const data = records.flatMap((item) => item.enrichedAttackTargets);
-    const vectors = data.map((d) => d!.embedding);
+  async #computeTsne(records: UnifiedData[]) {
+    const data = records.flatMap((item) =>
+      (item.entities || []).filter(
+        (e) => e.embedding && e.embedding.length > 0
+      )
+    );
+
+    if (data.length === 0) {
+      console.log("No entities with embeddings found, skipping t-SNE");
+      return;
+    }
+
+    const vectors = data.map((d) => d.embedding!);
 
     const tsne = new TSNE({
       dim: 2,
@@ -98,7 +100,7 @@ export class DataAnalyzer {
     const tsneResults = tsne.getOutputScaled(); // Array<[number, number]>
 
     const tsneData = data.map((d, i) => ({
-      name: d!.name,
+      name: d.name,
       x: tsneResults[i][0],
       y: tsneResults[i][1],
     }));

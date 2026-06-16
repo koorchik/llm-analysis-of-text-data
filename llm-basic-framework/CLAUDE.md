@@ -22,6 +22,11 @@ npm start
 # npm test returns "Not implemented yet"
 ```
 
+### Typecheck
+```bash
+npx tsc --noEmit   # no build step; strict:true but noUnusedLocals is OFF, so unused imports compile
+```
+
 ### Environment Setup
 Create a `.env` file with these required variables:
 ```
@@ -34,21 +39,30 @@ ANTHROPIC_API_KEY=your_key
 ## Architecture
 
 ### Processing Pipeline
-The application follows a 3-stage pipeline orchestrated by `FlowManager`:
+The application follows a 5-stage pipeline orchestrated by `FlowManager`:
 
 1. **DataExtractor** (`src/DataProcessors/DataExtractor.ts`)
-   - Reads incident reports from `storage/data/cert.gov.ua-news/`
-   - Uses LLM to extract entities: attack targets, hacker groups, countries, malware, etc.
+   - Reads incident reports and uses LLM to extract entities into a unified format (name, category, role)
    - Outputs to `storage/output/raw/{model-name}/`
 
-2. **DataNormalizer** (`src/DataProcessors/DataNormalizer.ts`)
+2. **DataEntitiesCollector** (`src/DataProcessors/DataEntitiesCollector.ts`)
+   - Collects entities across all reports and normalizes names via LLM (deduplication)
+   - Supports resumable processing
+   - Outputs to `storage/output/entities/{model-name}/`
+
+3. **DataNormalizer** (`src/DataProcessors/DataNormalizer.ts`)
    - Normalizes country names using `CountryNameNormalizer`
-   - Generates embeddings for attack targets
+   - Applies normalized entity names from the entities collector
+   - Generates embeddings for target infrastructure/sector/device entities
    - Outputs to `storage/output/normalized/{model-name}/`
 
-3. **DataAnalyzer** (`src/DataProcessors/DataAnalyzer.ts`)
+4. **DataAnalyzer** (`src/DataProcessors/DataAnalyzer.ts`)
    - Performs statistical analysis
    - Creates t-SNE visualizations of embeddings
+   - Outputs to `storage/output/analyzed/{model-name}/`
+
+5. **DataGraphBuilder** (`src/DataProcessors/DataGraphBuilder.ts`)
+   - Builds relationship graphs from normalized data
    - Outputs to `storage/output/analyzed/{model-name}/`
 
 ### Multi-LLM Architecture
@@ -66,20 +80,22 @@ The system supports multiple LLM backends through a plugin architecture:
 ## Development Notes
 
 ### Modifying the Pipeline
-To change which steps run, edit `bin/app.ts:79`:
-```typescript
-// Run single step:
-await flowManager.runStep("dataExtractor");
+Configure which steps run via the `STEPS` environment variable:
+```bash
+# Run single step:
+STEPS=dataExtractor npm start
 
-// Run all steps:
-// await flowManager.runAllSteps();
+# Run full pipeline:
+STEPS=dataExtractor,dataEntitiesCollector,dataNormalizer,dataAnalyzer,dataGraphBuilder npm start
 ```
+All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-SNE, free to run). `DataNormalizer` embedding generation is currently stubbed (`entity.embedding = []`; the `embed()` call is commented out).
 
 ### Switching LLM Models
-Models are configured in `bin/app.ts` in the `makeLlmClient()` and `makeEmbeddingsClient()` functions. 
+Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EMBEDDINGS_PROVIDER`, `EMBEDDINGS_MODEL`. See `README-CONFIGURATION.md` for details.
 
 ### Code Conventions
 - No build process - uses ts-node for direct TypeScript execution
+- Data lives at the repo root under `storage/cert.gov.ua/` (committed to git), one level up from this subproject — hence the `../storage/...` paths in `bin/app.ts` (override via `INPUT_DIR`/`OUTPUT_DIR`)
 - Entry point: `bin/app.ts`
 - All processors follow constructor injection pattern with config objects
 - Data flows through directories under `storage/`

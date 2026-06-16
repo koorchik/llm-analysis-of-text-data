@@ -5,9 +5,6 @@ Simple environment-based configuration. No complex abstractions.
 ## Environment Variables
 
 ```bash
-# Format
-FORMAT=legacy          # or 'unified'
-
 # LLM
 LLM_PROVIDER=ollama     # 'openai', 'ollama', 'vertexai', 'anthropic'
 LLM_MODEL=gpt-oss:20b
@@ -43,9 +40,6 @@ npm start
 # Run full pipeline
 STEPS=dataExtractor,dataEntitiesCollector,dataNormalizer,dataAnalyzer,dataGraphBuilder npm start
 
-# Use unified format
-FORMAT=unified npm start
-
 # Use different model
 LLM_PROVIDER=openai LLM_MODEL=gpt-4o-mini npm start
 
@@ -61,9 +55,3 @@ INPUT_DIR=./my-data OUTPUT_DIR=./my-output npm start
 - `dataAnalyzer` - Statistical analysis
 - `dataGraphBuilder` - Build relationship graphs
 
-## Format Differences
-
-**Legacy**: Separate arrays for different entity types
-**Unified**: Single entities array with category and role fields
-
-Output goes to different directories to avoid conflicts.

@@ -4,80 +4,58 @@ import LIVR from 'livr';
 LIVR.Validator.defaultAutoTrim(true);
 
 const validator = new LIVR.Validator({
-  attackTargets: [{ default: [[]] }, { listOf: ['string'] }],
-  hackerGroups: [{ default: [[]] }, { listOf: ['string'] }],
-  applications: [{ default: [[]] }, { listOf: ['string'] }],
-  countries: [{ default: [[]] }, {
+  entities: [{ default: [[]] }, {
     listOfObjects: [{
       name: ['required', 'string'],
-      relation: ['required', 'string', { oneOf: ['attacker', 'neutral', 'target'] }]
+      category: ['required', 'string', { 
+        oneOf: [
+          'Organization', 
+          'HackerGroup', 
+          'Software', 
+          'Country', 
+          'Individual', 
+          'Domain', 
+          'Sector', 
+          'Government Body', 
+          'Infrastructure', 
+          'Device'
+        ] 
+      }],
+      role: ['required', 'string', { oneOf: ['Target', 'Attacker', 'Neutral'] }]
     }]
-  }],
-  organizations: [{ default: [[]] }, {
-    listOfObjects: [{
-      name: ['string'],
-      relation: [{ default: 'neutral' }, 'string', { oneOf: ['attacker', 'neutral', 'target'] }]
-    }]
-  }],
-  individuals: [{ default: [[]] }, {
-    listOfObjects: [{
-      name: ['string'],
-      relation: [{ default: 'neutral' }, 'string', { oneOf: ['attacker', 'neutral', 'target'] }]
-    }]
-  }],
-  domains: [{ default: [[]] }, {
-    listOfObjects: [{
-      name: ['string', 'toLc'],
-      relation: [{ default: 'neutral' }, 'string', { oneOf: ['attacker', 'neutral', 'target'] }]
-    }]
-  }],
+  }]
 });
 
 interface RawData {
-  [key: string]: string
+  [key: string]: any
 };
 
-export type Relation = 'attacker' | 'target' | 'neutral';
+export type Category = 
+  | 'Organization' 
+  | 'HackerGroup' 
+  | 'Software' 
+  | 'Country' 
+  | 'Individual' 
+  | 'Domain' 
+  | 'Sector' 
+  | 'Government Body' 
+  | 'Infrastructure' 
+  | 'Device';
 
-export interface NormalizedData {
-  attackTargets: string[];
-  enrichedAttackTargets?: Array<{
-    name: string;
-    embedding: number[]
-  }>;
-  hackerGroups: string[];
-  normalizedHackerGroups?: string[];
-  applications: [];
-  normalizedApplications?: string[];
-  countries: Array<{
-    name: string;
-    relation: Relation;
-    code?: string; // Quick fix for the country code
-  }>;
-  organizations: Array<{
-    name: string;
-    relation: Relation
-  }>;
-  normalizedOrganizations?: Array<{
-    name: string;
-    relation: Relation
-  }>;
-  individuals: Array<{
-    name: string;
-    relation: Relation
-  }>;
-  normalizedIndividuals?: Array<{
-    name: string;
-    relation: Relation
-  }>;
-  domains: Array<{
-    name: string;
-    relation: Relation
-  }>;
-  normalizedDomains?: Array<{
-    name: string;
-    relation: Relation
-  }>;
+export type Role = 'Target' | 'Attacker' | 'Neutral';
+
+export interface Entity {
+  name: string;
+  category: Category;
+  role: Role;
+  embedding?: number[];
+  normalizedName?: string;
+  code?: string; // For countries
+}
+
+export interface UnifiedData {
+  entities: Entity[];
+  metadata?: Record<string, string | number>;
 }
 
 export function extractAndParseJson(text: string): RawData | undefined {
@@ -92,7 +70,7 @@ export function extractAndParseJson(text: string): RawData | undefined {
   }
 }
 
-export function normalizeRawData(data: { [key: string]: string }): NormalizedData | undefined {
+export function normalizeRawData(data: RawData): UnifiedData | undefined {
   const validData = validator.validate(data);
   console.log(data);
   if (!validData) {
@@ -100,10 +78,26 @@ export function normalizeRawData(data: { [key: string]: string }): NormalizedDat
     return;
   }
 
-  validData.individuals = validData.individuals.filter((item: {name: string}) => item.name);
-  validData.countries = validData.countries.filter((item: {name: string}) => item.name);
-  validData.domains = validData.domains.filter((item: {name: string}) => item.name);
-  validData.organizations = validData.organizations.filter((item: {name: string}) => item.name);
+  // Filter out empty entities and normalize domain names to lowercase
+  validData.entities = validData.entities
+    .filter((entity: Entity) => entity.name && entity.name.trim())
+    .map((entity: Entity) => {
+      if (entity.category === 'Domain') {
+        entity.name = entity.name.toLowerCase();
+      }
+      return entity;
+    });
 
-  return validData as NormalizedData;
+  // Remove duplicates based on name, category, and role
+  const seen = new Set<string>();
+  validData.entities = validData.entities.filter((entity: Entity) => {
+    const key = `${entity.name}|${entity.category}|${entity.role}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+
+  return validData as UnifiedData;
 }

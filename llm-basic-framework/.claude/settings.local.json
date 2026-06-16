@@ -7,7 +7,10 @@
       "Bash(cat:*)",
       "Read(/workspaces/dissert/storage/cert.gov.ua/processed/analyzed-unified/gpt-5/**)",
       "Read(/workspaces/dissert/storage/cert.gov.ua/processed/analyzed-unified/gpt-5/**)",
-      "Read(/workspaces/dissert/storage/cert.gov.ua/processed/analyzed-unified/gpt-5/**)"
+      "Read(/workspaces/dissert/storage/cert.gov.ua/processed/analyzed-unified/gpt-5/**)",
+      "Bash(sort -k2)",
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
+      "Bash(git mv:*)"
     ],
     "deny": []
   }

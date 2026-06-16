@@ -1,12 +1,9 @@
 import { CountryNameNormalizer } from '../src/CountryNameNormalizer/CountryNameNormalizer';
 import { DataAnalyzer } from '../src/DataProcessors/DataAnalyzer';
 import { DataEntitiesCollector } from '../src/DataProcessors/DataEntitiesCollector';
-import { DataEntitiesCollectorUnified } from '../src/DataProcessors/DataEntitiesCollectorUnified';
 import { DataExtractor } from '../src/DataProcessors/DataExtractor';
-import { DataExtractorUnified } from '../src/DataProcessors/DataExtractorUnified';
 import { DataGraphBuilder } from '../src/DataProcessors/DataGraphBuilder';
 import { DataNormalizer } from '../src/DataProcessors/DataNormalizer';
-import { DataNormalizerUnified } from '../src/DataProcessors/DataNormalizerUnified';
 import { EmbeddingsBackendOllama } from '../src/EmbeddingsClient/EmbeddingsBackendOllama';
 import { EmbeddingsBackendOpenAi } from '../src/EmbeddingsClient/EmbeddingsBackendOpenAi';
 import { EmbeddingsBackendVertexAi } from '../src/EmbeddingsClient/EmbeddingsBackendVertexAi';
@@ -23,9 +20,6 @@ dotenv.config();
 
 // Configuration from environment or defaults
 const CONFIG = {
-  // Use 'unified' or 'legacy' format
-  format: process.env.FORMAT || 'legacy',
-
   // LLM provider: 'openai', 'ollama', 'vertexai', 'anthropic'
   llmProvider: process.env.LLM_PROVIDER || 'openai',
   llmModel: process.env.LLM_MODEL || 'gpt-5',
@@ -168,89 +162,44 @@ function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClie
     });
   };
 
-  if (CONFIG.format === 'unified') {
-    // Unified format
-    const suffix = 'unified';
+  const dataExtractor = new DataExtractor({
+    inputDir,
+    outputDir: `${baseDir}/raw/${modelDir}`,
+    preprocessor,
+    llmClient,
+  });
 
-    const dataExtractor = new DataExtractorUnified({
-      inputDir,
-      outputDir: `${baseDir}/raw-${suffix}/${modelDir}`,
-      preprocessor,
-      llmClient,
-    });
+  const dataEntitiesCollector = new DataEntitiesCollector({
+    inputDir: dataExtractor.outputDir,
+    outputDir: `${baseDir}/entities/${modelDir}`,
+    llmClient,
+  });
 
-    const dataEntitiesCollector = new DataEntitiesCollectorUnified({
-      inputDir: dataExtractor.outputDir,
-      outputDir: `${baseDir}/entities-${suffix}/${modelDir}`,
-      llmClient,
-    });
+  const dataNormalizer = new DataNormalizer({
+    inputDir: dataExtractor.outputDir,
+    outputDir: `${baseDir}/normalized/${modelDir}`,
+    entitiesFile: `${dataEntitiesCollector.outputDir}/entities.json`,
+    countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
+    embeddingsClient,
+  });
 
-    const dataNormalizer = new DataNormalizerUnified({
-      inputDir: dataExtractor.outputDir,
-      outputDir: `${baseDir}/normalized-${suffix}/${modelDir}`,
-      entitiesFile: `${dataEntitiesCollector.outputDir}/entities.json`,
-      countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
-      embeddingsClient,
-    });
+  const dataAnalyzer = new DataAnalyzer({
+    inputDir: dataNormalizer.outputDir,
+    outputDir: `${baseDir}/analyzed/${modelDir}`,
+  });
 
-    const dataAnalyzer = new DataAnalyzer({
-      inputDir: dataNormalizer.outputDir,
-      outputDir: `${baseDir}/analyzed-${suffix}/${modelDir}`,
-    });
+  const dataGraphBuilder = new DataGraphBuilder({
+    inputDir: dataNormalizer.outputDir,
+    outputDir: `${baseDir}/analyzed/${modelDir}`,
+  });
 
-    const dataGraphBuilder = new DataGraphBuilder({
-      inputDir: dataNormalizer.outputDir,
-      outputDir: `${baseDir}/analyzed-${suffix}/${modelDir}`,
-    });
-
-    return {
-      dataExtractor,
-      dataEntitiesCollector,
-      dataNormalizer,
-      dataAnalyzer,
-      dataGraphBuilder,
-    };
-  } else {
-    // Legacy format
-    const dataExtractor = new DataExtractor({
-      inputDir,
-      outputDir: `${baseDir}/raw/${modelDir}`,
-      preprocessor,
-      llmClient,
-    });
-
-    const dataEntitiesCollector = new DataEntitiesCollector({
-      inputDir: dataExtractor.outputDir,
-      outputDir: `${baseDir}/entities/${modelDir}`,
-      llmClient,
-    });
-
-    const dataNormalizer = new DataNormalizer({
-      inputDir: dataExtractor.outputDir,
-      outputDir: `${baseDir}/normalized/${modelDir}`,
-      entitiesFile: `${dataEntitiesCollector.outputDir}/entities.json`,
-      countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
-      embeddingsClient,
-    });
-
-    const dataAnalyzer = new DataAnalyzer({
-      inputDir: dataNormalizer.outputDir,
-      outputDir: `${baseDir}/analyzed/${modelDir}`,
-    });
-
-    const dataGraphBuilder = new DataGraphBuilder({
-      inputDir: dataNormalizer.outputDir,
-      outputDir: `${baseDir}/analyzed/${modelDir}`,
-    });
-
-    return {
-      dataExtractor,
-      dataEntitiesCollector,
-      dataNormalizer,
-      dataAnalyzer,
-      dataGraphBuilder,
-    };
-  }
+  return {
+    dataExtractor,
+    dataEntitiesCollector,
+    dataNormalizer,
+    dataAnalyzer,
+    dataGraphBuilder,
+  };
 }
 
 main().catch((error) => {
