@@ -1,0 +1,116 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0063",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0063"
+    },
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "HATVIBE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HATVIBE"
+    },
+    {
+      "name": "CHERRYSPY",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CHERRYSPY"
+    },
+    {
+      "name": "RecordsService",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RecordsService"
+    },
+    {
+      "name": "DOCX-документ",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DOCX-документ"
+    },
+    {
+      "name": "Python-інтерпретатор",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python-інтерпретатор"
+    },
+    {
+      "name": "Ukrainian research institutions",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Research and Scientific Institutes",
+      "embedding": []
+    },
+    {
+      "name": "ГУ ГШ ЗС РФ",
+      "category": "Government Body",
+      "role": "Attacker",
+      "normalizedName": "Головне управління Генерального штабу ЗС Росії"
+    },
+    {
+      "name": "Російська Федерація",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "RU",
+      "normalizedName": "Russian Federation"
+    },
+    {
+      "name": "Міністерство оборони Республіки Вірменія",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство оборони Вірменії"
+    },
+    {
+      "name": "Вірменія",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "AM",
+      "normalizedName": "Armenia"
+    },
+    {
+      "name": "Управління міжнародного військового співробітництва Міністерства оборони Киргизької Республіки",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "МВСС МЗС КРК"
+    },
+    {
+      "name": "Киргизька Республіка",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "KG",
+      "normalizedName": "Kyrgyzstan"
+    },
+    {
+      "name": "HFS HTTP File Server",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "HFS HTTP File Server"
+    },
+    {
+      "name": "trust-certificate.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Certificate Authority Domain"
+    },
+    {
+      "name": "enrollmentdm.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "enrollment-data management.com"
+    }
+  ],
+  "metadata": {
+    "date": "21.07.2024",
+    "id": 6280129,
+    "title": "UAC-0063 атакує науково-дослідні установи України: HATVIBE + CHERRYSPY + CVE-2024-23692 (CERT-UA#10356)",
+    "llmProcessingTimeSeconds": 21.673
+  }
+}

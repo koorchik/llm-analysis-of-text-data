@@ -1,0 +1,65 @@
+{
+  "entities": [
+    {
+      "name": "державних органів України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Органи державної влади України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Windows"
+    },
+    {
+      "name": "outlook.com",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "outlook.com"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "Mocky",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Mocky"
+    },
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "mockbin[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mockbin.org"
+    },
+    {
+      "name": "run.mocky[.]io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mocky.io"
+    }
+  ],
+  "metadata": {
+    "date": "28.04.2023",
+    "id": 4492467,
+    "title": "Кібератака групи APT28: розповсюдження електронних листів з \"інструкціями\" щодо \"оновлення операційної системи\" (CERT-UA#6562)",
+    "llmProcessingTimeSeconds": 4.872
+  }
+}

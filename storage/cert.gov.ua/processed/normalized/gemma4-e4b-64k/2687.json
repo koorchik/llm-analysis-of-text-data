@@ -1,0 +1,66 @@
+{
+  "entities": [
+    {
+      "name": "rtlwifi",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "rtlwifi"
+    },
+    {
+      "name": "Linux",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Linux"
+    },
+    {
+      "name": "Microsoft SQL Server",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft SQL Server"
+    },
+    {
+      "name": "MSSQL Backdoor Malware",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MSSQL Backdoor Malware"
+    },
+    {
+      "name": "Financial Institutions",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Financial Services Institutions",
+      "embedding": []
+    },
+    {
+      "name": "FireEye",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Mandiant (formerly FireEye)"
+    },
+    {
+      "name": "TeamViewer",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "TeamViewer"
+    },
+    {
+      "name": "APT41",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT41"
+    },
+    {
+      "name": "China",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "CN",
+      "normalizedName": "China"
+    }
+  ],
+  "metadata": {
+    "date": "22.10.2019",
+    "id": 2687,
+    "title": "Новини зі світу кібербезпеки",
+    "llmProcessingTimeSeconds": 14.846
+  }
+}

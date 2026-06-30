@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "Department of Cyber Police of the National Police of Ukraine",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Департамент кіберполіції Національної поліції України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "citizens of Ukraine",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "громадяни України",
+      "embedding": []
+    },
+    {
+      "name": "Telegram",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Telegram"
+    },
+    {
+      "name": "UAC-0094",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0094"
+    },
+    {
+      "name": "telegram.org.security.ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ohsxy.com"
+    },
+    {
+      "name": "security-check.telegram.org.ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ohsxy.com"
+    },
+    {
+      "name": "ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ohsxy.com"
+    },
+    {
+      "name": "telsec.org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "telsec.org"
+    },
+    {
+      "name": "45.150.67.87",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "45.150.67.87"
+    },
+    {
+      "name": "193.106.191.202",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "193.106.191.202"
+    }
+  ],
+  "metadata": {
+    "date": "05.04.2022",
+    "id": 39253,
+    "title": "Інформація щодо кібератак, спрямованих на отримання доступу до облікових записів Telegram (CERT-UA#4360)",
+    "llmProcessingTimeSeconds": 5.509
+  }
+}

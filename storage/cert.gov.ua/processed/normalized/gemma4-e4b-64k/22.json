@@ -1,0 +1,60 @@
+{
+  "entities": [
+    {
+      "name": "Cisco",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Cisco Systems"
+    },
+    {
+      "name": "CDPwn",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Exploit/Vulnerability: CDPwn"
+    },
+    {
+      "name": "Cisco Discovery Protocol (CDP)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Network Protocol Information"
+    },
+    {
+      "name": "Cisco FXOS",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Networking Operating System: Cisco FXOS"
+    },
+    {
+      "name": "IOS XR",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Networking OS: IOS XR"
+    },
+    {
+      "name": "NX-OS",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Networking OS: NX-OS"
+    },
+    {
+      "name": "Cisco IP phone",
+      "category": "Device",
+      "role": "Target",
+      "normalizedName": "IP Phone (Cisco)",
+      "embedding": []
+    },
+    {
+      "name": "IP-камери Cisco для відеоспостереження серії 8000",
+      "category": "Device",
+      "role": "Target",
+      "normalizedName": "Cisco Security Camera System",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "12.02.2020",
+    "id": 22,
+    "title": "Cisco випустив патчі для закриття 'CDPwn'",
+    "llmProcessingTimeSeconds": 11.772
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Attacker",
+      "normalizedName": "Державна служба безпеки України (СБУ)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Державні та місцеві органи влади України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "ANONVNC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ANONVNC"
+    },
+    {
+      "name": "MESHAGENT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MESHAGENT"
+    },
+    {
+      "name": "Scan_docs#40562153.msi",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Scan_docs#40562153.msi"
+    },
+    {
+      "name": "syn.hiddenvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Remote Desktop Service"
+    },
+    {
+      "name": "filedn[.]eu",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "file-download domain (EU)"
+    },
+    {
+      "name": "gbshost[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hostingdomain.net"
+    },
+    {
+      "name": "sync.anonvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Remote Desktop Service (Anon)"
+    }
+  ],
+  "metadata": {
+    "date": "12.08.2024",
+    "id": 6280345,
+    "title": "UAC-0198: Масове розповсюдження ANONVNC (MESHAGENT) серед державних організацій України (CERT-UA#10647)",
+    "llmProcessingTimeSeconds": 15.114
+  }
+}

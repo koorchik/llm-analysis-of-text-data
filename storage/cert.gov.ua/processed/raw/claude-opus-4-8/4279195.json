@@ -1,0 +1,95 @@
+{
+  "entities": [
+    {
+      "name": "комунальне підприємство",
+      "category": "Organization",
+      "role": "Target"
+    },
+    {
+      "name": "UAC-0145",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "Microsoft Office 2019",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "DarkCrystal RAT",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "DWAgent",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "PinkyAgent",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "AUTORUN.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "agent.py",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Windows Update.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Microsoft Defender",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "toloka.to",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "bt.toloka.tv",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "bt.hurtom.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "bt.toloka.to",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "dwservice.net",
+      "category": "Domain",
+      "role": "Neutral"
+    }
+  ],
+  "metadata": {
+    "date": "03.04.2023",
+    "id": 4279195,
+    "title": "Використання неліцензійних програм Microsoft Office як вектор первинної компрометації ІКС (CERT-UA#6322)",
+    "llmProcessingTimeSeconds": 6.024
+  }
+}

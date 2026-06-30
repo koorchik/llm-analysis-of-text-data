@@ -1,0 +1,156 @@
+{
+  "entities": [
+    {
+      "name": "органів місцевого самоврядування",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "органи місцевого самоврядування",
+      "embedding": []
+    },
+    {
+      "name": "Google таблицю",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Google Sheets"
+    },
+    {
+      "name": "reCAPTCHA",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "reCAPTCHA"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "browser.hta",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "browser.hta"
+    },
+    {
+      "name": "Browser.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Browser.ps1"
+    },
+    {
+      "name": "SSH",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SSH"
+    },
+    {
+      "name": "Chrome",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Google Chrome"
+    },
+    {
+      "name": "Edge",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Edge"
+    },
+    {
+      "name": "Opera",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Opera"
+    },
+    {
+      "name": "Firefox",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Mozilla Firefox"
+    },
+    {
+      "name": "METASPLOIT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Metasploit"
+    },
+    {
+      "name": "Roundcube",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Roundcube"
+    },
+    {
+      "name": "CVE-2023-43770",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2023-43770"
+    },
+    {
+      "name": "ManageSiev",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ManageSiev"
+    },
+    {
+      "name": "mail.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "zhblz.com"
+    },
+    {
+      "name": "оборонним відомствам інших країни світу",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "оборонні відомства інших країн світу",
+      "embedding": []
+    },
+    {
+      "name": "UAC-0001 (APT28)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "zapit.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "zapit.exe"
+    },
+    {
+      "name": "rdp.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "rdp.exe"
+    },
+    {
+      "name": "ssh.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ssh.exe"
+    },
+    {
+      "name": "libcrypto.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "libcrypto.dll"
+    },
+    {
+      "name": "docs.google.com.spreadsheets.d.1ip6eeakdebmwteh36vana4hu-glaeksstsht-boujdk.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "zhblz.com"
+    },
+    {
+      "name": "doc.gmail.com.gyehddhrggdii323sdhnshiswh2udhqjwdhhfjcjeuejcj.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "zhblz.com"
+    }
+  ],
+  "metadata": {
+    "date": "25.10.2024",
+    "id": 6281123,
+    "title": "Кібератака UAC-0001 (APT28): PowerShell-команда в буфері обміну як \"точка входу\" (CERT-UA#11689)",
+    "llmProcessingTimeSeconds": 10.517
+  }
+}

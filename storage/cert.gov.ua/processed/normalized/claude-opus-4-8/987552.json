@@ -1,0 +1,67 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0100",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0100"
+    },
+    {
+      "name": "mono.gg-pay[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gg-pay.me"
+    },
+    {
+      "name": "next24.gg-pay[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gg-pay.me"
+    },
+    {
+      "name": "privat24.ua-wallet[.]pw",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-wallet.pw"
+    },
+    {
+      "name": "Ukrainian banks",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські банки",
+      "embedding": []
+    },
+    {
+      "name": "Ukrainian refugees",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські біженці",
+      "embedding": []
+    },
+    {
+      "name": "Національний банк України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Національний банк України"
+    },
+    {
+      "name": "Мінсоцполітики",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство соціальної політики України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "27.07.2022",
+    "id": 987552,
+    "title": "Онлайн-шахрайство з використанням тематики \"допомоги від Червоного Хреста\" (CERT-UA#5063) ",
+    "llmProcessingTimeSeconds": 4.174
+  }
+}

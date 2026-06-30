@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "Cyberpolice Department of the National Police of Ukraine",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Киберполіція Національної поліції України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Telegram",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Telegram"
+    },
+    {
+      "name": "Cybersecurity entities of Ukraine",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Cybersecurity Entities of Ukraine"
+    },
+    {
+      "name": "Ukrainian citizens",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Citizens and Personnel Access Points",
+      "embedding": []
+    },
+    {
+      "name": "hxxps://telegram.org.security.ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Suspicious Telegram URL"
+    },
+    {
+      "name": "security-check.telegram.org.ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Suspicious Telegram URL"
+    },
+    {
+      "name": "ohsxy.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "suspicious_domain"
+    },
+    {
+      "name": "telsec.org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "telsec.org"
+    },
+    {
+      "name": "45.150.67.87",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "193.106.191.202",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    }
+  ],
+  "metadata": {
+    "date": "05.04.2022",
+    "id": 39253,
+    "title": "Інформація щодо кібератак, спрямованих на отримання доступу до облікових записів Telegram (CERT-UA#4360)",
+    "llmProcessingTimeSeconds": 12.318
+  }
+}

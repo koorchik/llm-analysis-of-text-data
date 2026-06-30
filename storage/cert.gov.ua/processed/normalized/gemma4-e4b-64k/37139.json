@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "name": "National Bank of Ukraine (CSIRT-NBU)",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "National Bank of Ukraine"
+    },
+    {
+      "name": "Cyberpolice Department of the National Police of Ukraine",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Киберполіція Національної поліції України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Mirai",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Mirai"
+    },
+    {
+      "name": "Meris",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Meris"
+    },
+    {
+      "name": "Mikrotik",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "MikroTik Networking Hardware"
+    },
+    {
+      "name": "Ukrainian banking sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Financial Services Institutions",
+      "embedding": []
+    },
+    {
+      "name": "gov.ua zone web resources",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Government Domain Resources (.gov.ua)",
+      "embedding": []
+    },
+    {
+      "name": "Nigeria",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "NG",
+      "normalizedName": "Nigeria"
+    }
+  ],
+  "metadata": {
+    "date": "18.02.2022",
+    "id": 37139,
+    "title": "Інформація щодо кібератак 15 лютого 2022 року",
+    "llmProcessingTimeSeconds": 13.043
+  }
+}

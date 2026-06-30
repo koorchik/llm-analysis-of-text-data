@@ -1,0 +1,45 @@
+{
+  "entities": [
+    {
+      "name": "Державний центр кіберзахисту Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Ситуаційним центром забезпечення кібербезпеки СБУ",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Cloudflare Inc.",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "українських органів державної влади",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "об’єктів критичної інфраструктури",
+      "category": "Infrastructure",
+      "role": "Target"
+    },
+    {
+      "name": "*.gov.ua",
+      "category": "Domain",
+      "role": "Target"
+    },
+    {
+      "name": "*.ua",
+      "category": "Domain",
+      "role": "Target"
+    }
+  ],
+  "metadata": {
+    "date": "28.07.2020",
+    "id": 2628,
+    "title": "Інформація щодо бази даних реальних ІР-адрес  електронних ресурсів органів державної влади та об’єктів критичної інфраструктури України, які використовують сервіси Cloudflare",
+    "llmProcessingTimeSeconds": 11.618
+  }
+}

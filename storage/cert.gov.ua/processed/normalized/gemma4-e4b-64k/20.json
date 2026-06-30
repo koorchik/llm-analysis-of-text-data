@@ -1,0 +1,53 @@
+{
+  "entities": [
+    {
+      "name": "CERT-UA",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Центр реагування на інциденти Кібербезпеки України (CERT-UA)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "MS Word",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Word Processor (Office Suite)"
+    },
+    {
+      "name": "MS Excel",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Excel Spreadsheet"
+    },
+    {
+      "name": "MS PowerPoint",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft PowerPoint Presentation"
+    },
+    {
+      "name": "макросів",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Macros Code"
+    },
+    {
+      "name": "електронною поштою",
+      "category": "Domain",
+      "role": "Target",
+      "normalizedName": "Non-Latin Text (Email placeholder)"
+    }
+  ],
+  "metadata": {
+    "date": "06.02.2020",
+    "id": 20,
+    "title": "Коректне налаштування програмного забезпечення MS Office",
+    "llmProcessingTimeSeconds": 11.585
+  }
+}

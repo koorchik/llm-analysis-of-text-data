@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Ministry of Defence of Ukraine",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство оборони України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "delta.mil.gov.ua.delta-storages[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Military/Government Subdomain"
+    },
+    {
+      "name": "hexactor[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hexactor.com"
+    },
+    {
+      "name": "certificates_rootca.zip",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "certificates_rootca.zip"
+    },
+    {
+      "name": "certificates_rootCA.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "certificates_rootCA.exe"
+    },
+    {
+      "name": "RomCom",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RomCom"
+    },
+    {
+      "name": "FateGrab",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "FateGrab"
+    },
+    {
+      "name": "StealDeal",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "StealDeal"
+    },
+    {
+      "name": "Military Communications/Credentials",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Defense and Military Industry Complex",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "18.12.2022",
+    "id": 3349703,
+    "title": "Кібератака на користувачів системи DELTA з використанням шкідливих програм RomCom/FateGrab/StealDeal (CERT-UA#5709)",
+    "llmProcessingTimeSeconds": 14.565
+  }
+}

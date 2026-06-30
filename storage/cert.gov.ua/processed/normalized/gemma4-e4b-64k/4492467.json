@@ -1,0 +1,42 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "державних органів України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "mockbin[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Testing Service (Mockbin)"
+    },
+    {
+      "name": "run.mocky[.]io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Testing Service (Mocky)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "28.04.2023",
+    "id": 4492467,
+    "title": "Кібератака групи APT28: розповсюдження електронних листів з \"інструкціями\" щодо \"оновлення операційної системи\" (CERT-UA#6562)",
+    "llmProcessingTimeSeconds": 12.133
+  }
+}

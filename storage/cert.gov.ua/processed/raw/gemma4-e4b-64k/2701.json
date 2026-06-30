@@ -1,0 +1,30 @@
+{
+  "entities": [
+    {
+      "name": "Національний центр інтеграції кібербезпеки і комунікацій (NCCIC)",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral"
+    },
+    {
+      "name": "DNS records/services",
+      "category": "Infrastructure",
+      "role": "Attacker"
+    },
+    {
+      "name": "Web and mail traffic",
+      "category": "Sector",
+      "role": "Target"
+    }
+  ],
+  "metadata": {
+    "date": "28.01.2019",
+    "id": 2701,
+    "title": "Глобальна кампанія з підміни DNS-записів",
+    "llmProcessingTimeSeconds": 11.937
+  }
+}

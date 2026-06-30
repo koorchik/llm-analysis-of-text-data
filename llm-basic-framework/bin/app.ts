@@ -37,6 +37,7 @@ const CONFIG = {
 };
 
 async function main() {
+  console.log(CONFIG);
   // Create LLM client
   const llmClient = createLlmClient();
   const embeddingsClient = createEmbeddingsClient();
@@ -55,7 +56,9 @@ async function main() {
 
   const steps = CONFIG.steps.map((stepName) => {
     if (!availableSteps[stepName]) {
-      throw new Error(`Unknown step: ${stepName}. Available: ${Object.keys(availableSteps).join(', ')}`);
+      throw new Error(
+        `Unknown step: ${stepName}. Available: ${Object.keys(availableSteps).join(', ')}`
+      );
     }
     return {
       name: stepName,

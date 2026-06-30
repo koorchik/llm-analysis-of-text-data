@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Google Drive",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "Google Drive"
+    },
+    {
+      "name": "DropMeFiles",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "DropMeFiles"
+    },
+    {
+      "name": "Remote Utilities",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remote Utilities"
+    },
+    {
+      "name": "UAC-0096",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0096"
+    },
+    {
+      "name": "державних органів України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи України",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "101.99.93[.]49",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "101.99.93.49"
+    },
+    {
+      "name": "rmssrv2[.]ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rmssrv2.ru"
+    },
+    {
+      "name": "rmssrv3[.]ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rmssrv3.ru"
+    },
+    {
+      "name": "rmssrv4[.]ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rmssrv4.ru"
+    }
+  ],
+  "metadata": {
+    "date": "28.01.2022",
+    "id": 18163,
+    "title": "Кібератака на організації та установи України з використанням програми Remote Utilities (CERT-UA#3751)",
+    "llmProcessingTimeSeconds": 4.035
+  }
+}

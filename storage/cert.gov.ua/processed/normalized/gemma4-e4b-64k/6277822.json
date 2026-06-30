@@ -1,0 +1,106 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0028 (APT28)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "UAC-0003 (Turla)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Turla Group"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "Russia",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "RU",
+      "normalizedName": "Russian Federation"
+    },
+    {
+      "name": "KAZUAR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "KAZUAR"
+    },
+    {
+      "name": "REMCOS RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "REMCOS RAT"
+    },
+    {
+      "name": "QUASAR RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "QUASAR RAT"
+    },
+    {
+      "name": "VENOM RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "VENOM RAT"
+    },
+    {
+      "name": "REMOTE UTILITIES",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "REMOTE UTILITIES"
+    },
+    {
+      "name": "LUMMASTEALER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LUMMASTEALER"
+    },
+    {
+      "name": "Governmental sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Energy sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure Assets/Sectors",
+      "embedding": []
+    },
+    {
+      "name": "Financial sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Financial Services Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Healthcare sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Sector-Specific Service Provider (Health)",
+      "embedding": []
+    },
+    {
+      "name": "IT sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Information Technology Sector",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "22.02.2024",
+    "id": 6277822,
+    "title": "Щодо обстановки в сфері кібер на 23-24 лютого 2024 року",
+    "llmProcessingTimeSeconds": 11.485
+  }
+}

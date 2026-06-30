@@ -1,0 +1,180 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "MASEPIE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MASEPIE"
+    },
+    {
+      "name": "OCEANMAP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OCEANMAP"
+    },
+    {
+      "name": "STEELHOOK",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "STEELHOOK"
+    },
+    {
+      "name": "OPENSSH",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OpenSSH"
+    },
+    {
+      "name": "IMPACKET",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Impacket"
+    },
+    {
+      "name": "SMBEXEC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SMBEXEC"
+    },
+    {
+      "name": "Client.py",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Client.py"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python"
+    },
+    {
+      "name": "Chrome",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Google Chrome"
+    },
+    {
+      "name": "Edge",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Edge"
+    },
+    {
+      "name": "Trellix",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Trellix"
+    },
+    {
+      "name": "State organizations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні організації",
+      "embedding": []
+    },
+    {
+      "name": "Polish organizations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "польські організації",
+      "embedding": []
+    },
+    {
+      "name": "194.126.178.8",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "194.126.178.8"
+    },
+    {
+      "name": "88.209.251.6",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "88.209.251.6"
+    },
+    {
+      "name": "173.239.196.66",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "173.239.196.66"
+    },
+    {
+      "name": "74.124.219.71",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "74.124.219.71"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvs4knf1av02demj.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsclx05sfi23bfr.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsgapqr3hclnhhj.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsvlaax17vd5r6v.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "oast.fun"
+    },
+    {
+      "name": "nas-files.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "firstcloudit.com"
+    },
+    {
+      "name": "ua-calendar.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "firstcloudit.com"
+    },
+    {
+      "name": "e-nas.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "firstcloudit.com"
+    },
+    {
+      "name": "webmail.facadesolutionsuae.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "facadesolutionsuae.com"
+    },
+    {
+      "name": "jrb@bahouholdings.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "jrb@bahouholdings.com"
+    }
+  ],
+  "metadata": {
+    "date": "28.12.2023",
+    "id": 6276894,
+    "title": "APT28: від первинного ураження до створення загроз для контролеру домену за годину (CERT-UA#8399)",
+    "llmProcessingTimeSeconds": 12.077
+  }
+}

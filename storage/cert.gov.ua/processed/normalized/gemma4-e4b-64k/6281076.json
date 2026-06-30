@@ -1,0 +1,56 @@
+{
+  "entities": [
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": ".rdp configuration files",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": ".rdp configuration files"
+    },
+    {
+      "name": "Government sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Industrial enterprises",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "General Economic Sector",
+      "embedding": []
+    },
+    {
+      "name": "Military formations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Defense and Military Industry Complex",
+      "embedding": []
+    },
+    {
+      "name": "Microsoft",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Microsoft"
+    },
+    {
+      "name": "Amazon",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Amazon"
+    }
+  ],
+  "metadata": {
+    "date": "23.10.2024",
+    "id": 6281076,
+    "title": "Файли конфігурацій RDP як засіб отримання віддаленого доступу до комп'ютера або \"Rogue RDP\" (CERT-UA#11690)",
+    "llmProcessingTimeSeconds": 13.409
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "критичної енергетичної інфраструктури України",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Energy Sector Critical Infrastructure Assets",
+      "embedding": []
+    },
+    {
+      "name": "photo.zip",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "photo.zip"
+    },
+    {
+      "name": "weblinks.cmd",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "weblinks.cmd"
+    },
+    {
+      "name": "TOR program",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "TOR program"
+    },
+    {
+      "name": "file.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "File Hosting Domain"
+    },
+    {
+      "name": "webhook.site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "WebHook Testing Service"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "cURL",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "cURL"
+    }
+  ],
+  "metadata": {
+    "date": "04.09.2023",
+    "id": 5702579,
+    "title": "Кібератака APT28: msedge як завантажувач, TOR та сервіси mockbin.org/website.hook як центр управління (CERT-UA#7469)",
+    "llmProcessingTimeSeconds": 14.665
+  }
+}

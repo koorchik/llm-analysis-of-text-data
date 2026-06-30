@@ -1,0 +1,126 @@
+{
+  "entities": [
+    {
+      "name": "Sandworm",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Sandworm Group"
+    },
+    {
+      "name": "APT44",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT44"
+    },
+    {
+      "name": "Seashell Blizzard",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Blizzard Operation"
+    },
+    {
+      "name": "SECONDSBEST",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SECONDSBEST"
+    },
+    {
+      "name": "EMPIREPAST",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "EMPIREPAST"
+    },
+    {
+      "name": "SPARK",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPARK"
+    },
+    {
+      "name": "CROOKBAG",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CROOKBAG"
+    },
+    {
+      "name": "RSYNC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RSYNC"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Serbia",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "RS",
+      "normalizedName": "Serbia"
+    },
+    {
+      "name": "Czech Republic",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "CZ",
+      "normalizedName": "Czech Republic"
+    },
+    {
+      "name": "Energy Sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure Assets/Sectors",
+      "embedding": []
+    },
+    {
+      "name": "Water and Heat Supply Sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure Assets/Sectors",
+      "embedding": []
+    },
+    {
+      "name": "Logistics/Transportation Sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Economic Sector Classification",
+      "embedding": []
+    },
+    {
+      "name": "Agricultural Tech (Grain Storage)",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Sector-Specific Service Provider (Agriculture)",
+      "embedding": []
+    },
+    {
+      "name": "Automation Systems (АСУТП)",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Industrial Control Systems Technology",
+      "embedding": []
+    },
+    {
+      "name": "documents-reader[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Document Reader Service"
+    },
+    {
+      "name": "object-storage-service[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloud Storage Infrastructure"
+    }
+  ],
+  "metadata": {
+    "date": "23.02.2025",
+    "id": 6282517,
+    "title": "Цільова активність UAC-0212 у відношенні розробників та постачальників рішень АСУТП з метою здійснення кібератак на об'єкти критичної інфраструктури України (CERT-UA#13702)",
+    "llmProcessingTimeSeconds": 20.803
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "ScrubCrypt",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ScrubCrypt"
+    },
+    {
+      "name": "AsyncRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AsyncRAT"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "UAC-0173",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0173"
+    },
+    {
+      "name": "UAC-0007",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0007"
+    },
+    {
+      "name": "BlackNotary",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "BlackNotary"
+    },
+    {
+      "name": "органи юстиції та нотаріату України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "органи юстиції та нотаріату України",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "minijusfil[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "minijusfil.com"
+    },
+    {
+      "name": "filetransrediremin[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "filetransrediremin.com"
+    },
+    {
+      "name": "barnsertr[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "barnsertr.com"
+    }
+  ],
+  "metadata": {
+    "date": "28.08.2023",
+    "id": 5628441,
+    "title": "UAC-0173: органи юстиції та нотаріат \"під прицілом\" (CERT-UA#7372)",
+    "llmProcessingTimeSeconds": 6.788
+  }
+}

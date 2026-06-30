@@ -1,0 +1,55 @@
+{
+  "entities": [
+    {
+      "name": "CSIRT-NBU",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "SuperOps RMM",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "PyInstaller",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "anotepad.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "*.superops.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "*.superops.ai",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "dropbox.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "Ukrainian organizations",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Financial and insurance institutions of Europe and USA",
+      "category": "Sector",
+      "role": "Target"
+    }
+  ],
+  "metadata": {
+    "date": "23.05.2024",
+    "id": 6279419,
+    "title": "UAC-0188: Цільові кібератаки з використанням SuperOps RMM (CERT-UA#9797)",
+    "llmProcessingTimeSeconds": 12.502
+  }
+}

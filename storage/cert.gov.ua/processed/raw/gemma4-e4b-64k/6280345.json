@@ -1,0 +1,60 @@
+{
+  "entities": [
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Attacker"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Attacker"
+    },
+    {
+      "name": "Державні та місцеві органи влади України",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "ANONVNC",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "MESHAGENT",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Scan_docs#40562153.msi",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "syn.hiddenvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "filedn[.]eu",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gbshost[.]net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "sync.anonvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "12.08.2024",
+    "id": 6280345,
+    "title": "UAC-0198: Масове розповсюдження ANONVNC (MESHAGENT) серед державних організацій України (CERT-UA#10647)",
+    "llmProcessingTimeSeconds": 15.114
+  }
+}

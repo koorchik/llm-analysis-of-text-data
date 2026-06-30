@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Центр кібернетичної безпеки інформаційно-телекомунікаційних систем військової частини А0334 (ЦКБ ІТС в/ч А0334)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Центральний центр кібербезпеки ІТС Збройних Сил України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "1_ф_5.39-2024.xlsm",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "1_ф_5.39-2024.xlsm"
+    },
+    {
+      "name": "mob2002.data",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "mob2002.data"
+    },
+    {
+      "name": "COOKBOX",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "COOKBOX"
+    },
+    {
+      "name": "v0.dec.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "v0.dec.ps1"
+    },
+    {
+      "name": "Сили оборони України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Defense and Military Industry Complex",
+      "embedding": []
+    },
+    {
+      "name": "array.myftp.biz",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test FTP Endpoint"
+    },
+    {
+      "name": "bom02.gotdns.ch",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Domain Generator Test Site"
+    },
+    {
+      "name": "worker-test-6f41.idv64828.workers.dev",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloud Worker Endpoint"
+    }
+  ],
+  "metadata": {
+    "date": "24.02.2024",
+    "id": 6277849,
+    "title": "UAC-0149: Цільові вибіркові атаки у відношенні Сил оборони України із застосуванням COOKBOX (CERT-UA#9204)",
+    "llmProcessingTimeSeconds": 13.659
+  }
+}

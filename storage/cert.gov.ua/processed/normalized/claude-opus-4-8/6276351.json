@@ -1,0 +1,79 @@
+{
+  "entities": [
+    {
+      "name": "Security Service of Ukraine (СБУ)",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Служба безпеки України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Remcos RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos"
+    },
+    {
+      "name": "Shinjiru",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "Shinjiru"
+    },
+    {
+      "name": "Malaysia",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "MY",
+      "normalizedName": "Malaysia"
+    },
+    {
+      "name": "REG.RU",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "REG.RU"
+    },
+    {
+      "name": "Russia",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "RU",
+      "normalizedName": "Russia"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "davincigroup.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "davincigroup.online"
+    },
+    {
+      "name": "groupdavinci.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "groupdavinci.online"
+    },
+    {
+      "name": "info@davincigroup.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "davincigroup.online"
+    }
+  ],
+  "metadata": {
+    "date": "13.11.2023",
+    "id": 6276351,
+    "title": "Кібератака UAC-0050 з використанням Remcos RAT, замаскована під \"запит СБУ\" (CERT-UA#8026)",
+    "llmProcessingTimeSeconds": 4.121
+  }
+}

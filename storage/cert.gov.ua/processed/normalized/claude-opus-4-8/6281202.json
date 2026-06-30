@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "Державної податкової служби України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Державна податкова служба України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "LITEMANAGER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LiteManager"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "бухгалтери",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "бухгалтери",
+      "embedding": []
+    },
+    {
+      "name": "qaz.im",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.im"
+    },
+    {
+      "name": "qaz.is",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.is"
+    },
+    {
+      "name": "qaz.su",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.su"
+    },
+    {
+      "name": "tax-gov-ua.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tax-gov-ua.com"
+    },
+    {
+      "name": "dpsu-gov-ua.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dpsu-gov-ua.com"
+    },
+    {
+      "name": "christine@rozsenich.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "christine@rozsenich.com"
+    }
+  ],
+  "metadata": {
+    "date": "30.10.2024",
+    "id": 6281202,
+    "title": "Кібератака UAC-0050 з використанням податкової тематики та LITEMANAGER (CERT-UA#11776)",
+    "llmProcessingTimeSeconds": 5.971
+  }
+}

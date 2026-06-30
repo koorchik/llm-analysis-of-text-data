@@ -1,0 +1,80 @@
+{
+  "entities": [
+    {
+      "name": "Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Target"
+    },
+    {
+      "name": "ДСНС України",
+      "category": "Government Body",
+      "role": "Target"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "RemoteUtilities",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "install.msi",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CCleaner.rar",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Електронний план евакуації.rar",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "plan_dsns.gov.ua.rar",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "rutserv.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Bitbucket",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "hxxps://bitbucket[.]org/ccleaners/ccleaner/downloads/ccleaner.zip",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "hxxps://bitbucket[.]org/dsnsgovua/dsns/downloads/plan_dsns.gov.ua.rar",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "8161[.]uk",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "22.01.2024",
+    "id": 6277285,
+    "title": "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)",
+    "llmProcessingTimeSeconds": 7.121
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "entities": [
+    {
+      "name": "APT44 aka Sandworm",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Sandworm Group/APT44"
+    },
+    {
+      "name": "ArmyPlusInstaller-v.0.10.23722.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ArmyPlusInstaller-v.0.10.23722.exe"
+    },
+    {
+      "name": "ArmyPlus.exe (приманка)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ArmyPlus.exe (приманка)"
+    },
+    {
+      "name": "init.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "init.ps1"
+    },
+    {
+      "name": "Office16.iso",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Office16.iso"
+    },
+    {
+      "name": "omas-x-none.msp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "omas-x-none.msp"
+    },
+    {
+      "name": "communicatorcontentbinapp.cmd",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "communicatorcontentbinapp.cmd"
+    },
+    {
+      "name": "desktopapluscom.workers[.]dev",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloud Worker Endpoint"
+    },
+    {
+      "name": "wvtmsouaa2gt6jmcuxj5hkfrqdss5lhecoqijt5dl7gfruueu3i5mkad[.]onion",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Tor Onion Address"
+    },
+    {
+      "name": "Information and Communication Systems",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Communication Infrastructure",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "18.12.2024",
+    "id": 6281701,
+    "title": "Кібератака UAC-0125 з використанням тематики \"Армія+\" (CERT-UA#12559)",
+    "llmProcessingTimeSeconds": 13.919
+  }
+}

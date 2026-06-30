@@ -1,0 +1,97 @@
+{
+  "entities": [
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Ukrainian governmental organizations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Ukrainian mass media personnel",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Media & Communications Platforms",
+      "embedding": []
+    },
+    {
+      "name": "LONEPAGE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LONEPAGE"
+    },
+    {
+      "name": "THUMBCHOP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "THUMBCHOP"
+    },
+    {
+      "name": "CLOGFLAG",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CLOGFLAG"
+    },
+    {
+      "name": "SEAGLOW",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SEAGLOW"
+    },
+    {
+      "name": "OVERJAM",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OVERJAM"
+    },
+    {
+      "name": "powershell.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell Scripting Host"
+    },
+    {
+      "name": "wscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Windows Scripting Component (WScript)"
+    },
+    {
+      "name": "cscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "cscript.exe"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Microsoft HTML Application Host"
+    },
+    {
+      "name": "156.38.245.115",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "217.12.218.107:30139",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address (Unique Port)"
+    }
+  ],
+  "metadata": {
+    "date": "05.06.2023",
+    "id": 4818341,
+    "title": "UAC-0099: кібершпигунство у відношенні державних організацій та представників ЗМІ України (CERT-UA#6710)",
+    "llmProcessingTimeSeconds": 11.974
+  }
+}

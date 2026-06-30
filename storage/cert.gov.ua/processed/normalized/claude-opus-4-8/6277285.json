@@ -1,0 +1,95 @@
+{
+  "entities": [
+    {
+      "name": "Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Держспецзв’язку"
+    },
+    {
+      "name": "ДСНС України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Державна служба України з надзвичайних ситуацій"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "RemoteUtilities",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remote Utilities"
+    },
+    {
+      "name": "install.msi",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "install.msi"
+    },
+    {
+      "name": "CCleaner.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CCleaner.rar"
+    },
+    {
+      "name": "Електронний план евакуації.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Електронний план евакуації.rar"
+    },
+    {
+      "name": "plan_dsns.gov.ua.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "plan_dsns.gov.ua.rar"
+    },
+    {
+      "name": "rutserv.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "rutserv.exe"
+    },
+    {
+      "name": "Bitbucket",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Bitbucket"
+    },
+    {
+      "name": "hxxps://bitbucket[.]org/ccleaners/ccleaner/downloads/ccleaner.zip",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bitbucket.org"
+    },
+    {
+      "name": "hxxps://bitbucket[.]org/dsnsgovua/dsns/downloads/plan_dsns.gov.ua.rar",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bitbucket.org"
+    },
+    {
+      "name": "8161[.]uk",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "8161.uk"
+    }
+  ],
+  "metadata": {
+    "date": "22.01.2024",
+    "id": 6277285,
+    "title": "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)",
+    "llmProcessingTimeSeconds": 7.121
+  }
+}

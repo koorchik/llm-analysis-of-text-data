@@ -1,0 +1,50 @@
+{
+  "entities": [
+    {
+      "name": "Raidforums",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "Raidforums"
+    },
+    {
+      "name": "raidforums[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "raidforums.com"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "державний сектор",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державний сектор",
+      "embedding": []
+    },
+    {
+      "name": "банківський сектор",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "банківський сектор",
+      "embedding": []
+    },
+    {
+      "name": "сектор оборони",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "сектор оборони",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "21.02.2022",
+    "id": 37211,
+    "title": "Попередження щодо можливих кібератак",
+    "llmProcessingTimeSeconds": 3.242
+  }
+}

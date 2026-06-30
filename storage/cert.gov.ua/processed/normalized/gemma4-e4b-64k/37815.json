@@ -1,0 +1,108 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0020 (Vermin)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Vermin Malware"
+    },
+    {
+      "name": "SPECTR.Usb",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Usb"
+    },
+    {
+      "name": "SPECTR.Shell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Shell"
+    },
+    {
+      "name": "SPECTR.Fs",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Fs"
+    },
+    {
+      "name": "SPECTR.Info",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Info"
+    },
+    {
+      "name": "SPECTR.Archiver",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Archiver"
+    },
+    {
+      "name": "getmod[.]host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test/Utility Domain"
+    },
+    {
+      "name": "syncapp[.]host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test/Utility Domain"
+    },
+    {
+      "name": "netbin[.]host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test/Utility Domain"
+    },
+    {
+      "name": "stormpredictor[.]host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test/Utility Domain"
+    },
+    {
+      "name": "meteolink[.]host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test/Utility Domain"
+    },
+    {
+      "name": "vServerCo",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "vServerCo"
+    },
+    {
+      "name": "AS58271",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "Network Identifier (ASN)"
+    },
+    {
+      "name": "Ukrainian government entities",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Ministry of Defence of Ukraine",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство оборони України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "17.03.2022",
+    "id": 37815,
+    "title": "Кібератака групи UAC-0020 (Vermin) на державні організації України з використанням шкідливої програми SPECTR (CERT-UA#4207)",
+    "llmProcessingTimeSeconds": 12.073
+  }
+}

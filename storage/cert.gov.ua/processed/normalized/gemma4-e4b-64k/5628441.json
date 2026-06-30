@@ -1,0 +1,54 @@
+{
+  "entities": [
+    {
+      "name": "AsyncRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AsyncRAT"
+    },
+    {
+      "name": "ScrubCrypt",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ScrubCrypt"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "minijusfil[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "minijusfil.com"
+    },
+    {
+      "name": "filetransrediremin[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "filetransfer/redirect.com"
+    },
+    {
+      "name": "Justice Department Sector / Notariat",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Government Digital Infrastructure/Services",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "28.08.2023",
+    "id": 5628441,
+    "title": "UAC-0173: органи юстиції та нотаріат \"під прицілом\" (CERT-UA#7372)",
+    "llmProcessingTimeSeconds": 12.318
+  }
+}

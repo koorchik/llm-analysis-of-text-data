@@ -1,9 +1,5 @@
 import type { LlmClient } from '../LlmClient/LlmClient';
-import {
-  extractAndParseJson,
-  UnifiedData,
-  Category,
-} from '../utils/validationUtils';
+import { extractAndParseJson, UnifiedData, Category } from '../utils/validationUtils';
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
 
@@ -169,9 +165,6 @@ export class DataEntitiesCollector {
       Return a JSON object where each key is the original entity name and the value is the normalized name.
       If an entity doesn't need normalization, map it to itself.
       
-      Entities to normalize:
-      ${JSON.stringify(uniqueEntities, null, 2)}
-      
       Return ONLY a JSON object in this format:
       {
         "original_name_1": "normalized_name_1",
@@ -179,12 +172,16 @@ export class DataEntitiesCollector {
       }
     `;
 
+    const text = `Entities to normalize: ${JSON.stringify(uniqueEntities, null, 2)}`;
+
     let attempts = 0;
     while (attempts < this.#maxRetries) {
       try {
         console.time(`LLM NORMALIZATION - ${entityType}`);
-        const result = await this.#llmClient.send(instructions, '');
+        const result = await this.#llmClient.send(instructions, text);
         console.timeEnd(`LLM NORMALIZATION - ${entityType}`);
+
+        console.log(result);
 
         const parsed = extractAndParseJson(result);
         if (parsed) {

@@ -1,0 +1,71 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0020 (Vermin)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Vermin Malware"
+    },
+    {
+      "name": "Defense Forces of Ukraine",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Збройні Сили України (ЗСУ)"
+    },
+    {
+      "name": "SPECTR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR"
+    },
+    {
+      "name": "SyncThing",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SyncThing"
+    },
+    {
+      "name": "Лугонськ",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "UA",
+      "normalizedName": "Лугонськ"
+    },
+    {
+      "name": "туррель.фоп.вовчок.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "туррель.фоп.вовчок.rar"
+    },
+    {
+      "name": "Wowchok.pdf",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Wowchok.pdf"
+    },
+    {
+      "name": "sync.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "sync.exe"
+    },
+    {
+      "name": "run_user.bat",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "run_user.bat"
+    },
+    {
+      "name": "*.syncthing.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Syncthing Wildcard Domain"
+    }
+  ],
+  "metadata": {
+    "date": "05.06.2024",
+    "id": 6279600,
+    "title": "UAC-0020 (Vermin) атакує Сили оборони України з використанням ШПЗ SPECTR в тандемі з легітимним SyncThing (кампанія \"SickSync\") (CERT-UA#9934)",
+    "llmProcessingTimeSeconds": 11.572
+  }
+}

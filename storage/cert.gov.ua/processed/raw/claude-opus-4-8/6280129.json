@@ -1,0 +1,105 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0063",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "APT28 (UAC-0001)",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "HATVIBE",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CHERRYSPY",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "ГУ ГШ ЗС РФ",
+      "category": "Government Body",
+      "role": "Attacker"
+    },
+    {
+      "name": "Russia",
+      "category": "Country",
+      "role": "Attacker"
+    },
+    {
+      "name": "українська науково-дослідна установа",
+      "category": "Organization",
+      "role": "Target"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "Управління оборонної політики Міністерства оборони Республіки Вірменія",
+      "category": "Government Body",
+      "role": "Target"
+    },
+    {
+      "name": "Armenia",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "Управління міжнародного військового співробітництва Міністерства оборони Киргизької Республіки",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Kyrgyzstan",
+      "category": "Country",
+      "role": "Neutral"
+    },
+    {
+      "name": "CVE-2024-23692",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "HFS HTTP File Server",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "pyArmor",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Virustotal",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "trust-certificate.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "enrollmentdm.com",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "21.07.2024",
+    "id": 6280129,
+    "title": "UAC-0063 атакує науково-дослідні установи України: HATVIBE + CHERRYSPY + CVE-2024-23692 (CERT-UA#10356)",
+    "llmProcessingTimeSeconds": 9.542
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "entities": [
+    {
+      "name": "органів місцевого самоврядування",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Google таблицю",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "reCAPTCHA",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "browser.hta",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Browser.ps1",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "SSH",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Chrome",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Edge",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Opera",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Firefox",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "METASPLOIT",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Roundcube",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "CVE-2023-43770",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "ManageSiev",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "mail.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "оборонним відомствам інших країни світу",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "UAC-0001 (APT28)",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "zapit.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "rdp.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "ssh.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "libcrypto.dll",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "docs.google.com.spreadsheets.d.1ip6eeakdebmwteh36vana4hu-glaeksstsht-boujdk.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "doc.gmail.com.gyehddhrggdii323sdhnshiswh2udhqjwdhhfjcjeuejcj.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "25.10.2024",
+    "id": 6281123,
+    "title": "Кібератака UAC-0001 (APT28): PowerShell-команда в буфері обміну як \"точка входу\" (CERT-UA#11689)",
+    "llmProcessingTimeSeconds": 10.517
+  }
+}

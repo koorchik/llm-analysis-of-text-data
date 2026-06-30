@@ -1,0 +1,83 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0010 (Armageddon)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Armageddon Campaign"
+    },
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Державна служба безпеки України (СБУ)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "HTM-dropper",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HTM-dropper"
+    },
+    {
+      "name": "RAR-архів",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RAR-архів"
+    },
+    {
+      "name": "LNK-файл",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LNK-файл"
+    },
+    {
+      "name": "HTA-файл",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HTA-файл"
+    },
+    {
+      "name": "VBScript-код",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "VBScript-код"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell"
+    },
+    {
+      "name": "GammaLoad.PS1_v2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "GammaLoad.PS1_v2"
+    },
+    {
+      "name": "hxxps://cloudflare-dns[.]com/dns-query",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloudflare DNS Query URL"
+    },
+    {
+      "name": "hxxps://whoer[.]net/ru/checkwhois",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "WHOIS Lookup Service (Suspicious)"
+    }
+  ],
+  "metadata": {
+    "date": "26.07.2022",
+    "id": 971405,
+    "title": "Кібератаки групи UAC-0010 (Armageddon) з використанням шкідливої програми GammaLoad.PS1_v2 (CERT-UA#5003,5013,5069,5071)",
+    "llmProcessingTimeSeconds": 12.579
+  }
+}

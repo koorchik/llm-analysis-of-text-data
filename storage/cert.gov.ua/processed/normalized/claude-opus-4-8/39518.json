@@ -1,0 +1,121 @@
+{
+  "entities": [
+    {
+      "name": "INDUSTROYER2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Industroyer2"
+    },
+    {
+      "name": "CADDYWIPER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CaddyWiper"
+    },
+    {
+      "name": "ARGUEPATCH",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ArguePatch"
+    },
+    {
+      "name": "TAILJUMP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "TailJump"
+    },
+    {
+      "name": "ORCSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OrcShred"
+    },
+    {
+      "name": "SOLOSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SoloShred"
+    },
+    {
+      "name": "AWFULSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AwfulShred"
+    },
+    {
+      "name": "POWERGAP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerGap"
+    },
+    {
+      "name": "IMPACKET",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Impacket"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Windows"
+    },
+    {
+      "name": "Linux",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Linux"
+    },
+    {
+      "name": "high-voltage electrical substations",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "High-Voltage Electrical Substations",
+      "embedding": []
+    },
+    {
+      "name": "energy sector of Ukraine",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "енергетичний сектор",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft"
+    },
+    {
+      "name": "ESET",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "ESET"
+    },
+    {
+      "name": "91.245.255[.]243",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "91.245.255.243"
+    },
+    {
+      "name": "195.230.23[.]19",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "195.230.23.19"
+    }
+  ],
+  "metadata": {
+    "date": "12.04.2022",
+    "id": 39518,
+    "title": "Кібератака групи Sandworm (UAC-0082) на об’єкти енергетики України з використанням шкідливих програм INDUSTROYER2 та CADDYWIPER (CERT-UA#4435)",
+    "llmProcessingTimeSeconds": 5.997
+  }
+}

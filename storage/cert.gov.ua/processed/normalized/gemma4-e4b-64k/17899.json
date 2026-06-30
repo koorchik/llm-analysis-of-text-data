@@ -1,0 +1,66 @@
+{
+  "entities": [
+    {
+      "name": "МЗС",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Міністерство закордонних справ України (МЗС)"
+    },
+    {
+      "name": "МОН",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Міністерство освіти та науки України (МОН)"
+    },
+    {
+      "name": "Derzhspetszvyazky",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державна служба спеціального зв’язку та захисту інформації України"
+    },
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державна служба безпеки України (СБУ)"
+    },
+    {
+      "name": "Кіберполіція",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Киберполіція Національної поліції України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "October CMS",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Content Management System: OctoberCMS"
+    },
+    {
+      "name": "CVE-2021-32648",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Vulnerability: CVE-2021-32648"
+    },
+    {
+      "name": "State government websites/organs",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Government Digital Infrastructure/Services",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "14.01.2022",
+    "id": 17899,
+    "title": "Кібератака на сайти державних органів",
+    "llmProcessingTimeSeconds": 14.217
+  }
+}

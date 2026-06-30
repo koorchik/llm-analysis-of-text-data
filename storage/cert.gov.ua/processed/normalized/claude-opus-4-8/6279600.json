@@ -1,0 +1,174 @@
+{
+  "entities": [
+    {
+      "name": "Центр кібербезпеки ЗСУ (ЦКБ)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Центр кібербезпеки ЗСУ"
+    },
+    {
+      "name": "UAC-0020",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Vermin"
+    },
+    {
+      "name": "Vermin",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Vermin"
+    },
+    {
+      "name": "Сили оборони України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Сили оборони України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "SPECTR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR"
+    },
+    {
+      "name": "SyncThing",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Syncthing"
+    },
+    {
+      "name": "туррель.фоп.вовчок.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "туррель.фоп.вовчок.rar"
+    },
+    {
+      "name": "туррель.фоп.вовчок.sfx.rar.scr",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "туррель.фоп.вовчок.sfx.rar.scr"
+    },
+    {
+      "name": "Wowchok.pdf",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Wowchok.pdf"
+    },
+    {
+      "name": "sync.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "sync.exe"
+    },
+    {
+      "name": "run_user.bat",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "run_user.bat"
+    },
+    {
+      "name": "InnoSetup",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Inno Setup"
+    },
+    {
+      "name": "SpecMon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SpecMon"
+    },
+    {
+      "name": "PluginLoader.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PluginLoader.dll"
+    },
+    {
+      "name": "Screengrabber",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Screengrabber"
+    },
+    {
+      "name": "FileGrabber",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "FileGrabber"
+    },
+    {
+      "name": "Usb",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Usb"
+    },
+    {
+      "name": "Social",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Social"
+    },
+    {
+      "name": "Browsers",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Browsers"
+    },
+    {
+      "name": "robocopy.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "robocopy.exe"
+    },
+    {
+      "name": "SickSync",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SickSync"
+    },
+    {
+      "name": "Луганськ",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "UA",
+      "normalizedName": "Luhansk"
+    },
+    {
+      "name": "crash.syncthing.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "syncthing.net"
+    },
+    {
+      "name": "data.syncthing.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "syncthing.net"
+    },
+    {
+      "name": "upgrades.syncthing.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "syncthing.net"
+    },
+    {
+      "name": "syncthing.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "syncthing.net"
+    }
+  ],
+  "metadata": {
+    "date": "05.06.2024",
+    "id": 6279600,
+    "title": "UAC-0020 (Vermin) атакує Сили оборони України з використанням ШПЗ SPECTR в тандемі з легітимним SyncThing (кампанія \"SickSync\") (CERT-UA#9934)",
+    "llmProcessingTimeSeconds": 10.859
+  }
+}

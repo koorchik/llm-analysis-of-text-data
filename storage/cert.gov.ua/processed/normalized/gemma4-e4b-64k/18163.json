@@ -1,0 +1,48 @@
+{
+  "entities": [
+    {
+      "name": "Google Drive",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "Cloud Storage Service"
+    },
+    {
+      "name": "DropMeFiles",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "File Hosting Service"
+    },
+    {
+      "name": "Remote Utilities",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Utility Software/Tool (General)"
+    },
+    {
+      "name": "RManService",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Background Service Name"
+    },
+    {
+      "name": "Ukrainian government agencies",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "28.01.2022",
+    "id": 18163,
+    "title": "Кібератака на організації та установи України з використанням програми Remote Utilities (CERT-UA#3751)",
+    "llmProcessingTimeSeconds": 8.945
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "entities": [
+    {
+      "name": "FireEye",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "Government bodies",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Critical infrastructure",
+      "category": "Infrastructure",
+      "role": "Target"
+    },
+    {
+      "name": "Stolen FireEye Security Tools",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "SolarWinds Orion",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "USA",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "Snort",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "YARA",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "ClamAV",
+      "category": "Software",
+      "role": "Neutral"
+    }
+  ],
+  "metadata": {
+    "date": "14.12.2020",
+    "id": 9483,
+    "title": "Хакери отримали доступ до спеціалізованого програмного забезпечення, що може бути використано для реалізації кібератак в Україні",
+    "llmProcessingTimeSeconds": 10.285
+  }
+}

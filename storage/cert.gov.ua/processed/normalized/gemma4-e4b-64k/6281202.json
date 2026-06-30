@@ -1,0 +1,60 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "LITEMANAGER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LITEMANAGER"
+    },
+    {
+      "name": "qaz.im",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Kazakhstan TLD (Mail)"
+    },
+    {
+      "name": "qaz.is",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Kazakhstan Domain"
+    },
+    {
+      "name": "qaz.su",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Deprecated Kazakhstan Domain"
+    },
+    {
+      "name": "Державна податкова служба України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "ДПСУ (Державна податкова служба)"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Financial Institutions",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Financial Services Institutions",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "30.10.2024",
+    "id": 6281202,
+    "title": "Кібератака UAC-0050 з використанням податкової тематики та LITEMANAGER (CERT-UA#11776)",
+    "llmProcessingTimeSeconds": 11.323
+  }
+}

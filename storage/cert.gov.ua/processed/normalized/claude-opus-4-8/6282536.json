@@ -1,0 +1,133 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0173",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0173"
+    },
+    {
+      "name": "Notaries",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "органи юстиції та нотаріату України",
+      "embedding": []
+    },
+    {
+      "name": "Ministry of Justice of Ukraine",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Ministry of Justice of Ukraine"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "DARKCRYSTALRAT (DCRAT)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkCrystal RAT"
+    },
+    {
+      "name": "RDPWRAPPER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RDPWrapper"
+    },
+    {
+      "name": "BORE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Bore"
+    },
+    {
+      "name": "NMAP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Nmap"
+    },
+    {
+      "name": "FIDDLER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Fiddler"
+    },
+    {
+      "name": "XWORM",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "XWorm"
+    },
+    {
+      "name": "SENDEMAIL",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "sendEmail"
+    },
+    {
+      "name": "PEAKLIGHT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PEAKLIGHT"
+    },
+    {
+      "name": "Notary Chamber of Ukraine",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Notary Chamber of Ukraine"
+    },
+    {
+      "name": "ДП \"НАІС\"",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "ДП \"НАІС\""
+    },
+    {
+      "name": "State registries of Ukraine",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "State Registries of Ukraine",
+      "embedding": []
+    },
+    {
+      "name": "89.105.201.98",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "89.105.201.98"
+    },
+    {
+      "name": "193.233.48.166",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "193.233.48.166"
+    },
+    {
+      "name": "194.0.234.155",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "194.0.234.155"
+    },
+    {
+      "name": "87.120.126.48",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "87.120.126.48"
+    },
+    {
+      "name": "91.92.246.18",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "91.92.246.18"
+    }
+  ],
+  "metadata": {
+    "date": "25.02.2025",
+    "id": 6282536,
+    "title": "UAC-0173 проти Нотаріату України (CERT-UA#13738)",
+    "llmProcessingTimeSeconds": 9.577
+  }
+}

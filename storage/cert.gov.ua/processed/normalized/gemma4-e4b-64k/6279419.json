@@ -1,0 +1,66 @@
+{
+  "entities": [
+    {
+      "name": "CSIRT-NBU",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "National Bank of Ukraine (NBU)"
+    },
+    {
+      "name": "SuperOps RMM",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SuperOps RMM"
+    },
+    {
+      "name": "PyInstaller",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PyInstaller"
+    },
+    {
+      "name": "anotepad.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "notepad.com"
+    },
+    {
+      "name": "*.superops.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SuperOps Wildcard Domain"
+    },
+    {
+      "name": "*.superops.ai",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SuperOps Wildcard Domain"
+    },
+    {
+      "name": "dropbox.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloud Storage Provider"
+    },
+    {
+      "name": "Ukrainian organizations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "General Ukrainian Entities",
+      "embedding": []
+    },
+    {
+      "name": "Financial and insurance institutions of Europe and USA",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "International Financial Services Institutions",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "23.05.2024",
+    "id": 6279419,
+    "title": "UAC-0188: Цільові кібератаки з використанням SuperOps RMM (CERT-UA#9797)",
+    "llmProcessingTimeSeconds": 12.502
+  }
+}

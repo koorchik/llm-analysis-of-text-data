@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0056",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0056"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Cobalt Strike Beacon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Cobalt Strike Beacon"
+    },
+    {
+      "name": "136[.]144.41.177",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+    },
+    {
+      "name": "baseupd.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "baseupd.exe"
+    },
+    {
+      "name": "stage1.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "stage1.ps1"
+    },
+    {
+      "name": "stage2.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "stage2.ps1"
+    },
+    {
+      "name": "shellcode.x86.bin",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "shellcode.x86.bin"
+    },
+    {
+      "name": "shellcode.x64.bin",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "shellcode.x64.bin"
+    },
+    {
+      "name": "Government IT Infrastructure",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Digital/Physical Government Infrastructure",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "11.07.2022",
+    "id": 703548,
+    "title": "Атака групи UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4941)",
+    "llmProcessingTimeSeconds": 14.441
+  }
+}

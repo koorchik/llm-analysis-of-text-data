@@ -1,0 +1,59 @@
+{
+  "entities": [
+    {
+      "name": "Єдиної судової інформаційно-телекомунікаційної системи (ЄСІТС)",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Specific Ukrainian State Registry/System",
+      "embedding": []
+    },
+    {
+      "name": "Telegram",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "Instant Messaging Platform"
+    },
+    {
+      "name": "bit.ly",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "URL Shortener Service"
+    },
+    {
+      "name": "sec-t[.]info",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "security/test domain"
+    },
+    {
+      "name": "5[.]255.112.246",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address (Broadcast/Reserved)"
+    },
+    {
+      "name": "telegram.org-a0dk3dm91iu.tgeo[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Telegram Link Generation URL"
+    },
+    {
+      "name": "telegram.account[.]associates",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Telegram Infrastructure Domain"
+    },
+    {
+      "name": "tgeo[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Telegram Shortener Link"
+    }
+  ],
+  "metadata": {
+    "date": "02.06.2023",
+    "id": 4789582,
+    "title": "Розсилання SMS-повідомлень з темою судових повісток з використанням шахрайського альфа-імені \"SUDpovistka\" (CERT-UA#6804)",
+    "llmProcessingTimeSeconds": 13.605
+  }
+}

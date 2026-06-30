@@ -1,0 +1,157 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0215",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0215"
+    },
+    {
+      "name": "Amazon",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Amazon"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft"
+    },
+    {
+      "name": "органів державної влади",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи",
+      "embedding": []
+    },
+    {
+      "name": "підприємств основних галузей промисловості",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "підприємства основних галузей промисловості",
+      "embedding": []
+    },
+    {
+      "name": "військових формувань",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "військові формування",
+      "embedding": []
+    },
+    {
+      "name": "Zero Trust Architecture Configuration.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Zero Trust Architecture Configuration.rdp"
+    },
+    {
+      "name": "ZTS Device Compatibility Test.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ZTS Device Compatibility Test.rdp"
+    },
+    {
+      "name": "Device Configuration Verification.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Device Configuration Verification.rdp"
+    },
+    {
+      "name": "Device Security Requirements Check.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Device Security Requirements Check.rdp"
+    },
+    {
+      "name": "Zero Trust Security Environment Compliance Check.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Zero Trust Security Environment Compliance Check.rdp"
+    },
+    {
+      "name": "AWS IAM Quick Start.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AWS IAM Quick Start.rdp"
+    },
+    {
+      "name": "AWS IAM Configuration.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AWS IAM Configuration.rdp"
+    },
+    {
+      "name": "AWS IAM Compliance Check.rdp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AWS IAM Compliance Check.rdp"
+    },
+    {
+      "name": "ca-central-1.awsplatform[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "awsplatform.online"
+    },
+    {
+      "name": "ca-west-1.mfa-gov[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mfa-gov.cloud"
+    },
+    {
+      "name": "central-2-aws.ua-aws[.]army",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-aws.army"
+    },
+    {
+      "name": "eu-central-1-aws.mfa-gov[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mfa-gov.cloud"
+    },
+    {
+      "name": "eu-central-1.mfa-gov[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mfa-gov.cloud"
+    },
+    {
+      "name": "eu-central-1.ukrtelecom[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ukrtelecom.cloud"
+    },
+    {
+      "name": "eu-central-2-aws.ua-aws[.]army",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-aws.army"
+    },
+    {
+      "name": "eu-north-1-aws.ua-energy[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-energy.cloud"
+    },
+    {
+      "name": "eu-north-1-aws.ua-gov[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-gov.cloud"
+    },
+    {
+      "name": "eu-south-1-aws.mfa-gov[.]cloud",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mfa-gov.cloud"
+    }
+  ],
+  "metadata": {
+    "date": "23.10.2024",
+    "id": 6281076,
+    "title": "Файли конфігурацій RDP як засіб отримання віддаленого доступу до комп'ютера або \"Rogue RDP\" (CERT-UA#11690)",
+    "llmProcessingTimeSeconds": 10.204
+  }
+}

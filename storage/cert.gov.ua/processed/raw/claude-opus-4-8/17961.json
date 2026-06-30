@@ -1,0 +1,40 @@
+{
+  "entities": [
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "CVE-2022-21907",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "HTTP Protocol Stack (http.sys)",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "IIS (Internet Information Services)",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Windows Server 2019",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Windows 10",
+      "category": "Software",
+      "role": "Target"
+    }
+  ],
+  "metadata": {
+    "date": "18.01.2022",
+    "id": 17961,
+    "title": "Інформація щодо вразливості в продуктах Microsoft CVE-2022-21907",
+    "llmProcessingTimeSeconds": 2.86
+  }
+}

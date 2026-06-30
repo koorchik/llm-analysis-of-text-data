@@ -1,0 +1,70 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0010 (Armageddon)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Armageddon Campaign"
+    },
+    {
+      "name": "Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державна служба спеціального зв’язку та захисту інформації України"
+    },
+    {
+      "name": "@mail.gov.ua",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Government Email Placeholder (UA)"
+    },
+    {
+      "name": "JavaScript-код",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "JavaScript-код"
+    },
+    {
+      "name": "HTA-файл",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HTA-файл"
+    },
+    {
+      "name": "VBScript-код",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "VBScript-код"
+    },
+    {
+      "name": "cloudflare-dns.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Cloudflare DNS Infrastructure"
+    },
+    {
+      "name": "arhiv.ua-cip.org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "arhiv.ua-cip.org"
+    },
+    {
+      "name": "tzi.info-cip.org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tzi.info-cip.org"
+    },
+    {
+      "name": "civh.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "civh.ru"
+    }
+  ],
+  "metadata": {
+    "date": "08.11.2022",
+    "id": 2681855,
+    "title": "Кібератака групи UAC-0010: розсилання електронних листів, начебто, від імені Держспецзв'язку (CERT-UA#5570)",
+    "llmProcessingTimeSeconds": 15.087
+  }
+}

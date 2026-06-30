@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0010 (Armageddon)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Armageddon Campaign"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "critical infrastructure of Kherson",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Geographic Critical Infrastructure Asset",
+      "embedding": []
+    },
+    {
+      "name": "План Херсон.htm",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "План Херсон.htm"
+    },
+    {
+      "name": "Herson.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Herson.rar"
+    },
+    {
+      "name": "План підходу та закладання вибухівки на об'єктах критичної інфростурктури Херсона.lnk",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "План підходу та закладання вибухівки на об'єктах критичної інфростурктури Херсона.lnk"
+    },
+    {
+      "name": "precarious.xml",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "precarious.xml"
+    },
+    {
+      "name": "GammaLoad.PS1_v2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "GammaLoad.PS1_v2"
+    },
+    {
+      "name": "a0671524.xsph.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "spam_domain_ad"
+    },
+    {
+      "name": "a0667987.xsph.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "spam_domain_ad"
+    },
+    {
+      "name": "qiwardos.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qiwardos.ru"
+    }
+  ],
+  "metadata": {
+    "date": "12.05.2022",
+    "id": 40240,
+    "title": "Кібератаки групи UAC-0010 (Armageddon) з використанням шкідливої програми GammaLoad.PS1_v2 (CERT-UA#4634,4648)",
+    "llmProcessingTimeSeconds": 14.452
+  }
+}

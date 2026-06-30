@@ -1,0 +1,66 @@
+{
+  "entities": [
+    {
+      "name": "FireEye",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "FireEye"
+    },
+    {
+      "name": "USA",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "US",
+      "normalizedName": "United States"
+    },
+    {
+      "name": "Snort",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Snort"
+    },
+    {
+      "name": "YARA",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "YARA"
+    },
+    {
+      "name": "ClamAV",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "ClamAV"
+    },
+    {
+      "name": "SolarWinds Orion",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "SolarWinds Orion"
+    },
+    {
+      "name": "SUNBURST",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SUNBURST"
+    },
+    {
+      "name": "critical infrastructure",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure",
+      "embedding": []
+    },
+    {
+      "name": "US government institutions",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "US government institutions"
+    }
+  ],
+  "metadata": {
+    "date": "14.12.2020",
+    "id": 9483,
+    "title": "Хакери отримали доступ до спеціалізованого програмного забезпечення, що може бути використано для реалізації кібератак в Україні",
+    "llmProcessingTimeSeconds": 4.437
+  }
+}

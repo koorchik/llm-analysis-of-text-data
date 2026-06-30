@@ -1,0 +1,53 @@
+{
+  "entities": [
+    {
+      "name": "Sandworm",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Sandworm Group"
+    },
+    {
+      "name": "State Institutions",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian Government Bodies and Institutions",
+      "embedding": []
+    },
+    {
+      "name": "RoarBat - BAT-скрипт",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RoarBat - BAT-скрипт"
+    },
+    {
+      "name": "BASH-скрипта",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "BASH-скрипта"
+    },
+    {
+      "name": "WinRAR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "WinRAR"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Windows"
+    },
+    {
+      "name": "Linux",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Linux"
+    }
+  ],
+  "metadata": {
+    "date": "29.04.2023",
+    "id": 4501891,
+    "title": "WinRAR як \"кіберзброя\". Деструктивна кібератака UAC-0165 (ймовірно, Sandworm) на держсектор України із застосуванням RoarBat (CERT-UA#6550)",
+    "llmProcessingTimeSeconds": 13.975
+  }
+}

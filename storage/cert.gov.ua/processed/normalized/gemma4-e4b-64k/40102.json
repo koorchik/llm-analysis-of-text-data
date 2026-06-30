@@ -1,0 +1,47 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "UkrScanner.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "UkrScanner.rar"
+    },
+    {
+      "name": "CredoMap_v2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CredoMap_v2"
+    },
+    {
+      "name": "HTTP POST-запитів",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HTTP POST-запитів"
+    },
+    {
+      "name": "pipedream",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Pipedream Infrastructure Service"
+    },
+    {
+      "name": "Ukrainian news websites",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Media & Communications Platforms",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "06.05.2022",
+    "id": 40102,
+    "title": "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)",
+    "llmProcessingTimeSeconds": 2.049
+  }
+}

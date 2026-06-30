@@ -1,0 +1,90 @@
+{
+  "entities": [
+    {
+      "name": "Київстар",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "Київстар"
+    },
+    {
+      "name": "GB.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "GB.exe"
+    },
+    {
+      "name": "wsuscr.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "wsuscr.exe"
+    },
+    {
+      "name": "SmartAssembly .NET",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SmartAssembly"
+    },
+    {
+      "name": "RemcosRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos"
+    },
+    {
+      "name": "Запит.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Запит.exe"
+    },
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050"
+    },
+    {
+      "name": "Shinjiru",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "Shinjiru"
+    },
+    {
+      "name": "Malaysia",
+      "category": "Country",
+      "role": "Attacker",
+      "code": "MY",
+      "normalizedName": "Malaysia"
+    },
+    {
+      "name": "STARK INDUSTRIES SOLUTIONS LTD",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "STARK INDUSTRIES SOLUTIONS LTD"
+    },
+    {
+      "name": "СБУ",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Служба безпеки України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "bitbucket.org/olegovich-007/777/downloads/wsuscr.exe",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bitbucket.org"
+    }
+  ],
+  "metadata": {
+    "date": "21.12.2023",
+    "id": 6276824,
+    "title": "\"Заборгованість Київстар\", \"Запит СБУ\": нова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8338)",
+    "llmProcessingTimeSeconds": 7.981
+  }
+}

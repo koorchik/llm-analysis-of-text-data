@@ -1,0 +1,66 @@
+{
+  "entities": [
+    {
+      "name": "OUTSTEEL",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Malware/Payload: OutSteel"
+    },
+    {
+      "name": "LOADJUMP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Loader/Dropper: LoadJump"
+    },
+    {
+      "name": "756285df0c8b81cf14ad3463a57d33ed.xll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Macro Enabled Library File (.xll)"
+    },
+    {
+      "name": "0707a.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Unknown Executable File"
+    },
+    {
+      "name": "differencecell.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Application Utility/Executable"
+    },
+    {
+      "name": "1833[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "domain_ad_scam"
+    },
+    {
+      "name": "giraffe-tour[.]ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "giraffe-tour.ru"
+    },
+    {
+      "name": "Presidential Office of Ukraine website impersonation",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Impersonation/Phishing Targeting High Officials",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "13.07.2021",
+    "id": 13156,
+    "title": "Зафіксовано атаку на державні органи України з використанням веб-сайту, що імітує Офіційне інтернет-представництво Президента України",
+    "llmProcessingTimeSeconds": 12.399
+  }
+}

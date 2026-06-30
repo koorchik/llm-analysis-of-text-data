@@ -1,0 +1,54 @@
+{
+  "entities": [
+    {
+      "name": "Ukrainian refugees",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Displaced Persons Population Group",
+      "embedding": []
+    },
+    {
+      "name": "mono.gg-pay.me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Payment Gateway Link (GG)"
+    },
+    {
+      "name": "next24.gg-pay.me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Payment Gateway Link (Next 24)"
+    },
+    {
+      "name": "privat24.ua-wallet.pw",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Wallet/Crypto Domain (UA)"
+    },
+    {
+      "name": "Ministry of Social Policy (Мінсоцполітики)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство соціальної політики"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "National Bank of Ukraine (Національний банк України)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Національний банк України"
+    }
+  ],
+  "metadata": {
+    "date": "27.07.2022",
+    "id": 987552,
+    "title": "Онлайн-шахрайство з використанням тематики \"допомоги від Червоного Хреста\" (CERT-UA#5063) ",
+    "llmProcessingTimeSeconds": 12.046
+  }
+}

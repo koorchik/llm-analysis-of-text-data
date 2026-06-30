@@ -1,0 +1,78 @@
+{
+  "entities": [
+    {
+      "name": "МЗС",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Міністерство закордонних справ України"
+    },
+    {
+      "name": "МОН",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Міністерство освіти і науки України"
+    },
+    {
+      "name": "сайти державних органів",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи",
+      "embedding": []
+    },
+    {
+      "name": "October CMS",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "October CMS"
+    },
+    {
+      "name": "CVE-2021-32648",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-32648"
+    },
+    {
+      "name": "Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Держспецзв’язку"
+    },
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Служба безпеки України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Кіберполіція",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Департамент кіберполіції Національної поліції України"
+    },
+    {
+      "name": "NGINX",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "nginx"
+    },
+    {
+      "name": "APACHE",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Apache"
+    }
+  ],
+  "metadata": {
+    "date": "14.01.2022",
+    "id": 17899,
+    "title": "Кібератака на сайти державних органів",
+    "llmProcessingTimeSeconds": 4.723
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0063",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "HATVIBE",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CHERRYSPY",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "RecordsService",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "DOCX-документ",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Python-інтерпретатор",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Ukrainian research institutions",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "ГУ ГШ ЗС РФ",
+      "category": "Government Body",
+      "role": "Attacker"
+    },
+    {
+      "name": "Російська Федерація",
+      "category": "Country",
+      "role": "Attacker"
+    },
+    {
+      "name": "Міністерство оборони Республіки Вірменія",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Вірменія",
+      "category": "Country",
+      "role": "Neutral"
+    },
+    {
+      "name": "Управління міжнародного військового співробітництва Міністерства оборони Киргизької Республіки",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "Киргизька Республіка",
+      "category": "Country",
+      "role": "Neutral"
+    },
+    {
+      "name": "HFS HTTP File Server",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "trust-certificate.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "enrollmentdm.com",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "21.07.2024",
+    "id": 6280129,
+    "title": "UAC-0063 атакує науково-дослідні установи України: HATVIBE + CHERRYSPY + CVE-2024-23692 (CERT-UA#10356)",
+    "llmProcessingTimeSeconds": 21.673
+  }
+}

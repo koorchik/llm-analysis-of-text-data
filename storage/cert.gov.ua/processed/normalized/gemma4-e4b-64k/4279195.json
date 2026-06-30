@@ -1,0 +1,71 @@
+{
+  "entities": [
+    {
+      "name": "Communal Enterprise ICS",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure Assets/Sectors",
+      "embedding": []
+    },
+    {
+      "name": "Microsoft Office 2019",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Microsoft Office 2019"
+    },
+    {
+      "name": "toloka[.]to",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Toloka Platform"
+    },
+    {
+      "name": "AUTORUN.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AUTORUN.exe"
+    },
+    {
+      "name": "DarkCrystal RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkCrystal RAT"
+    },
+    {
+      "name": "Python 2.7.18",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python 2.7.18"
+    },
+    {
+      "name": "DWAgent",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DWAgent"
+    },
+    {
+      "name": "PinkyAgent",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PinkyAgent"
+    },
+    {
+      "name": "Microsoft Defender",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft Corporation"
+    },
+    {
+      "name": "dwservice[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dwservice.net"
+    }
+  ],
+  "metadata": {
+    "date": "03.04.2023",
+    "id": 4279195,
+    "title": "Використання неліцензійних програм Microsoft Office як вектор первинної компрометації ІКС (CERT-UA#6322)",
+    "llmProcessingTimeSeconds": 12.121
+  }
+}

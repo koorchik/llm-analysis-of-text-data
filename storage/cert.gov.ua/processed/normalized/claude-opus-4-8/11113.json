@@ -1,0 +1,85 @@
+{
+  "entities": [
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft"
+    },
+    {
+      "name": "Microsoft Exchange Server",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Exchange Server"
+    },
+    {
+      "name": "CVE-2021-26855",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-26855"
+    },
+    {
+      "name": "CVE-2021-26857",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-26857"
+    },
+    {
+      "name": "CVE-2021-26858",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-26858"
+    },
+    {
+      "name": "CVE-2021-27065",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-27065"
+    },
+    {
+      "name": "HAFNIUM",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "HAFNIUM"
+    },
+    {
+      "name": "Державний центр кіберзахисту Держспецзв’язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державний центр кіберзахисту Держспецзв’язку"
+    },
+    {
+      "name": "державних органів України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи України",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "CISA",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Cybersecurity and Infrastructure Security Agency (CISA)"
+    },
+    {
+      "name": "організацій України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські організації",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "17.03.2021",
+    "id": 11113,
+    "title": "Державним центром кіберзахисту Держспецзв’язку вживаються заходи з протидії кібератакам з використанням вразливостей Microsoft Exchange Server (ProxyLogon)",
+    "llmProcessingTimeSeconds": 6.008
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0028 (APT28)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "UKR.NET",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Ukrainian Domain Registry Scope",
+      "embedding": []
+    },
+    {
+      "name": "URL-shortener services",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "URL-shortener services"
+    },
+    {
+      "name": "Pipedream",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Pipedream"
+    },
+    {
+      "name": "panelunregistertle-348.frge[.]io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "suspicious_domain.io"
+    },
+    {
+      "name": "eoy7zvsvn6xfcmy.m.pipedream[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Pipedream Endpoint"
+    },
+    {
+      "name": "eo9p1d2bfmioiot.m.pipedream[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Pipedream Endpoint"
+    },
+    {
+      "name": "eoiw8lhjwuc3sh2.m.pipedream[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Pipedream Endpoint"
+    }
+  ],
+  "metadata": {
+    "date": "16.03.2022",
+    "id": 37788,
+    "title": "Фішингова кампанія з використанням тематики сервісу UKR.NET та QR-кодів (CERT-UA#4193)",
+    "llmProcessingTimeSeconds": 12.632
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0056",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0056"
+    },
+    {
+      "name": "Cobalt Strike Beacon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Cobalt Strike Beacon"
+    },
+    {
+      "name": "skreatortemp[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "skreatortemp.site"
+    },
+    {
+      "name": "Defense Sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Defense and Military Industry Complex",
+      "embedding": []
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "06.07.2022",
+    "id": 619229,
+    "title": "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)",
+    "llmProcessingTimeSeconds": 14.004
+  }
+}

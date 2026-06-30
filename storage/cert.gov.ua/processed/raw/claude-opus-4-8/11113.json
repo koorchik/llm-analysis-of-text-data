@@ -1,0 +1,70 @@
+{
+  "entities": [
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "Microsoft Exchange Server",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "CVE-2021-26855",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CVE-2021-26857",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CVE-2021-26858",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CVE-2021-27065",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "HAFNIUM",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "Державний центр кіберзахисту Держспецзв’язку",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "державних органів України",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "CISA",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "організацій України",
+      "category": "Sector",
+      "role": "Target"
+    }
+  ],
+  "metadata": {
+    "date": "17.03.2021",
+    "id": 11113,
+    "title": "Державним центром кіберзахисту Держспецзв’язку вживаються заходи з протидії кібератакам з використанням вразливостей Microsoft Exchange Server (ProxyLogon)",
+    "llmProcessingTimeSeconds": 6.008
+  }
+}

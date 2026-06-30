@@ -1,0 +1,76 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0010",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0010"
+    },
+    {
+      "name": "HTM-droppers",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Dropper/Malware: HTM Droppers"
+    },
+    {
+      "name": "GammaLoad.PS1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Malware Script Loader: GammaLoad"
+    },
+    {
+      "name": "GammaSteel.PS1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Malware Payload: GammaSteel"
+    },
+    {
+      "name": "GammaSteel.NET",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Malware Payload: GammaSteel .NET"
+    },
+    {
+      "name": "Normal.dotm",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Template File (.dotm)"
+    },
+    {
+      "name": "powershell.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell Scripting Host"
+    },
+    {
+      "name": "wscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Windows Scripting Component (WScript)"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Microsoft HTML Application Host"
+    },
+    {
+      "name": "atlantar.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "atlantar.ru"
+    },
+    {
+      "name": "motoristo.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "motoristo.ru"
+    }
+  ],
+  "metadata": {
+    "date": "10.08.2022",
+    "id": 1229152,
+    "title": "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)",
+    "llmProcessingTimeSeconds": 15.119
+  }
+}

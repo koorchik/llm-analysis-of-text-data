@@ -1,0 +1,180 @@
+{
+  "entities": [
+    {
+      "name": "SUDpovistka",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SUDpovistka"
+    },
+    {
+      "name": "Електронний суд",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Електронний суд"
+    },
+    {
+      "name": "Єдина судова інформаційно-телекомунікаційна система (ЄСІТС)",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Unified Judicial Information and Telecommunication System (UJITS)",
+      "embedding": []
+    },
+    {
+      "name": "Telegram",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Telegram"
+    },
+    {
+      "name": "bit.ly",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "bit.ly"
+    },
+    {
+      "name": "CSIRT-NBU",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "CSIRT-NBU"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "id.court.gov.ua",
+      "category": "Domain",
+      "role": "Target",
+      "normalizedName": "court.gov.ua"
+    },
+    {
+      "name": "bit[.]ly/3otvelp",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bit.ly"
+    },
+    {
+      "name": "sec-t[.]info",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "sec-t.info"
+    },
+    {
+      "name": "telegram.org-a0dk3dm91iu.tgeo[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tgeo.link"
+    },
+    {
+      "name": "telegram.org-a0dm91dk31i.cloue[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cloue.link"
+    },
+    {
+      "name": "telegram.org.t.me-cloud[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "me-cloud.link"
+    },
+    {
+      "name": "telegram.account[.]associates",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "account.associates"
+    },
+    {
+      "name": "tgeo[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tgeo.link"
+    },
+    {
+      "name": "me-cloud[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "me-cloud.link"
+    },
+    {
+      "name": "account[.]associates",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "account.associates"
+    },
+    {
+      "name": "cloue[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cloue.link"
+    },
+    {
+      "name": "4-t[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "4-t.me"
+    },
+    {
+      "name": "i1t[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "i1t.me"
+    },
+    {
+      "name": "t--t[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "t--t.me"
+    },
+    {
+      "name": "0-t[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "0-t.me"
+    },
+    {
+      "name": "7tt[.]me",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "7tt.me"
+    },
+    {
+      "name": "vljsport[.]eu[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "vljsport.eu.com"
+    },
+    {
+      "name": "pomoshnikrbx[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "pomoshnikrbx.site"
+    },
+    {
+      "name": "telegrad[.]info",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "telegrad.info"
+    },
+    {
+      "name": "chimeramarket24[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "chimeramarket24.online"
+    },
+    {
+      "name": "chimeramarketplace24[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "chimeramarketplace24.online"
+    }
+  ],
+  "metadata": {
+    "date": "02.06.2023",
+    "id": 4789582,
+    "title": "Розсилання SMS-повідомлень з темою судових повісток з використанням шахрайського альфа-імені \"SUDpovistka\" (CERT-UA#6804)",
+    "llmProcessingTimeSeconds": 9.687
+  }
+}

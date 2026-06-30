@@ -1,0 +1,124 @@
+{
+  "entities": [
+    {
+      "name": "Національний банк України (CSIRT-NBU)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Національний банк України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Департамент кіберполіції Національної поліції України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Департамент кіберполіції Національної поліції України"
+    },
+    {
+      "name": "Mirai",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Mirai"
+    },
+    {
+      "name": "Meris",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Meris"
+    },
+    {
+      "name": "Mikrotik routers",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "MikroTik Router"
+    },
+    {
+      "name": "IoT пристрої",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "IoT Devices"
+    },
+    {
+      "name": "Shodan",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Shodan"
+    },
+    {
+      "name": "MISP",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "MISP"
+    },
+    {
+      "name": "українські банки",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські банки",
+      "embedding": []
+    },
+    {
+      "name": "державні установи",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи",
+      "embedding": []
+    },
+    {
+      "name": "фінансові установи",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "фінансові установи",
+      "embedding": []
+    },
+    {
+      "name": "DNS-сервери",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "DNS",
+      "embedding": []
+    },
+    {
+      "name": "Cisco Crosswork",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Cisco Crosswork"
+    },
+    {
+      "name": "Приватбанк",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "Приватбанк"
+    },
+    {
+      "name": "Inq-Digital-Nigeria-AS",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Inq-Digital-Nigeria-AS"
+    },
+    {
+      "name": "360Netlab",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "360Netlab"
+    },
+    {
+      "name": "об’єкти критичної інфраструктури",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "18.02.2022",
+    "id": 37139,
+    "title": "Інформація щодо кібератак 15 лютого 2022 року",
+    "llmProcessingTimeSeconds": 7.303
+  }
+}

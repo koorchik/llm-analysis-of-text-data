@@ -1,0 +1,150 @@
+{
+  "entities": [
+    {
+      "name": "Служби безпеки України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Служба безпеки України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "ANONVNC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AnonVNC"
+    },
+    {
+      "name": "MESHAGENT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MeshAgent"
+    },
+    {
+      "name": "UAC-0198",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0198"
+    },
+    {
+      "name": "державних органів та органів місцевого самоврядування України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи та органи місцевого самоврядування України",
+      "embedding": []
+    },
+    {
+      "name": "pCloud",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "pCloud"
+    },
+    {
+      "name": "Github",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Github"
+    },
+    {
+      "name": "Scan_docs#40562153.msi",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Scan_docs#40562153.msi"
+    },
+    {
+      "name": "Scan_docs#14107386.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Scan_docs#14107386.exe"
+    },
+    {
+      "name": "32x.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "32x.exe"
+    },
+    {
+      "name": "syn.hiddenvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hiddenvnc.com"
+    },
+    {
+      "name": "filedn[.]eu",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "filedn.eu"
+    },
+    {
+      "name": "gbshost[.]net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gbshost.net"
+    },
+    {
+      "name": "gbshost[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gbshost.org"
+    },
+    {
+      "name": "sync.hiddenvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hiddenvnc.com"
+    },
+    {
+      "name": "sync.anonvnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "anonvnc.com"
+    },
+    {
+      "name": "sync.invoice-traffic[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "invoice-traffic.com"
+    },
+    {
+      "name": "sync.smart-vnc[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "smart-vnc.com"
+    },
+    {
+      "name": "sync.smartcloudflare[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "smartcloudflare.com"
+    },
+    {
+      "name": "hiddenvnc.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hiddenvnc.com"
+    },
+    {
+      "name": "anonvnc.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "anonvnc.com"
+    },
+    {
+      "name": "invoice-traffic.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "invoice-traffic.com"
+    }
+  ],
+  "metadata": {
+    "date": "12.08.2024",
+    "id": 6280345,
+    "title": "UAC-0198: Масове розповсюдження ANONVNC (MESHAGENT) серед державних організацій України (CERT-UA#10647)",
+    "llmProcessingTimeSeconds": 9.66
+  }
+}

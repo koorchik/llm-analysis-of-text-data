@@ -1,0 +1,1845 @@
+{
+  "entities": [
+    {
+      "name": "JokerDPR",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Jokerdpr Toolset"
+    },
+    {
+      "name": "Google",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Third-Party Technology Provider/Platform",
+      "embedding": []
+    },
+    {
+      "name": "Ukr.Net",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Media & Communications Platforms",
+      "embedding": []
+    },
+    {
+      "name": "Outlook",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Communication Platform",
+      "embedding": []
+    },
+    {
+      "name": "EXMO",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Specific Software/Service Platform",
+      "embedding": []
+    },
+    {
+      "name": "Binance",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Specific Financial Institution (Crypto Exchange)",
+      "embedding": []
+    },
+    {
+      "name": "Tucows",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Tucows"
+    },
+    {
+      "name": "Namecheap",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Namecheap"
+    },
+    {
+      "name": "hxxps://edisk.ukr.net.ssl2[.]link/shared/179[.]43.162.29",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian File Share Link"
+    },
+    {
+      "name": "185[.]196.9.215",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "80[.]78.22.194",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "authcheck[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Check Service"
+    },
+    {
+      "name": "authssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Certificate Verification Service"
+    },
+    {
+      "name": "authssl[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Redirection"
+    },
+    {
+      "name": "authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker"
+    },
+    {
+      "name": "authssl[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Organization Domain"
+    },
+    {
+      "name": "authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder"
+    },
+    {
+      "name": "ssl1[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Test Tool"
+    },
+    {
+      "name": "ssl1[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Test Tool"
+    },
+    {
+      "name": "ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Protocol Checker"
+    },
+    {
+      "name": "ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Link Redirection"
+    },
+    {
+      "name": "ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online TLS Check"
+    },
+    {
+      "name": "ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Site Placeholder"
+    },
+    {
+      "name": "ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Test Tool"
+    },
+    {
+      "name": "ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Site Placeholder"
+    },
+    {
+      "name": "ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker"
+    },
+    {
+      "name": "ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "TLS/SSL Site Placeholder"
+    },
+    {
+      "name": "exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Domain (Domain Generation)"
+    },
+    {
+      "name": "getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Link Generator"
+    },
+    {
+      "name": "getssl[.]ink",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Link Redirection"
+    },
+    {
+      "name": "goaccount[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Account Access Redirector"
+    },
+    {
+      "name": "passport2[.]zip",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Download/Generic Zip File"
+    },
+    {
+      "name": "personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "User Login Tracking Domain"
+    },
+    {
+      "name": "certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Service Provider"
+    },
+    {
+      "name": "hsts[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hsts[.]online"
+    },
+    {
+      "name": "connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "connectssl[.]in"
+    },
+    {
+      "name": "account.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Subdomain"
+    },
+    {
+      "name": "account.google.com.getssl[.]ink",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "account.google.com.getssl[.]ink"
+    },
+    {
+      "name": "account.live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "account.live.com.exmo[.]day"
+    },
+    {
+      "name": "accounts.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.binance.com.exmo[.]day"
+    },
+    {
+      "name": "accounts.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.binance.com.personlog[.]in"
+    },
+    {
+      "name": "accounts.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.certifiedauth[.]in"
+    },
+    {
+      "name": "accounts.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.google.com.getssl[.]click"
+    },
+    {
+      "name": "accounts.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.google2.certifiedauth[.]in"
+    },
+    {
+      "name": "accounts.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.personlog[.]in"
+    },
+    {
+      "name": "accounts.ukr.net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.ukr.net.ssl2[.]in"
+    },
+    {
+      "name": "accounts.ukr.net.ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.ukr.net.ssl2[.]link"
+    },
+    {
+      "name": "admin.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "admin.certifiedauth[.]in"
+    },
+    {
+      "name": "analytics.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Analytics Tracking Domain"
+    },
+    {
+      "name": "analytics.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Analytics Link Generator"
+    },
+    {
+      "name": "analytics.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Analytics Subdomain"
+    },
+    {
+      "name": "api.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Endpoint (Placeholder)"
+    },
+    {
+      "name": "api.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Login Tracking"
+    },
+    {
+      "name": "api.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Usage Domain"
+    },
+    {
+      "name": "apis.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "API Service Provider"
+    },
+    {
+      "name": "apis.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google API Link Generator"
+    },
+    {
+      "name": "apis.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google API Subdomain"
+    },
+    {
+      "name": "azwus1-client-s.gateway.messenger.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Messaging Gateway Endpoint"
+    },
+    {
+      "name": "azwus1-client-s.gateway.messenger.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Messaging Endpoint"
+    },
+    {
+      "name": "azwus1-client-s.gateway.messenger.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Messenger Link Generator"
+    },
+    {
+      "name": "b.stats.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Stats Tracking Subdomain"
+    },
+    {
+      "name": "bin.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Bin Placeholder Endpoint"
+    },
+    {
+      "name": "bin.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Bin Login Tracking"
+    },
+    {
+      "name": "bin.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Bin Usage Domain"
+    },
+    {
+      "name": "binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Placeholder Domain"
+    },
+    {
+      "name": "binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Login Tracking"
+    },
+    {
+      "name": "blogger.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Blogger Service Integration"
+    },
+    {
+      "name": "blogger.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Blogger Link Generator"
+    },
+    {
+      "name": "blogger.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Blogger Subdomain"
+    },
+    {
+      "name": "browser.events.data.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Browser Event Tracking"
+    },
+    {
+      "name": "browser.events.data.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Browser Endpoint"
+    },
+    {
+      "name": "browser.events.data.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Browser Link Generator"
+    },
+    {
+      "name": "c.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Client Subdomain (Auth)"
+    },
+    {
+      "name": "c6.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Client Subdomain (Auth)"
+    },
+    {
+      "name": "cdn.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "CDN Infrastructure for Auth"
+    },
+    {
+      "name": "cdn.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder CDN Endpoint"
+    },
+    {
+      "name": "cdn.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live CDN Link Generator"
+    },
+    {
+      "name": "coinbase.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Coinbase Placeholder Domain"
+    },
+    {
+      "name": "com.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Subdomain"
+    },
+    {
+      "name": "com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Com)"
+    },
+    {
+      "name": "com.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Connection Test Service"
+    },
+    {
+      "name": "com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Domain (Com)"
+    },
+    {
+      "name": "com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Generic SSL Link Generator"
+    },
+    {
+      "name": "com.getssl[.]ink",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Generic SSL Redirection"
+    },
+    {
+      "name": "com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain"
+    },
+    {
+      "name": "com.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Status Tool (Com)"
+    },
+    {
+      "name": "com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Com)"
+    },
+    {
+      "name": "com.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (Com)"
+    },
+    {
+      "name": "com.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Com)"
+    },
+    {
+      "name": "com.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (Com)"
+    },
+    {
+      "name": "content.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Content Retrieval Subdomain"
+    },
+    {
+      "name": "content.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Content Endpoint"
+    },
+    {
+      "name": "content.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Content Link Generator"
+    },
+    {
+      "name": "content.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Content Subdomain"
+    },
+    {
+      "name": "csp.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Content Security Policy Domain"
+    },
+    {
+      "name": "csp.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder CSP Endpoint"
+    },
+    {
+      "name": "csp.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live CSP Link Generator"
+    },
+    {
+      "name": "data.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Data Retrieval Subdomain"
+    },
+    {
+      "name": "data.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Data Endpoint"
+    },
+    {
+      "name": "data.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Data Link Generator"
+    },
+    {
+      "name": "docs.gdrive.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Site"
+    },
+    {
+      "name": "docs.gdrive.com.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Doc SSL Status Checker"
+    },
+    {
+      "name": "docs.gdrive.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Doc SSL Site Placeholder"
+    },
+    {
+      "name": "docs.googie.com.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Online"
+    },
+    {
+      "name": "docs.googie.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Site"
+    },
+    {
+      "name": "docs.googie.com.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Connection Check"
+    },
+    {
+      "name": "docs.googie.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Doc SSL Placeholder"
+    },
+    {
+      "name": "docs.googie.com.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Online Checker"
+    },
+    {
+      "name": "docs.googie.com.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Online Checker"
+    },
+    {
+      "name": "docs.google.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Site Placeholder"
+    },
+    {
+      "name": "docs.google.com.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Site Placeholder"
+    },
+    {
+      "name": "docs.googleauth.com.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Auth Subdomain (SSL)"
+    },
+    {
+      "name": "docs.googledrive.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Placehoder"
+    },
+    {
+      "name": "docs.ukr.net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Domain SSL Check"
+    },
+    {
+      "name": "docs.ukr.net.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Domain SSL Placeholder"
+    },
+    {
+      "name": "docs.ukr.net.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Domain SSL Placeholder"
+    },
+    {
+      "name": "drive.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Drive Access Subdomain"
+    },
+    {
+      "name": "drive.gdocs.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Auth Site"
+    },
+    {
+      "name": "drive.gdocs.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Person Log Tracking"
+    },
+    {
+      "name": "drive.gdocs.com.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Online Checker"
+    },
+    {
+      "name": "drive.googie.com.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Connection Check"
+    },
+    {
+      "name": "drive.googie.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Placeholder"
+    },
+    {
+      "name": "drive.googie.com.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Online Checker"
+    },
+    {
+      "name": "drive.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Link Generator"
+    },
+    {
+      "name": "drive.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Subdomain (Auth)"
+    },
+    {
+      "name": "drive.googles.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Person Log Tracking"
+    },
+    {
+      "name": "dynamic.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Dynamic Endpoint"
+    },
+    {
+      "name": "edisk.ukr.net.ssl1[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Disk Online Check"
+    },
+    {
+      "name": "edisk.ukr.net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Disk SSL Check"
+    },
+    {
+      "name": "edisk.ukr.net.ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Disk Link Redirection"
+    },
+    {
+      "name": "edisk.ukr.net.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Disk SSL Placeholder"
+    },
+    {
+      "name": "events.data.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Event Data Tracking Subdomain"
+    },
+    {
+      "name": "events.data.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Event Endpoint"
+    },
+    {
+      "name": "events.data.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Event Link Generator"
+    },
+    {
+      "name": "exceptions.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Error Endpoint"
+    },
+    {
+      "name": "files.ukr.net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Files SSL Check"
+    },
+    {
+      "name": "files.ukr.net.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Files Online Check"
+    },
+    {
+      "name": "files.ukr.net.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Files Online Checker"
+    },
+    {
+      "name": "fonts.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Font Asset Tracking Subdomain"
+    },
+    {
+      "name": "fonts.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Font Link Generator"
+    },
+    {
+      "name": "fonts.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Font Subdomain (Auth)"
+    },
+    {
+      "name": "frontend-m.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Frontend Placeholder Endpoint"
+    },
+    {
+      "name": "frontend-m.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Frontend Login Tracking"
+    },
+    {
+      "name": "frontend-m.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Frontend Usage Domain"
+    },
+    {
+      "name": "gateway.messenger.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Messaging Gateway Subdomain"
+    },
+    {
+      "name": "gateway.messenger.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Messaging Endpoint (Gateway)"
+    },
+    {
+      "name": "gateway.messenger.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Messenger Link Generator (Gateway)"
+    },
+    {
+      "name": "gdocs.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Site (General)"
+    },
+    {
+      "name": "gdocs.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Person Log Tracking"
+    },
+    {
+      "name": "gdocs.com.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Online Checker"
+    },
+    {
+      "name": "gdrive.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive Auth Site (General)"
+    },
+    {
+      "name": "gdrive.com.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Online Checker"
+    },
+    {
+      "name": "gdrive.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Site Placeholder"
+    },
+    {
+      "name": "geolocation.authcheck[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Geolocational Data Tracking Subdomain"
+    },
+    {
+      "name": "googie.com.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Status Checker"
+    },
+    {
+      "name": "googie.com.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Auth Website"
+    },
+    {
+      "name": "googie.com.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs Connection Check"
+    },
+    {
+      "name": "googie.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Doc SSL Placeholder"
+    },
+    {
+      "name": "googie.com.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Online Checker"
+    },
+    {
+      "name": "googie.com.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Docs SSL Online Checker"
+    },
+    {
+      "name": "google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Generic Google Link Generator"
+    },
+    {
+      "name": "google.com.getssl[.]ink",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Generic Google Redirection"
+    },
+    {
+      "name": "google.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Site Placeholder"
+    },
+    {
+      "name": "google.com.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Site Placeholder"
+    },
+    {
+      "name": "google.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Domain (Exmo)"
+    },
+    {
+      "name": "google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Subdomain (Auth)"
+    },
+    {
+      "name": "googleauth.com.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Authentication SSL Site Placeholder"
+    },
+    {
+      "name": "googledrive.com.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Drive SSL Placeholder"
+    },
+    {
+      "name": "googles.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Google Person Log Tracking"
+    },
+    {
+      "name": "googletag.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Tag Endpoint"
+    },
+    {
+      "name": "hnd.stats.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Stats Subdomain (HND)"
+    },
+    {
+      "name": "images.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Image Endpoint"
+    },
+    {
+      "name": "lh3.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Photo Link Generator"
+    },
+    {
+      "name": "lh3.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Photo Subdomain (Auth)"
+    },
+    {
+      "name": "live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Live Domain"
+    },
+    {
+      "name": "live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Site Link Generator"
+    },
+    {
+      "name": "login.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Generic Login Domain"
+    },
+    {
+      "name": "login.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Login Endpoint"
+    },
+    {
+      "name": "login.live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Live Login Endpoint"
+    },
+    {
+      "name": "login.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Login Link Generator"
+    },
+    {
+      "name": "login.outlook.live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Outlook Placeholder Login Endpoint"
+    },
+    {
+      "name": "logincdn.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Login CDN Domain"
+    },
+    {
+      "name": "logincdn.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Login CDN Endpoint"
+    },
+    {
+      "name": "m.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Mobile Placeholder Endpoint"
+    },
+    {
+      "name": "m.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Mobile Login Tracking"
+    },
+    {
+      "name": "m.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain (Mobile)"
+    },
+    {
+      "name": "mail.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Mail Access Subdomain"
+    },
+    {
+      "name": "mail.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Mail Link Generator"
+    },
+    {
+      "name": "mail.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Mail Subdomain (Auth)"
+    },
+    {
+      "name": "messenger.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Messenger Service Domain"
+    },
+    {
+      "name": "messenger.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Messenger Endpoint"
+    },
+    {
+      "name": "messenger.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Messenger Link Generator"
+    },
+    {
+      "name": "monitor.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Monitor Placeholder Endpoint"
+    },
+    {
+      "name": "monitor.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Monitor Login Tracking"
+    },
+    {
+      "name": "monitor.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain (Monitor)"
+    },
+    {
+      "name": "myaccount.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "My Account Subdomain"
+    },
+    {
+      "name": "myaccount.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google My Account Link Generator"
+    },
+    {
+      "name": "myaccount.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google My Account Subdomain (Auth)"
+    },
+    {
+      "name": "net.ssl1[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Test Tool (Net)"
+    },
+    {
+      "name": "net.ssl1[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Net)"
+    },
+    {
+      "name": "net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Network SSL Check"
+    },
+    {
+      "name": "net.ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Network SSL Link Redirection"
+    },
+    {
+      "name": "net.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online Network SSL Checker"
+    },
+    {
+      "name": "net.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Net)"
+    },
+    {
+      "name": "net.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (Net)"
+    },
+    {
+      "name": "net.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Net)"
+    },
+    {
+      "name": "net.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (Net)"
+    },
+    {
+      "name": "net.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (Net)"
+    },
+    {
+      "name": "notifications.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Notification Tracking Subdomain"
+    },
+    {
+      "name": "notifications.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Notification Link Generator"
+    },
+    {
+      "name": "notifications.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Notification Subdomain"
+    },
+    {
+      "name": "ns1.authcheck[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Check Server (NS1)"
+    },
+    {
+      "name": "ns1.authssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Server (NS1)"
+    },
+    {
+      "name": "ns1.authssl[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Redirection (NS1)"
+    },
+    {
+      "name": "ns1.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (NS1)"
+    },
+    {
+      "name": "ns1.authssl[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Organization Domain (NS1)"
+    },
+    {
+      "name": "ns1.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (NS1)"
+    },
+    {
+      "name": "ns1.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Server (NS1)"
+    },
+    {
+      "name": "ns1.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Connection Test Server (NS1)"
+    },
+    {
+      "name": "ns1.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Endpoint (NS1)"
+    },
+    {
+      "name": "ns1.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Generator (NS1)"
+    },
+    {
+      "name": "ns1.goaccount[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Account Access Redirector (NS1)"
+    },
+    {
+      "name": "ns1.passport2[.]zip",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Download/Generic Zip File (NS1)"
+    },
+    {
+      "name": "ns1.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "User Login Tracking Domain (NS1)"
+    },
+    {
+      "name": "ns2.authcheck[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Check Server (NS2)"
+    },
+    {
+      "name": "ns2.authssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Server (NS2)"
+    },
+    {
+      "name": "ns2.authssl[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Redirection (NS2)"
+    },
+    {
+      "name": "ns2.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (NS2)"
+    },
+    {
+      "name": "ns2.authssl[.]org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Organization Domain (NS2)"
+    },
+    {
+      "name": "ns2.authssl[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (NS2)"
+    },
+    {
+      "name": "ns2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Server (NS2)"
+    },
+    {
+      "name": "ns2.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Connection Test Server (NS2)"
+    },
+    {
+      "name": "ns2.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Endpoint (NS2)"
+    },
+    {
+      "name": "ns2.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Generator (NS2)"
+    },
+    {
+      "name": "ns2.goaccount[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Account Access Redirector (NS2)"
+    },
+    {
+      "name": "ns2.passport2[.]zip",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Download/Generic Zip File (NS2)"
+    },
+    {
+      "name": "ns2.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "User Login Tracking Domain (NS2)"
+    },
+    {
+      "name": "ogs.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Organization Subdomain"
+    },
+    {
+      "name": "ogs.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Organization Link Generator"
+    },
+    {
+      "name": "ogs.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Organization Subdomain"
+    },
+    {
+      "name": "outlook-1.cdn.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Outlook CDN Domain"
+    },
+    {
+      "name": "outlook-1.cdn.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Outlook Endpoint"
+    },
+    {
+      "name": "outlook-1.cdn.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Outlook Link Generator"
+    },
+    {
+      "name": "outlook.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Outlook Subdomain"
+    },
+    {
+      "name": "outlook.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Outlook Endpoint"
+    },
+    {
+      "name": "outlook.live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Live Domain (Outlook)"
+    },
+    {
+      "name": "outlook.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Outlook Link Generator"
+    },
+    {
+      "name": "outlook.outlook.live.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Nested Endpoint"
+    },
+    {
+      "name": "play.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Play Store Subdomain"
+    },
+    {
+      "name": "play.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Play Link Generator"
+    },
+    {
+      "name": "play.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Play Subdomain (Auth)"
+    },
+    {
+      "name": "r4.res.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Resource Tracking Subdomain (R4)"
+    },
+    {
+      "name": "r4.res.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Resource Endpoint (R4)"
+    },
+    {
+      "name": "r4.res.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Resource Link Generator"
+    },
+    {
+      "name": "res.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Resource Subdomain"
+    },
+    {
+      "name": "res.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Resource Endpoint"
+    },
+    {
+      "name": "res.live.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Live Resource Link Generator"
+    },
+    {
+      "name": "secure.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Secure Status Subdomain"
+    },
+    {
+      "name": "sensors.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Sensor Placeholder Endpoint"
+    },
+    {
+      "name": "sensors.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Sensor Login Tracking"
+    },
+    {
+      "name": "sensors.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain (Sensor)"
+    },
+    {
+      "name": "share.ukr.net.ssl1[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Share SSL Placeholder"
+    },
+    {
+      "name": "share.ukr.net.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Share SSL Online Checker"
+    },
+    {
+      "name": "shared.document.drive.googie.com.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Shared Google Document SSL Placeholder"
+    },
+    {
+      "name": "shared.drive.googie.com.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Shared Google Drive SSL Online Checker"
+    },
+    {
+      "name": "shared.drive.googie.com.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Shared Google Drive SSL Placeholder"
+    },
+    {
+      "name": "ssl.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Service Domain"
+    },
+    {
+      "name": "ssl.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google SSL Link Generator"
+    },
+    {
+      "name": "ssl.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google SSL Subdomain (Auth)"
+    },
+    {
+      "name": "static.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Static Placeholder Endpoint"
+    },
+    {
+      "name": "static.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Static Login Tracking"
+    },
+    {
+      "name": "static.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Static Asset Subdomain"
+    },
+    {
+      "name": "static.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain (Static)"
+    },
+    {
+      "name": "stats.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Statistics Domain"
+    },
+    {
+      "name": "t.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Test Subdomain"
+    },
+    {
+      "name": "ukr.net.ssl1[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Online Checker"
+    },
+    {
+      "name": "ukr.net.ssl1[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Placeholder"
+    },
+    {
+      "name": "ukr.net.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Check"
+    },
+    {
+      "name": "ukr.net.ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Link Redirection"
+    },
+    {
+      "name": "ukr.net.ssl2[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online Ukrainian Network SSL Checker"
+    },
+    {
+      "name": "ukr.net.ssl2[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Placeholder"
+    },
+    {
+      "name": "ukr.net.ssl3[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online Ukrainian Network SSL Checker"
+    },
+    {
+      "name": "ukr.net.ssl3[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Placeholder"
+    },
+    {
+      "name": "ukr.net.ssl4[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online Ukrainian Network SSL Checker"
+    },
+    {
+      "name": "ukr.net.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Ukrainian Network SSL Placeholder"
+    },
+    {
+      "name": "ws.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Placeholder Endpoint (WS)"
+    },
+    {
+      "name": "www.authcheck[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Check Domain"
+    },
+    {
+      "name": "www.authssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Service Domain"
+    },
+    {
+      "name": "www.authssl[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Online SSL Status Checker (WWW)"
+    },
+    {
+      "name": "www.binance.com.exmo[.]day",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Placeholder Website"
+    },
+    {
+      "name": "www.binance.com.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Binance Login Tracking (WWW)"
+    },
+    {
+      "name": "www.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Domain"
+    },
+    {
+      "name": "www.connectssl[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Connection Test Domain"
+    },
+    {
+      "name": "www.getssl[.]ink",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Check Link Redirection (WWW)"
+    },
+    {
+      "name": "www.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Subdomain (Auth) (WWW)"
+    },
+    {
+      "name": "www.hsts[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "HTTP Strict Transport Security Checker"
+    },
+    {
+      "name": "www.personlog[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "General Person Log Domain (WWW)"
+    },
+    {
+      "name": "www.ssl2[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (WWW)"
+    },
+    {
+      "name": "www.ssl2[.]link",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Link Redirection (WWW)"
+    },
+    {
+      "name": "www.ssl4[.]site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "SSL Site Placeholder (WWW)"
+    },
+    {
+      "name": "www2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Authentication Domain 2"
+    },
+    {
+      "name": "www2.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Website Link Generator"
+    },
+    {
+      "name": "www2.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Subdomain (Auth) 2"
+    },
+    {
+      "name": "www3.google.com.getssl[.]click",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Website Link Generator 3"
+    },
+    {
+      "name": "www3.google2.certifiedauth[.]in",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Google Subdomain (Auth) 3"
+    }
+  ],
+  "metadata": {
+    "date": "19.12.2023",
+    "id": 6276799,
+    "title": "Modus operandi UAC-0177 (JokerDPR) на прикладі однієї з кібератак (CERT-UA#8290)",
+    "llmProcessingTimeSeconds": 86.95
+  }
+}

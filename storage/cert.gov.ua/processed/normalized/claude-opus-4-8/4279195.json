@@ -1,0 +1,112 @@
+{
+  "entities": [
+    {
+      "name": "комунальне підприємство",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "комунальне підприємство"
+    },
+    {
+      "name": "UAC-0145",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0145"
+    },
+    {
+      "name": "Microsoft Office 2019",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Microsoft Office 2019"
+    },
+    {
+      "name": "DarkCrystal RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkCrystal RAT"
+    },
+    {
+      "name": "DWAgent",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DWAgent"
+    },
+    {
+      "name": "PinkyAgent",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PinkyAgent"
+    },
+    {
+      "name": "AUTORUN.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AUTORUN.exe"
+    },
+    {
+      "name": "agent.py",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "agent.py"
+    },
+    {
+      "name": "Windows Update.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Windows Update.exe"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python"
+    },
+    {
+      "name": "Microsoft Defender",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Microsoft Defender"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft"
+    },
+    {
+      "name": "toloka.to",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "toloka.to"
+    },
+    {
+      "name": "bt.toloka.tv",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "toloka.tv"
+    },
+    {
+      "name": "bt.hurtom.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hurtom.com"
+    },
+    {
+      "name": "bt.toloka.to",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "toloka.to"
+    },
+    {
+      "name": "dwservice.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "dwservice.net"
+    }
+  ],
+  "metadata": {
+    "date": "03.04.2023",
+    "id": 4279195,
+    "title": "Використання неліцензійних програм Microsoft Office як вектор первинної компрометації ІКС (CERT-UA#6322)",
+    "llmProcessingTimeSeconds": 6.024
+  }
+}

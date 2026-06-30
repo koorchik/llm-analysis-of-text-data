@@ -1,0 +1,53 @@
+{
+  "entities": [
+    {
+      "name": "Sandworm",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "Sandworm Group"
+    },
+    {
+      "name": "CVE-2022-30190",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Vulnerability: CVE-2022-30190"
+    },
+    {
+      "name": "CrescentImp",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Malware/Payload: CrescentImp"
+    },
+    {
+      "name": "медійних організацій України (радіостанції, газети, новинні агенції та інші)",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Media & Communications Platforms",
+      "embedding": []
+    },
+    {
+      "name": "hxxp://185[.]80.92.143:8998/update.html",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Malicious URL"
+    },
+    {
+      "name": "hxxp://185[.]80.92.143:8998/2.txt",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Malicious URL"
+    },
+    {
+      "name": "hxxps://star-cz.ddns[.]net/requestgeosqluniversalwordpress.php",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "Suspicious PHP Endpoint"
+    }
+  ],
+  "metadata": {
+    "date": "10.06.2022",
+    "id": 160530,
+    "title": "Масована кібератака на медійні організації України з використанням шкідливої програми CrescentImp (CERT-UA#4797)",
+    "llmProcessingTimeSeconds": 10.033
+  }
+}

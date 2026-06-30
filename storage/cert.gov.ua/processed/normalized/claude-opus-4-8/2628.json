@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Державний центр кіберзахисту Держспецзв’язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державний центр кіберзахисту Держспецзв’язку"
+    },
+    {
+      "name": "Ситуаційний центр забезпечення кібербезпеки СБУ",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Ситуаційний центр забезпечення кібербезпеки СБУ"
+    },
+    {
+      "name": "Cloudflare Inc.",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Cloudflare Inc."
+    },
+    {
+      "name": "органи державної влади",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Органи державної влади України"
+    },
+    {
+      "name": "об’єкти критичної інфраструктури",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure",
+      "embedding": []
+    },
+    {
+      "name": "Cloudflare",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Cloudflare"
+    },
+    {
+      "name": "nslookup",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "nslookup"
+    },
+    {
+      "name": "whois",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "whois"
+    },
+    {
+      "name": "українські органи державної влади",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Органи державної влади України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "28.07.2020",
+    "id": 2628,
+    "title": "Інформація щодо бази даних реальних ІР-адрес  електронних ресурсів органів державної влади та об’єктів критичної інфраструктури України, які використовують сервіси Cloudflare",
+    "llmProcessingTimeSeconds": 4.339
+  }
+}

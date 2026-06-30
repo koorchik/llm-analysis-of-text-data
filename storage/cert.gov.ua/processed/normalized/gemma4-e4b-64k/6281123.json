@@ -1,0 +1,59 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0001 (APT28)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28"
+    },
+    {
+      "name": "Browser.ps1",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Browser.ps1"
+    },
+    {
+      "name": "browser.hta",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "browser.hta"
+    },
+    {
+      "name": "METASPLOIT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "METASPLOIT"
+    },
+    {
+      "name": "CVE-2023-43770",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2023-43770"
+    },
+    {
+      "name": "mail.zhblz[.]com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mail.zhblz.com"
+    },
+    {
+      "name": "203.161.50[.]145",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "203.161.50/145 (IP Address)"
+    },
+    {
+      "name": "Government Service Infrastructure",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Digital/Physical Government Infrastructure",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "25.10.2024",
+    "id": 6281123,
+    "title": "Кібератака UAC-0001 (APT28): PowerShell-команда в буфері обміну як \"точка входу\" (CERT-UA#11689)",
+    "llmProcessingTimeSeconds": 12.774
+  }
+}

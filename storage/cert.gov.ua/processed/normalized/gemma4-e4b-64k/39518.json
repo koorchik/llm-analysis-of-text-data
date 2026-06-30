@@ -1,0 +1,85 @@
+{
+  "entities": [
+    {
+      "name": "Industroyer2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Industroyer2"
+    },
+    {
+      "name": "CADDYWIPER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CADDYWIPER"
+    },
+    {
+      "name": "ORCSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ORCSHRED"
+    },
+    {
+      "name": "SOLOSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SOLOSHRED"
+    },
+    {
+      "name": "AWFULSHRED",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AWFULSHRED"
+    },
+    {
+      "name": "POWERGAP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "POWERGAP"
+    },
+    {
+      "name": "IMPACKET",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "IMPACKET"
+    },
+    {
+      "name": "Ukrainian power grid",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Energy Sector Critical Infrastructure Assets",
+      "embedding": []
+    },
+    {
+      "name": "Energy Sector",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Critical Infrastructure Assets/Sectors",
+      "embedding": []
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft Corporation"
+    },
+    {
+      "name": "ESET",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "ESET"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    }
+  ],
+  "metadata": {
+    "date": "12.04.2022",
+    "id": 39518,
+    "title": "Кібератака групи Sandworm (UAC-0082) на об’єкти енергетики України з використанням шкідливих програм INDUSTROYER2 та CADDYWIPER (CERT-UA#4435)",
+    "llmProcessingTimeSeconds": 12.495
+  }
+}

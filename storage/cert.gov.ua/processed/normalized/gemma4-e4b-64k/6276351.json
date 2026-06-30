@@ -1,0 +1,85 @@
+{
+  "entities": [
+    {
+      "name": "СБ України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державна служба безпеки України (СБУ)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "UA",
+      "normalizedName": "Ukraine"
+    },
+    {
+      "name": "Електронна вимога СБУ України.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Електронна вимога СБУ України.rar"
+    },
+    {
+      "name": "Вимога СБУ 543 від 13.11.2023.pdf.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Вимога СБУ 543 від 13.11.2023.pdf.rar"
+    },
+    {
+      "name": "Вимога СБУ 543 від 13.11.2023.pdf.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Вимога СБУ 543 від 13.11.2023.pdf.exe"
+    },
+    {
+      "name": "Remcos RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos RAT"
+    },
+    {
+      "name": "Shinjiru",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "Shinjiru"
+    },
+    {
+      "name": "Малайзія",
+      "category": "Country",
+      "role": "Neutral",
+      "code": "MY",
+      "normalizedName": "Malaysia"
+    },
+    {
+      "name": "REG.RU",
+      "category": "Organization",
+      "role": "Attacker",
+      "normalizedName": "REG.RU Registry Service"
+    },
+    {
+      "name": "davincigroup[.]online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "davincigroup.online"
+    },
+    {
+      "name": "111[.]90.147.133",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "IP Address"
+    },
+    {
+      "name": "Personal Computers",
+      "category": "Device",
+      "role": "Target",
+      "normalizedName": "Workstation/PC",
+      "embedding": []
+    }
+  ],
+  "metadata": {
+    "date": "13.11.2023",
+    "id": 6276351,
+    "title": "Кібератака UAC-0050 з використанням Remcos RAT, замаскована під \"запит СБУ\" (CERT-UA#8026)",
+    "llmProcessingTimeSeconds": 13.304
+  }
+}
