@@ -21,7 +21,15 @@ export interface NilObservation {
   stratum?: Stratum;
 }
 
-export interface NilMetrics extends PRF {
+/**
+ * Like {@link MergeMetrics}, precision/recall/F1 are `number | null` where null means *undefined*
+ * rather than zero — a condition that emitted no mint claims, or a slice with no gold NILs, has no
+ * defined figure, and printing 0 would make an abstention indistinguishable from a failure.
+ */
+export interface NilMetrics {
+  precision: number | null;
+  recall: number | null;
+  f1: number | null;
   /** Predicted mint AND gold NIL. */
   truePositives: number;
   /** Predicted mint but the entity was already known — a wrong mint (duplicate). */
@@ -70,11 +78,11 @@ export function nilMetrics(observations: NilObservation[]): NilMetrics {
   }
 
   const precisionDenominator = truePositives + falsePositives;
-  const precision = precisionDenominator === 0 ? 0 : truePositives / precisionDenominator;
+  const precision = precisionDenominator === 0 ? null : truePositives / precisionDenominator;
 
   // Deferrals on gold-NIL mentions join the recall denominator: they are missed mints.
   const recallDenominator = truePositives + falseNegatives + deferredOnNil;
-  const recall = recallDenominator === 0 ? 0 : truePositives / recallDenominator;
+  const recall = recallDenominator === 0 ? null : truePositives / recallDenominator;
 
   return {
     truePositives,
@@ -87,7 +95,7 @@ export function nilMetrics(observations: NilObservation[]): NilMetrics {
     deferralRate: observations.length === 0 ? 0 : deferred / observations.length,
     precision,
     recall,
-    f1: f1Of(precision, recall),
+    f1: precision === null || recall === null ? null : f1Of(precision, recall),
   };
 }
 

@@ -8,8 +8,14 @@ import {
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-const near = (actual: number, expected: number, message?: string) =>
-  assert.ok(Math.abs(actual - expected) < 1e-9, `${message ?? ''} expected ${expected}, got ${actual}`);
+/** Asserts the value is defined as well as close: a null here means the metric was undefined. */
+const near = (actual: number | null | undefined, expected: number, message?: string) => {
+  assert.notEqual(actual, null, `${message ?? ''} expected ${expected}, got an UNDEFINED metric`);
+  assert.ok(
+    Math.abs(actual! - expected) < 1e-9,
+    `${message ?? ''} expected ${expected}, got ${actual}`
+  );
+};
 
 const obs = (over: Partial<NilObservation>): NilObservation => ({
   docId: 1,
@@ -81,9 +87,11 @@ test('"defer everything" cannot game the score', () => {
     obs({ goldNil: true, decision: 'defer' }),
     obs({ goldNil: false, decision: 'defer' }),
   ]);
-  near(result.precision, 0, 'no mint claims at all');
-  near(result.recall, 0, 'both gold NILs missed');
-  near(result.f1, 0);
+  // Precision is UNDEFINED, not 0: no mint was claimed, so there is nothing to be right or wrong
+  // about. That is exactly why it cannot be quoted as a good score.
+  assert.equal(result.precision, null, 'no mint claims at all → undefined precision');
+  near(result.recall!, 0, 'both gold NILs missed, so recall is a defined 0');
+  assert.equal(result.f1, null, 'F1 is unreportable when precision is undefined');
   near(result.deferralRate, 1, 'and the deferral rate makes it obvious');
 });
 
@@ -104,8 +112,8 @@ test('the appendix variant drops deferrals entirely, so the convention’s effec
     obs({ goldNil: true, decision: 'defer' }),
   ];
   // Primary: recall 1/2 (deferral charged). Appendix: recall 1/1 (deferral dropped).
-  near(nilMetrics(observations).recall, 0.5);
-  near(nilMetricsIgnoringDeferrals(observations).recall, 1);
+  near(nilMetrics(observations).recall!, 0.5);
+  near(nilMetricsIgnoringDeferrals(observations).recall!, 1);
 });
 
 // --- strata -----------------------------------------------------------------------------------
@@ -121,7 +129,7 @@ test('per-stratum NIL metrics, never averaged', () => {
   ]);
 
   assert.equal(byStratum.c.trueNegatives, 2);
-  near(byStratum.d.recall, 0, 'total failure on the novel tail');
+  near(byStratum.d.recall!, 0, 'total failure on the novel tail');
   assert.equal(byStratum.d.falseNegatives, 2);
   assert.ok('all' in byStratum, 'pooled row present for completeness');
 });
@@ -148,19 +156,24 @@ test('asymmetry ratio is null rather than Infinity when there are no wrong merge
 
 // --- degenerate ------------------------------------------------------------------------------
 
-test('empty input yields zeros, not NaN', () => {
+test('empty input yields undefined metrics and a defined 0 deferral rate, never NaN', () => {
   const result = nilMetrics([]);
-  for (const value of [result.precision, result.recall, result.f1, result.deferralRate]) {
-    assert.equal(Number.isNaN(value), false);
-    assert.equal(value, 0);
-  }
+  assert.equal(result.precision, null);
+  assert.equal(result.recall, null);
+  assert.equal(result.f1, null);
+  assert.equal(result.deferralRate, 0, 'no observations means nothing was deferred');
+  assert.equal(result.observations, 0);
 });
 
-test('all-correct-links scores zero NIL recall because there were no NILs to find', () => {
+test('with no gold NILs, recall is UNDEFINED rather than 0', () => {
+  // Two correct links and nothing to mint. Reporting recall 0 would read as a failure to find
+  // NILs that never existed; the honest answer is that recall is not defined on this slice.
   const result = nilMetrics([
     obs({ goldNil: false, decision: 'link' }),
     obs({ goldNil: false, decision: 'link' }),
   ]);
-  near(result.recall, 0, 'no gold NILs: recall denominator is empty');
-  assert.equal(result.trueNegatives, 2);
+  assert.equal(result.recall, null, 'empty recall denominator → undefined');
+  assert.equal(result.precision, null, 'no mint claims → undefined');
+  assert.equal(result.f1, null);
+  assert.equal(result.trueNegatives, 2, 'the two correct links are still counted');
 });

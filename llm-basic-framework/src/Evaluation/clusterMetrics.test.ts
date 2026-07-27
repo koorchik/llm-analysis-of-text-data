@@ -14,11 +14,14 @@ import {
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-const near = (actual: number, expected: number, message?: string) =>
+/** Asserts the value is defined as well as close: a null here means the metric was undefined. */
+const near = (actual: number | null | undefined, expected: number, message?: string) => {
+  assert.notEqual(actual, null, `${message ?? ''} expected ${expected}, got an UNDEFINED metric`);
   assert.ok(
-    Math.abs(actual - expected) < 1e-9,
+    Math.abs(actual! - expected) < 1e-9,
     `${message ?? ''} expected ${expected}, got ${actual}`
   );
+};
 
 /**
  * The reference toy, used for every metric below. All expected values are computed BY HAND in the
@@ -201,11 +204,13 @@ test('merge metrics count TP/FP/FN/TN over an explicit labelled pair set', () =>
   near(byStratum.s1.recall, 0.5);
   near(byStratum.s1.f1, 2 / 3);
 
-  // s2: FP=1 TN=1, no TP → P = 0, R = 0 (no gold positives at all in this stratum)
+  // s2: FP=1 TN=1, no TP. Precision IS defined (a merge was claimed, and it was wrong) → 0/1 = 0.
+  // Recall is UNDEFINED: this stratum contains no gold-positive pair to find.
   assert.equal(byStratum.s2.falsePositives, 1);
   assert.equal(byStratum.s2.trueNegatives, 1);
-  near(byStratum.s2.precision, 0);
-  near(byStratum.s2.recall, 0);
+  near(byStratum.s2.precision, 0, 'one merge claimed, and it was wrong');
+  assert.equal(byStratum.s2.recall, null, 'no gold positives → recall undefined, not 0');
+  assert.equal(byStratum.s2.f1, null);
 
   // pooled: TP=1 FP=1 FN=1 TN=1 → P = R = F1 = 0.5
   near(byStratum.all.precision, 0.5);
