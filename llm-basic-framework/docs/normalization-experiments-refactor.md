@@ -4,15 +4,15 @@
 > `dissert/wiki/notes/normalization-experiments-cert-ua.md` — that note owns *what* to measure;
 > this one owns *what to build*.
 >
-> **Execution step 0 — establish a baseline commit.** Every file this plan cites by line number is
-> currently **untracked working-tree code** (`src/Consolidator/`, `src/DecisionLog/`,
-> `src/EntityRegistry/`, `src/SchemaRegistry/`, `StreamingExtractor.ts`, `StreamingNormalizer.ts`,
-> `StreamingGraphBuilder.ts`, `fsUtils.ts`, `similarityUtils.ts`, plus modifications to
-> `bin/app.ts`, `validationUtils.ts`, `LlmClientBackendAnthropic.ts`). Commit the streaming
-> pipeline **and this document**, tag the result, and verify `npx tsc --noEmit` is green at the
-> tag. Until that exists there is no revert point, no baseline for M4's byte-identity gate, and the
-> `git sha` field in every run card is meaningless. The line numbers below are valid as of that tag
-> and will drift afterwards.
+> **Execution step 0 — establish a baseline commit. ✅ DONE.** The streaming pipeline
+> (`src/Consolidator/`, `src/DecisionLog/`, `src/EntityRegistry/`, `src/SchemaRegistry/`,
+> `StreamingExtractor.ts`, `StreamingNormalizer.ts`, `StreamingGraphBuilder.ts`, `fsUtils.ts`,
+> `similarityUtils.ts`, plus modifications to `bin/app.ts`, `validationUtils.ts`,
+> `LlmClientBackendAnthropic.ts`) **and this document** are committed and tagged
+> **`skein-v2-baseline`**; `npx tsc --noEmit` is green at the tag over 32 TS files. That is the revert
+> point, the reference for M2.5's byte-identity capture, and what the `git sha` in every run card
+> means. **The line numbers below are valid as of that tag and drift afterwards** — resolve them with
+> `git show skein-v2-baseline:<path>` rather than against the working tree.
 
 ## Context
 
@@ -107,7 +107,9 @@ Two design rules carried from the research notes:
 
 Each leaves the system runnable.
 
-**Critical path: M1 → M2 → M3 → M4 → M6 → M7 → M9, with M5 after.** M1–M4 alone do *not* reach the
+**Critical path: M1 → M2 → M2.5 → M3 → M4 → M6 → M7 → M9, with M5 after.** M2.5 is small but
+**order-critical**: it captures the behaviour-preservation fixture that M4's gate is scored against,
+and it must run *before* M3 rewrites the registry format. M1–M4 alone do *not* reach the
 headline experiment: E2's Phase 4.1 design invariants require mint-as-an-explicit-candidate
 (**M6**) and chronological replay with 20-document snapshots (**M7**). M5 (embeddings) serves only
 the IMPORTANT embedding-threshold conditions and the E4 ablation, so it follows. M9 is the 2–4 week
@@ -124,15 +126,40 @@ CRITICAL and belongs to the minimum viable article — schedule it, do not drop 
 `LlmCallOptions { temperature?, seed?, maxTokens?, topP? }`. The usage data already exists in every
 provider response and is discarded:
 
-| Backend | Capture from | Seed support |
-|---|---|---|
-| Anthropic | `message.usage.{input_tokens,output_tokens}` | none — use `temperature: 0` (today `LlmClientBackendAnthropic.ts:17` hardcodes `temperature: 1`) |
-| OpenAI | `chatCompletion.usage.{prompt_tokens,completion_tokens}` | `seed` param |
-| Ollama | `response.{prompt_eval_count,eval_count}` | `options.seed` |
-| VertexAI | `result.response.usageMetadata` | none — use `temperature: 0` (today `:20-21` hardcodes `temperature: 0.2, topP: 0.95`) |
+| Backend | Capture from | Seed support | Determinism lever |
+|---|---|---|---|
+| Anthropic | `message.usage.{input_tokens,output_tokens}` | none | **none — see below.** `temperature` must be *omitted*, not zeroed |
+| OpenAI | `chatCompletion.usage.{prompt_tokens,completion_tokens}` | `seed` param | `seed` (+ `temperature` only if the model accepts it) |
+| Ollama | `response.{prompt_eval_count,eval_count}` | `options.seed` | `options.seed` |
+| VertexAI | `result.response.usageMetadata` | none — use `temperature: 0` (today `:20-21` hardcodes `temperature: 0.2, topP: 0.95`) | `temperature: 0` |
 
-**Sampling parameters become per-call, never per-backend.** All three hardcoded values above are
-invisible to the run card today. After M1 they arrive through `LlmCallOptions` and are recorded.
+**Anthropic has no `temperature: 0` option — do not add one.** On Claude Opus 4.7 and later
+(4.7 / 4.8 / Opus 5 / Sonnet 5 / Fable 5) the sampling parameters `temperature`, `top_p` and `top_k`
+are **removed from the API**: sending a *non-default* value returns HTTP 400. The default
+`temperature` is 1.0, which is exactly why the current `LlmClientBackendAnthropic.ts:17`
+(`temperature: 1`) works — verified by the 204 committed `claude-opus-4-8` outputs under
+`storage/cert.gov.ua/processed/normalized/claude-opus-4-8/`. Setting `temperature: 0` there would
+400 on every call and break the whole Anthropic arm.
+
+Consequences, all of which must be honoured rather than worked around:
+
+- `LlmCallOptions` must let a backend **omit** a sampling field, not merely default it to a number.
+  Modelling `temperature` as `number` with a `0` default silently breaks Anthropic; it has to be
+  `temperature?: number` with the Anthropic backend dropping it (or passing the default `1`).
+- The run card records `temperature: null` / `"provider-default (1.0)"` for Anthropic rather than
+  pretending a value was chosen.
+- **The determinism substitute for Anthropic is replication at default sampling**, not
+  low-temperature sampling: ≥3 independent calls with identical inputs and no sampling parameters.
+  This is a weaker claim than a seed *and* weaker than `temperature: 0`, and
+  `docs/statistical-protocol.md` must say so in those terms.
+- Anthropic's newer models also think by default and never return raw chain-of-thought.
+  `LlmClientBackendAnthropic.ts:27-29` already skips leading `thinking` blocks — keep that, and note
+  that thinking tokens are billed and counted in `usage`, so `CostMeter` figures for Anthropic
+  include reasoning the log cannot show.
+
+**Sampling parameters become per-call, never per-backend.** The hardcoded values above are invisible
+to the run card today. After M1 they arrive through `LlmCallOptions` and are recorded — including
+being recorded as *absent* where the provider forbids them.
 
 Ripple: 4 backends + `LlmClient.ts` + **10 call sites in 7 files** (`CountryNameNormalizer.ts:27`,
 `Normalizer.ts:27,41`, `DataExtractor.ts:199`, `DataEntitiesCollector.ts:181`,
@@ -168,9 +195,19 @@ points*", Phase 7.1). It is nearly free once `DecisionEvent` exists and it makes
 (Phase 1.4 is CRITICAL and explicitly about the garden of forking paths). It must fix: the
 significance test for headline deltas (paired permutation test over documents is the default
 choice — see M2), the bootstrap CI method and resampling unit, how the ≥3 seeds are aggregated,
-and the documented substitute for providers without a seed — for Anthropic and VertexAI a "seed"
-is three independent `temperature: 0` replicates, which is a weaker claim and must be stated as
-such in the paper's threats to validity.
+and the documented substitute for providers without a seed. That substitute is **not uniform across
+providers** and the document must spell out all three tiers, because they support different claims:
+
+| Tier | Providers | What "≥3 seeds" means | Strength |
+|---|---|---|---|
+| Seeded | OpenAI, Ollama | 3 distinct `seed` values | strongest available |
+| Zero-temperature replicates | VertexAI | 3 calls at `temperature: 0` | weaker — no seed, but sampling pinned |
+| **Default-sampling replicates** | **Anthropic** | 3 calls with sampling params **omitted** (provider default `temperature` 1.0) | **weakest — sampling is not pinned at all** |
+
+The Anthropic tier is the one that constrains the paper's claims: because `temperature` cannot be
+lowered on Opus 4.7+ without a 400 (see M1), its replicates vary under full default sampling, so
+its variance estimates measure a genuinely noisier process than the other two arms. State this in
+threats to validity, and never present the three tiers as interchangeable "3 seeds".
 
 **Instrument the two blind spots:** `CountryNameNormalizer` (LLM calls invisible today) and
 `DataEntitiesCollector` (batch — console.time only). Algorithm untouched.
@@ -214,6 +251,7 @@ must not be written against an undefined format:
 ```jsonc
 { "version": "gold-aliases-v1",
   "inputContentHash": "…",
+  "order": "chronological",        // the stream order the NIL labels below are relative to
   "clusters": [ { "id": "g0007", "category": "HackerGroup",
                   "members": ["APT28", "Fancy Bear", "УАЦ-0028"],
                   "stratum": "c",                       // a | b | c | d
@@ -223,14 +261,61 @@ must not be written against an undefined format:
                                   "source": "mitre:G0007",
                                   "annotator": "expert" | "llm" | "kb",
                                   "rationale": "…" } ] } ],
-  "nilLabels": { "…": "…" } }   // mention -> NIL|known, relative to a registry prefix
+  // NIL is a property of (mention, stream position) — never of a mention alone.
+  "nilLabels": [ { "docId": 40102, "category": "HackerGroup", "mention": "УАЦ-0028",
+                   "clusterId": "g0007", "label": "NIL" } ] }
 ```
+
+**`nilLabels` is position-indexed, and this is load-bearing.** A flat `mention -> NIL|known` map
+cannot express what M9's `close` must emit: the same mention is NIL the first time its cluster is
+seen and `known` at every later occurrence, so one mention carries *both* labels over the stream.
+Keying by `(docId, category, mention)` — one row per occurrence, in `order` — is the minimum shape
+that makes streaming replay scoreable at all (Phase 2.4). `order` is recorded in the file because
+the labels are only valid for the stream order they were derived from; the same gold table replayed
+under `seededShuffle` needs its NIL labels regenerated, not reused.
+
+An equivalent normalisation is to store `firstSeen: { docId }` per cluster and derive each
+occurrence's label as `docId === cluster.firstSeen.docId ? "NIL" : "known"`. Either is acceptable —
+**a flat mention→label map is not.** M2's `gold.ts` loader must reject `nilLabels` given as a plain
+object, so a regression to the flat shape fails at load rather than silently mis-scoring.
 
 Gold stores **cluster membership, not canonical names** (see M9).
 
 `bin/evaluate.ts` scores any set of runs against gold and emits the composed results table —
 rows = conditions, columns = per-stratum merge P/R, NIL F1, cluster F1, calls/tokens/$, downstream
 τ (from M11), order-ARI where applicable.
+
+### M2.5 — Behaviour-preservation fixture (small, and it must land before M3)
+
+**Why this is its own migration.** M4's byte-identity gate is the test that makes the whole refactor
+safe, but it can only be captured against the **v1** registry format and the **current**
+`EntityRegistry.candidates()`. M3 replaces that format and M4 deletes that method. Left inside M4 —
+where the original plan put it — the gate is unbuildable by the time you reach it: the fixture would
+have to be reconstructed through the v1→v2 migrator, and a gate whose reference was produced by the
+very migrator it is meant to police proves nothing. So it is hoisted here, after M2 (which supplies
+`unionFind` and the test harness) and before M3 touches the format.
+
+Deliverables:
+
+1. **`test/fixtures/registry-v1.json`** — built by replaying the 3,392 frozen `(surface, category)`
+   pairs through exact-`resolve()`-then-`mint()` with **no LLM in the loop**, in `sortByNumericId`
+   order (deliberately the *current* order, not chronological — this fixture reproduces today's
+   behaviour, it does not improve on it). Deterministic and committed.
+2. **`bin/capture-golden.ts`** — the generator, committed alongside its output so the fixture can be
+   rebuilt and diffed rather than trusted.
+3. **`test/fixtures/golden-candidates.json`** — `candidates()` output for every one of the 3,392
+   pairs against that fixture, at the defaults the streaming pipeline actually uses (`k`, `minSim`
+   as passed by `StreamingNormalizer`; record them in the file header so the gate cannot drift).
+4. **Fix the tie-break first.** `similarityUtils.ts:61` sorts on `b.sim - a.sim` only, so
+   equal-similarity candidates fall back to registry insertion order. Change it to sort on
+   `(-sim, canonicalName)` **before** capturing, and capture against the fixed version — otherwise
+   the golden file bakes in a run-dependent ordering and the gate enforces a bug. This is the one
+   intentional behaviour change in M2.5; everything else is capture-only.
+5. A test that rebuilds the fixture from the frozen input and asserts it matches the committed copy
+   byte for byte, so a change in `mint`/`resolve` semantics is caught here rather than in M4.
+
+Nothing in M2.5 changes pipeline behaviour beyond the tie-break, and nothing consumes the fixture
+yet — M4 is where it becomes a gate.
 
 ### M3 — Registry v2: alias graph with provenance
 
@@ -288,25 +373,15 @@ belongs in the paper's rejection list, not in the codebase.
 (`StreamingExtractor.ts:5`, `RegistryConsolidator.ts:6`) migrate separately.
 
 **Regression gate:** `StringSimilarityGenerator` with `identity` analyzer + `max(lev, dice)` must
-reproduce the current `candidates()` output **exactly** on the frozen input. Assert byte-identity in
-a test before anything else changes.
+reproduce `EntityRegistry.candidates()` output **exactly** on all 3,392 frozen pairs, asserted
+against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.json` pair captured
+in **M2.5**. Assert byte-identity before anything else changes; only then delete `candidates()`.
 
-**How to capture the golden output** — the gate is not runnable as stated, because `candidates()`
-needs a populated registry and none exists on disk. Sequence it explicitly:
-
-1. **Before** touching `EntityRegistry`, build a deterministic fixture registry by replaying the
-   3,392 frozen `(surface, category)` pairs through exact-`resolve()`-then-mint (no LLM), in
-   `sortByNumericId` order, and commit it as a test fixture.
-2. Record `candidates()` output for every pair against that fixture → `golden-candidates.json`.
-3. Capture this **before the M3 v2 format change**, or the fixture and the golden file must be
-   regenerated through the v1→v2 migrator and the gate proves nothing.
-4. Only then remove `candidates()` and assert the generator reproduces the golden file byte for
-   byte.
-
-**Deterministic tie-break.** `similarityUtils.ts:61` sorts `b.sim - a.sim`, so equal-similarity
-candidates come back in registry insertion order — run-dependent. Since the note mandates
-similarity-ordered top-k *precisely because* position bias is real, ties must break on a stable
-key: sort by `(-sim, canonicalName)`. Fix this in the golden capture, not after.
+The capture itself — fixture construction, the golden file, and the `(-sim, canonicalName)`
+tie-break fix it must be captured against — is **M2.5**, deliberately sequenced before M3's format
+change. Do not attempt to (re)capture it here: by this point the registry is v2 and the original
+`candidates()` is the thing under test, so a reference produced now would be circular. If M2.5 was
+skipped, stop and do it against the `skein-v2-baseline` tag rather than improvising a reference.
 
 ### M5 — Embeddings
 
@@ -413,7 +488,12 @@ npm run experiment -- --matrix experiments/E4-retrieval.json
 **Validate the model/sampling combination against the live API before committing this example.**
 Reasoning-class OpenAI models reject or ignore `temperature` on some endpoints; if `gpt-5` does,
 the config is wrong on paper and the determinism story for the *one* provider that supports `seed`
-collapses. A single throwaway call settles it.
+collapses. A single throwaway call settles it — and it is worth spending, because M1 establishes
+that Anthropic has **no** sampling lever and VertexAI has no seed, so OpenAI is the only arm that
+can claim seeded reproducibility at all. If `gpt-5` also rejects `temperature`, drop the field from
+this example and rely on `seed` alone (recording `temperature: null` in the run card), rather than
+silently sending a value the endpoint ignores — an ignored parameter recorded as if it applied is
+worse than an absent one.
 
 **Per-category policy dispatch (E3) must be expressible in the schema.** As written, a run has one
 candidate generator and one decision strategy, so E3 — dispatch Domain to deterministic
@@ -456,7 +536,12 @@ audit set the note asks for):
   tooling **is** the validity argument that replaces inter-annotator κ
 - `close` runs union-find (M2) and additionally emits **NIL/known labels relative to a registry
   prefix** — for each document position in the stream order, which mentions are NIL against the
-  registry as it stood. Without this, streaming replay cannot be scored (Phase 2.4)
+  registry as it stood. Without this, streaming replay cannot be scored (Phase 2.4). It emits the
+  **position-indexed `nilLabels` array defined in M2** (one row per `(docId, category, mention)`
+  occurrence, plus the `order` the labels were derived under) — the same mention is `NIL` at its
+  cluster's first occurrence and `known` at every later one, so a flat mention→label map is not a
+  valid output here. Re-run `close` for any run whose document order differs (`seededShuffle`);
+  reusing chronological NIL labels under a shuffled order silently mis-scores the mint side
 - `split` partitions **by cluster** ~20/80 dev/test; `freeze` content-hashes as `gold-aliases-v1`
 - **`package`** emits the public release bundle — gold table, evidence snippets, annotation
   guideline, agreement reports, licence notes. The note frames the gold table as a *contribution*,
@@ -511,7 +596,8 @@ src/Evaluation/{unionFind.ts, partition.ts, clusterMetrics.ts, nilMetrics.ts, bl
                 bootstrap.ts, streamCurves.ts, rankCorrelation.ts, gold.ts, *.test.ts}
 src/Resources/{AttackStix.ts, MispGalaxy.ts, Wikidata.ts}        // GeoNames, NvdCpe → E3
 bin/{app.ts, experiment.ts, evaluate.ts, gold.ts, replay.ts, downstream.ts, hash-input.ts,
-     migrate-registry.ts}
+     migrate-registry.ts, capture-golden.ts}
+test/fixtures/{registry-v1.json, golden-candidates.json}         // M2.5, before M3
 docs/statistical-protocol.md
 prompts/*.md          experiments/*.json          config/model-prices.json
 ```
@@ -542,6 +628,7 @@ in this column is a defect in **this** document.
 | P1.1 decision log · P1.2 cost meter · P1.5 config versioning | M1 | |
 | P1.3 metric suite (+ per-stratum, growth curve) | M2 | `streamCurves.ts` covers 4.5/4.6 |
 | P1.4 statistical protocol | M1 (`docs/statistical-protocol.md`) + M2 (permutation test) | must predate results |
+| *(no research phase — refactor safety)* | **M2.5** fixture + golden capture | not in the note; gates M4. Must precede M3 |
 | P2 / E0 gold, all four strata + acronym | M9 | |
 | P2.3 agreement, test-retest, rationale · P2.6 Domain sampling · P2.7 hours · P2.8 release | M9 | the E0 gate |
 | P2.4 closure + prefix-relative NIL labels | M9 `close` + M2 `unionFind` | |
@@ -562,8 +649,8 @@ in this column is a defect in **this** document.
 
 ## Verification
 
-0. **Baseline tagged.** The streaming pipeline is committed and `npx tsc --noEmit` is green at the
-   tag (execution step 0). Nothing below is meaningful without it.
+0. **Baseline tagged. ✅ satisfied** — tag `skein-v2-baseline`, `npx tsc --noEmit` green over 32
+   files (execution step 0). Nothing below is meaningful without it.
 1. **Typecheck stays green.** `npx tsc --noEmit` passes today over 32 files with zero errors —
    treat any new diagnostic as introduced. Wire it into a `typecheck` script. **Note there is no CI
    today** — `.github/` contains only `dependabot.yml` — so "wire it into CI" is new
@@ -575,10 +662,13 @@ in this column is a defect in **this** document.
 3. **Statistical protocol exists before any result** (M1). `docs/statistical-protocol.md` is
    committed, names the significance test, and predates the first `experiments/` directory. This is
    checkable by commit date, and it is the specific thing reviewers probe for.
-4. **Behaviour-preservation gate** (M4). `StringSimilarityGenerator(identity, max-lev-dice)` must
-   reproduce `EntityRegistry.candidates()` byte-identically on all 3,392 frozen pairs, against the
-   committed fixture registry and golden file captured before the M3 format change. This is the
-   test that makes the refactor safe.
+4. **Behaviour-preservation gate** (captured in M2.5, enforced in M4).
+   `StringSimilarityGenerator(identity, max-lev-dice)` must reproduce `EntityRegistry.candidates()`
+   byte-identically on all 3,392 frozen pairs, against the committed fixture registry and golden
+   file. This is the test that makes the refactor safe. **Checkable by commit order:** the fixture
+   and golden file must be committed *before* the M3 registry-v2 commit — if they arrive after, the
+   gate is circular and does not count. Verify with
+   `git log --oneline -- test/fixtures/golden-candidates.json src/EntityRegistry/`.
 5. **Instrumentation smoke test** (M1). One 5-document run emits a decision log with non-zero token
    counts from every backend, and a run card whose cost totals equal the log's sum.
 6. **Content hash is reproducible.** `bin/hash-input.ts` run twice gives the same value, and the
@@ -610,18 +700,31 @@ in this column is a defect in **this** document.
    experiment until they are made constructible. Not blocking for E2/E4; note it.
 4. **Prompt extraction changes behaviour if done carelessly.** Extract verbatim first, hash, verify
    an identical run, and only then introduce variants.
-5. **Anthropic and VertexAI have no seed.** Determinism there is `temperature: 0` only — and today
-   both backends hardcode the *wrong* values (`temperature: 1` for Anthropic, `0.2/0.95` for
-   Vertex), so this risk is currently worse than stated. State the limitation in the paper's
-   threats-to-validity rather than implying three independent seeds everywhere.
-6. **Registry v2 must land before the first real run**, or every artifact needs regeneration.
-7. **Determinism leaks beyond the seed.** Equal-similarity candidate ordering (fixed in M4),
-   `seededShuffle`'s PRNG (named in M7), and `runId` excluding the git sha (fixed in M1) each make
-   "same config → same run" false in a different way. All three are cheap to close and expensive to
-   discover after results exist.
-8. **The baseline is uncommitted** (execution step 0). Every line number in this document is a
-   reference into untracked working-tree code. Until the tag exists, run cards cannot record a
-   meaningful `git sha` and the M4 gate has no fixed reference point.
+5. **Anthropic and VertexAI have no seed — and Anthropic has no `temperature: 0` either.** For
+   VertexAI the lever is `temperature: 0` and today's hardcoded `0.2/0.95` is simply wrong; fix it.
+   For Anthropic there is **no lever at all** on Opus 4.7+: sampling parameters are removed from the
+   API and any non-default value 400s, so the current `temperature: 1` is not a bug to fix but the
+   only accepted value (see M1). Its determinism substitute is replication under default sampling,
+   which is weaker than both other tiers. The real risk is an implementation that "fixes" Anthropic
+   to `temperature: 0` and breaks every call, or a protocol that reports all three tiers as "3
+   seeds" — guard against both, and state the limitation in threats-to-validity rather than implying
+   three independent seeds everywhere. Re-check this if the Anthropic model is ever pinned to an
+   older Claude (4.6 and earlier still accept `temperature`), since the tier would change.
+6. **Registry v2 is order-boxed on both sides.** It must land **before the first real run** (or every
+   artifact needs regeneration) and **after M2.5** (or the behaviour-preservation gate loses its
+   reference). That window is narrow and easy to miss under schedule pressure — M2.5 is small, so the
+   temptation is to fold it into M4 and do M3 first, which is exactly the failure. Treat "M2.5
+   committed before M3" as a hard precondition, checkable by commit order.
+7. **Determinism leaks beyond the seed.** Equal-similarity candidate ordering (fixed in **M2.5**, as
+   part of the golden capture — not M4, or the golden file bakes the bug in), `seededShuffle`'s PRNG
+   (named in M7), and `runId` excluding the git sha (fixed in M1) each make "same config → same run"
+   false in a different way. All three are cheap to close and expensive to discover after results
+   exist.
+8. **~~The baseline is uncommitted~~ — closed.** Execution step 0 is done: the streaming pipeline and
+   this document are committed and tagged **`skein-v2-baseline`**, with `npx tsc --noEmit` green at
+   the tag over 32 files. Line numbers in this document are valid as of that tag and drift
+   afterwards; re-resolve them against `git show skein-v2-baseline:<path>` rather than trusting them
+   later in the program.
 9. **E9 is easy to defer and cannot be dropped.** It is days of work over existing artifacts, which
    makes it tempting to postpone indefinitely — but it is CRITICAL and inside the minimum viable
    article. A measurement paper that never shows the measurement changing a conclusion reads as an
