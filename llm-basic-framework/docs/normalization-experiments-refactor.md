@@ -603,10 +603,40 @@ prompts/*.md          experiments/*.json          config/model-prices.json
 ```
 
 Out of scope for this plan, deliberately, **all four declared**: **M8 repair strategies** (E6),
-**M10 external baselines** (CESI runner, ReVerb45K adapter), **M12 extra decision strategies**
-(`PairwiseJudgeDecision`, `CascadeDecision`, `VotingDecision` — the budget-dependent half of E8,
-cheap to add later because `bin/replay.ts` lands in M1), and **E7 micro-batch window plus NIL
-clustering**. M3 lays the foundation for M8 and M10 so neither needs a second format change.
+**M10 external baselines and corpora — dropped, not merely deferred** (see below),
+**M12 extra decision strategies** (`PairwiseJudgeDecision`, `CascadeDecision`, `VotingDecision` —
+the budget-dependent half of E8, cheap to add later because `bin/replay.ts` lands in M1), and
+**E7 micro-batch window plus NIL clustering**. M3 still lays the foundation for M8 so it needs no
+second format change.
+
+**M10 is dropped by decision (2026-07-27), and the consequence is on the record.** The corpus is
+**CERT-UA only**: no ReVerb45K adapter, no CESI runner, no second corpus. The reason is that every
+external candidate is annotated for someone else's task — this project's gold is being built by hand
+for this corpus, and an external set's labels do not transfer to it.
+
+What that costs, stated plainly because Phase 3.2/3.3 are **IMPORTANT** and the note's own rule is
+"skip only under real constraint and acknowledge the consequence in the paper where visible":
+
+- **No number in the paper is calibratable against published results.** A reviewer cannot tell
+  whether the gold table is hard or easy, because nothing anchors it to a benchmark others have run.
+- **Every condition is self-implemented.** There is no non-self-implemented comparator, so
+  implementation quality and method quality are not separable by an outside reader.
+- Both belong in **threats to validity**, not in a footnote.
+
+Two mitigations already inside scope, which is what makes the drop defensible rather than merely
+convenient: **Fellegi–Sunter** (M6) is a classical non-LLM statistical pole that needs no external
+corpus and no side information, and the **exact-match floor** (M4) bounds the problem from below.
+Neither is a published external baseline, and neither claims to be.
+
+Separately on CESI: only its **metric suite** (macro/micro/pairwise, implemented in M2) is used. The
+CESI *system* would not have been informative on this corpus even had it been in scope — its
+measured advantage comes from side information that does not exist here (Freebase/Wikipedia entity
+linking, which fails precisely on the novel tail; English-only PPDB paraphrases, useless for the
+cross-script stratum; English GloVe, for which Cyrillic surface forms are out-of-vocabulary; AMIE
+constraints over functional relations this co-occurrence graph does not have). Run in that crippled
+configuration it degenerates to string similarity plus IDF token overlap — which the note already
+records as MEASURED-**negative** — and being batch-only it says nothing about the streaming question
+that is RQ2. Record it in the paper's considered-and-rejected list with that reason.
 
 E7 deserves a note rather than silence: the research design flags NIL clustering — deciding
 whether several would-be mints inside one window denote the *same* new entity — as a ★★★ genuinely
@@ -633,7 +663,7 @@ in this column is a defect in **this** document.
 | P2.3 agreement, test-retest, rationale · P2.6 Domain sampling · P2.7 hours · P2.8 release | M9 | the E0 gate |
 | P2.4 closure + prefix-relative NIL labels | M9 `close` + M2 `unionFind` | |
 | P3.1 / E1 Ψ_norm scored | M7 `BatchRun` + M2 `partition.ts` batch-map source + M6 prompt hash | |
-| P3.2 CESI · P3.3 ReVerb45K anchor | **M10 — out of scope** | declared |
+| P3.2 CESI · P3.3 ReVerb45K anchor | **dropped — CERT-UA only** | consequence recorded in threats to validity; CESI *metric suite* still used via M2 |
 | P3.3 Fellegi–Sunter pole | M6 | |
 | P4 / E2 all conditions + invariants | M4 + M5 + M6 + M7 | |
 | **P5 / E9 downstream impact** | **M11** | CRITICAL, in the MVA |

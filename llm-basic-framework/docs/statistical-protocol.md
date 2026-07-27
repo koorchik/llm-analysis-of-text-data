@@ -146,6 +146,26 @@ any `defer` is emitted**:
   says so — rather than the synthetic generated pairs used by `lairgi2024itext2kg` and
   `lairgi2026atom`, since a real dev slice is available.
 
+### 6.1 Single-corpus design — an accepted limitation
+
+The corpus is **CERT-UA only** (decision of 2026-07-27). There is no public-benchmark anchor and no
+external baseline system, because every external candidate is annotated for a different task and its
+labels do not transfer to this gold table, which is hand-built for this corpus.
+
+Two consequences follow, and both are reported in threats to validity rather than left implicit:
+
+1. **No reported number is calibratable against published results.** A reader cannot place this
+   gold table's difficulty relative to any benchmark, so absolute figures carry less information
+   than the *deltas between conditions*, which are measured on identical input. Frame claims as
+   within-corpus comparisons accordingly.
+2. **Every condition is self-implemented**, so implementation quality and method quality are not
+   separable by an outside reader. The mitigations inside scope — the exact-match floor and the
+   Fellegi–Sunter statistical pole — bound the comparison but are not external baselines and are
+   not described as such.
+
+This also means **no cross-corpus generalisation may be claimed**: transfer is designed-for, not
+validated (Phase 9.5's scoping-honesty clause).
+
 ## 7. What is pre-registered
 
 Fixed before results, and therefore quotable as confirmatory:
