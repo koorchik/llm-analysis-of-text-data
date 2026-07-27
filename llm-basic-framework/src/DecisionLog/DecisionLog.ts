@@ -5,19 +5,76 @@ import path from 'path';
 interface Params {
   filePath: string;
   enabled: boolean;
+  /** Stamped onto every event so a log is attributable after it leaves its run directory. */
+  runId?: string;
 }
 
-export type LlmCallKind = 'extract' | 'type-judge' | 'link-judge' | 'pair-rule' | 'consolidate';
+/**
+ * Known operators, kept as named strings for discoverability — but the union is **open**
+ * (`(string & {})`) so a new decision strategy or repair operator can log without editing
+ * this file. It was closed in v1, which made the log a bottleneck on every new operator.
+ */
+export type LlmCallKind =
+  | 'extract'
+  | 'type-judge'
+  | 'link-judge'
+  | 'pair-rule'
+  | 'consolidate'
+  | 'country-normalize'
+  | 'batch-normalize'
+  | (string & {});
+
+export interface LlmCallEvent {
+  doc: number;
+  kind: LlmCallKind;
+  seconds: number;
+  model?: string;
+  seed?: number | null;
+  promptTokens?: number;
+  completionTokens?: number;
+  /** null means unpriced, not free — see CostMeter. */
+  costUsd?: number | null;
+}
+
+/** One candidate as it was shown to the judge, in the order it was shown. */
+export interface DecisionCandidate {
+  name: string;
+  sim: number;
+  /** Which generator surfaced it: 'string-sim', 'exact', 'embedding', 'bm25', 'rrf'… */
+  channel: string;
+}
+
+/**
+ * The shape Phase 1.1 of the research note specifies. Every normalization variant emits these,
+ * and all merge/mint metrics are computed from this log plus the final registry.
+ * `bin/replay.ts` consumes exactly this to re-run logged decision points against another judge.
+ */
+export interface DecisionEvent {
+  mention: string;
+  category: string;
+  docId: number;
+  candidates: DecisionCandidate[];
+  decision: 'link' | 'mint' | 'defer';
+  /** Canonical name linked to; null for mint and defer. */
+  target: string | null;
+  confidence?: number | null;
+  /** Which DecisionStrategy produced this, so a replayed log is distinguishable. */
+  strategy?: string;
+  model?: string;
+  seed?: number | null;
+}
 
 export class DecisionLog {
   public readonly filePath: string;
   public readonly enabled: boolean;
+  public readonly runId?: string;
 
   #dirReady = false;
 
   constructor(params: Params) {
     this.filePath = params.filePath;
     this.enabled = params.enabled;
+    this.runId = params.runId;
   }
 
   async log(event: Record<string, unknown>): Promise<void> {
@@ -28,10 +85,15 @@ export class DecisionLog {
       this.#dirReady = true;
     }
 
-    await fs.appendFile(this.filePath, `${JSON.stringify(event)}\n`);
+    const stamped = this.runId ? { runId: this.runId, ...event } : event;
+    await fs.appendFile(this.filePath, `${JSON.stringify(stamped)}\n`);
   }
 
-  async logLlmCall(event: { doc: number; kind: LlmCallKind; seconds: number }): Promise<void> {
+  async logLlmCall(event: LlmCallEvent): Promise<void> {
     await this.log({ op: 'llm-call', ...event });
+  }
+
+  async logDecision(event: DecisionEvent): Promise<void> {
+    await this.log({ op: 'decision', ...event });
   }
 }

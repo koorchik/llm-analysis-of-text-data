@@ -107,5 +107,10 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  },
+
+  /* M1: previously absent, so tsc silently walked everything reachable. Explicit now
+     so new files under src/, bin/ and test/ are typechecked and node_modules is not. */
+  "include": ["src/**/*.ts", "bin/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -14,8 +14,13 @@ import { EmbeddingsBackendOpenAi } from '../src/EmbeddingsClient/EmbeddingsBacke
 import { EmbeddingsBackendVertexAi } from '../src/EmbeddingsClient/EmbeddingsBackendVertexAi';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { CostMeter } from '../src/Experiment/CostMeter';
+import { RunCard } from '../src/Experiment/RunCard';
+import { resolveRunConfig, type ResolvedRunConfig } from '../src/Experiment/RunConfig';
+import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
 import { LlmClient } from '../src/LlmClient/LlmClient';
+import type { LlmBackendBase, LlmCallOptions } from '../src/LlmClient/LlmClientBackendBase';
 import { LlmClientBackendAnthropic } from '../src/LlmClient/LlmClientBackendAnthropic';
 import { LlmClientBackendOllama } from '../src/LlmClient/LlmClientBackendOllama';
 import { LlmClientBackendOpenAi } from '../src/LlmClient/LlmClientBackendOpenAi';
@@ -24,6 +29,7 @@ import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
+import path from 'path';
 
 dotenv.config();
 
@@ -56,16 +62,61 @@ const CONFIG = {
   // Incremental flow options
   decisionsLog: process.env.DECISIONS_LOG === '1',
   edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
+
+  // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
+  // share an output directory, so they cannot silently resume each other.
+  condition: process.env.CONDITION || (FLOW === 'incremental' ? 'psi-link-default' : 'psi-norm-default'),
+  seed: process.env.SEED === undefined ? null : Number(process.env.SEED),
+
+  // Sampling is per-call and recorded. Unset means "send nothing" — which is the only valid
+  // choice for Anthropic on Opus 4.7+, where a non-default temperature returns HTTP 400.
+  temperature: process.env.TEMPERATURE === undefined ? undefined : Number(process.env.TEMPERATURE),
+  topP: process.env.TOP_P === undefined ? undefined : Number(process.env.TOP_P),
+  maxTokens: process.env.MAX_TOKENS === undefined ? undefined : Number(process.env.MAX_TOKENS),
 };
 
 async function main() {
   console.log(CONFIG);
-  // Create LLM client
-  const llmClient = createLlmClient();
+
+  // --- M1: establish run identity before anything writes ---
+  const backend = createLlmBackend();
+  const sampling = {
+    effective: {} as LlmCallOptions, // filled in below from the client's own view
+    supported: backend.sampling,
+  };
+
+  const runConfig = resolveRunConfig({
+    condition: CONFIG.condition,
+    orchestration: CONFIG.flow,
+    input: await describeInput(CONFIG.inputDir),
+    llm: { provider: CONFIG.llmProvider, model: CONFIG.llmModel },
+    embeddings: { provider: CONFIG.embeddingsProvider, model: CONFIG.embeddingsModel },
+    sampling,
+    seed: CONFIG.seed,
+    order: 'numeric-id', // M7 replaces this with chronological | seededShuffle
+    promptHashes: {}, // populated by M6's PromptProvider
+    extra: { steps: CONFIG.steps, edgesFrom: CONFIG.edgesFrom },
+  });
+
+  const runDir = `${CONFIG.outputDir}/experiments/${runConfig.runId}`;
+  const costMeter = new CostMeter({ runId: runConfig.runId });
+  const llmClient = createLlmClient(backend, costMeter);
+
+  // Record what the client will really send, after unsupported parameters are dropped.
+  sampling.effective = llmClient.effectiveDefaults;
+  runConfig.sampling = sampling;
+
+  const runCard = new RunCard({ runDir, config: runConfig });
+  await runCard.save();
+  console.log(`RUN ${runConfig.runId} → ${runDir}`);
+  if (runConfig.git.dirty) {
+    console.warn('RUN: working tree is dirty — runId includes a diff hash, but commit before a real run');
+  }
+
   const embeddingsClient = createEmbeddingsClient();
 
   // Create processors
-  const processors = createProcessors(llmClient, embeddingsClient);
+  const processors = createProcessors(llmClient, embeddingsClient, runDir);
 
   // Build flow
   const batchSteps: Record<string, () => Promise<void>> = {
@@ -101,15 +152,43 @@ async function main() {
 
   const flowManager = new FlowManager({ steps });
 
-  // Run
-  if (CONFIG.steps.length === 1) {
-    await flowManager.runStep(CONFIG.steps[0]);
-  } else {
-    await flowManager.runAllSteps();
+  // Run. The cost totals are attached in `finally` so an aborted run still leaves a card
+  // recording what it spent before it died.
+  try {
+    if (CONFIG.steps.length === 1) {
+      await flowManager.runStep(CONFIG.steps[0]);
+    } else {
+      await flowManager.runAllSteps();
+    }
+    runCard.markComplete();
+  } finally {
+    runCard.attachCost(costMeter);
+    await runCard.save();
+    const totals = costMeter.totals();
+    console.log(
+      `COST ${runConfig.runId}: ${totals.calls} calls, ` +
+        `${totals.inputTokens}+${totals.outputTokens} tokens, ` +
+        `$${totals.costUsd.toFixed(4)}` +
+        (totals.unpricedCalls ? ` (+${totals.unpricedCalls} unpriced calls)` : '')
+    );
+    if (costMeter.unpricedModels.length) {
+      console.warn(`COST: no price entry for ${costMeter.unpricedModels.join(', ')} — add to config/model-prices.json`);
+    }
   }
 }
 
-function createLlmClient(): LlmClient {
+/** Content-hash the frozen input so a run card cannot claim a corpus it did not read. */
+async function describeInput(dir: string) {
+  try {
+    const { contentHash, fileCount } = await hashInputDir(dir);
+    return { path: dir, contentHash, fileCount };
+  } catch (error) {
+    console.warn(`RUN: could not hash input dir ${dir} —`, error);
+    return { path: dir, contentHash: 'unavailable', fileCount: 0 };
+  }
+}
+
+function createLlmBackend(): LlmBackendBase {
   let backend;
 
   switch (CONFIG.llmProvider) {
@@ -146,7 +225,22 @@ function createLlmClient(): LlmClient {
       throw new Error(`Unknown LLM provider: ${CONFIG.llmProvider}`);
   }
 
-  return new LlmClient({ backend });
+  return backend;
+}
+
+function createLlmClient(backend: LlmBackendBase, costMeter: CostMeter): LlmClient {
+  return new LlmClient({
+    backend,
+    costMeter,
+    // Sampling defaults are per-call and get filtered per backend: LlmClient drops any
+    // parameter the provider does not accept rather than forwarding it into a 400.
+    defaultCallOptions: {
+      ...(CONFIG.temperature !== undefined ? { temperature: CONFIG.temperature } : {}),
+      ...(CONFIG.topP !== undefined ? { topP: CONFIG.topP } : {}),
+      ...(CONFIG.maxTokens !== undefined ? { maxTokens: CONFIG.maxTokens } : {}),
+      ...(CONFIG.seed !== null && !Number.isNaN(CONFIG.seed) ? { seed: CONFIG.seed } : {}),
+    },
+  });
 }
 
 function createEmbeddingsClient(): EmbeddingsClient {
@@ -181,10 +275,22 @@ function createEmbeddingsClient(): EmbeddingsClient {
   return new EmbeddingsClient({ backend });
 }
 
-function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClient) {
+function createProcessors(
+  llmClient: LlmClient,
+  embeddingsClient: EmbeddingsClient,
+  runDir: string
+) {
   const modelDir = llmClient.modelName.replace(/:/g, '-');
   const baseDir = CONFIG.outputDir;
   const inputDir = CONFIG.inputDir;
+
+  // The decision log and run card live in the run directory for BOTH flows — cost and decisions
+  // are properties of a run, not of an artifact layout.
+  const decisionLog = new DecisionLog({
+    filePath: `${runDir}/decisions.jsonl`,
+    enabled: CONFIG.decisionsLog,
+    runId: path.basename(runDir),
+  });
 
   const preprocessor = (content: string) => {
     const data = JSON.parse(content);
@@ -209,13 +315,14 @@ function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClie
     inputDir: dataExtractor.outputDir,
     outputDir: `${baseDir}/entities/${modelDir}`,
     llmClient,
+    decisionLog,
   });
 
   const dataNormalizer = new DataNormalizer({
     inputDir: dataExtractor.outputDir,
     outputDir: `${baseDir}/normalized/${modelDir}`,
     entitiesFile: `${dataEntitiesCollector.outputDir}/entities.json`,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
+    countryNameNormalizer: new CountryNameNormalizer({ llmClient, decisionLog }),
     embeddingsClient,
   });
 
@@ -230,16 +337,14 @@ function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClie
   });
 
   // --- Incremental (streaming) flow — spec: docs/streaming-pipeline-spec.md ---
-  const incrementalDir = `${baseDir}/incremental/${modelDir}`;
+  // M1: was `${baseDir}/incremental/${modelDir}`, where two conditions on the same model shared a
+  // directory and silently resumed each other through the `existsSync` skips. Keyed by runId now.
+  const incrementalDir = runDir;
 
   // Shared state instances: one schema/registry per run keeps the interleaved
   // extract→normalize step coherent (disk is write-only during a run)
   const schemaRegistry = new SchemaRegistry({ filePath: `${incrementalDir}/schema.json` });
   const entityRegistry = new EntityRegistry({ filePath: `${incrementalDir}/registry.json` });
-  const decisionLog = new DecisionLog({
-    filePath: `${incrementalDir}/decisions.jsonl`,
-    enabled: CONFIG.decisionsLog,
-  });
 
   const streamingExtractor = new StreamingExtractor({
     inputDir,
@@ -256,7 +361,7 @@ function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClie
     llmClient,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
+    countryNameNormalizer: new CountryNameNormalizer({ llmClient, decisionLog }),
     decisionLog,
     sourceDir: inputDir,
     preprocessor,

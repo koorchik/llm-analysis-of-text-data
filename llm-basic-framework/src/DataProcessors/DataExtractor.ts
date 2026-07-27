@@ -196,12 +196,14 @@ Your final output MUST be a single, raw JSON object and nothing else. Do not wra
 Apply these instructions to the text provided in the user's next message.`;
 
     console.time('LLM PROCESSING');
-    const result = await this.#llmClient.send(instructions, text);
+    const response = await this.#llmClient.send(instructions, text, {
+      operator: 'extract-batch',
+    });
     console.timeEnd('LLM PROCESSING');
     console.time('EXTRACT_JSON');
-    console.log({ result });
+    console.log({ result: response.text });
     // TODO: check if result contains JSON
-    const rawData = extractAndParseJson(result);
+    const rawData = extractAndParseJson(response.text);
     console.timeEnd('EXTRACT_JSON');
 
     if (!rawData) return {};

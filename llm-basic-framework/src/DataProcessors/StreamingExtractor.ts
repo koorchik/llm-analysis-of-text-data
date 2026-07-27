@@ -1,5 +1,6 @@
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import type { LlmClient } from '../LlmClient/LlmClient';
+import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import { stringSimilarity } from '../utils/similarityUtils';
@@ -83,12 +84,22 @@ export class StreamingExtractor {
 
     const started = Date.now();
     console.time(`LLM EXTRACTION ${file}`);
-    const result = await this.#llmClient.send(this.#buildInstructions(), data.text);
+    const response = await this.#llmClient.send(this.#buildInstructions(), data.text, {
+      operator: 'extract',
+      docId,
+    });
     console.timeEnd(`LLM EXTRACTION ${file}`);
     const spent = (Date.now() - started) / 1000;
-    await this.#decisionLog.logLlmCall({ doc: docId, kind: 'extract', seconds: spent });
+    await this.#decisionLog.logLlmCall({
+      doc: docId,
+      kind: 'extract',
+      seconds: spent,
+      model: response.model,
+      promptTokens: response.usage.inputTokens,
+      completionTokens: response.usage.outputTokens,
+    });
 
-    const rawData = extractAndParseJson(result);
+    const rawData = extractAndParseJson(response.text);
     const extraction = rawData && normalizeStreamingExtraction(rawData);
     if (!extraction) {
       // Write nothing, mutate nothing — the document is retried on the next run
@@ -306,9 +317,14 @@ Output a single raw JSON object, no markdown fences, no commentary:
 
     const started = Date.now();
     console.time(`TYPE-JUDGE doc ${docId}`);
+    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    let response: LlmResponse | undefined;
     try {
-      const result = await this.#llmClient.send(instructions, lines.join('\n'));
-      const verdicts = normalizeTypeJudgeVerdicts(extractAndParseJson(result) || {});
+      response = await this.#llmClient.send(instructions, lines.join('\n'), {
+        operator: 'type-judge',
+        docId,
+      });
+      const verdicts = normalizeTypeJudgeVerdicts(extractAndParseJson(response.text) || {});
       return verdicts || [];
     } catch (error) {
       // Never lose the document over a judge call — admit-all is repairable by the consolidator
@@ -320,6 +336,9 @@ Output a single raw JSON object, no markdown fences, no commentary:
         doc: docId,
         kind: 'type-judge',
         seconds: (Date.now() - started) / 1000,
+        model: response?.model,
+        promptTokens: response?.usage.inputTokens,
+        completionTokens: response?.usage.outputTokens,
       });
     }
   }

@@ -24,7 +24,13 @@ export class Normalizer {
       - "military departments other countries"
     `;
 
-    return await this.#llmClient.send(instructions, target);
+    // NOTE: this returned the bare `send()` result before M1, so widening the contract changed
+    // its return type silently — tsc could not flag it because the value was passed straight
+    // through. Kept returning a string. (This class is currently unreferenced; see M6.)
+    const response = await this.#llmClient.send(instructions, target, {
+      operator: 'normalize-target',
+    });
+    return response.text;
   }
 
   async normalizeCountry(country: string) {
@@ -38,8 +44,10 @@ export class Normalizer {
       { "normalized": "CODE" }
     `;
 
-    const text = await this.#llmClient.send(instructions, country);
-    const data = extractAndParseJson(text);
+    const response = await this.#llmClient.send(instructions, country, {
+      operator: 'normalize-country',
+    });
+    const data = extractAndParseJson(response.text);
     return data?.normalized;
   }
 }

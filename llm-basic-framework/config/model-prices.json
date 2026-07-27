@@ -1,0 +1,31 @@
+{
+  "$comment": [
+    "USD per 1M tokens, consumed by src/Experiment/CostMeter.ts.",
+    "A model with null prices is treated as UNPRICED, not free: CostMeter records its token",
+    "counts, leaves costUsd null, and reports the model in `unpricedModels` so the run card",
+    "and bin/evaluate.ts can flag it rather than silently under-reporting spend.",
+    "Verification item 11 of the refactor plan requires comparing the meter's total against the",
+    "provider dashboard once. Fill in any null below from the dashboard before trusting a $ figure.",
+    "Anthropic prices are first-party API list rates; Bedrock/Vertex-brokered Claude differs."
+  ],
+  "models": {
+    "claude-fable-5": { "inputPerMTok": 10.0, "outputPerMTok": 50.0 },
+    "claude-opus-5": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
+    "claude-opus-4-8": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
+    "claude-opus-4-7": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
+    "claude-opus-4-6": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
+    "claude-sonnet-5": { "inputPerMTok": 3.0, "outputPerMTok": 15.0 },
+    "claude-sonnet-4-6": { "inputPerMTok": 3.0, "outputPerMTok": 15.0 },
+    "claude-haiku-4-5": { "inputPerMTok": 1.0, "outputPerMTok": 5.0 },
+
+    "gpt-5": { "inputPerMTok": null, "outputPerMTok": null },
+
+    "$comment_local": "Self-hosted via Ollama: no marginal API cost. Wall-clock is still metered.",
+    "gpt-oss:20b": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
+    "gemma4:e4b-64k": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+  },
+  "providerDefaults": {
+    "$comment": "Fallback when a model id is absent from `models`. Only ollama has a defensible default (local inference is free at the margin); cloud providers stay unpriced so a missing entry is visible rather than assumed.",
+    "ollama": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+  }
+}

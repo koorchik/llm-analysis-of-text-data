@@ -2,6 +2,7 @@ import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNorma
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
+import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import {
@@ -235,7 +236,7 @@ export class StreamingNormalizer {
       plan.entity.category = plan.category;
       plan.entity.normalizedName = plan.canonical;
       if (plan.category.toLowerCase() === 'country') {
-        const code = await this.#countryNameNormalizer.normalizeCountry(plan.entity.name);
+        const code = await this.#countryNameNormalizer.normalizeCountry(plan.entity.name, docId);
         if (code) plan.entity.code = code;
       }
     }
@@ -310,9 +311,14 @@ ${lines.join('\n')}`;
 
     const started = Date.now();
     console.time(`LINK-JUDGE doc ${docId}`);
+    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    let response: LlmResponse | undefined;
     try {
-      const result = await this.#llmClient.send(instructions, text);
-      const verdicts = normalizeLinkVerdicts(extractAndParseJson(result) || {}) || [];
+      response = await this.#llmClient.send(instructions, text, {
+        operator: 'link-judge',
+        docId,
+      });
+      const verdicts = normalizeLinkVerdicts(extractAndParseJson(response.text) || {}) || [];
 
       const verdictMap = new Map<string, string>();
       const batchByMention = new Map(
@@ -341,6 +347,9 @@ ${lines.join('\n')}`;
         doc: docId,
         kind: 'link-judge',
         seconds: (Date.now() - started) / 1000,
+        model: response?.model,
+        promptTokens: response?.usage.inputTokens,
+        completionTokens: response?.usage.outputTokens,
       });
     }
   }
@@ -366,9 +375,15 @@ Output a single raw JSON object, no markdown fences, no commentary:
 
     const started = Date.now();
     console.time(`PAIR-RULES doc ${docId}`);
+    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    let response: LlmResponse | undefined;
     try {
-      const result = await this.#llmClient.send(instructions, `Signatures to rule on:\n${lines.join('\n')}`);
-      const verdicts = normalizePairRuleVerdicts(extractAndParseJson(result) || {}) || [];
+      response = await this.#llmClient.send(
+        instructions,
+        `Signatures to rule on:\n${lines.join('\n')}`,
+        { operator: 'pair-rule', docId }
+      );
+      const verdicts = normalizePairRuleVerdicts(extractAndParseJson(response.text) || {}) || [];
 
       const rules: Array<{
         rule: {
@@ -415,6 +430,9 @@ Output a single raw JSON object, no markdown fences, no commentary:
         doc: docId,
         kind: 'pair-rule',
         seconds: (Date.now() - started) / 1000,
+        model: response?.model,
+        promptTokens: response?.usage.inputTokens,
+        completionTokens: response?.usage.outputTokens,
       });
     }
   }

@@ -1,6 +1,7 @@
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
+import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry, SchemaEntry } from '../SchemaRegistry/SchemaRegistry';
 import { sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import { stringSimilarity } from '../utils/similarityUtils';
@@ -185,9 +186,14 @@ Output a single raw JSON object, no markdown fences, no commentary:
 Return { "merges": [] } when nothing should merge.`;
 
     const started = Date.now();
+    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    let response: LlmResponse | undefined;
     try {
-      const result = await this.#llmClient.send(instructions, lines.join('\n'));
-      const parsed = extractAndParseJson(result);
+      response = await this.#llmClient.send(instructions, lines.join('\n'), {
+        operator: 'consolidate',
+        docId: null,
+      });
+      const parsed = extractAndParseJson(response.text);
       const merges = Array.isArray(parsed?.merges) ? parsed!.merges : [];
       return merges.filter(
         (merge: Merge) =>
@@ -205,6 +211,9 @@ Return { "merges": [] } when nothing should merge.`;
         doc: -1,
         kind: 'consolidate',
         seconds: (Date.now() - started) / 1000,
+        model: response?.model,
+        promptTokens: response?.usage.inputTokens,
+        completionTokens: response?.usage.outputTokens,
       });
     }
   }

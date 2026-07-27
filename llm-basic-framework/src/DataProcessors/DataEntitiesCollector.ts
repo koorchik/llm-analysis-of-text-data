@@ -1,3 +1,4 @@
+import type { DecisionLog } from '../DecisionLog/DecisionLog';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import { extractAndParseJson, UnifiedData, Category } from '../utils/validationUtils';
 import { existsSync } from 'fs';
@@ -9,6 +10,8 @@ interface Params {
   llmClient: LlmClient;
   maxRetries?: number;
   retryDelay?: number;
+  /** M1: batch Ψ_norm had console.time only. Instrumentation added; algorithm untouched. */
+  decisionLog?: DecisionLog;
 }
 
 export class DataEntitiesCollector {
@@ -17,6 +20,7 @@ export class DataEntitiesCollector {
   #llmClient: LlmClient;
   #maxRetries: number;
   #retryDelay: number;
+  #decisionLog?: DecisionLog;
 
   constructor(params: Params) {
     this.inputDir = params.inputDir;
@@ -24,6 +28,7 @@ export class DataEntitiesCollector {
     this.#llmClient = params.llmClient;
     this.#maxRetries = params.maxRetries ?? 3;
     this.#retryDelay = params.retryDelay ?? 2000;
+    this.#decisionLog = params.decisionLog;
   }
 
   async run() {
@@ -178,12 +183,25 @@ export class DataEntitiesCollector {
     while (attempts < this.#maxRetries) {
       try {
         console.time(`LLM NORMALIZATION - ${entityType}`);
-        const result = await this.#llmClient.send(instructions, text);
+        const started = Date.now();
+        // M1 blind spot #2: this is the published Ψ_norm prompt and the artifact E1 is scored
+        // from. Instrumentation only — the algorithm, prompt and retry policy are untouched.
+        const response = await this.#llmClient.send(instructions, text, {
+          operator: 'batch-normalize',
+        });
         console.timeEnd(`LLM NORMALIZATION - ${entityType}`);
+        await this.#decisionLog?.logLlmCall({
+          doc: -1,
+          kind: 'batch-normalize',
+          seconds: (Date.now() - started) / 1000,
+          model: response.model,
+          promptTokens: response.usage.inputTokens,
+          completionTokens: response.usage.outputTokens,
+        });
 
-        console.log(result);
+        console.log(response.text);
 
-        const parsed = extractAndParseJson(result);
+        const parsed = extractAndParseJson(response.text);
         if (parsed) {
           // Ensure all entities have a mapping
           const normalized: Record<string, string> = {};
