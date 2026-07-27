@@ -1,4 +1,4 @@
-import { CostMeter, type PriceTable } from './CostMeter';
+import { CostMeter, priceLookupKeys, type PriceTable } from './CostMeter';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
@@ -11,6 +11,72 @@ const PRICES: PriceTable = {
     ollama: { inputPerMTok: 0, outputPerMTok: 0 },
   },
 };
+
+// --- dated-snapshot resolution ---------------------------------------------------------------
+// Providers resolve an alias to a dated snapshot in the response. Found on a live OpenAI run:
+// requesting `gpt-5.4-nano` returned `gpt-5.4-nano-2026-03-17`, so an alias-keyed price table
+// matched nothing and every call was silently unpriced.
+
+test('priceLookupKeys strips a -YYYY-MM-DD snapshot suffix', () => {
+  assert.deepEqual(priceLookupKeys('gpt-5.4-nano-2026-03-17'), [
+    'gpt-5.4-nano-2026-03-17',
+    'gpt-5.4-nano',
+  ]);
+});
+
+test('priceLookupKeys strips a -YYYYMMDD snapshot suffix', () => {
+  assert.deepEqual(priceLookupKeys('claude-haiku-4-5-20251001'), [
+    'claude-haiku-4-5-20251001',
+    'claude-haiku-4-5',
+  ]);
+});
+
+test('priceLookupKeys leaves an undated id alone', () => {
+  assert.deepEqual(priceLookupKeys('claude-opus-4-8'), ['claude-opus-4-8']);
+});
+
+test('priceLookupKeys does not mistake a version tail for a date', () => {
+  // `-4-8` and `-2026` alone must not be stripped, or the wrong model would be priced.
+  assert.deepEqual(priceLookupKeys('claude-opus-4-8'), ['claude-opus-4-8']);
+  assert.deepEqual(priceLookupKeys('some-model-2026'), ['some-model-2026']);
+});
+
+test('a dated snapshot is priced from its alias entry', () => {
+  const m = new CostMeter({
+    runId: 'r',
+    priceTable: { models: { 'aliased-model': { inputPerMTok: 4, outputPerMTok: 8 } }, providerDefaults: {} },
+  });
+  const record = m.record({
+    operator: 'extract',
+    provider: 'openai',
+    model: 'aliased-model-2026-03-17',
+    usage: { inputTokens: 1_000_000, outputTokens: 1_000_000 },
+    latencyMs: 1,
+  });
+  assert.equal(record.costUsd, 12);
+  assert.deepEqual(m.unpricedModels, [], 'snapshot must not be reported unpriced');
+});
+
+test('an exact snapshot entry wins over the alias entry', () => {
+  const m = new CostMeter({
+    runId: 'r',
+    priceTable: {
+      models: {
+        'aliased-model': { inputPerMTok: 4, outputPerMTok: 8 },
+        'aliased-model-2026-03-17': { inputPerMTok: 1, outputPerMTok: 1 },
+      },
+      providerDefaults: {},
+    },
+  });
+  const record = m.record({
+    operator: 'extract',
+    provider: 'openai',
+    model: 'aliased-model-2026-03-17',
+    usage: { inputTokens: 1_000_000, outputTokens: 1_000_000 },
+    latencyMs: 1,
+  });
+  assert.equal(record.costUsd, 2);
+});
 
 const meter = () => new CostMeter({ runId: 'test-run', priceTable: PRICES });
 

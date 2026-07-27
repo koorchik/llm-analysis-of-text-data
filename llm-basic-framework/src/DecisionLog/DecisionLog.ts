@@ -55,7 +55,14 @@ export interface DecisionEvent {
   docId: number;
   candidates: DecisionCandidate[];
   decision: 'link' | 'mint' | 'defer';
-  /** Canonical name linked to; null for mint and defer. */
+  /**
+   * The canonical this mention ended up attached to: the existing canonical for `link`, the
+   * newly-minted canonical for `mint`, and `null` only for `defer` (no decision was made).
+   *
+   * Populated for mints on purpose: M2's `partition.ts` reconstructs the cluster partition from
+   * this log alone, which needs mention → canonical for every decided mention. A null target on
+   * mint would make every minted cluster unrecoverable from the log.
+   */
   target: string | null;
   confidence?: number | null;
   /** Which DecisionStrategy produced this, so a replayed log is distinguishable. */

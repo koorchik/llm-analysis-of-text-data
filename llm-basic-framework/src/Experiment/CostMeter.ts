@@ -42,6 +42,24 @@ interface Params {
   priceTablePath?: string;
 }
 
+/**
+ * Price-table lookup keys for a model id, most specific first.
+ *
+ * Providers resolve an alias to a **dated snapshot** in the response: requesting `gpt-5.4-nano`
+ * returns `gpt-5.4-nano-2026-03-17`, and Anthropic returns ids like `claude-haiku-4-5-20251001`.
+ * CostMeter prices what actually ran, so it sees the snapshot id — which means a table keyed on
+ * the alias would never match and every call would be silently unpriced. Confirmed on a live
+ * 5-document OpenAI run during M1 verification.
+ *
+ * Both suffix forms are stripped: `-YYYY-MM-DD` and `-YYYYMMDD`.
+ */
+export function priceLookupKeys(model: string): string[] {
+  const keys = [model];
+  const dated = model.match(/^(.*?)-(?:\d{4}-\d{2}-\d{2}|\d{8})$/);
+  if (dated) keys.push(dated[1]);
+  return keys;
+}
+
 const EMPTY_TOTALS = (): CostTotals => ({
   calls: 0,
   inputTokens: 0,
@@ -85,8 +103,10 @@ export class CostMeter {
   }
 
   priceFor(provider: string, model: string): ModelPrice | null {
-    const entry = this.#prices.models[model];
-    if (entry && entry.inputPerMTok !== null && entry.outputPerMTok !== null) return entry;
+    for (const key of priceLookupKeys(model)) {
+      const entry = this.#prices.models[key];
+      if (entry && entry.inputPerMTok !== null && entry.outputPerMTok !== null) return entry;
+    }
 
     const fallback = this.#prices.providerDefaults[provider];
     if (fallback && fallback.inputPerMTok !== null && fallback.outputPerMTok !== null) {

@@ -41,6 +41,21 @@ interface MentionPlan {
   action: 'resolved' | 'mint' | 'judge';
 }
 
+/**
+ * Candidates as the judge saw them, in the order shown. `channel` names the generator that
+ * surfaced each one — everything is string similarity until M4 adds embedding/BM25/RRF channels,
+ * and E4's per-channel candidate recall is scored off this field.
+ */
+function describeCandidates(
+  candidates: MentionPlan['candidates']
+): Array<{ name: string; sim: number; channel: string }> {
+  return candidates.map((candidate) => ({
+    name: candidate.name,
+    sim: Number(candidate.sim.toFixed(2)),
+    channel: 'string-sim',
+  }));
+}
+
 export class StreamingNormalizer {
   public readonly inputDir: string;
   public readonly outputDir: string;
@@ -182,13 +197,12 @@ export class StreamingNormalizer {
       if (plan.canonical && plan.action !== 'resolved') {
         // link verdict
         this.#entityRegistry.link(plan.category, plan.canonical, plan.entity.name);
-        await this.#decisionLog.log({
-          doc: docId,
-          op: 'link',
+        await this.#decisionLog.logDecision({
+          docId,
           mention: plan.entity.name,
           category: plan.category,
-          candidates: plan.candidates.map((c) => ({ name: c.name, sim: Number(c.sim.toFixed(2)) })),
-          verdict: 'link',
+          candidates: describeCandidates(plan.candidates),
+          decision: 'link',
           target: plan.canonical,
         });
       } else if (!plan.canonical) {
@@ -197,13 +211,12 @@ export class StreamingNormalizer {
           doc: docId,
           date: docDate,
         });
-        await this.#decisionLog.log({
-          doc: docId,
-          op: 'mint',
+        await this.#decisionLog.logDecision({
+          docId,
           mention: plan.entity.name,
           category: plan.category,
-          candidates: plan.candidates.map((c) => ({ name: c.name, sim: Number(c.sim.toFixed(2)) })),
-          verdict: 'mint',
+          candidates: describeCandidates(plan.candidates),
+          decision: 'mint',
           target: plan.canonical,
         });
       }

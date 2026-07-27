@@ -1,6 +1,9 @@
 {
   "$comment": [
     "USD per 1M tokens, consumed by src/Experiment/CostMeter.ts.",
+    "Keys may be an alias (`gpt-5.4-nano`): CostMeter also matches the dated snapshot the provider",
+    "actually returns (`gpt-5.4-nano-2026-03-17`) by stripping a -YYYY-MM-DD or -YYYYMMDD suffix,",
+    "so one row per alias is enough. Verified on a live run — the response carries the snapshot id.",
     "A model with null prices is treated as UNPRICED, not free: CostMeter records its token",
     "counts, leaves costUsd null, and reports the model in `unpricedModels` so the run card",
     "and bin/evaluate.ts can flag it rather than silently under-reporting spend.",
@@ -18,7 +21,10 @@
     "claude-sonnet-4-6": { "inputPerMTok": 3.0, "outputPerMTok": 15.0 },
     "claude-haiku-4-5": { "inputPerMTok": 1.0, "outputPerMTok": 5.0 },
 
+    "$comment_openai": "Both models are in active use (gpt-5.4-nano is the current LLM_MODEL) and both are UNPRICED pending the provider-dashboard check of verification item 11. Fill these in before quoting any $ figure; token counts are already correct.",
     "gpt-5": { "inputPerMTok": null, "outputPerMTok": null },
+    "gpt-5.4-nano": { "inputPerMTok": null, "outputPerMTok": null },
+    "text-embedding-3-large": { "inputPerMTok": null, "outputPerMTok": null },
 
     "$comment_local": "Self-hosted via Ollama: no marginal API cost. Wall-clock is still metered.",
     "gpt-oss:20b": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
