@@ -24,10 +24,8 @@ export class LlmClientBackendAnthropic implements LlmBackendBase {
       ],
     });
 
-    if (message.content[0].type === 'text') {
-      return message.content[0].text;
-    } else {
-      return '';
-    }
+    // Newer Claude models may prepend a `thinking` block before the text block
+    const textBlock = message.content.find((block) => block.type === 'text');
+    return textBlock?.type === 'text' ? textBlock.text : '';
   }
 }

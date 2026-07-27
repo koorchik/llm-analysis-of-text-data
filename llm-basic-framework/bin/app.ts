@@ -1,22 +1,37 @@
 import { CountryNameNormalizer } from '../src/CountryNameNormalizer/CountryNameNormalizer';
+import { RegistryConsolidator } from '../src/Consolidator/RegistryConsolidator';
 import { DataAnalyzer } from '../src/DataProcessors/DataAnalyzer';
 import { DataEntitiesCollector } from '../src/DataProcessors/DataEntitiesCollector';
 import { DataExtractor } from '../src/DataProcessors/DataExtractor';
 import { DataGraphBuilder } from '../src/DataProcessors/DataGraphBuilder';
 import { DataNormalizer } from '../src/DataProcessors/DataNormalizer';
+import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
+import { StreamingGraphBuilder, EdgesFrom } from '../src/DataProcessors/StreamingGraphBuilder';
+import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
+import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import { EmbeddingsBackendOllama } from '../src/EmbeddingsClient/EmbeddingsBackendOllama';
 import { EmbeddingsBackendOpenAi } from '../src/EmbeddingsClient/EmbeddingsBackendOpenAi';
 import { EmbeddingsBackendVertexAi } from '../src/EmbeddingsClient/EmbeddingsBackendVertexAi';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
+import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
 import { FlowManager } from '../src/FlowManager/FlowManager';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import { LlmClientBackendAnthropic } from '../src/LlmClient/LlmClientBackendAnthropic';
 import { LlmClientBackendOllama } from '../src/LlmClient/LlmClientBackendOllama';
 import { LlmClientBackendOpenAi } from '../src/LlmClient/LlmClientBackendOpenAi';
 import { LlmClientBackendVertexAi } from '../src/LlmClient/LlmClientBackendVertexAi';
+import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
+import { sortByNumericId } from '../src/utils/fsUtils';
 import dotenv from 'dotenv';
+import fs from 'fs/promises';
 
 dotenv.config();
+
+// Flow: 'batch' (legacy pipeline) | 'incremental' (streaming SKEIN v2 pipeline)
+const FLOW = process.env.FLOW || 'batch';
+if (!['batch', 'incremental'].includes(FLOW)) {
+  throw new Error(`Unknown FLOW: ${FLOW}. Available: batch, incremental`);
+}
 
 // Configuration from environment or defaults
 const CONFIG = {
@@ -32,8 +47,15 @@ const CONFIG = {
   inputDir: process.env.INPUT_DIR || '../storage/cert.gov.ua/fetched',
   outputDir: process.env.OUTPUT_DIR || '../storage/cert.gov.ua/processed',
 
-  // What to run
-  steps: process.env.STEPS?.split(',') || ['dataExtractor'],
+  // What to run (subset of the selected flow's steps)
+  flow: FLOW,
+  steps:
+    process.env.STEPS?.split(',') ||
+    (FLOW === 'incremental' ? ['streamingPipeline'] : ['dataExtractor']),
+
+  // Incremental flow options
+  decisionsLog: process.env.DECISIONS_LOG === '1',
+  edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
 };
 
 async function main() {
@@ -46,7 +68,7 @@ async function main() {
   const processors = createProcessors(llmClient, embeddingsClient);
 
   // Build flow
-  const availableSteps: Record<string, () => Promise<void>> = {
+  const batchSteps: Record<string, () => Promise<void>> = {
     dataExtractor: () => processors.dataExtractor.run(),
     dataEntitiesCollector: () => processors.dataEntitiesCollector.run(),
     dataNormalizer: () => processors.dataNormalizer.run(),
@@ -54,10 +76,21 @@ async function main() {
     dataGraphBuilder: () => processors.dataGraphBuilder.run(),
   };
 
+  const incrementalSteps: Record<string, () => Promise<void>> = {
+    streamingPipeline: () => runStreamingPipeline(processors),
+    streamingExtractor: () => processors.streamingExtractor.run(),
+    streamingNormalizer: () => processors.streamingNormalizer.run(),
+    streamingGraphBuilder: () => processors.streamingGraphBuilder.run(),
+    registryConsolidator: () => processors.registryConsolidator.run(),
+    dataAnalyzer: () => processors.streamingDataAnalyzer.run(),
+  };
+
+  const availableSteps = CONFIG.flow === 'incremental' ? incrementalSteps : batchSteps;
+
   const steps = CONFIG.steps.map((stepName) => {
     if (!availableSteps[stepName]) {
       throw new Error(
-        `Unknown step: ${stepName}. Available: ${Object.keys(availableSteps).join(', ')}`
+        `Unknown step: ${stepName}. Available for FLOW=${CONFIG.flow}: ${Object.keys(availableSteps).join(', ')}`
       );
     }
     return {
@@ -196,13 +229,93 @@ function createProcessors(llmClient: LlmClient, embeddingsClient: EmbeddingsClie
     outputDir: `${baseDir}/analyzed/${modelDir}`,
   });
 
+  // --- Incremental (streaming) flow — spec: docs/streaming-pipeline-spec.md ---
+  const incrementalDir = `${baseDir}/incremental/${modelDir}`;
+
+  // Shared state instances: one schema/registry per run keeps the interleaved
+  // extract→normalize step coherent (disk is write-only during a run)
+  const schemaRegistry = new SchemaRegistry({ filePath: `${incrementalDir}/schema.json` });
+  const entityRegistry = new EntityRegistry({ filePath: `${incrementalDir}/registry.json` });
+  const decisionLog = new DecisionLog({
+    filePath: `${incrementalDir}/decisions.jsonl`,
+    enabled: CONFIG.decisionsLog,
+  });
+
+  const streamingExtractor = new StreamingExtractor({
+    inputDir,
+    outputDir: `${incrementalDir}/extractions`,
+    preprocessor,
+    llmClient,
+    schemaRegistry,
+    decisionLog,
+  });
+
+  const streamingNormalizer = new StreamingNormalizer({
+    inputDir: streamingExtractor.outputDir,
+    outputDir: `${incrementalDir}/artifacts`,
+    llmClient,
+    schemaRegistry,
+    entityRegistry,
+    countryNameNormalizer: new CountryNameNormalizer({ llmClient }),
+    decisionLog,
+    sourceDir: inputDir,
+    preprocessor,
+  });
+
+  const streamingGraphBuilder = new StreamingGraphBuilder({
+    inputDir: streamingNormalizer.outputDir,
+    outputDir: `${incrementalDir}/graph`,
+    schemaRegistry,
+    edgesFrom: CONFIG.edgesFrom,
+  });
+
+  const registryConsolidator = new RegistryConsolidator({
+    artifactsDir: streamingNormalizer.outputDir,
+    llmClient,
+    schemaRegistry,
+    entityRegistry,
+    decisionLog,
+  });
+
+  // Artifacts are a strict superset of normalized/NN.json — DataAnalyzer reused unchanged
+  const streamingDataAnalyzer = new DataAnalyzer({
+    inputDir: streamingNormalizer.outputDir,
+    outputDir: `${incrementalDir}/analyzed`,
+  });
+
   return {
     dataExtractor,
     dataEntitiesCollector,
     dataNormalizer,
     dataAnalyzer,
     dataGraphBuilder,
+    streamingExtractor,
+    streamingNormalizer,
+    streamingGraphBuilder,
+    registryConsolidator,
+    streamingDataAnalyzer,
   };
+}
+
+// Spec §5: per document, extract → normalize (interleaved) so that after any
+// document the artifacts + state files are complete for everything seen so far
+async function runStreamingPipeline(processors: ReturnType<typeof createProcessors>) {
+  const files = sortByNumericId(
+    (await fs.readdir(CONFIG.inputDir)).filter((file) => file.endsWith('.json'))
+  );
+
+  let consecutiveFailures = 0;
+  for (const file of files) {
+    const extracted = await processors.streamingExtractor.processFile(file);
+    if (extracted) {
+      consecutiveFailures = 0;
+      await processors.streamingNormalizer.processFile(file);
+    } else if (++consecutiveFailures >= 5) {
+      throw new Error(
+        '5 consecutive extraction failures — aborting (check API key / model config)'
+      );
+    }
+  }
 }
 
 main().catch((error) => {
