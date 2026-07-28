@@ -3,7 +3,7 @@ import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNorma
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
-import type { CandidateGenerator } from '../Normalization/types';
+import type { CandidateGenerator, Decision, DecisionRequest, DecisionStrategy } from '../Normalization/types';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
@@ -41,6 +41,14 @@ interface Params {
    * without touching this class; defaults to the shared `prompts/` directory.
    */
   prompts?: PromptProvider;
+  /**
+   * The decision stage (M6). Omitted means the built-in `link-judge` path — the published Ψ_link
+   * behaviour the golden fixture pins — so the default arm is unaffected by this port existing.
+   *
+   * Set it to run E1/E3/E8's alternative decision rules live. `bin/app.ts` wires it from
+   * `DECISION_STRATEGY`.
+   */
+  decisionStrategy?: DecisionStrategy;
 }
 
 interface MentionPlan {
@@ -87,9 +95,11 @@ export class StreamingNormalizer {
     Promise.resolve({ text: content, metadata: {} });
 
   #prompts: PromptProvider;
+  #decisionStrategy?: DecisionStrategy;
 
   constructor(params: Params) {
     this.#prompts = params.prompts ?? prompts;
+    this.#decisionStrategy = params.decisionStrategy;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
@@ -200,13 +210,19 @@ export class StreamingNormalizer {
     }
 
     if (judgeBatch.size > 0) {
-      const verdictMap = await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
+      // M6: the decision stage is a port. With no strategy injected this keeps using the built-in
+      // `link-judge` path, which is the published Ψ_link behaviour the golden fixture pins — so the
+      // default arm is unchanged and `psi-link-default` still measures what it always measured.
+      const verdictMap = this.#decisionStrategy
+        ? await this.#strategyJudge([...judgeBatch.values()], extraction, docId, file)
+        : await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
+
       for (const plan of plans) {
         if (plan.action !== 'judge') continue;
-        const target = verdictMap.get(mentionKey(plan.category, plan.entity.name));
-        if (target) {
-          plan.canonical = target;
-        } // else: stays a mint
+        const verdict = verdictMap.get(mentionKey(plan.category, plan.entity.name));
+        if (verdict) {
+          plan.canonical = verdict;
+        } // else: link declined, or deferred — stays a mint
       }
     }
 
@@ -342,6 +358,69 @@ export class StreamingNormalizer {
       `StreamingNormalizer: relation endpoint "${name}" (${category}) in ${file} matches no entity — keeping raw name`
     );
     return name;
+  }
+
+  /**
+   * The M6 decision port, in place of the built-in `link-judge` call.
+   *
+   * Returns the same shape `#linkJudge` does — `mentionKey → canonical` for links only — so the
+   * caller is identical either way. A `mint` or a `defer` is simply absent from the map; the
+   * difference between them is recorded in the decision log, not here, because the registry has
+   * nothing to record for either (see §5 of docs/statistical-protocol.md).
+   */
+  async #strategyJudge(
+    batch: MentionPlan[],
+    extraction: StreamingExtraction,
+    docId: number,
+    file: string
+  ): Promise<Map<string, string>> {
+    const strategy = this.#decisionStrategy!;
+    const title = String(extraction.metadata?.title || 'untitled');
+    const snippet = await this.#loadSnippet(file);
+
+    const requests: DecisionRequest[] = batch.map((plan) => ({
+      mention: plan.entity.name,
+      category: plan.category,
+      docId,
+      docTitle: title,
+      docSnippet: snippet,
+      candidates: plan.candidates.map((candidate) => ({
+        canonical: candidate.name,
+        sim: candidate.sim,
+        surfaces: candidate.aliases,
+        channel: candidate.channel ?? 'string-sim',
+      })),
+    }));
+
+    let decisions: Decision[];
+    try {
+      decisions = await strategy.decide(requests);
+    } catch (error) {
+      // Same failure posture as #linkJudge: mint-all is conservative and repairable by the
+      // consolidator. Never abort the document.
+      console.error(`DECISION (${strategy.id}) failed for doc ${docId}, minting all:`, error);
+      return new Map();
+    }
+
+    if (decisions.length !== requests.length) {
+      // The port's contract is one decision per request, in order. A strategy that breaks it would
+      // otherwise silently misalign verdicts with mentions, which is unrecoverable after the fact.
+      throw new Error(
+        `DecisionStrategy '${strategy.id}' returned ${decisions.length} decisions for ${requests.length} requests`
+      );
+    }
+
+    const verdictMap = new Map<string, string>();
+    decisions.forEach((decision, index) => {
+      const plan = batch[index];
+      if (decision.kind !== 'link' || !decision.target) return;
+      // Accept links to actual candidates only, exactly as the built-in path does.
+      const target = plan.candidates.find(
+        (candidate) => candidate.name.toLowerCase() === decision.target!.trim().toLowerCase()
+      );
+      if (target) verdictMap.set(mentionKey(plan.category, plan.entity.name), target.name);
+    });
+    return verdictMap;
   }
 
   async #linkJudge(

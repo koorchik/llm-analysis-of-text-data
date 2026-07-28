@@ -597,7 +597,13 @@ loses a verdict (confirmed: `atera` as Organization and Software in doc 6280099)
   strategy could emit one — as intended.
 - **Bug fixed**, and all three key-construction sites now route through one `mentionKey()`. Keys
   built two different ways is precisely how the loss survived unnoticed.
-- **Two additions beyond the plan's letter**, both required to make the milestone's own goal real:
+- **`DECISION_STRATEGY` selects the arm at runtime.** `StreamingNormalizer` now takes the port;
+  unset keeps the built-in `link-judge` call, which is the published Ψ_link behaviour the golden
+  fixture pins, so the default arm is provably unchanged (test asserts the built-in path still runs
+  when nothing is injected). The strategy id **and its full config** go into `extra`, so they are
+  part of the runId — two arms differing only by decision rule would otherwise share a directory and
+  resume each other through the `existsSync` skips. Verified: three strategies, three distinct runIds.
+- **Three additions beyond the plan's letter**, all required to make the milestone's own goal real:
   1. `DecisionCandidate.surfaces` is now logged. The replay contract promises "the exact candidate
      list the judge saw", and aliases are part of what it saw (`dong2023reveal`: +2–14 F1) — without
      them a replayed prompt is not the original prompt, so E8 would report an input difference as a
@@ -607,6 +613,10 @@ loses a verdict (confirmed: `atera` as Organization and Software in doc 6280099)
      scored over a logged run for zero marginal cost. Replaying the batched LLM strategies is
      *refused*, not silently allowed: one call per mention is a different arm from one call per
      document, and substituting them would put a wrong cost next to a real quality figure.
+  3. The runtime wiring above. Without it the five strategies had **no live caller at all** — the
+     port existed and was tested, but nothing could run it, and `bin/replay.ts` told users to
+     "run it live with CONDITION=", which does nothing (`CONDITION` only names an arm for the
+     runId). Caught by a fact-check pass over the usage guide, along with several doc overclaims.
 
 **Usage guide:** `docs/RUNNING-EXPERIMENTS.md` — every CLI, env var, the gold-table schema, cost
 expectations, and an explicit "what does not work yet" section.

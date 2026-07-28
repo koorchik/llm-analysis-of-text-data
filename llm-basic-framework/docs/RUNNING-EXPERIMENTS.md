@@ -27,6 +27,7 @@ OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 VERTEXAI_PROJECT=your-project
 VERTEXAI_LOCATION=us-central1
+OLLAMA_API_KEY=...          # only if your Ollama endpoint requires one
 ```
 
 Only the provider you actually run needs a key. Nothing here needs Python — the whole pipeline,
@@ -96,7 +97,7 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 |---|---|---|
 | `FLOW` | `batch` | `batch` (Ψ_norm) or `incremental` (Ψ_link) |
 | `STEPS` | flow-dependent | Comma-separated subset; see below |
-| `CONDITION` | `psi-norm-default` / `psi-link-default` | **Names the experimental arm.** Part of the runId |
+| `CONDITION` | `psi-norm-default` / `psi-link-default` | **Names** the arm — a label in the runId. It does *not* select behaviour; `DECISION_STRATEGY` does |
 | `LLM_PROVIDER` | `openai` | `openai`, `anthropic`, `ollama`, `vertexai` |
 | `LLM_MODEL` | `gpt-5` | |
 | `EMBEDDINGS_PROVIDER` | `ollama` | |
@@ -104,6 +105,7 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `INPUT_DIR` | `../storage/cert.gov.ua/fetched` | |
 | `OUTPUT_DIR` | `../storage/cert.gov.ua/processed` | |
 | `DECISIONS_LOG` | off | **Set to `1`.** Without it there is nothing to score or replay |
+| `DECISION_STRATEGY` | unset | Selects the decision stage (§4). Unset = the built-in `link-judge` path |
 | `SEED` | none | Recorded in the run card |
 | `TEMPERATURE`, `TOP_P`, `MAX_TOKENS` | unset | Unset means *send nothing* — see below |
 | `EDGES_FROM` | `layered` | Graph build only |
@@ -113,7 +115,9 @@ Steps for `FLOW=incremental`: `streamingPipeline` (all of them), `streamingExtra
 For `FLOW=batch`: `dataExtractor`, `dataEntitiesCollector`, `dataNormalizer`, `dataAnalyzer`,
 `dataGraphBuilder`.
 
-Every step makes live LLM calls **except** `dataAnalyzer`, which is local t-SNE and free.
+Steps that make **no** LLM calls, and so are free to re-run: `dataAnalyzer` (local t-SNE),
+`dataGraphBuilder` and `streamingGraphBuilder` (both build graphs from existing artifacts). Every
+other step calls the model.
 
 ### Do not set `TEMPERATURE=0` on Anthropic
 
@@ -132,11 +136,11 @@ Each run gets its own directory, `$OUTPUT_DIR/experiments/<runId>/`:
 - `decisions.jsonl` — one row per decision point and per LLM call (needs `DECISIONS_LOG=1`)
 
 For `FLOW=incremental`, the run's whole state lives there too: `registry.json`, `schema.json`,
-`extractions/`, `artifacts/`. That is what `evaluate --run <runDir>` reads.
+`extractions/`, `artifacts/`, `graph/`, `analyzed/`. That is what `evaluate --run <runDir>` reads.
 
 For `FLOW=batch` only the run card and decision log are in the run directory — the artifacts still
-go to the shared `$OUTPUT_DIR/{raw,entities,normalized}/<model>/` layout. Score a batch arm with
-`evaluate --batch <entities.json>`, not `--run`.
+go to the shared `$OUTPUT_DIR/{raw,entities,normalized,analyzed}/<model>/` layout. Score a batch arm
+with `evaluate --batch <entities.json>`, not `--run`.
 
 `runId = sha256(config + git sha + dirty-diff hash + prompt hashes)`, prefixed with the condition
 name. Two arms therefore cannot share a directory and silently resume each other, and **a prompt
@@ -150,7 +154,20 @@ commit before a real one.
 ## 4. Decision strategies
 
 The decision stage is a port (`src/Normalization/types.ts`), and five strategies implement it.
-Three cost nothing to run:
+Select one with `DECISION_STRATEGY`:
+
+```bash
+DECISION_STRATEGY=listwise-mint-candidate CONDITION=e2-listwise \
+  FLOW=incremental DECISIONS_LOG=1 npm start
+```
+
+**Leaving `DECISION_STRATEGY` unset is a sixth path, not a synonym for any of these.** It runs the
+built-in `link-judge` call — the published Ψ_link behaviour the golden fixture pins — and that is
+deliberately the default, so an unset variable can never quietly change what `psi-link-default`
+measures. `listwise-mint-candidate` is its closest relative but uses a different prompt
+(`listwise-select`), so the two are separate arms.
+
+Three of the five cost nothing to run:
 
 | id | LLM calls | What it is for |
 |---|---|---|
@@ -171,7 +188,9 @@ Two corpus cases are worth knowing because they drive the whole comparison:
 The three-state outcome is `link | mint | defer`. `defer` is **not** a synonym for mint: it is a
 withheld decision, excluded from merge *precision* but counted as a miss in *recall*, and reported
 as its own rate. That asymmetry is deliberate — excluding deferrals from both would make "defer
-everything" score perfectly. Only `fellegi-sunter` and a configured `threshold` band ever defer.
+everything" score perfectly. Only `fellegi-sunter` and a `threshold` configured with `deferBand` or
+`minMargin` ever defer; the LLM arms never do (an LLM asked to abstain will abstain, so the rate
+would reflect prompt wording rather than genuine ambiguity).
 
 ---
 
@@ -224,10 +243,15 @@ reporting, `--ignore-categories` for arms whose category vocabulary is emergent.
 `--split test` is the default and `dev` requires `--allow-dev` on purpose: the split you report is
 a decision that should predate the numbers.
 
-What it computes: cluster-level merge P/R, the CESI suite (macro/micro/pairwise F1), B³, ARI,
-mint/NIL accounting, blocking/candidate recall per channel, Kendall τ-b, BCa bootstrap CIs
-(10k resamples, 95%), paired permutation tests (10k, two-sided, add-one) and Holm–Bonferroni.
-Undefined metrics render as `—`, never as `0`.
+What it computes **today**: merge precision/recall by stratum, mint/NIL accounting, and the CESI
+cluster suite (macro/micro/pairwise F1, B³, ARI). Undefined metrics render as `—`, never as `0`.
+
+**Not yet wired into this CLI**, though the modules exist and are unit-tested to the protocol's
+parameters: BCa bootstrap CIs (10k, 95%, `src/Evaluation/bootstrap.ts`), paired permutation tests,
+Holm–Bonferroni, blocking/candidate recall per channel (`blockingMetrics.ts`) and Kendall τ-b
+(`rankCorrelation.ts`). `evaluate` currently emits `downstreamTau: null` and `orderAri: null`
+outright. Wiring them up is M7/M11 work — until then, CIs and significance tests must be computed
+by calling those modules directly.
 
 ### The gold table
 
@@ -238,7 +262,7 @@ measured against, so a malformed table fails at load rather than producing a pla
 {
   "version": "gold-aliases-v1",
   "inputContentHash": "37d57e47...",
-  "order": "chronological",
+  "order": "numeric-id",
   "clusters": [
     { "id": "g1", "category": "HackerGroup",
       "members": ["APT28", "Fancy Bear", "АРТ28"],
@@ -259,7 +283,10 @@ Two things the loader enforces rather than assumes, because both are silent-corr
    first occurrence and known at every later one. A flat map cannot represent both and would
    mis-score the entire mint side. Note both rows above, same mention, different answers.
 2. **`order` is recorded.** NIL labels are only valid for the stream order they were derived under.
-   Replay under a different order and they must be regenerated, not reused.
+   Replay under a different order and they must be regenerated, not reused. The loader accepts any
+   non-empty string, but today runs only ever use `numeric-id` — `chronological` and `seededShuffle`
+   are M7 and do not exist yet, so a table claiming one of those cannot be matched by any run you
+   can currently produce.
 
 `members` are **surface forms**, not canonical names. `stratum` is the E0 stratum (a–d).
 
@@ -280,6 +307,11 @@ npm test                                    # the gate runs as part of the suite
 npm run capture-golden -- --verify          # explicit check, writes nothing
 ```
 
+`capture-golden` also takes `--input`, `--out-dir`, `--k` and `--min-sim` for regenerating the
+fixture against a different registry or retrieval setting. `hash-input` takes `--manifest` to print
+the per-file digests behind a content hash, which is what to reach for when two directories hash
+differently and you need to know which file moved.
+
 `test/fixtures/golden-candidates.json` holds 3,392 candidate lists captured from the pre-refactor
 code path, plus `test/fixtures/registry-v1.json` (3,360 canonicals). The verify path is path-free
 by design — it compares hashes only, so a fixture is not tied to the machine that made it.
@@ -291,8 +323,10 @@ deliberately.
 
 ## 8. Prompts
 
-All ten prompts live in `prompts/` as files, are hashed into every run card, and are folded into
-the runId. `prompts/README.md` covers the format and provenance; `prompts/manifest.json` is the
+All twelve prompts live in `prompts/` as files, are hashed into every run card, and are folded into
+the runId. Ten were mechanically **extracted** from inline literals in M6; `listwise-select` and
+`comem-select` were authored for their strategies and carry `extractedFrom: null` in the manifest
+rather than claiming a provenance they do not have. `prompts/README.md` covers the format and provenance; `prompts/manifest.json` is the
 extraction record.
 
 Editing a prompt **fails the test suite on purpose** — the manifest hash no longer matches. Prompt
@@ -315,9 +349,12 @@ npm run migrate-registry -- registry.json --policy first-seen --dry-run
 npm run migrate-registry -- registry.json --policy first-seen --out registry-v2.json
 ```
 
-Always `--dry-run` first. It reports the detected version, category/canonical/alias counts and the
-migrated document on stdout, and writes nothing. Without `--out` the migration overwrites the input
-file in place, which is the other reason to dry-run first.
+`--policy` accepts `first-seen`, `frequency-weighted` or `highest-degree`.
+
+Always `--dry-run` first. It reports the detected version, category/canonical/alias counts and **one
+sample migrated record**, and writes nothing. Without `--out` the migration rewrites the input file
+in place — it does copy the original to `<file>.v1.bak` first, but dry-running is still the cheaper
+way to find out you passed the wrong policy.
 
 ---
 
@@ -330,9 +367,13 @@ Read the run card's cost block rather than guessing — but the shape to expect:
 - `comem-select` — one call **per unresolved mention**, a large multiple of the above on this
   corpus. That cost is the finding, not a defect; do a 5-document slice before committing to it.
 
-Guard rails already in place: an unpriced model yields `costUsd: null` plus an `unpricedModels`
-list — **never a 0** that would silently understate a run. Dated snapshot suffixes
-(`-2025-01-01`) are stripped for the price lookup.
+Guard rail: a call on an unpriced model yields `costUsd: null` and is counted in `unpricedCalls` /
+`unpricedModels`. Dated snapshot suffixes (`-2025-01-01`) are stripped for the lookup, so one row
+per model alias is enough.
+
+**Read `unpricedCalls`, not the total.** `totals().costUsd` sums the priced calls only, so a run
+where nothing was priced reports `$0.0000 (+N unpriced calls)` — a plain zero, not a null. The
+zero is not the cost; the `+N` is the warning.
 
 **`config/model-prices.json` is partly unpriced.** The Anthropic models have real rates; `gpt-5`,
 `gpt-5.4-nano` and `text-embedding-3-large` are still `null` pending the provider-dashboard check
@@ -350,8 +391,9 @@ not a result.
 Honest status, so you do not plan around something that is not there.
 
 **Works now:** both pipelines end to end; run cards and cost metering; the decision log; all five
-decision strategies; offline replay; the full metric and significance suite; the gate; registry v2;
-analyzers and candidate generators (string-sim, exact, TF-IDF, BM25, RRF fusion).
+decision strategies, live via `DECISION_STRATEGY` and offline via `replay`; the gate; registry v2;
+analyzers and candidate generators (string-sim, exact, TF-IDF, BM25, RRF fusion); merge P/R, NIL and
+the CESI suite through `bin/evaluate.ts`.
 
 **Not built yet:**
 
@@ -359,9 +401,13 @@ analyzers and candidate generators (string-sim, exact, TF-IDF, BM25, RRF fusion)
   commented out. There is no embedding candidate generator, so the cosine-threshold arm the plan
   calls for cannot run, and the SecureBERT-vs-`text-embedding-3-large` comparison is unavailable.
   `ThresholdDecision` currently thresholds *string* similarity.
-- **M7 — the experiment CLI and ordering.** No single command runs a full arm matrix. Stream order
-  is fixed at `numeric-id`; `chronological` and `seededShuffle` are not implemented, which matters
-  because the gold table's `order` field must match the order a run actually used.
+- **M7 — the experiment CLI and ordering.** No single command runs a full arm matrix; run each arm
+  by hand with `DECISION_STRATEGY` and `CONDITION`. Stream order is fixed at `numeric-id`;
+  `chronological` and `seededShuffle` are not implemented, which matters because the gold table's
+  `order` field must match the order a run actually used.
+- **M7/M11 — significance testing in the CLI.** The bootstrap, permutation-test, Holm, blocking and
+  rank-correlation modules are written and unit-tested, but `bin/evaluate.ts` does not call them
+  yet (§6).
 - **M9 — the gold table.** No CERT-UA gold table exists yet. `bin/evaluate.ts` and the whole metric
   suite are tested and ready, but until you annotate one there is nothing to score against. This is
   the work you said you would do yourself, and it is the single blocker on every headline number.

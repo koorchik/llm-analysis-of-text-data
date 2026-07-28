@@ -15,7 +15,8 @@
  * alternative decision rule over a logged run costs nothing. The batched LLM strategies are excluded
  * on purpose: they exist to make one call per document, and replaying them a mention at a time would
  * both multiply their cost and change the context the judge sees, so the result would not be the
- * arm being named. Run those through `npm start` with CONDITION set instead.
+ * arm being named. Run those live instead:
+ *   DECISION_STRATEGY=comem-select CONDITION=e2-comem FLOW=incremental DECISIONS_LOG=1 npm start
  */
 import {
   DECISION_STRATEGIES,
@@ -97,7 +98,7 @@ async function main() {
     // one for the other would put a wrong cost figure next to a real quality figure.
     throw new Error(
       `Strategy '${strategyId}' makes LLM calls and is not replayable one decision point at a time. ` +
-        `Run it live via npm start with CONDITION=${strategyId}. ` +
+        `Run it live: DECISION_STRATEGY=${strategyId} CONDITION=<arm-name> FLOW=incremental npm start. ` +
         `Replayable: ${['identity', ...OFFLINE_STRATEGY_IDS].join(', ')}`
     );
   } else {

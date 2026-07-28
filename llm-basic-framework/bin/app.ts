@@ -25,6 +25,14 @@ import { LlmClientBackendAnthropic } from '../src/LlmClient/LlmClientBackendAnth
 import { LlmClientBackendOllama } from '../src/LlmClient/LlmClientBackendOllama';
 import { LlmClientBackendOpenAi } from '../src/LlmClient/LlmClientBackendOpenAi';
 import { LlmClientBackendVertexAi } from '../src/LlmClient/LlmClientBackendVertexAi';
+import {
+  DECISION_STRATEGIES,
+  ComemSelectDecision,
+  ListwiseMintCandidateDecision,
+  createOfflineStrategy,
+  isOfflineStrategyId,
+} from '../src/Normalization/decision';
+import type { DecisionStrategy } from '../src/Normalization/types';
 import { prompts } from '../src/Normalization/PromptProvider';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
@@ -62,6 +70,13 @@ const CONFIG = {
 
   // Incremental flow options
   decisionsLog: process.env.DECISIONS_LOG === '1',
+
+  // M6 decision stage. Unset means the built-in link-judge path — the published Ψ_link behaviour
+  // the golden fixture pins — so an unset variable never silently changes what the default arm
+  // measures. CONDITION only *names* an arm; this is what selects one.
+  // Normalized to undefined when empty: `DECISION_STRATEGY=` must behave exactly like unset, or the
+  // run card would record an empty-string arm name that reads as "none" but is not `?? `-defaulted.
+  decisionStrategy: process.env.DECISION_STRATEGY || undefined,
   edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
 
   // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
@@ -86,6 +101,12 @@ async function main() {
     supported: backend.sampling,
   };
 
+  // Built before the run config so its id and config can enter the runId. The LLM-backed strategies
+  // need a client, which needs the cost meter, which needs the runId — so this one is constructed
+  // with a placeholder client and rebuilt below once the real one exists. Only `.config` is read
+  // here, and that does not depend on the client.
+  const strategyForCard = createDecisionStrategy(null as unknown as LlmClient, undefined);
+
   const runConfig = resolveRunConfig({
     condition: CONFIG.condition,
     orchestration: CONFIG.flow,
@@ -99,7 +120,14 @@ async function main() {
     // only the used subset would make an unused-prompt edit invisible, and the next run of a
     // different step would then reuse this runId despite a genuinely different prompt set.
     promptHashes: prompts.hashes(),
-    extra: { steps: CONFIG.steps, edgesFrom: CONFIG.edgesFrom },
+    extra: {
+      steps: CONFIG.steps,
+      edgesFrom: CONFIG.edgesFrom,
+      // Part of the runId, not just a label: two arms differing only by decision rule would
+      // otherwise share a directory and resume each other through the `existsSync` skips.
+      decisionStrategy: CONFIG.decisionStrategy ?? 'builtin-link-judge',
+      decisionStrategyConfig: strategyForCard?.config ?? null,
+    },
   });
 
   const runDir = `${CONFIG.outputDir}/experiments/${runConfig.runId}`;
@@ -279,6 +307,34 @@ function createEmbeddingsClient(): EmbeddingsClient {
   return new EmbeddingsClient({ backend });
 }
 
+/**
+ * Build the decision strategy named by `DECISION_STRATEGY`, or undefined for the built-in path.
+ *
+ * Undefined is the default on purpose: the built-in `link-judge` call is the published Ψ_link
+ * behaviour, and having an unset environment variable quietly substitute a different decision rule
+ * would change what `psi-link-default` measures without anything in the run card saying so.
+ */
+function createDecisionStrategy(
+  llmClient: LlmClient,
+  decisionLog?: DecisionLog
+): DecisionStrategy | undefined {
+  const id = CONFIG.decisionStrategy;
+  if (!id) return undefined;
+
+  if (isOfflineStrategyId(id)) return createOfflineStrategy(id);
+  if (id === 'listwise-mint-candidate') {
+    return new ListwiseMintCandidateDecision({ llmClient, decisionLog });
+  }
+  if (id === 'comem-select') return new ComemSelectDecision({ llmClient, decisionLog });
+
+  // Fatal rather than falling back: silently running the built-in judge under another arm's name
+  // would put the wrong label on a real result.
+  throw new Error(
+    `Unknown DECISION_STRATEGY: ${id}. Available: ${Object.keys(DECISION_STRATEGIES).join(', ')} ` +
+      '(unset = the built-in link-judge path)'
+  );
+}
+
 function createProcessors(
   llmClient: LlmClient,
   embeddingsClient: EmbeddingsClient,
@@ -369,6 +425,7 @@ function createProcessors(
     decisionLog,
     sourceDir: inputDir,
     preprocessor,
+    decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
   });
 
   const streamingGraphBuilder = new StreamingGraphBuilder({
