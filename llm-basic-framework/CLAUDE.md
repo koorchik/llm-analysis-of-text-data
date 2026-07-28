@@ -6,6 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a TypeScript-based LLM framework for analyzing Ukrainian cybersecurity incident reports from CERT-UA. The application processes unstructured text reports to extract structured entities (attack targets, hacker groups, countries), normalize data, generate embeddings, and create visualizations.
 
+It also hosts the experiment harness for a research paper comparing entity-normalization approaches
+(streaming Ψ_link vs batch Ψ_norm) on a frozen 204-report corpus. Three docs cover that work:
+
+- **`docs/RUNNING-EXPERIMENTS.md`** — how to run, replay and score everything. Start here.
+- `docs/normalization-experiments-refactor.md` — the migration plan and milestone status.
+- `docs/statistical-protocol.md` — the pre-registered analysis. Read §5 before emitting a `defer`.
+
+Two things that are load-bearing and easy to break: `test/gate.test.ts` (byte-identity against a
+golden fixture — a failure means a measured difference downstream would be the refactor, not the
+experiment), and `prompts/` (prompt text is an experimental variable, hashed into every `runId`, so
+editing a prompt is meant to fail the suite until `prompts/manifest.json` is updated deliberately).
+
 ## Key Commands
 
 ### Development
@@ -18,8 +30,8 @@ npm start
 # 2. Data normalization and embedding generation  
 # 3. Data analysis and visualization
 
-# Note: No test framework is configured yet
-# npm test returns "Not implemented yet"
+# Tests: node:test via ts-node, no build step
+npm test        # 437 tests, ~12s — includes the behaviour gate (test/gate.test.ts)
 ```
 
 ### Typecheck
@@ -88,7 +100,12 @@ STEPS=dataExtractor npm start
 # Run full pipeline:
 STEPS=dataExtractor,dataEntitiesCollector,dataNormalizer,dataAnalyzer,dataGraphBuilder npm start
 ```
-All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-SNE, free to run). `DataNormalizer` embedding generation is currently stubbed (`entity.embedding = []`; the `embed()` call is commented out).
+All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-SNE, free to run). `DataNormalizer` embedding generation is currently stubbed (`entity.embedding = []`; the `embed()` call is commented out) — M5 has not been built.
+
+`FLOW=incremental` selects the streaming SKEIN v2 pipeline instead, with its own steps
+(`streamingPipeline`, `streamingExtractor`, `streamingNormalizer`, `streamingGraphBuilder`,
+`registryConsolidator`, `dataAnalyzer`). Set `CONDITION` to name the experimental arm and
+`DECISIONS_LOG=1` to get a scorable log. Full reference: `docs/RUNNING-EXPERIMENTS.md`.
 
 ### Switching LLM Models
 Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EMBEDDINGS_PROVIDER`, `EMBEDDINGS_MODEL`. See `README-CONFIGURATION.md` for details.
