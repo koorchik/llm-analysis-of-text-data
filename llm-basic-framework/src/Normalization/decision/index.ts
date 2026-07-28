@@ -3,6 +3,7 @@ import { ExactOnlyDecision } from './ExactOnlyDecision';
 import { FellegiSunterDecision } from './FellegiSunterDecision';
 import { ListwiseMintCandidateDecision } from './ListwiseMintCandidateDecision';
 import { ThresholdDecision } from './ThresholdDecision';
+import type { DecisionStrategy } from '../types';
 
 export { ComemSelectDecision } from './ComemSelectDecision';
 export { ExactOnlyDecision } from './ExactOnlyDecision';
@@ -34,8 +35,53 @@ export const DECISION_STRATEGIES = {
 export type DecisionStrategyId = keyof typeof DECISION_STRATEGIES;
 
 /** Strategy ids that make no LLM calls, so they can run without a configured backend. */
-export const OFFLINE_STRATEGY_IDS: DecisionStrategyId[] = [
-  'exact-only',
-  'threshold',
-  'fellegi-sunter',
-];
+export const OFFLINE_STRATEGY_IDS = ['exact-only', 'threshold', 'fellegi-sunter'] as const;
+
+export type OfflineStrategyId = (typeof OFFLINE_STRATEGY_IDS)[number];
+
+export interface OfflineStrategyOptions {
+  /** ThresholdDecision */
+  threshold?: number;
+  deferBand?: number;
+  minMargin?: number;
+  /** FellegiSunterDecision */
+  upper?: number;
+  lower?: number;
+  noDefer?: boolean;
+  /** ExactOnlyDecision */
+  caseSensitive?: boolean;
+}
+
+export function isOfflineStrategyId(id: string): id is OfflineStrategyId {
+  return (OFFLINE_STRATEGY_IDS as readonly string[]).includes(id);
+}
+
+/**
+ * Build an offline strategy by id.
+ *
+ * Exists so `bin/replay.ts` can construct one from a flag without switching on the id itself: the
+ * classes take different option objects, and a union of their constructors is not callable. Unknown
+ * options for the chosen strategy are ignored rather than rejected, because the CLI passes one flat
+ * bag of flags for whichever strategy was asked for.
+ */
+export function createOfflineStrategy(
+  id: OfflineStrategyId,
+  options: OfflineStrategyOptions = {}
+): DecisionStrategy {
+  switch (id) {
+    case 'exact-only':
+      return new ExactOnlyDecision({ caseSensitive: options.caseSensitive });
+    case 'threshold':
+      return new ThresholdDecision({
+        threshold: options.threshold,
+        deferBand: options.deferBand,
+        minMargin: options.minMargin,
+      });
+    case 'fellegi-sunter':
+      return new FellegiSunterDecision({
+        upper: options.upper,
+        lower: options.lower,
+        noDefer: options.noDefer,
+      });
+  }
+}

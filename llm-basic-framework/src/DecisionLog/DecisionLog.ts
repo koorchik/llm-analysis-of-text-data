@@ -42,6 +42,19 @@ export interface DecisionCandidate {
   sim: number;
   /** Which generator surfaced it: 'string-sim', 'exact', 'embedding', 'bm25', 'rrf'… */
   channel: string;
+  /**
+   * The alias surfaces shown to the judge alongside this candidate, in the order shown.
+   *
+   * Recorded because the replay contract is "the exact candidate list in the exact order the
+   * original judge saw it", and aliases are *part of what it saw* — `dong2023reveal` measures them
+   * at +2–14 F1. Without them a replayed prompt is not the original prompt, so E8 would compare two
+   * judges on different inputs and report the difference as a judge effect. The alias-aware
+   * non-LLM arms (`exact-only`, `fellegi-sunter`) would likewise score against name-only evidence.
+   *
+   * Optional because logs written before M6 do not have it; consumers must treat a missing value as
+   * "unknown", never as "no aliases".
+   */
+  surfaces?: string[];
 }
 
 /**

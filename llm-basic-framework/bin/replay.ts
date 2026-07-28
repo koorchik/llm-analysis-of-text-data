@@ -4,13 +4,26 @@
  * same mention and candidate set. This is what makes E8 (judge swap) cheap: the candidate
  * generator is held fixed by construction, so a delta measures the judge and nothing else.
  *
- *   npm run replay -- --in <decisions.jsonl> --out <replayed.jsonl> [--strategy identity]
+ *   npm run replay -- --in <decisions.jsonl> --out <replayed.jsonl> [--strategy exact-only]
  *   npm run replay -- --in <decisions.jsonl> --verify        # fidelity check, writes nothing
+ *   npm run replay -- --list-strategies
  *
  * `--verify` is verification item 7 of the refactor plan: replaying a log through the *same*
- * strategy must reproduce it exactly. Only the `identity` strategy exists in M1; M6 registers the
- * real ones (listwise-mint-candidate, exact-only, threshold, …).
+ * strategy must reproduce it exactly.
+ *
+ * Only the **offline** strategies are replayable here — they make no LLM calls, so scoring an
+ * alternative decision rule over a logged run costs nothing. The batched LLM strategies are excluded
+ * on purpose: they exist to make one call per document, and replaying them a mention at a time would
+ * both multiply their cost and change the context the judge sees, so the result would not be the
+ * arm being named. Run those through `npm start` with CONDITION set instead.
  */
+import {
+  DECISION_STRATEGIES,
+  OFFLINE_STRATEGY_IDS,
+  createOfflineStrategy,
+  isOfflineStrategyId,
+} from '../src/Normalization/decision';
+import { StrategyReplayAdapter } from '../src/Experiment/StrategyReplayAdapter';
 import {
   IdentityReplayStrategy,
   readDecisionEvents,
@@ -25,14 +38,33 @@ function arg(name: string): string | undefined {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
+/** A numeric flag, or undefined so the strategy's own default applies. */
+function num(name: string): number | undefined {
+  const value = arg(name);
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  // Fatal rather than falling back: a typo'd --threshold silently reverting to 0.8 would put the
+  // wrong number in the results table under the right label.
+  if (!Number.isFinite(parsed)) throw new Error(`--${name} must be a number, got "${value}"`);
+  return parsed;
+}
+
 async function main() {
   const inPath = arg('in');
   const outPath = arg('out');
   const strategyId = arg('strategy') ?? 'identity';
   const verify = process.argv.includes('--verify');
 
+  if (process.argv.includes('--list-strategies')) {
+    console.log(['identity', ...OFFLINE_STRATEGY_IDS].join('\n'));
+    return;
+  }
+
   if (!inPath) {
-    console.error('usage: replay --in <decisions.jsonl> [--out <file>] [--strategy identity] [--verify]');
+    console.error(
+      'usage: replay --in <decisions.jsonl> [--out <file>] [--strategy <id>] [--verify]\n' +
+        `       replayable strategies: ${['identity', ...OFFLINE_STRATEGY_IDS].join(', ')}`
+    );
     process.exit(2);
   }
 
@@ -43,18 +75,49 @@ async function main() {
   }
 
   let strategy: ReplayStrategy;
-  switch (strategyId) {
-    case 'identity':
-      strategy = new IdentityReplayStrategy(events);
-      break;
-    default:
-      // Deliberately fatal: silently falling back to identity would make a swap look like a no-op.
-      throw new Error(
-        `Unknown strategy: ${strategyId}. Only 'identity' exists in M1; M6 adds the real strategies.`
-      );
+  let adapter: StrategyReplayAdapter | undefined;
+  if (strategyId === 'identity') {
+    strategy = new IdentityReplayStrategy(events);
+  } else if (isOfflineStrategyId(strategyId)) {
+    adapter = new StrategyReplayAdapter(
+      createOfflineStrategy(strategyId, {
+        threshold: num('threshold'),
+        deferBand: num('defer-band'),
+        minMargin: num('min-margin'),
+        upper: num('upper'),
+        lower: num('lower'),
+        noDefer: process.argv.includes('--no-defer'),
+        caseSensitive: process.argv.includes('--case-sensitive'),
+      })
+    );
+    strategy = adapter;
+  } else if (strategyId in DECISION_STRATEGIES) {
+    // Deliberately fatal rather than "helpfully" running it: an LLM strategy replayed one mention
+    // at a time is a different arm from the same strategy run batched, and silently substituting
+    // one for the other would put a wrong cost figure next to a real quality figure.
+    throw new Error(
+      `Strategy '${strategyId}' makes LLM calls and is not replayable one decision point at a time. ` +
+        `Run it live via npm start with CONDITION=${strategyId}. ` +
+        `Replayable: ${['identity', ...OFFLINE_STRATEGY_IDS].join(', ')}`
+    );
+  } else {
+    // Deliberately fatal: silently falling back to identity would make a swap look like a no-op.
+    throw new Error(
+      `Unknown strategy: ${strategyId}. Replayable: ${['identity', ...OFFLINE_STRATEGY_IDS].join(', ')}`
+    );
   }
 
   const replayed = await replayEvents(events, strategy);
+
+  if (adapter && adapter.missingSurfaces > 0) {
+    // Loud, because a silently degraded arm looks like a genuinely weaker one. Pre-M6 logs did not
+    // record the alias surfaces the judge saw, so alias-sensitive strategies scored on names alone.
+    console.warn(
+      `REPLAY WARNING: ${adapter.missingSurfaces} candidate(s) had no logged alias surfaces ` +
+        `(pre-M6 log). '${strategyId}' scored them on canonical names alone — treat its numbers as a ` +
+        'lower bound, not a measurement.'
+    );
+  }
 
   if (verify) {
     const differences = replayed.filter((event, index) => {

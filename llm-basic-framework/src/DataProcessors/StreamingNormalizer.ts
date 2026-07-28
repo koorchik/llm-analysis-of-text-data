@@ -58,11 +58,14 @@ interface MentionPlan {
  */
 function describeCandidates(
   candidates: MentionPlan['candidates']
-): Array<{ name: string; sim: number; channel: string }> {
+): Array<{ name: string; sim: number; channel: string; surfaces: string[] }> {
   return candidates.map((candidate) => ({
     name: candidate.name,
     sim: Number(candidate.sim.toFixed(2)),
     channel: candidate.channel ?? 'string-sim',
+    // The aliases as shown to the judge. M6: without these a replayed prompt is not the original
+    // prompt, so E8 would attribute an input difference to the judge.
+    surfaces: candidate.aliases,
   }));
 }
 

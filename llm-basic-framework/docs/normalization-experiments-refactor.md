@@ -582,6 +582,35 @@ is deduped by `category|name`. One document with the same string under two categ
 loses a verdict (confirmed: `atera` as Organization and Software in doc 6280099). Key by
 `${category}|${name}` and use `verdict.category` on lookup.
 
+**✅ M6 DONE** (`a0433a2`, `b97cbf6`). 437 tests pass; gate still 3,392/3,392.
+
+- **All 10 prompts extracted** to `prompts/`, hashed into the run card, folded into the `runId` —
+  which makes `promptHashes` load-bearing for the first time (a prompt can now change with no code
+  change, so the git sha no longer covers it). Extraction was **mechanical**: a script lifted the
+  exact characters of each template literal and replaced `${expr}` with `{{name}}`, then diffed each
+  result against `git HEAD` with interpolations masked to the same sentinel. All ten matched exactly,
+  satisfying Risk #4. `prompts/manifest.json` locks them; a prompt edit now fails the test suite.
+- **Five strategies shipped**, behind the new `DecisionStrategy` port with `link | mint | defer`.
+  Two extra prompts (`listwise-select`, `comem-select`) were authored for M6 and are marked as such
+  in the manifest rather than claiming an extraction provenance they do not have.
+- **The `defer` convention was already fixed in M1** (`docs/statistical-protocol.md` §5), before any
+  strategy could emit one — as intended.
+- **Bug fixed**, and all three key-construction sites now route through one `mentionKey()`. Keys
+  built two different ways is precisely how the loss survived unnoticed.
+- **Two additions beyond the plan's letter**, both required to make the milestone's own goal real:
+  1. `DecisionCandidate.surfaces` is now logged. The replay contract promises "the exact candidate
+     list the judge saw", and aliases are part of what it saw (`dong2023reveal`: +2–14 F1) — without
+     them a replayed prompt is not the original prompt, so E8 would report an input difference as a
+     judge effect. Optional, since pre-M6 logs lack it; replay warns loudly rather than treating
+     absent as empty.
+  2. `StrategyReplayAdapter` + `bin/replay.ts` wiring, so the three **offline** strategies can be
+     scored over a logged run for zero marginal cost. Replaying the batched LLM strategies is
+     *refused*, not silently allowed: one call per mention is a different arm from one call per
+     document, and substituting them would put a wrong cost next to a real quality figure.
+
+**Usage guide:** `docs/RUNNING-EXPERIMENTS.md` — every CLI, env var, the gold-table schema, cost
+expectations, and an explicit "what does not work yet" section.
+
 ### M7 — Orchestration and the experiment CLI
 
 `src/Normalization/runs/` — `StreamingRun` (Ψ_link; `StreamingNormalizer.processFile` L126-159
