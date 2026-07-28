@@ -306,12 +306,35 @@ Deliverables:
 3. **`test/fixtures/golden-candidates.jsonl`** — `candidates()` output for every one of the 3,392
    pairs against that fixture, at the defaults the streaming pipeline actually uses
    (**verified: `k = 5`, `minSim = 0.5`**, from `StreamingNormalizer`'s `candidateK` /
-   `candidateMinSim`), recorded in a header line so the gate cannot drift. JSONL rather than one
-   JSON document: 3,392 records, one per line, stays diffable and is 1.2 MB instead of several.
+   `candidateMinSim`), recorded in a header line so the gate cannot drift.
    The header is deliberately **path-free** — the corpus is identified by its content hash and the
    fixture by its canonical hash, so the file verifies from any directory. (Found by testing the
    verifier: embedding paths made a faithful copy fail on the header alone, a false positive that
    would mask real drift.)
+
+   **On JSONL vs JSON, with the comparison actually measured** (the first version of this section
+   overstated the case, claiming a size and diff advantage that only partly exists):
+
+   | format | bytes | lines | diff: 1 sim changes | diff: 1,275 sims change | diff: 1 query inserted |
+   |---|---|---|---|---|---|
+   | pretty JSON (indent 2) | 2,466,743 | 114,566 | **2** | 2,550 | 13 |
+   | compact JSON (one line) | 1,278,012 | 1 | 2 (= whole file) | 2 (= whole file) | 2 (= whole file) |
+   | **JSONL** | 1,278,000 | 3,393 | 2 | 2,550 | **1** |
+
+   So: JSONL beats *compact* JSON decisively (a one-line file has no usable diff at all), but is
+   **not** better than *pretty* JSON on diffs — pretty JSON is equally surgical for value changes and
+   only loses on insertions. Size is the one clear win: 1.93× smaller than pretty, and the file is
+   regenerated whenever the metric changes, so each version is stored again in git history. JSONL and
+   compact JSON are within 12 bytes of each other.
+
+   The choice therefore rests on **record-stream semantics and existing convention**, not on the
+   size or diff numbers: this file is 3,392 independent records with no cross-record structure, the
+   repo already uses JSONL for exactly that shape (`decisions.jsonl`), and it reserves `.json` for
+   documents read whole (`registry-v1.json`, `run-card.json`, `gold-aliases-v1.json`). The costs are
+   real and worth naming: consumers need a line-splitting helper instead of one `JSON.parse`, JSON
+   Schema cannot validate the file as a unit, and a header record sharing a stream with data records
+   is a mild hack that a JSON document would not need. If a future consumer makes those costs bite,
+   switching is a regeneration plus two call sites.
 4. **Fix the tie-break first.** `similarityUtils.ts:61` sorts on `b.sim - a.sim` only, so
    equal-similarity candidates fall back to registry insertion order. Change it to sort on
    `(-sim, canonicalName)` **before** capturing, and capture against the fixed version — otherwise
