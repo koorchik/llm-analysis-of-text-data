@@ -10,6 +10,7 @@ It also hosts the experiment harness for a research paper comparing entity-norma
 (streaming Ψ_link vs batch Ψ_norm) on a frozen 204-report corpus. Three docs cover that work:
 
 - **`docs/RUNNING-EXPERIMENTS.md`** — how to run, replay and score everything. Start here.
+- **`docs/GOLD-TABLE.md`** — how to build the gold table (`npm run gold`). Gates every result.
 - `docs/normalization-experiments-refactor.md` — the migration plan and milestone status.
 - `docs/statistical-protocol.md` — the pre-registered analysis. Read §5 before emitting a `defer`.
 

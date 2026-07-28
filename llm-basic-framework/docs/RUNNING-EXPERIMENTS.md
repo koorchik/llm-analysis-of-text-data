@@ -7,6 +7,9 @@ This is the operational guide. Two companions cover the *why*:
 `docs/statistical-protocol.md` is the pre-registered analysis — read §5 before you emit a `defer`
 and §6.1 before you generalize any result off this single corpus.
 
+**Building the gold table is a separate guide: `docs/GOLD-TABLE.md`.** Nothing in §6 below can run
+until it exists, so start there.
+
 **Milestone status: M1–M4 and M6 are done. M5, M7–M12 are not.** What that means in practice is
 called out in [What does not work yet](#what-does-not-work-yet) — read it before you plan a run, so
 you do not spend money discovering it.
@@ -255,7 +258,11 @@ by calling those modules directly.
 
 ### The gold table
 
-`gold-aliases-v1`, and the loader is deliberately strict — it is the reference every number is
+**How to build one: `docs/GOLD-TABLE.md`.** `npm run gold` does the mechanical parts (inventory,
+pair proposals, transitive closure, singletons, NIL labels, dev/test split); you adjudicate pairs
+and source the semantic strata.
+
+The format is `gold-aliases-v1`, and the loader is deliberately strict — it is the reference every number is
 measured against, so a malformed table fails at load rather than producing a plausible wrong score.
 
 ```json
