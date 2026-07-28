@@ -192,7 +192,7 @@ export class StreamingNormalizer {
     const judgeBatch = new Map<string, MentionPlan>();
     for (const plan of plans) {
       if (plan.action !== 'judge') continue;
-      const key = `${plan.category}|${plan.entity.name.trim().toLowerCase()}`;
+      const key = mentionKey(plan.category, plan.entity.name);
       if (!judgeBatch.has(key)) judgeBatch.set(key, plan);
     }
 
@@ -200,8 +200,7 @@ export class StreamingNormalizer {
       const verdictMap = await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
       for (const plan of plans) {
         if (plan.action !== 'judge') continue;
-        const key = `${plan.category}|${plan.entity.name.trim().toLowerCase()}`;
-        const target = verdictMap.get(key);
+        const target = verdictMap.get(mentionKey(plan.category, plan.entity.name));
         if (target) {
           plan.canonical = target;
         } // else: stays a mint
@@ -376,19 +375,29 @@ ${lines.join('\n')}`;
       const verdicts = normalizeLinkVerdicts(extractAndParseJson(response.text) || {}) || [];
 
       const verdictMap = new Map<string, string>();
+      // Key by category|mention, exactly as the caller does. Keying by mention alone silently lost a
+      // verdict whenever one document carried the same surface under two categories — confirmed on
+      // `atera`, extracted as both Organization and Software in doc 6280099. Both reach the judge as
+      // separate numbered lines, but a name-only map collapses them to one entry, so one plan minted
+      // regardless of the verdict and the surviving plan could be assigned the other's target.
       const batchByMention = new Map(
-        batch.map((plan) => [plan.entity.name.trim().toLowerCase(), plan])
+        batch.map((plan) => [mentionKey(plan.category, plan.entity.name), plan])
       );
       for (const verdict of verdicts) {
         if (verdict.verdict !== 'link') continue;
-        const plan = batchByMention.get(verdict.mention.trim().toLowerCase());
+        // `category` has a LIVR default of '' — a model that omits it falls through to a name-only
+        // lookup, but only when that surface is unambiguous in this batch. Guessing when two
+        // categories share a surface is the very failure being fixed here.
+        const plan =
+          batchByMention.get(mentionKey(verdict.category ?? '', verdict.mention)) ??
+          unambiguousPlan(batch, verdict.mention);
         if (!plan) continue;
         // Only accept links to actual candidates' canonical names
         const target = plan.candidates.find(
           (c) => c.name.toLowerCase() === verdict.target.trim().toLowerCase()
         );
         if (target) {
-          verdictMap.set(`${plan.category}|${plan.entity.name.trim().toLowerCase()}`, target.name);
+          verdictMap.set(mentionKey(plan.category, plan.entity.name), target.name);
         }
       }
       return verdictMap;
@@ -498,4 +507,29 @@ ${lines.join('\n')}`;
       return '(no document text available)';
     }
   }
+}
+
+/**
+ * The one key used for every (category, mention) map in this file: the judge batch, the verdict map
+ * and the lookups on both sides.
+ *
+ * Both parts are folded, including the category. Categories reaching this from a plan are already
+ * canonical, but a category coming back from the judge is whatever the model typed, and a key built
+ * two different ways is how the verdict-loss bug survived unnoticed in the first place.
+ */
+function mentionKey(category: string, mention: string): string {
+  return `${category.trim().toLowerCase()}|${mention.trim().toLowerCase()}`;
+}
+
+/**
+ * The plan for a surface, when exactly one plan in the batch carries it.
+ *
+ * Used only as a fallback for a verdict whose `category` the model omitted. Returning undefined for
+ * an ambiguous surface is the whole point: the alternative is guessing which of two categories the
+ * judge meant, which is what produced cross-category mis-assignment before.
+ */
+function unambiguousPlan(batch: MentionPlan[], mention: string): MentionPlan | undefined {
+  const folded = mention.trim().toLowerCase();
+  const matches = batch.filter((plan) => plan.entity.name.trim().toLowerCase() === folded);
+  return matches.length === 1 ? matches[0] : undefined;
 }

@@ -37,6 +37,9 @@ interface Params {
 
 const PLACEHOLDER = /\{\{(\w+)\}\}/g;
 
+/** `.md` files in `prompts/` that are documentation rather than prompts. */
+const NON_PROMPT_FILES = new Set(['README']);
+
 export class PromptProvider {
   public readonly dir: string;
 
@@ -52,6 +55,8 @@ export class PromptProvider {
     return readdirSync(this.dir)
       .filter((file) => file.endsWith('.md'))
       .map((file) => file.replace(/\.md$/, ''))
+      // README.md documents the directory; it is not a prompt and must not reach a run card.
+      .filter((id) => !NON_PROMPT_FILES.has(id))
       .sort();
   }
 

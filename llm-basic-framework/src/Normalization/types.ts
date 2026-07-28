@@ -140,3 +140,64 @@ export function compareCandidates(a: Candidate, b: Candidate): number {
 export function topK(candidates: Candidate[], k: number): Candidate[] {
   return [...candidates].sort(compareCandidates).slice(0, k);
 }
+
+// --- DecisionStrategy -----------------------------------------------------------------------------
+
+/**
+ * One mention awaiting a decision, with the candidates a generator surfaced for it.
+ *
+ * `candidates` arrives already ordered by {@link compareCandidates} and truncated to k. A strategy
+ * may re-rank internally but must not assume it can widen the list — recall it did not get is gone.
+ */
+export interface DecisionRequest {
+  mention: string;
+  category: string;
+  candidates: Candidate[];
+  docId: number;
+  /** Document title and text snippet, for strategies that judge in context. */
+  docTitle?: string;
+  docSnippet?: string;
+}
+
+export type DecisionKind = 'link' | 'mint' | 'defer';
+
+/**
+ * `defer` is the third state M6 adds, and it is deliberately not a synonym for `mint`.
+ *
+ * A `mint` asserts "this is a new entity"; a `defer` asserts "I decline to decide". They differ in
+ * how they score — see §5 of `docs/statistical-protocol.md`, fixed before any `defer` was emitted: a
+ * deferral is a **withheld decision**, excluded from merge *precision* (no claim was made, so none
+ * can be wrong) but **counted as a miss in recall**, and reported as its own deferral-rate column.
+ * The asymmetry is deliberate — excluding deferrals from both would make "defer everything" score
+ * perfectly. A strategy that cannot abstain never returns it, so the baseline arms are unaffected.
+ */
+export interface Decision {
+  kind: DecisionKind;
+  /** The chosen canonical for `link`; null for `mint` and `defer`. */
+  target: string | null;
+  /**
+   * Strategy-reported confidence in [0, 1], or null when the strategy has no calibrated notion of
+   * one. Never invent a number here: a fabricated confidence would flow into the decision log and
+   * look like evidence in E5's calibration curves.
+   */
+  confidence: number | null;
+  /** Short, loggable reason — appears in the decision log, so keep it stable across runs. */
+  reason: string;
+}
+
+/**
+ * Decides identity. This is the port E1/E3/E8 vary along.
+ *
+ * `decide` takes the whole document's batch at once, because the LLM strategies make **one batched
+ * call per document** and splitting that into per-mention calls would change both cost and the
+ * judge's context. Returning an array positionally aligned with `requests` is part of the contract —
+ * strategies must return exactly one decision per request, in order.
+ *
+ * Note the asymmetry with `CandidateGenerator`: generators see one query at a time and strategies see
+ * the batch. That is not an inconsistency, it reflects where batching is observable in cost.
+ */
+export interface DecisionStrategy {
+  readonly id: string;
+  readonly config: Record<string, unknown>;
+  decide(requests: DecisionRequest[]): Promise<Decision[]>;
+}
