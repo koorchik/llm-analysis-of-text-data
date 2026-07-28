@@ -303,38 +303,44 @@ Deliverables:
    behaviour, it does not improve on it). Deterministic and committed.
 2. **`bin/capture-golden.ts`** — the generator, committed alongside its output so the fixture can be
    rebuilt and diffed rather than trusted.
-3. **`test/fixtures/golden-candidates.jsonl`** — `candidates()` output for every one of the 3,392
+3. **`test/fixtures/golden-candidates.json`** — `candidates()` output for every one of the 3,392
    pairs against that fixture, at the defaults the streaming pipeline actually uses
    (**verified: `k = 5`, `minSim = 0.5`**, from `StreamingNormalizer`'s `candidateK` /
-   `candidateMinSim`), recorded in a header line so the gate cannot drift.
-   The header is deliberately **path-free** — the corpus is identified by its content hash and the
+   `candidateMinSim`), recorded in the document metadata so the gate cannot drift.
+   Metadata is deliberately **path-free** — the corpus is identified by its content hash and the
    fixture by its canonical hash, so the file verifies from any directory. (Found by testing the
-   verifier: embedding paths made a faithful copy fail on the header alone, a false positive that
+   verifier: embedding paths made a faithful copy fail on the metadata alone, a false positive that
    would mask real drift.)
 
-   **On JSONL vs JSON, with the comparison actually measured** (the first version of this section
-   overstated the case, claiming a size and diff advantage that only partly exists):
+   **Format: a JSON document, not JSONL.** This was got wrong twice before landing, so the reasoning
+   is recorded rather than the conclusion alone.
+
+   The first attempt was JSONL with the metadata as line 0. That breaks the only contract JSONL has —
+   **every line is the same shape** — and consumers depend on it: `pandas.read_json(lines=True)`
+   yields a phantom all-null row, DuckDB/BigQuery schema inference produces a bogus union schema,
+   `jq -s 'map(.category)'` returns a leading null. It also forced the loader to identify the header
+   *by position*, which stops working the moment the file is sorted, filtered or concatenated. Adding
+   a `type` discriminator per line was considered and rejected: it hardens the parse while keeping
+   the heterogeneity, and "metadata plus a uniform table" is exactly what a JSON document is for.
+
+   The size and diff arguments originally offered for JSONL do not survive measurement either:
 
    | format | bytes | lines | diff: 1 sim changes | diff: 1,275 sims change | diff: 1 query inserted |
    |---|---|---|---|---|---|
-   | pretty JSON (indent 2) | 2,466,743 | 114,566 | **2** | 2,550 | 13 |
-   | compact JSON (one line) | 1,278,012 | 1 | 2 (= whole file) | 2 (= whole file) | 2 (= whole file) |
-   | **JSONL** | 1,278,000 | 3,393 | 2 | 2,550 | **1** |
+   | pretty JSON (`indent 2`) | 2,466,743 | 114,566 | 2 | 2,550 | 13 |
+   | compact JSON (one line) | 1,278,012 | 1 | 2 = *whole file* | 2 = *whole file* | 2 = *whole file* |
+   | JSONL | 1,278,000 | 3,393 | 2 | 2,550 | 1 |
 
-   So: JSONL beats *compact* JSON decisively (a one-line file has no usable diff at all), but is
-   **not** better than *pretty* JSON on diffs — pretty JSON is equally surgical for value changes and
-   only loses on insertions. Size is the one clear win: 1.93× smaller than pretty, and the file is
-   regenerated whenever the metric changes, so each version is stored again in git history. JSONL and
-   compact JSON are within 12 bytes of each other.
+   JSONL beats *compact* JSON decisively but is no better than *pretty* JSON on diffs, and is within
+   12 bytes of compact on size. So the format was chosen on structure, not on those numbers.
 
-   The choice therefore rests on **record-stream semantics and existing convention**, not on the
-   size or diff numbers: this file is 3,392 independent records with no cross-record structure, the
-   repo already uses JSONL for exactly that shape (`decisions.jsonl`), and it reserves `.json` for
-   documents read whole (`registry-v1.json`, `run-card.json`, `gold-aliases-v1.json`). The costs are
-   real and worth naming: consumers need a line-splitting helper instead of one `JSON.parse`, JSON
-   Schema cannot validate the file as a unit, and a header record sharing a stream with data records
-   is a mild hack that a JSON document would not need. If a future consumer makes those costs bite,
-   switching is a regeneration plus two call sites.
+   The shipped file is a JSON document whose **metadata is pretty-printed and whose `results` rows
+   occupy exactly one line each** (hand-rolled serializer, ~10 deterministic lines in
+   `bin/capture-golden.ts`). That keeps every property worth having at once: one `JSON.parse`, a
+   homogeneous `results` array, metadata at the root, 1.25 MB, and a one-line diff per changed query.
+   Rule of thumb for this repo: **JSONL only for homogeneous record streams; JSON for anything
+   carrying metadata alongside rows.**
+
 4. **Fix the tie-break first.** `similarityUtils.ts:61` sorts on `b.sim - a.sim` only, so
    equal-similarity candidates fall back to registry insertion order. Change it to sort on
    `(-sim, canonicalName)` **before** capturing, and capture against the fixed version — otherwise
@@ -449,7 +455,7 @@ belongs in the paper's rejection list, not in the codebase.
 
 **Regression gate:** `StringSimilarityGenerator` with `identity` analyzer + `max(lev, dice)` must
 reproduce `EntityRegistry.candidates()` output **exactly** on all 3,392 frozen pairs, asserted
-against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.jsonl` pair captured
+against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.json` pair captured
 in **M2.5**. Assert byte-identity before anything else changes; only then delete `candidates()`.
 
 The capture itself — fixture construction, the golden file, and the `(-sim, canonicalName)`
@@ -672,7 +678,7 @@ src/Evaluation/{unionFind.ts, partition.ts, clusterMetrics.ts, nilMetrics.ts, bl
 src/Resources/{AttackStix.ts, MispGalaxy.ts, Wikidata.ts}        // GeoNames, NvdCpe → E3
 bin/{app.ts, experiment.ts, evaluate.ts, gold.ts, replay.ts, downstream.ts, hash-input.ts,
      migrate-registry.ts, capture-golden.ts}
-test/fixtures/{registry-v1.json, golden-candidates.jsonl}        // M2.5, before M3
+test/fixtures/{registry-v1.json, golden-candidates.json}         // M2.5, before M3
 docs/statistical-protocol.md
 prompts/*.md          experiments/*.json          config/model-prices.json
 ```
@@ -773,7 +779,7 @@ in this column is a defect in **this** document.
    file. This is the test that makes the refactor safe. **Checkable by commit order:** the fixture
    and golden file must be committed *before* the M3 registry-v2 commit — if they arrive after, the
    gate is circular and does not count. Verify with
-   `git log --oneline -- test/fixtures/golden-candidates.jsonl src/EntityRegistry/`.
+   `git log --oneline -- test/fixtures/golden-candidates.json src/EntityRegistry/`.
 5. **Instrumentation smoke test** (M1). One 5-document run emits a decision log with non-zero token
    counts from every backend, and a run card whose cost totals equal the log's sum.
 6. **Content hash is reproducible.** `bin/hash-input.ts` run twice gives the same value, and the

@@ -2,7 +2,7 @@
 /**
  * M2.5 — capture the behaviour-preservation fixture and golden candidate lists.
  *
- *   npm run capture-golden            # write test/fixtures/{registry-v1.json,golden-candidates.jsonl}
+ *   npm run capture-golden            # write test/fixtures/{registry-v1.json,golden-candidates.json}
  *   npm run capture-golden -- --verify   # recompute and compare; writes nothing, exits 1 on drift
  *
  * WHY THIS EXISTS, AND WHY NOW
@@ -40,7 +40,19 @@ const DEFAULT_OUT_DIR = 'test/fixtures';
 const PIPELINE_K = 5;
 const PIPELINE_MIN_SIM = 0.5;
 
-const GOLDEN_VERSION = 'golden-candidates-v1';
+/**
+ * v2 is a JSON **document**, not JSONL. v1 was JSONL with the metadata as line 0 — which broke the
+ * one contract JSONL has: **every line is the same shape**. Consumers rely on that
+ * (`pandas.read_json(lines=True)`, DuckDB/BigQuery schema inference, `jq -s 'map(.category)'`); a
+ * differently-shaped first line yields a phantom all-null row or a bogus union schema. Adding a
+ * `type` discriminator was considered and rejected: it hardens the parse but keeps the
+ * heterogeneity, and metadata plus a uniform table is precisely what a JSON document is for.
+ *
+ * Metadata therefore lives at the document root and the rows live in `results`. Serialization is
+ * hand-rolled so each row occupies exactly one line: that keeps per-record diffs (a changed row is
+ * a one-line diff) and the compact size, without the format lie.
+ */
+const GOLDEN_VERSION = 'golden-candidates-v2';
 
 interface CandidateRow {
   name: string;
@@ -55,12 +67,12 @@ interface GoldenResult {
 }
 
 /**
- * Header fields are deliberately **path-free**: the corpus is identified by its content hash and
- * the fixture by its canonical hash, both of which are semantic. Recording file paths would make
- * the golden file non-portable — verifying a copy from another directory would fail on the header
+ * Document-level metadata, deliberately **path-free**: the corpus is identified by its content hash
+ * and the fixture by its canonical hash, both of which are semantic. Recording file paths would make
+ * the golden file non-portable — verifying a copy from another directory would fail on the metadata
  * alone, which is a false positive that hides real drift. (Found by testing the verifier.)
  */
-interface GoldenHeader {
+interface GoldenMeta {
   version: typeof GOLDEN_VERSION;
   generatedBy: string;
   note: string;
@@ -69,6 +81,26 @@ interface GoldenHeader {
   options: { k: number; minSim: number };
   tieBreak: string;
   queries: number;
+}
+
+/**
+ * Serialize as valid JSON with **one result per line**.
+ *
+ * `JSON.stringify(doc, null, 2)` would indent every candidate object across ~7 lines, giving a
+ * 2.47 MB file whose diffs span whole blocks; fully compact would give one 1.28 MB line with no
+ * usable diff at all. Emitting the metadata pretty and each row on its own line gets both: 1.28 MB,
+ * a one-line diff per changed query, and `JSON.parse` in a single call.
+ *
+ * Deterministic by construction — key order comes from the object literals, and no sorting or
+ * locale-dependent formatting is involved.
+ */
+function serializeGolden(meta: GoldenMeta, results: GoldenResult[]): string {
+  const metaLines = Object.entries(meta).map(
+    ([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value)}`
+  );
+  const rows = results.map((row) => `    ${JSON.stringify(row)}`);
+  const resultsBlock = rows.length === 0 ? '  "results": []' : `  "results": [\n${rows.join(',\n')}\n  ]`;
+  return `{\n${metaLines.join(',\n')},\n${resultsBlock}\n}\n`;
 }
 
 /** Code-unit comparison — never `localeCompare`, which is ICU- and locale-dependent. */
@@ -128,7 +160,7 @@ async function main() {
   const minSim = Number(arg('min-sim') ?? PIPELINE_MIN_SIM);
 
   const fixturePath = path.join(outDir, 'registry-v1.json');
-  const goldenPath = path.join(outDir, 'golden-candidates.jsonl');
+  const goldenPath = path.join(outDir, 'golden-candidates.json');
 
   console.log(`input:    ${inputDir}`);
   console.log(`fixture:  ${fixturePath}`);
@@ -219,7 +251,7 @@ async function main() {
   }
   console.log(`scored ${queries.length} queries in ${Date.now() - started}ms`);
 
-  const header: GoldenHeader = {
+  const meta: GoldenMeta = {
     version: GOLDEN_VERSION,
     generatedBy: 'bin/capture-golden.ts',
     note:
@@ -239,7 +271,7 @@ async function main() {
     queries: queries.length,
   };
 
-  const serialized = `${[JSON.stringify(header), ...results.map((row) => JSON.stringify(row))].join('\n')}\n`;
+  const serialized = serializeGolden(meta, results);
 
   if (verify) {
     if (!existsSync(goldenPath)) {

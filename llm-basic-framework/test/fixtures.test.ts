@@ -21,7 +21,7 @@ import path from 'path';
 
 const INPUT_DIR = path.resolve(__dirname, '../../storage/cert.gov.ua/processed/raw-unified/gpt-5');
 const FIXTURE = path.resolve(__dirname, 'fixtures/registry-v1.json');
-const GOLDEN = path.resolve(__dirname, 'fixtures/golden-candidates.jsonl');
+const GOLDEN = path.resolve(__dirname, 'fixtures/golden-candidates.json');
 
 const corpusAvailable = existsSync(INPUT_DIR);
 const fixtureAvailable = existsSync(FIXTURE);
@@ -35,10 +35,17 @@ interface GoldenRow {
   candidates: Array<{ name: string; sim: number; aliases: string[] }>;
 }
 
-function loadGolden(): { header: Record<string, any>; rows: GoldenRow[] } {
-  const lines = readFileSync(GOLDEN, 'utf8').split('\n').filter((line) => line.length > 0);
-  return { header: JSON.parse(lines[0]), rows: lines.slice(1).map((line) => JSON.parse(line)) };
+interface GoldenDocument extends Record<string, any> {
+  results: GoldenRow[];
 }
+
+/**
+ * One `JSON.parse`, no line splitting.
+ *
+ * The file was briefly JSONL with the metadata on line 0, which violated JSONL's only real
+ * contract — every line the same shape — and forced this loader to hard-code `lines[0]`.
+ */
+const loadGolden = (): GoldenDocument => JSON.parse(readFileSync(GOLDEN, 'utf8'));
 
 // --- the fixture ---------------------------------------------------------------------------------
 
@@ -116,16 +123,46 @@ test('serializeFixture is stable and newline-terminated', { skip: !fixtureAvaila
 
 // --- the golden candidate lists ------------------------------------------------------------------
 
-test('the golden header pins the options the pipeline actually uses', { skip: !goldenAvailable }, () => {
-  const { header, rows } = loadGolden();
-  assert.equal(header.version, 'golden-candidates-v1');
+test('the golden file is a single valid JSON document with a homogeneous results array', { skip: !goldenAvailable }, () => {
+  // It is deliberately NOT JSONL. JSONL's one contract is that every line has the same shape, and
+  // metadata-plus-rows does not — a differently-shaped first line breaks
+  // pandas.read_json(lines=True), DuckDB/BigQuery schema inference and `jq -s`. Metadata belongs at
+  // a document root.
+  const raw = readFileSync(GOLDEN, 'utf8');
+  const doc = JSON.parse(raw); // one call — no line splitting, no discriminator
+  assert.ok(Array.isArray(doc.results));
+
+  // Every row has exactly the same key set: uniform, so it really is a table.
+  const shape = (row: GoldenRow) => Object.keys(row).sort().join(',');
+  const shapes = new Set(doc.results.map(shape));
+  assert.equal(shapes.size, 1, `rows are not uniform: ${[...shapes].join(' | ')}`);
+  assert.equal([...shapes][0], 'candidates,category,name');
+
+  // Metadata keys must not leak into rows, nor vice versa.
+  assert.equal('results' in doc.results[0], false);
+  assert.equal('version' in doc.results[0], false);
+});
+
+test('each result occupies exactly one line, so a changed query is a one-line diff', { skip: !goldenAvailable }, () => {
+  // The reason for the hand-rolled serializer: JSON.stringify(doc, null, 2) would spread every
+  // candidate over ~7 lines (2.47 MB), and fully compact would put the file on one line.
+  const lines = readFileSync(GOLDEN, 'utf8').split('\n');
+  const rowLines = lines.filter((line) => line.startsWith('    {"category"'));
+  assert.equal(rowLines.length, 3392, 'one line per result');
+  assert.ok(lines.length < 3392 + 20, 'metadata adds only a handful of lines');
+});
+
+test('the golden metadata pins the options the pipeline actually uses', { skip: !goldenAvailable }, () => {
+  const doc = loadGolden();
+  const rows = doc.results;
+  assert.equal(doc.version, 'golden-candidates-v2');
   // StreamingNormalizer's candidateK / candidateMinSim defaults. If these drift, the gate is
   // measuring a configuration the pipeline never runs.
-  assert.equal(header.options.k, 5);
-  assert.equal(header.options.minSim, 0.5);
-  assert.equal(header.queries, 3392);
+  assert.equal(doc.options.k, 5);
+  assert.equal(doc.options.minSim, 0.5);
+  assert.equal(doc.queries, 3392);
   assert.equal(rows.length, 3392);
-  assert.match(header.tieBreak, /-sim/);
+  assert.match(doc.tieBreak, /-sim/);
 });
 
 test(
@@ -134,14 +171,14 @@ test(
   () => {
     // Without this, a regenerated fixture and a stale golden file could be compared against each
     // other and the M4 gate would silently score against a mismatched registry.
-    const { header } = loadGolden();
-    assert.equal(header.fixture.canonicalSha256, registryCanonicalSha256(loadFixture()));
-    assert.equal(header.fixture.canonicals, 3360);
+    const doc = loadGolden();
+    assert.equal(doc.fixture.canonicalSha256, registryCanonicalSha256(loadFixture()));
+    assert.equal(doc.fixture.canonicals, 3360);
   }
 );
 
 test('every golden row is ordered by (-sim, name)', { skip: !goldenAvailable }, () => {
-  const { rows } = loadGolden();
+  const rows = loadGolden().results;
   for (const row of rows) {
     for (let i = 1; i < row.candidates.length; i++) {
       const previous = row.candidates[i - 1];
@@ -158,7 +195,7 @@ test('every golden row is ordered by (-sim, name)', { skip: !goldenAvailable }, 
 test('every query finds its own canonical at similarity 1', { skip: !goldenAvailable }, () => {
   // The query name case-folds to exactly one canonical, so similarity 1 is guaranteed. Note it is
   // NOT guaranteed to be FIRST — see the next test.
-  const { rows } = loadGolden();
+  const rows = loadGolden().results;
   for (const row of rows) {
     const self = row.candidates.find(
       (candidate) => candidate.name.trim().toLowerCase() === row.name.trim().toLowerCase()
@@ -169,7 +206,7 @@ test('every query finds its own canonical at similarity 1', { skip: !goldenAvail
 });
 
 test('distinct surfaces can tie at similarity 1 — the tokenizer collapses punctuation', () => {
-  const { rows } = goldenAvailable ? loadGolden() : { rows: [] as GoldenRow[] };
+  const rows = goldenAvailable ? loadGolden().results : ([] as GoldenRow[]);
   if (rows.length === 0) return;
 
   const multipleAtOne = rows.filter(
@@ -195,7 +232,8 @@ test(
   async () => {
     // Full verification is `npm run capture-golden -- --verify` (~13s over 3.7M comparisons). Here a
     // strided sample keeps `npm test` fast while still catching drift in scoring or ordering.
-    const { header, rows } = loadGolden();
+    const doc = loadGolden();
+  const rows = doc.results;
     const registry = new EntityRegistry({ filePath: FIXTURE });
     await registry.load();
 
@@ -204,8 +242,8 @@ test(
     for (let i = 0; i < rows.length; i += stride) {
       const row = rows[i];
       const recomputed = registry.candidates(row.category, row.name, {
-        k: header.options.k,
-        minSim: header.options.minSim,
+        k: doc.options.k,
+        minSim: doc.options.minSim,
       });
       // Exact equality, including the similarity floats: a normalization difference anywhere in the
       // metric surfaces here as a sim mismatch, which is precisely what the M4 gate must catch.
@@ -222,16 +260,17 @@ test(
   async () => {
     // Sort-then-slice: slicing the full ordered list at k must equal candidates(k). If these ever
     // disagree, `bestMatches` has grown an order-dependent early exit.
-    const { header, rows } = loadGolden();
+    const doc = loadGolden();
+  const rows = doc.results;
     const registry = new EntityRegistry({ filePath: FIXTURE });
     await registry.load();
 
     for (const row of rows.filter((_, index) => index % 400 === 0)) {
       const full = registry.candidates(row.category, row.name, {
         k: Infinity,
-        minSim: header.options.minSim,
+        minSim: doc.options.minSim,
       });
-      assert.deepEqual(full.slice(0, header.options.k), row.candidates, `${row.category}/${row.name}`);
+      assert.deepEqual(full.slice(0, doc.options.k), row.candidates, `${row.category}/${row.name}`);
     }
   }
 );
