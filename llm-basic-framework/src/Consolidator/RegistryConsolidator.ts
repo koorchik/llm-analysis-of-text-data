@@ -72,10 +72,16 @@ export class RegistryConsolidator {
       const canonicals = Object.keys(records);
       const suspects = new Set<string>();
 
+      // v2 stores alias records; similarity and the judge prompt both want plain surfaces.
+      // Cached per canonical so the O(n²) sweep below does not re-project on every comparison.
+      const surfaces = new Map<string, string[]>(
+        canonicals.map((canonical) => [canonical, this.#entityRegistry.aliasSurfaces(category, canonical)])
+      );
+
       for (let i = 0; i < canonicals.length; i++) {
         for (let j = i + 1; j < canonicals.length; j++) {
-          const aliasesA = records[canonicals[i]].aliases;
-          const aliasesB = records[canonicals[j]].aliases;
+          const aliasesA = surfaces.get(canonicals[i])!;
+          const aliasesB = surfaces.get(canonicals[j])!;
           let maxSim = 0;
           for (const a of aliasesA) {
             for (const b of aliasesB) {
@@ -94,7 +100,7 @@ export class RegistryConsolidator {
 
       const merges = await this.#judgeMerges(
         `canonical entities of category "${category}" in a cyber-incident knowledge base`,
-        [...suspects].map((name) => ({ name, aliases: records[name].aliases }))
+        [...suspects].map((name) => ({ name, aliases: surfaces.get(name) ?? [] }))
       );
 
       const valid = merges.filter((merge) => records[merge.from] && records[merge.into]);

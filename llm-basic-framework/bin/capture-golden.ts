@@ -121,7 +121,6 @@ function arg(name: string): string | undefined {
  */
 function analyseQuery(
   registry: EntityRegistry,
-  data: RegistryDataV1,
   haystackIndex: Map<string, Map<string, number>>,
   query: { category: string; name: string },
   k: number,
@@ -202,12 +201,15 @@ async function main() {
   const registry = new EntityRegistry({ filePath: fixturePath });
   await registry.load();
 
-  const data: RegistryDataV1 = {};
-  for (const category of registry.categories()) data[category] = registry.records(category);
-
+  // Haystack order is `Object.keys(records)` — i.e. mint order — which is what a stable sort on
+  // similarity alone fell back to before the M2.5 tie-break fix. Needed to reconstruct that old
+  // ordering for the impact diagnostics.
   const haystackIndex = new Map<string, Map<string, number>>();
-  for (const [category, records] of Object.entries(data)) {
-    haystackIndex.set(category, new Map(Object.keys(records).map((name, index) => [name, index])));
+  for (const category of registry.categories()) {
+    haystackIndex.set(
+      category,
+      new Map(Object.keys(registry.records(category)).map((name, index) => [name, index]))
+    );
   }
 
   // Deterministic query order, independent of directory iteration.
@@ -227,7 +229,7 @@ async function main() {
 
   const started = Date.now();
   for (const [index, query] of queries.entries()) {
-    const analysis = analyseQuery(registry, data, haystackIndex, query, k, minSim);
+    const analysis = analyseQuery(registry, haystackIndex, query, k, minSim);
 
     results.push({ category: query.category, name: query.name, candidates: analysis.newTop });
 

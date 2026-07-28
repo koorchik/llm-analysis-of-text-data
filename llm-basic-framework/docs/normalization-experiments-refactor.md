@@ -414,7 +414,21 @@ exists on disk.
     "firstSeen": { "doc": 37788, "date": "16.03.2022" } } } } }
 ```
 
-Reader accepts v1 and v2; writer emits v2; `bin/migrate-registry.ts` converts.
+Reader accepts v1 and v2; writer emits v2; `bin/migrate-registry.ts` converts (idempotent, backs
+up the original, `--dry-run` to inspect).
+
+**The v1 reader is not just courtesy — it is what keeps the M2.5 gate valid.**
+`test/fixtures/registry-v1.json` must stay in the pre-M3 format, or the gate's reference would have
+passed through the very migration it exists to police. So `buildFixtureRegistry` projects through
+`toV1()`, and `candidates()` still returns alias **surfaces as strings** rather than alias records —
+the golden lists record them as strings, and changing that shape would break the byte comparison M4
+is scored against. Verified after the migration: fixture hash `098b21de…` unchanged and all 3,392
+candidate lists byte-identical.
+
+**The migration cannot invent provenance.** Every v1 alias becomes `decision: "migrated"` with
+`docId` from the record's `firstSeen.doc` — the only document context v1 recorded — and `gloss` null
+with `externalIds` empty. Fabricating finer provenance would make an unauditable registry look
+auditable, which is worse than admitting the gap.
 
 **Two real bugs to fix here:**
 - `EntityRegistry.applyMerges` (`:119-140`) applies `from→into` sequentially with a
@@ -430,6 +444,17 @@ never says *how* the canonical surface form is chosen — fix that"). v2 records
 `canonicalPolicy` per registry: `first-seen` (the current implicit behaviour, and the streaming
 default) vs `frequency-weighted` (`vashishth2018cesi`) vs `highest-degree` (`shu2026latticekg`).
 It is a recorded configuration choice, not an accident of insertion order.
+
+Two consequences discovered while implementing it:
+
+- **The caller's `into` is no longer authoritative for the surviving name.** Under closure it cannot
+  be: a three-way group `{A,B,C}` has no single requested target. The policy decides, and the
+  judge's requested direction is preserved in alias provenance instead of obeyed. With the default
+  `first-seen` this is also the more defensible choice — it is what makes the operation
+  order-independent, which was the point of the fix.
+- **`highest-degree` cannot be honoured by the registry alone**, which holds no graph. It takes an
+  injected `degreeOf` provider (the graph arrives in M11) and falls back to `first-seen` with a loud
+  warning when absent — because silently falling back would make the recorded policy a lie.
 
 ### M4 — Analyzers, metrics, candidate generators
 
