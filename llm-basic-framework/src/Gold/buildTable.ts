@@ -134,20 +134,54 @@ export function addSingletons(clusters: GoldCluster[], inventory: Inventory): Go
  * assigned, which a random split would.
  */
 export function assignSplit(clusters: GoldCluster[], devFraction = 0.2): GoldCluster[] {
+  // Stratified, not a plain hash over everything. Mergeable clusters are rare — a real table might
+  // have a few hundred against three thousand singletons — so an unstratified assignment can put
+  // almost all of them on one side by chance, and a split with no mergeable cluster produces empty
+  // merge P/R. Bucketing by (stratum, mergeable) makes the ratio hold *within* each group, which is
+  // the property the 20/80 split is actually for.
+  const buckets = new Map<string, GoldCluster[]>();
+  for (const cluster of clusters) {
+    const bucket = `${cluster.stratum}|${cluster.members.length > 1 ? 'multi' : 'single'}`;
+    const list = buckets.get(bucket) ?? [];
+    list.push(cluster);
+    buckets.set(bucket, list);
+  }
+
+  const devIds = new Set<string>();
+  for (const group of buckets.values()) {
+    // Rank by hash within the bucket and take the lowest `devFraction`. Ranking rather than
+    // thresholding is what makes the proportion exact per bucket instead of only in expectation.
+    const ranked = [...group].sort((a, b) => hashFraction(a.id) - hashFraction(b.id));
+    const devCount = Math.round(ranked.length * devFraction);
+    for (const cluster of ranked.slice(0, devCount)) devIds.add(cluster.id);
+  }
+
   return clusters.map((cluster) => ({
     ...cluster,
-    split: (hashFraction(cluster.id) < devFraction ? 'dev' : 'test') as Split,
+    split: (devIds.has(cluster.id) ? 'dev' : 'test') as Split,
   }));
 }
 
-/** Stable [0,1) from a string. FNV-1a — small, deterministic, no dependencies. */
+/**
+ * Stable [0,1) from a string: FNV-1a followed by a murmur3 finalizer.
+ *
+ * The finalizer is not optional. Plain FNV-1a avalanches poorly on short, sequential inputs — over
+ * ids `g1`…`g100` it put 66% on one side of a 20% cutoff, because the digits of the id still
+ * correlate with the output. Mixing the result decorrelates them.
+ */
 function hashFraction(value: string): number {
   let hash = 0x811c9dc5;
   for (let i = 0; i < value.length; i++) {
     hash ^= value.charCodeAt(i);
     hash = Math.imul(hash, 0x01000193) >>> 0;
   }
-  return hash / 0x100000000;
+  // murmur3 fmix32
+  hash ^= hash >>> 16;
+  hash = Math.imul(hash, 0x85ebca6b) >>> 0;
+  hash ^= hash >>> 13;
+  hash = Math.imul(hash, 0xc2b2ae35) >>> 0;
+  hash ^= hash >>> 16;
+  return (hash >>> 0) / 0x100000000;
 }
 
 /**

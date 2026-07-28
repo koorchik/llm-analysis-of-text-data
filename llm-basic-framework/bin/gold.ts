@@ -24,7 +24,9 @@ import {
   type AdjudicatedPair,
 } from '../src/Gold/buildTable';
 import { buildInventory, inventorySummary, type Inventory } from '../src/Gold/inventory';
+import { preLabel, preLabelSummary, PRE_LABEL_RULES } from '../src/Gold/preLabel';
 import { proposePairs, proposalSummary } from '../src/Gold/proposePairs';
+import { fromTsv, toTsv } from '../src/Gold/worksheet';
 import fs from 'fs/promises';
 
 function arg(name: string): string | undefined {
@@ -53,8 +55,9 @@ const USAGE = `usage:
   gold inventory --source <extractionsDir> [--out inventory.json] [--order numeric-id]
   gold pairs     --inventory <file> [--out worksheet.json] [--min-sim 0.7]
                  [--skip-categories Domain] [--max-per-category 0]
-  gold build     --inventory <file> --pairs <adjudicated.json> [--out gold.json] [--dev-fraction 0.2]
-  gold validate  <gold.json> [--inventory <file>]`;
+  gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
+  gold validate  <gold.json> [--inventory <file>]
+  gold rules     — explain every pre-labelling rule before you bulk-accept it`;
 
 async function main() {
   const command = process.argv[2];
@@ -93,16 +96,35 @@ async function main() {
       maxPerCategory: num('max-per-category', 0),
     });
 
-    console.log(`proposals:   ${proposals.length} pairs to adjudicate`);
+    const labelled = preLabel(proposals);
+
+    console.log(`proposals:   ${labelled.length} pairs`);
     if (skip.length > 0) console.log(`skipped:     ${skip.join(', ')}`);
+    console.log('\nby category:');
     for (const row of proposalSummary(proposals).slice(0, 15)) {
       console.log(`  ${row.category.padEnd(18)} ${row.stratum}  ${row.mechanism.padEnd(16)} ${row.pairs}`);
     }
+
+    console.log('\nsilver pre-labels (suggestions, not verdicts — `gold rules` explains each):');
+    for (const row of preLabelSummary(labelled)) {
+      console.log(`  ${row.rule.padEnd(20)} -> ${row.suggested.padEnd(10)} ${row.pairs}`);
+    }
+    const needsReview = labelled.filter((pair) => pair.suggested === 'review').length;
+    console.log(`\n${labelled.length - needsReview} pre-labelled, ${needsReview} need your judgment.`);
+
+    const out = arg('out') ?? 'worksheet.tsv';
+    if (out.endsWith('.tsv')) {
+      await fs.writeFile(out, toTsv(labelled));
+      console.log(`wrote ${out}`);
+      console.log('Open it in a spreadsheet, correct the `label` column, then run `gold build`.');
+    } else {
+      await writeJson(out, labelled);
+    }
+
     console.log(
       '\nStrata (c) semantic-known and (d) semantic-novel are NOT proposed here — no string\n' +
-        'mechanism can find a zero-overlap alias. See docs/GOLD-TABLE.md §4.'
+        'mechanism can find a zero-overlap alias. Add those rows yourself; see docs/GOLD-TABLE.md.'
     );
-    await writeJson(arg('out') ?? 'worksheet.json', proposals);
     return;
   }
 
@@ -112,14 +134,29 @@ async function main() {
     if (!inventoryPath || !pairsPath) throw new Error(USAGE);
 
     const inventory = await readJson<Inventory>(inventoryPath);
-    const allPairs = await readJson<AdjudicatedPair[]>(pairsPath);
 
-    const unlabelled = allPairs.filter((pair) => pair.label !== 'same' && pair.label !== 'different');
-    if (unlabelled.length > 0) {
+    let allPairs: AdjudicatedPair[];
+    let unlabelledCount: number;
+    let total: number;
+    if (pairsPath.endsWith('.tsv')) {
+      const parsed = fromTsv(await fs.readFile(pairsPath, 'utf8'));
+      allPairs = parsed.pairs;
+      unlabelledCount = parsed.unlabelled;
+      total = parsed.pairs.length + parsed.unlabelled;
+      console.log(`adjudicated: ${parsed.pairs.length}/${total} pairs`);
+      console.log(`corrections: ${parsed.corrected} rows where you overrode the silver suggestion`);
+    } else {
+      const raw = await readJson<AdjudicatedPair[]>(pairsPath);
+      allPairs = raw.filter((pair) => pair.label === 'same' || pair.label === 'different');
+      unlabelledCount = raw.length - allPairs.length;
+      total = raw.length;
+    }
+
+    if (unlabelledCount > 0) {
       // Loud, not fatal: a partially adjudicated worksheet is a normal mid-annotation state, but an
       // unlabelled pair silently counted as `different` would understate recall.
       console.warn(
-        `WARNING: ${unlabelled.length}/${allPairs.length} pairs are unlabelled and were treated as ` +
+        `WARNING: ${unlabelledCount}/${total} pairs are unlabelled and were treated as ` +
           '"not merged". Finish adjudication before reporting anything from this table.'
       );
     }
@@ -209,6 +246,16 @@ async function main() {
         for (const entry of missing.slice(0, 5)) console.warn(`    ${entry.category}: "${entry.surface}"`);
       }
     }
+    return;
+  }
+
+  if (command === 'rules') {
+    console.log('Silver pre-labelling rules, applied in this order (first match wins).\n');
+    for (const rule of PRE_LABEL_RULES) {
+      console.log(`${rule.id}  ->  ${rule.suggest}`);
+      console.log(`  ${rule.rationale}\n`);
+    }
+    console.log('Anything no rule claims gets "review" — most stratum-(a) pairs genuinely need you.');
     return;
   }
 

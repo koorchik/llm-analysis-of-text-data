@@ -140,16 +140,64 @@ describe('assignSplit', () => {
     assert.deepEqual(first, second);
   });
 
-  it('lands near the requested dev fraction', () => {
-    const clusters = Array.from({ length: 1000 }, (_, i) => ({
-      id: `g${i}`,
+  it('hits the requested fraction exactly, at every scale', () => {
+    // A loose "somewhere near 20%" assertion let a badly biased hash through: over ids g1..g100 the
+    // original FNV-1a put 66% in dev, and only evened out over thousands. Ranking within a bucket
+    // makes the proportion exact, so the test can be exact too.
+    for (const size of [21, 100, 1000]) {
+      const clusters = Array.from({ length: size }, (_, i) => ({
+        id: `g${i + 1}`,
+        category: 'C',
+        members: [`m${i}`],
+        stratum: 'a',
+        split: 'test' as const,
+      }));
+      const dev = assignSplit(clusters, 0.2).filter((cluster) => cluster.split === 'dev').length;
+      assert.equal(dev, Math.round(size * 0.2), `size ${size}`);
+    }
+  });
+
+  it('stratifies, so a rare mergeable cluster cannot land entirely on one side', () => {
+    // The real shape: a handful of mergeable clusters against thousands of singletons. An
+    // unstratified hash can put nearly all the mergeable ones in one split by chance, and a split
+    // with none produces empty merge P/R — the metric the whole study reports.
+    const mergeable = Array.from({ length: 21 }, (_, i) => ({
+      id: `g${i + 1}`,
       category: 'C',
-      members: [`m${i}`],
+      members: [`a${i}`, `b${i}`],
       stratum: 'a',
       split: 'test' as const,
     }));
-    const dev = assignSplit(clusters, 0.2).filter((cluster) => cluster.split === 'dev').length;
-    assert.ok(dev > 150 && dev < 250, `expected ~200 dev clusters, got ${dev}`);
+    const singletons = Array.from({ length: 3000 }, (_, i) => ({
+      id: `s${i + 100}`,
+      category: 'C',
+      members: [`s${i}`],
+      stratum: 'a',
+      split: 'test' as const,
+    }));
+    const assigned = assignSplit([...mergeable, ...singletons], 0.2);
+    const multi = (split: string) =>
+      assigned.filter((cluster) => cluster.members.length > 1 && cluster.split === split).length;
+
+    assert.equal(multi('dev'), 4);
+    assert.equal(multi('test'), 17);
+  });
+
+  it('keeps each stratum represented in both splits', () => {
+    const clusters = ['a', 'b', 'c', 'd'].flatMap((stratum) =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `${stratum}${i}`,
+        category: 'C',
+        members: [`${stratum}${i}x`, `${stratum}${i}y`],
+        stratum,
+        split: 'test' as const,
+      }))
+    );
+    const assigned = assignSplit(clusters, 0.2);
+    for (const stratum of ['a', 'b', 'c', 'd']) {
+      const dev = assigned.filter((c) => c.stratum === stratum && c.split === 'dev').length;
+      assert.equal(dev, 2, `stratum ${stratum}`);
+    }
   });
 
   it('keeps existing assignments stable when clusters are added', () => {
