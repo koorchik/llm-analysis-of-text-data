@@ -1,6 +1,6 @@
 import { writeJsonAtomic } from '../utils/fsUtils';
 import { sanitizeSchemaName } from '../utils/fsUtils';
-import { bestMatches } from '../utils/similarityUtils';
+import { matchStrings } from '../Normalization/matchStrings';
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
 
@@ -277,7 +277,9 @@ export class SchemaRegistry {
     name: string,
     minSim: number
   ): Array<{ entry: SchemaEntry; sim: number }> {
-    const matches = bestMatches(
+    // Near-matches are rendered into the type-judge PROMPT, so their order is model-visible — the
+    // reason M2.5's (-sim, key) tie-break had to reach this path too, not just entity candidates.
+    const matches = matchStrings(
       name,
       entries.map((entry) => ({ key: entry.name, strings: [entry.name, ...entry.aliases] })),
       { k: entries.length, minSim }

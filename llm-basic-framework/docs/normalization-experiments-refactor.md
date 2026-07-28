@@ -473,15 +473,51 @@ belongs in the paper's rejection list, not in the codebase.
 `RrfFusionGenerator(children[])` (the E4 union arm).
 
 **Structural change:** `EntityRegistry.candidates()` (`:57`) is removed. The registry keeps storage
-+ exact `resolve()` and gains a read-only `snapshot()`. Generators consume snapshots. Retire
-`bestMatches` from `similarityUtils` once its **two** importers (`EntityRegistry.ts:2`,
-`SchemaRegistry.ts:3`) are migrated; `stringSimilarity`'s two importers
-(`StreamingExtractor.ts:5`, `RegistryConsolidator.ts:6`) migrate separately.
++ exact `resolve()` and gains a read-only `snapshot()` — **live, not a frozen copy**, because the
+streaming registry mutates after every document. Generators consume snapshots and are told about
+mutations through `onRegistryChange`, which is what keeps the TF-IDF and BM25 indexes from silently
+losing every canonical minted since `prepare()`.
 
-**Regression gate:** `StringSimilarityGenerator` with `identity` analyzer + `max(lev, dice)` must
-reproduce `EntityRegistry.candidates()` output **exactly** on all 3,392 frozen pairs, asserted
-against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.json` pair captured
-in **M2.5**. Assert byte-identity before anything else changes; only then delete `candidates()`.
+`bestMatches` is retired; both importers are migrated. `EntityRegistry` uses the generator, and
+`SchemaRegistry` uses `Normalization/matchStrings` — a separate helper rather than a generator,
+because it matches *schema entries* and a `CandidateGenerator` is defined over a `RegistrySnapshot`.
+`stringSimilarity` **stays**: `StreamingExtractor` and `RegistryConsolidator` still use it for their
+pairwise suspect checks, and the metrics tests assert that `identity + max(levenshtein, tokenDice)`
+reproduces it exactly — the algebraic identity the gate rests on, asserted where a break is legible
+rather than as 3,392 mysterious mismatches.
+
+**Normalization lives in analyzers; metrics are pure functions of the keys they are given.** The
+pre-M4 `stringSimilarity` trimmed and case-folded internally, which is exactly why it could not be
+recombined — no caller could compose it with a different notion of identity. So `identity` means the
+identity *matching* transform, case folding included, because that is what identity has always meant
+here: `resolve()` matches on `trim().toLowerCase()`.
+
+**Regression gate: ✅ PASSED.** `StringSimilarityGenerator(identity, max-lev-dice)` reproduces
+`EntityRegistry.candidates()` output exactly on **3,392 / 3,392** frozen pairs — similarity floats
+included — against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.json` pair
+captured in **M2.5**. Only then was `candidates()` deleted. The gate lives in `test/gate.test.ts` and
+runs the **full** query set (~11M comparisons, ~7 s): a sampled gate would leave the tail unchecked,
+and the tail is where a normalization difference hides.
+
+Three bugs found by testing the analyzers against real corpus values rather than trusting them, all
+recorded in place so they are not reintroduced:
+
+- **Digit folding in the confusables table corrupted the case it exists for.** Mapping `8→b` turned
+  `АРТ28` into `apt2b`, so the homoglyph spoof failed to match `apt28`. Digits here are
+  identity-bearing — it would equally corrupt `UAC-0010`, `CVE-2021-44228` and every version number.
+  All digit→letter mappings removed.
+- **JavaScript's `\b` is ASCII-only even under the `u` flag**, so `/\bуац/u` can never match
+  `УАЦ-0028` — the Cyrillic designation form silently produced no keys. Replaced with Unicode
+  property lookarounds.
+- `\d{3,5}` rejected the shorthand `UAC-28`; now `{2,5}` zero-padded to four, with two digits
+  minimum so stray prose like `uac 5` does not register.
+
+**A finding that changes how E0 and E4 are built.** The research note offers `АРТ28` vs `APT28` as its
+stratum-(b) example, but that pair is **not** a transliteration case: Cyrillic `Р` is ER, so
+transliteration yields `art28` and cannot match `apt28`. It is a *homoglyph spoof*, handled by
+`confusableSkeleton`. Two distinct mechanisms hide behind "cross-script" — E0 should build stratum (b)
+from both, and E4 must attribute recall to the right channel, or a transliteration arm scored on
+homoglyph pairs will look falsely useless.
 
 The capture itself — fixture construction, the golden file, and the `(-sim, canonicalName)`
 tie-break fix it must be captured against — is **M2.5**, deliberately sequenced before M3's format

@@ -1,4 +1,5 @@
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { StringSimilarityGenerator } from '../src/Normalization/candidates/StringSimilarityGenerator';
 import {
   buildFixtureRegistry,
   registryCanonicalSha256,
@@ -227,50 +228,35 @@ test('distinct surfaces can tie at similarity 1 — the tokenizer collapses punc
 });
 
 test(
-  'a deterministic sample recomputes exactly, floats included',
-  { skip: !goldenAvailable || !fixtureAvailable },
-  async () => {
-    // Full verification is `npm run capture-golden -- --verify` (~13s over 3.7M comparisons). Here a
-    // strided sample keeps `npm test` fast while still catching drift in scoring or ordering.
-    const doc = loadGolden();
-  const rows = doc.results;
-    const registry = new EntityRegistry({ filePath: FIXTURE });
-    await registry.load();
-
-    const stride = 17;
-    let checked = 0;
-    for (let i = 0; i < rows.length; i += stride) {
-      const row = rows[i];
-      const recomputed = registry.candidates(row.category, row.name, {
-        k: doc.options.k,
-        minSim: doc.options.minSim,
-      });
-      // Exact equality, including the similarity floats: a normalization difference anywhere in the
-      // metric surfaces here as a sim mismatch, which is precisely what the M4 gate must catch.
-      assert.deepEqual(recomputed, row.candidates, `${row.category}/${row.name}`);
-      checked++;
-    }
-    assert.ok(checked >= 190, `sampled only ${checked} queries`);
-  }
-);
-
-test(
   'the golden lists are what an unrestricted top-k would have cut to',
   { skip: !goldenAvailable || !fixtureAvailable },
   async () => {
-    // Sort-then-slice: slicing the full ordered list at k must equal candidates(k). If these ever
-    // disagree, `bestMatches` has grown an order-dependent early exit.
+    // Sort-then-slice: slicing the full ordered list at k must equal asking for k directly. If these
+    // ever disagree, a generator has grown an order-dependent early exit.
+    //
+    // The exact per-query comparison against the golden lists lives in test/gate.test.ts, which runs
+    // all 3,392 pairs through StringSimilarityGenerator — the M4 replacement for the removed
+    // EntityRegistry.candidates(). A sampled copy of it here would be redundant.
     const doc = loadGolden();
-  const rows = doc.results;
     const registry = new EntityRegistry({ filePath: FIXTURE });
     await registry.load();
+    const generator = new StringSimilarityGenerator();
+    await generator.prepare(registry.snapshot());
 
-    for (const row of rows.filter((_, index) => index % 400 === 0)) {
-      const full = registry.candidates(row.category, row.name, {
+    for (const row of doc.results.filter((_: GoldenRow, index: number) => index % 400 === 0)) {
+      const full = await generator.candidates({
+        mention: row.name,
+        category: row.category,
         k: Infinity,
         minSim: doc.options.minSim,
       });
-      assert.deepEqual(full.slice(0, doc.options.k), row.candidates, `${row.category}/${row.name}`);
+      const capped = await generator.candidates({
+        mention: row.name,
+        category: row.category,
+        k: doc.options.k,
+        minSim: doc.options.minSim,
+      });
+      assert.deepEqual(full.slice(0, doc.options.k), capped, `${row.category}/${row.name}`);
     }
   }
 );

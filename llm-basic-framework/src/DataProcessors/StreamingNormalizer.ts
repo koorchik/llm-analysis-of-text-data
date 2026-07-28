@@ -1,6 +1,8 @@
 import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
+import type { CandidateGenerator } from '../Normalization/types';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
@@ -31,13 +33,15 @@ interface Params {
   preprocessor?: Preprocessor;
   candidateK?: number;
   candidateMinSim?: number;
+  /** Defaults to the generator the M2.5 gate proved equivalent to the pre-M4 registry path. */
+  candidateGenerator?: CandidateGenerator;
 }
 
 interface MentionPlan {
   entity: StreamingEntity;
   category: string; // canonical
   canonical?: string; // resolution result once known
-  candidates: Array<{ name: string; sim: number; aliases: string[] }>;
+  candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string }>;
   action: 'resolved' | 'mint' | 'judge';
 }
 
@@ -52,7 +56,7 @@ function describeCandidates(
   return candidates.map((candidate) => ({
     name: candidate.name,
     sim: Number(candidate.sim.toFixed(2)),
-    channel: 'string-sim',
+    channel: candidate.channel ?? 'string-sim',
   }));
 }
 
@@ -68,6 +72,8 @@ export class StreamingNormalizer {
   #sourceDir?: string;
   #candidateK: number;
   #candidateMinSim: number;
+  #candidateGenerator: CandidateGenerator;
+  #generatorPrepared = false;
   #preprocessor: Preprocessor = (content: string) =>
     Promise.resolve({ text: content, metadata: {} });
 
@@ -82,6 +88,7 @@ export class StreamingNormalizer {
     this.#sourceDir = params.sourceDir;
     this.#candidateK = params.candidateK ?? 5;
     this.#candidateMinSim = params.candidateMinSim ?? 0.5;
+    this.#candidateGenerator = params.candidateGenerator ?? new StringSimilarityGenerator();
 
     if (params.preprocessor) {
       this.#preprocessor = params.preprocessor;
@@ -112,6 +119,13 @@ export class StreamingNormalizer {
     await ensureDir(this.outputDir);
     await this.#schemaRegistry.load();
     await this.#entityRegistry.load();
+
+    if (!this.#generatorPrepared) {
+      // The snapshot is a live view over the registry, so preparing once is correct; index-bearing
+      // generators are kept current by the onRegistryChange notifications below.
+      await this.#candidateGenerator.prepare(this.#entityRegistry.snapshot());
+      this.#generatorPrepared = true;
+    }
 
     console.time(`NORMALIZE ${file}`);
     const extraction = JSON.parse(
@@ -146,10 +160,21 @@ export class StreamingNormalizer {
         plan.action = 'resolved';
         continue;
       }
-      plan.candidates = this.#entityRegistry.candidates(plan.category, plan.entity.name, {
+      // M4: candidate generation moved out of the registry behind the CandidateGenerator port, so
+      // the E2/E4 arms can swap blockers without touching this orchestration.
+      const generated = await this.#candidateGenerator.candidates({
+        mention: plan.entity.name,
+        category: plan.category,
         k: this.#candidateK,
         minSim: this.#candidateMinSim,
+        docId,
       });
+      plan.candidates = generated.map((candidate) => ({
+        name: candidate.canonical,
+        sim: candidate.sim,
+        aliases: candidate.surfaces,
+        channel: candidate.channel,
+      }));
       plan.action = plan.candidates.length > 0 ? 'judge' : 'mint';
     }
 
@@ -196,7 +221,14 @@ export class StreamingNormalizer {
     for (const plan of plans) {
       if (plan.canonical && plan.action !== 'resolved') {
         // link verdict
-        this.#entityRegistry.link(plan.category, plan.canonical, plan.entity.name);
+        this.#entityRegistry.link(plan.category, plan.canonical, plan.entity.name, {
+          docId,
+        });
+        this.#candidateGenerator.onRegistryChange({
+          type: 'link',
+          category: plan.category,
+          canonical: plan.canonical,
+        });
         await this.#decisionLog.logDecision({
           docId,
           mention: plan.entity.name,
@@ -210,6 +242,11 @@ export class StreamingNormalizer {
         plan.canonical = this.#entityRegistry.mint(plan.category, plan.entity.name, {
           doc: docId,
           date: docDate,
+        });
+        this.#candidateGenerator.onRegistryChange({
+          type: 'mint',
+          category: plan.category,
+          canonical: plan.canonical,
         });
         await this.#decisionLog.logDecision({
           docId,

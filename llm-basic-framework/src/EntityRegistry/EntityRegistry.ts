@@ -1,7 +1,6 @@
 import type { RegistrySnapshot } from '../Normalization/types';
 import { closure } from '../Evaluation/unionFind';
 import { writeJsonAtomic } from '../utils/fsUtils';
-import { bestMatches } from '../utils/similarityUtils';
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
 
@@ -14,8 +13,12 @@ import fs from 'fs/promises';
  *
  * **The v1 reader is retained deliberately.** `test/fixtures/registry-v1.json` is the M2.5
  * behaviour-preservation reference and must stay in the pre-M3 format; it would be worthless if
- * regenerated through this migration. `load()` therefore accepts both shapes, and `candidates()`
- * still returns alias **surfaces as strings** so the golden candidate lists remain byte-comparable.
+ * regenerated through this migration, so `load()` accepts both shapes.
+ *
+ * **Candidate generation lives outside this class** as of M4. The registry keeps storage plus the
+ * exact `resolve()` fast path and exposes `snapshot()`; `StringSimilarityGenerator` and friends
+ * consume the snapshot. `candidates()` was removed only after the M2.5 gate proved the generator
+ * reproduces it byte for byte on all 3,392 frozen pairs.
  */
 
 // --- v1 (read-only, historical) -------------------------------------------------------------------
@@ -216,36 +219,6 @@ export class EntityRegistry {
   /** Exact fast path (spec §4.2 step 1). */
   resolve(category: string, name: string): string | undefined {
     return this.#aliasIndex.get(category)?.get(name.trim().toLowerCase());
-  }
-
-  /**
-   * Candidate generation (spec §4.2 step 2) — the future embeddings/ANN swap point.
-   *
-   * `aliases` is returned as **surface strings, not alias records**. Two reasons: the judge prompt
-   * renders them as text, and the M2.5 golden candidate lists record them as strings, so changing
-   * the shape here would break the behaviour-preservation gate M4 is scored against.
-   */
-  candidates(
-    category: string,
-    name: string,
-    options: { k?: number; minSim?: number } = {}
-  ): Array<{ name: string; sim: number; aliases: string[] }> {
-    const records = this.#categories[category];
-    if (!records) return [];
-
-    const matches = bestMatches(
-      name,
-      Object.entries(records).map(([canonical, record]) => ({
-        key: canonical,
-        strings: [canonical, ...record.aliases.map((alias) => alias.surface)],
-      })),
-      options
-    );
-    return matches.map((match) => ({
-      name: match.key,
-      sim: match.sim,
-      aliases: records[match.key].aliases.map((alias) => alias.surface),
-    }));
   }
 
   categories(): string[] {

@@ -22,6 +22,9 @@
  * does not enshrine the bug. Diagnostics below quantify how much that changes.
  */
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { identityAnalyzer } from '../src/Normalization/analyzers/identity';
+import { StringSimilarityGenerator } from '../src/Normalization/candidates/StringSimilarityGenerator';
+import { maxLevDice } from '../src/Normalization/metrics/stringMetrics';
 import {
   buildFixtureRegistry,
   registryCanonicalSha256,
@@ -119,15 +122,23 @@ function arg(name: string): string | undefined {
  * the same scored set on `(-sim, haystackIndex)`, where the haystack index is the canonical's
  * position in `Object.keys(records)` — which is what a stable sort on similarity alone fell back to.
  */
-function analyseQuery(
-  registry: EntityRegistry,
+async function analyseQuery(
+  generator: StringSimilarityGenerator,
   haystackIndex: Map<string, Map<string, number>>,
   query: { category: string; name: string },
   k: number,
   minSim: number
 ) {
-  // Infinity is safe: `bestMatches` does `.slice(0, k)`.
-  const full = registry.candidates(query.category, query.name, { k: Infinity, minSim });
+  // Since M4 the reference is produced by the generator rather than the removed
+  // EntityRegistry.candidates(). The gate proves the two are byte-identical on every frozen pair, so
+  // the artifact this script writes is unchanged.
+  const full = (
+    await generator.candidates({ mention: query.name, category: query.category, k: Infinity, minSim })
+  ).map((candidate) => ({
+    name: candidate.canonical,
+    sim: candidate.sim,
+    aliases: candidate.surfaces,
+  }));
 
   const newTop = full.slice(0, k);
 
@@ -201,6 +212,12 @@ async function main() {
   const registry = new EntityRegistry({ filePath: fixturePath });
   await registry.load();
 
+  const generator = new StringSimilarityGenerator({
+    analyzers: [identityAnalyzer],
+    metric: maxLevDice,
+  });
+  await generator.prepare(registry.snapshot());
+
   // Haystack order is `Object.keys(records)` — i.e. mint order — which is what a stable sort on
   // similarity alone fell back to before the M2.5 tie-break fix. Needed to reconstruct that old
   // ordering for the impact diagnostics.
@@ -229,7 +246,7 @@ async function main() {
 
   const started = Date.now();
   for (const [index, query] of queries.entries()) {
-    const analysis = analyseQuery(registry, haystackIndex, query, k, minSim);
+    const analysis = await analyseQuery(generator, haystackIndex, query, k, minSim);
 
     results.push({ category: query.category, name: query.name, candidates: analysis.newTop });
 

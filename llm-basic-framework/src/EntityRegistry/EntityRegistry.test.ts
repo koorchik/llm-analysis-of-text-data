@@ -1,4 +1,5 @@
 import { EntityRegistry, type RegistryDataV1, type RegistryDataV2 } from './EntityRegistry';
+import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import fs from 'fs/promises';
@@ -531,10 +532,19 @@ test('a migrated registry answers candidates() identically to the v1 original', 
   await fromV2.load();
 
   assert.equal(fromV2.loadedFromV1, false);
+
+  // Candidate generation left the registry in M4, so the invariant is now expressed through the
+  // generator: v2 changes STORAGE, not matching, and the snapshot of either must score identically.
+  const fromV1Generator = new StringSimilarityGenerator();
+  await fromV1Generator.prepare(fromV1.snapshot());
+  const fromV2Generator = new StringSimilarityGenerator();
+  await fromV2Generator.prepare(fromV2.snapshot());
+
   for (const query of ['UAC-0010', 'UAC-0018', 'UAC-0099']) {
+    const q = { mention: query, category: 'C', k: 5, minSim: 0.5 };
     assert.deepEqual(
-      fromV2.candidates('C', query, { k: 5, minSim: 0.5 }),
-      fromV1.candidates('C', query, { k: 5, minSim: 0.5 }),
+      await fromV2Generator.candidates(q),
+      await fromV1Generator.candidates(q),
       `candidates differ for ${query}`
     );
   }
