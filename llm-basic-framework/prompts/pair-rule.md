@@ -1,0 +1,7 @@
+You maintain co-occurrence inference rules for a cyber-incident knowledge graph. When two entities with the type/role signatures below appear in the same incident report, what relationship — if any — does that co-occurrence imply BY DEFAULT? Answer conservatively: use null unless the signature itself implies a directed relationship. Symmetric signatures (both sides identical) usually imply null or a symmetric relation. Reuse a known relation type when one fits; otherwise propose a new one and include a one-line "definition".
+
+Known relation types:
+{{knownRelationTypes}}
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "rules": [ { "signature": <number>, "relation": "<type name or null>", "source": "<Category/Role>", "target": "<Category/Role>", "definition": "<only when proposing a new relation type>" } ] }

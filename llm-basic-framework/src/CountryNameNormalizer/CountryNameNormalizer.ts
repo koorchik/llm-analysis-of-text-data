@@ -1,3 +1,4 @@
+import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import type { DecisionLog } from '../DecisionLog/DecisionLog';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import { extractAndParseJson } from '../utils/validationUtils';
@@ -10,13 +11,21 @@ interface Params {
    * tokens, no cost. Optional so existing constructions keep working, but app.ts passes one.
    */
   decisionLog?: DecisionLog;
+  /**
+   * Prompt templates. Injectable so a variant arm (E8, prompt sensitivity) can supply its own
+   * without touching this class; defaults to the shared `prompts/` directory.
+   */
+  prompts?: PromptProvider;
 }
 
 export class CountryNameNormalizer {
   #llmClient: LlmClient;
   #decisionLog?: DecisionLog;
 
+  #prompts: PromptProvider;
+
   constructor(params: Params) {
+    this.#prompts = params.prompts ?? prompts;
     this.#llmClient = params.llmClient;
     this.#decisionLog = params.decisionLog;
   }
@@ -26,12 +35,9 @@ export class CountryNameNormalizer {
     const countryCode = getCountryCode(country);
     if (countryCode) return countryCode;
 
-    const instructions = `
-      You should normalize country name to country code from the following list:
-      ${Object.keys(countries).join(', ')}
-      Please return the extracted information in the exact JSON format specified below and nothing else:
-      { "normalized": "CODE" }
-    `;
+    const instructions = this.#prompts.render('country-normalize', {
+      countryCodes: Object.keys(countries).join(', '),
+    });
 
     const started = Date.now();
     const response = await this.#llmClient.send(instructions, country, {

@@ -25,6 +25,7 @@ import { LlmClientBackendAnthropic } from '../src/LlmClient/LlmClientBackendAnth
 import { LlmClientBackendOllama } from '../src/LlmClient/LlmClientBackendOllama';
 import { LlmClientBackendOpenAi } from '../src/LlmClient/LlmClientBackendOpenAi';
 import { LlmClientBackendVertexAi } from '../src/LlmClient/LlmClientBackendVertexAi';
+import { prompts } from '../src/Normalization/PromptProvider';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
 import dotenv from 'dotenv';
@@ -94,7 +95,10 @@ async function main() {
     sampling,
     seed: CONFIG.seed,
     order: 'numeric-id', // M7 replaces this with chronological | seededShuffle
-    promptHashes: {}, // populated by M6's PromptProvider
+    // Every prompt on disk, not just the ones this step happens to use: a run card that recorded
+    // only the used subset would make an unused-prompt edit invisible, and the next run of a
+    // different step would then reuse this runId despite a genuinely different prompt set.
+    promptHashes: prompts.hashes(),
     extra: { steps: CONFIG.steps, edgesFrom: CONFIG.edgesFrom },
   });
 

@@ -1,3 +1,4 @@
+import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
@@ -35,6 +36,11 @@ interface Params {
   candidateMinSim?: number;
   /** Defaults to the generator the M2.5 gate proved equivalent to the pre-M4 registry path. */
   candidateGenerator?: CandidateGenerator;
+  /**
+   * Prompt templates. Injectable so a variant arm (E8, prompt sensitivity) can supply its own
+   * without touching this class; defaults to the shared `prompts/` directory.
+   */
+  prompts?: PromptProvider;
 }
 
 interface MentionPlan {
@@ -77,7 +83,10 @@ export class StreamingNormalizer {
   #preprocessor: Preprocessor = (content: string) =>
     Promise.resolve({ text: content, metadata: {} });
 
+  #prompts: PromptProvider;
+
   constructor(params: Params) {
+    this.#prompts = params.prompts ?? prompts;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
@@ -349,11 +358,7 @@ export class StreamingNormalizer {
       return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
     });
 
-    const instructions = `You are an entity-resolution judge for a cyber-incident knowledge base.
-For each mention below, decide whether it refers to one of the known canonical entities of the same category (answer "link" with its name) or to an entity not seen before (answer "mint"). Only link when the evidence supports identity: shared naming, a stated alias in the document context, or an unambiguous abbreviation. Similar type or theme alone is NOT identity. If uncertain, prefer "mint" — duplicates are repairable later, wrong merges are not.
-
-Output a single raw JSON object, no markdown fences, no commentary:
-{ "verdicts": [ { "mention": "<mention>", "category": "<category>", "verdict": "link" | "mint", "target": "<canonical name when linking>" } ] }`;
+    const instructions = this.#prompts.render('link-judge');
 
     const text = `Document: "${title}" — context: ${snippet}
 Mentions:
@@ -415,13 +420,9 @@ ${lines.join('\n')}`;
         `${index + 1}. ${a.category}/${a.entity.role} × ${b.category}/${b.entity.role}`
     );
 
-    const instructions = `You maintain co-occurrence inference rules for a cyber-incident knowledge graph. When two entities with the type/role signatures below appear in the same incident report, what relationship — if any — does that co-occurrence imply BY DEFAULT? Answer conservatively: use null unless the signature itself implies a directed relationship. Symmetric signatures (both sides identical) usually imply null or a symmetric relation. Reuse a known relation type when one fits; otherwise propose a new one and include a one-line "definition".
-
-Known relation types:
-${this.#schemaRegistry.renderKnownRelationTypes()}
-
-Output a single raw JSON object, no markdown fences, no commentary:
-{ "rules": [ { "signature": <number>, "relation": "<type name or null>", "source": "<Category/Role>", "target": "<Category/Role>", "definition": "<only when proposing a new relation type>" } ] }`;
+    const instructions = this.#prompts.render('pair-rule', {
+      knownRelationTypes: this.#schemaRegistry.renderKnownRelationTypes(),
+    });
 
     const started = Date.now();
     console.time(`PAIR-RULES doc ${docId}`);

@@ -95,9 +95,9 @@ export function readGitState(): GitState {
  * Config alone is not enough: a code or prompt change would otherwise reuse an existing run
  * directory and the `existsSync` resume skips would silently continue a run across versions.
  *
- * In M1 the git sha carries most of that guarantee, because prompts are still inline literals —
- * `promptHashes` is wired through and recorded but is empty until M6 extracts the prompts to
- * files, at which point a prompt can vary without a code change and the field becomes load-bearing.
+ * Since M6 the prompts live in `prompts/` as files, so `promptHashes` is load-bearing: a prompt can
+ * now change with no code change at all, and without this field two such runs would share a runId.
+ * Callers get the hashes from `PromptProvider.hashes()`; `bin/app.ts` passes all of them.
  */
 export function computeRunId(
   config: RunConfigInput,

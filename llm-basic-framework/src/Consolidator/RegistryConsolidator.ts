@@ -1,3 +1,4 @@
+import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
@@ -16,6 +17,11 @@ interface Params {
   entityRegistry: EntityRegistry;
   decisionLog: DecisionLog;
   suspectSim?: number;
+  /**
+   * Prompt templates. Injectable so a variant arm (E8, prompt sensitivity) can supply its own
+   * without touching this class; defaults to the shared `prompts/` directory.
+   */
+  prompts?: PromptProvider;
 }
 
 interface Merge {
@@ -34,7 +40,10 @@ export class RegistryConsolidator {
   #decisionLog: DecisionLog;
   #suspectSim: number;
 
+  #prompts: PromptProvider;
+
   constructor(params: Params) {
+    this.#prompts = params.prompts ?? prompts;
     this.#artifactsDir = params.artifactsDir;
     this.#llmClient = params.llmClient;
     this.#schemaRegistry = params.schemaRegistry;
@@ -184,12 +193,7 @@ export class RegistryConsolidator {
       return `* "${item.name}"${definition} [aliases: ${item.aliases.join(', ') || 'none'}]`;
     });
 
-    const instructions = `You review ${subject} for duplicates.
-The entries below were flagged as suspiciously similar. Decide which are truly the SAME real-world concept under different names. Merge ONLY on naming evidence (shared names, stated aliases, unambiguous abbreviations) — similar type or theme alone is NOT identity. Never merge to make a graph more connected. When uncertain, do not merge. Prefer the more complete or more standard name as "into".
-
-Output a single raw JSON object, no markdown fences, no commentary:
-{ "merges": [ { "from": "<name to remove>", "into": "<name to keep>" } ] }
-Return { "merges": [] } when nothing should merge.`;
+    const instructions = this.#prompts.render('consolidate-merge', { subject });
 
     const started = Date.now();
     // Hoisted so the finally block can log tokens for a call that may have thrown.

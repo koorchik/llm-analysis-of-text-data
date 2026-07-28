@@ -1,3 +1,4 @@
+import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import type { DecisionLog } from '../DecisionLog/DecisionLog';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import { extractAndParseJson, UnifiedData, Category } from '../utils/validationUtils';
@@ -12,6 +13,11 @@ interface Params {
   retryDelay?: number;
   /** M1: batch Ψ_norm had console.time only. Instrumentation added; algorithm untouched. */
   decisionLog?: DecisionLog;
+  /**
+   * Prompt templates. Injectable so a variant arm (E8, prompt sensitivity) can supply its own
+   * without touching this class; defaults to the shared `prompts/` directory.
+   */
+  prompts?: PromptProvider;
 }
 
 export class DataEntitiesCollector {
@@ -22,7 +28,10 @@ export class DataEntitiesCollector {
   #retryDelay: number;
   #decisionLog?: DecisionLog;
 
+  #prompts: PromptProvider;
+
   constructor(params: Params) {
+    this.#prompts = params.prompts ?? prompts;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
@@ -159,23 +168,7 @@ export class DataEntitiesCollector {
   async #sendToLlm(entityType: string, entities: string[]): Promise<Record<string, string>> {
     const uniqueEntities = [...new Set(entities)];
 
-    const instructions = `
-      You are a data normalization expert. Your task is to normalize the following list of ${entityType} entities.
-      Group similar entities together and provide a single normalized name for each group.
-      
-      For example:
-      - "Microsoft Corp", "Microsoft Corporation", "MSFT" should all map to "Microsoft Corporation"
-      - "APT28", "Fancy Bear", "Sofacy Group" should all map to "APT28"
-      
-      Return a JSON object where each key is the original entity name and the value is the normalized name.
-      If an entity doesn't need normalization, map it to itself.
-      
-      Return ONLY a JSON object in this format:
-      {
-        "original_name_1": "normalized_name_1",
-        "original_name_2": "normalized_name_2"
-      }
-    `;
+    const instructions = this.#prompts.render('psi-norm-batch', { entityType });
 
     const text = `Entities to normalize: ${JSON.stringify(uniqueEntities, null, 2)}`;
 
