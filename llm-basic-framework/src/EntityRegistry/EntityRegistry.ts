@@ -1,3 +1,4 @@
+import type { RegistrySnapshot } from '../Normalization/types';
 import { closure } from '../Evaluation/unionFind';
 import { writeJsonAtomic } from '../utils/fsUtils';
 import { bestMatches } from '../utils/similarityUtils';
@@ -258,6 +259,32 @@ export class EntityRegistry {
   /** Alias surfaces for one canonical — for callers that want plain strings. */
   aliasSurfaces(category: string, canonical: string): string[] {
     return (this.#categories[category]?.[canonical]?.aliases ?? []).map((alias) => alias.surface);
+  }
+
+  /**
+   * Read-only view for candidate generators (M4).
+   *
+   * **Live, not a frozen copy.** The streaming registry mutates after every document, so a copy
+   * taken once at `prepare()` would be stale by the second document. Generators that maintain an
+   * index therefore rely on `onRegistryChange` for invalidation rather than on immutability here.
+   *
+   * `surfaces` is `[canonical, ...aliasSurfaces]` — the canonical usually appears twice, because
+   * `mint` stores it in its own alias list. Harmless (scoring takes a max) and preserved verbatim,
+   * because the M2.5 golden lists were captured against exactly this array.
+   */
+  snapshot(): RegistrySnapshot {
+    const categories = this.#categories;
+    return {
+      categories: () => Object.keys(categories),
+      size: (category: string) => Object.keys(categories[category] ?? {}).length,
+      entries: (category: string) =>
+        Object.entries(categories[category] ?? {}).map(([canonical, record]) => ({
+          canonical,
+          surfaces: [canonical, ...record.aliases.map((alias) => alias.surface)],
+          gloss: record.gloss ?? null,
+          categoryCounts: record.categoryCounts,
+        })),
+    };
   }
 
   aliasToCanonicalMap(category: string): Map<string, string> {
