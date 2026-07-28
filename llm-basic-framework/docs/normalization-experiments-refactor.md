@@ -303,19 +303,71 @@ Deliverables:
    behaviour, it does not improve on it). Deterministic and committed.
 2. **`bin/capture-golden.ts`** — the generator, committed alongside its output so the fixture can be
    rebuilt and diffed rather than trusted.
-3. **`test/fixtures/golden-candidates.json`** — `candidates()` output for every one of the 3,392
-   pairs against that fixture, at the defaults the streaming pipeline actually uses (`k`, `minSim`
-   as passed by `StreamingNormalizer`; record them in the file header so the gate cannot drift).
+3. **`test/fixtures/golden-candidates.jsonl`** — `candidates()` output for every one of the 3,392
+   pairs against that fixture, at the defaults the streaming pipeline actually uses
+   (**verified: `k = 5`, `minSim = 0.5`**, from `StreamingNormalizer`'s `candidateK` /
+   `candidateMinSim`), recorded in a header line so the gate cannot drift. JSONL rather than one
+   JSON document: 3,392 records, one per line, stays diffable and is 1.2 MB instead of several.
+   The header is deliberately **path-free** — the corpus is identified by its content hash and the
+   fixture by its canonical hash, so the file verifies from any directory. (Found by testing the
+   verifier: embedding paths made a faithful copy fail on the header alone, a false positive that
+   would mask real drift.)
 4. **Fix the tie-break first.** `similarityUtils.ts:61` sorts on `b.sim - a.sim` only, so
    equal-similarity candidates fall back to registry insertion order. Change it to sort on
    `(-sim, canonicalName)` **before** capturing, and capture against the fixed version — otherwise
    the golden file bakes in a run-dependent ordering and the gate enforces a bug. This is the one
-   intentional behaviour change in M2.5; everything else is capture-only.
-5. A test that rebuilds the fixture from the frozen input and asserts it matches the committed copy
-   byte for byte, so a change in `mint`/`resolve` semantics is caught here rather than in M4.
+   intentional behaviour change in M2.5; everything else is capture-only. Use UTF-16 code-unit
+   comparison, **never `localeCompare`**, which is ICU- and locale-dependent and would reintroduce
+   cross-environment nondeterminism on Cyrillic keys.
+5. A test that rebuilds the fixture from the frozen input and asserts it matches the committed copy,
+   so a change in `mint`/`resolve` semantics is caught here rather than in M4. Compared by
+   **canonical hash and deep equality, not raw bytes** — object key order is not semantically
+   meaningful to `candidates()` once the tie-break is name-based, and a formatter run over the
+   committed JSON must not be able to fail the gate. Order changes that *do* matter still surface,
+   because `firstSeen` is part of the hashed content.
+
+**Measured: the tie-break was not a cosmetic fix.** Over the 3,392 frozen queries against the
+3,360-canonical fixture at `k = 5`, `minSim = 0.5`:
+
+| | queries | top-5 changed by the fix | top-5 cut decided by tie order |
+|---|---|---|---|
+| **all** | 3,392 | **1,275 (37.6%)** | **1,352 (39.9%)** |
+| Domain | 1,929 | 836 (43.3%) | 1,058 (54.8%) |
+| Software | 882 | 334 (37.9%) | 228 (25.9%) |
+| **HackerGroup** | 93 | **51 (54.8%)** | 43 (46.2%) |
+| Sector | 121 | 27 | 10 |
+| Organization | 174 | 13 | 8 |
+| Government Body | 96 | 13 | 3 |
+| Device | 31 | 1 | 2 |
+| Country · Individual · Infrastructure | 66 | 0 | 0 |
+
+So **more than a third of all candidate lists were order-dependent**, and the worst-affected
+category is `HackerGroup` — the one carrying strata (c) and (d), on which the two-claims framing
+rests. Mean candidates above `minSim` is **42.0** (max 221), so `k = 5` already discards most of
+them; before the fix, *which* five reached the judge was decided by mint order. This is Risk #7
+made concrete, and it is why the fix precedes the capture.
+
+**Two mechanism findings that belong to M4 and E4, not here.** Both come from the same capture and
+are recorded so they are not rediscovered later:
+
+- **Token-set Dice makes structurally-similar identifiers look alike.** `tokenSetDice` splits on
+  `[^\p{L}\p{N}]+`, so any two 2-token domains sharing only a TLD score **exactly 0.5** — at the
+  `minSim` boundary, which is why Domain has 1,058 tie-decided cuts. Worse for designations:
+  60 of 92 `HackerGroup` canonicals are `UAC-####`, and they score 0.75–0.875 against each other on
+  the shared prefix alone. Concretely, query `UAC-0010` retrieves `UAC-0018`, `UAC-0050` and
+  `UAC-0210` at 0.875 **ahead of** `UAC-0010 (Armageddon)` at 0.8 — its own designation, ranked
+  fifth and only just inside `k = 5`. This is the strongest available argument for M4's
+  `identifierRegex` analyzer, and it is exactly the failure E4 measures as candidate recall@k.
+- **Distinct surfaces can score 1.0.** 73 queries retrieve more than one candidate at similarity 1,
+  because the tokenizer collapses punctuation: `accounts-ukr.net`, `accounts--ukr.net` and
+  `accounts---ukr.net` have identical token sets. They are plausibly typosquats of one another, so
+  any threshold-based merge arm will merge them unconditionally — and for a CTI corpus that may be
+  precisely the wrong answer. Note the tension for M4's `domainCanonical` analyzer: eTLD+1 folding
+  would make this *worse*, not better. Do not let the embedding-threshold arm inherit it silently.
 
 Nothing in M2.5 changes pipeline behaviour beyond the tie-break, and nothing consumes the fixture
-yet — M4 is where it becomes a gate.
+yet — M4 is where it becomes a gate. Regenerate with `npm run capture-golden`; check drift with
+`npm run capture-golden -- --verify` (~13 s, 3.7M similarity comparisons).
 
 ### M3 — Registry v2: alias graph with provenance
 
@@ -374,7 +426,7 @@ belongs in the paper's rejection list, not in the codebase.
 
 **Regression gate:** `StringSimilarityGenerator` with `identity` analyzer + `max(lev, dice)` must
 reproduce `EntityRegistry.candidates()` output **exactly** on all 3,392 frozen pairs, asserted
-against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.json` pair captured
+against the `test/fixtures/registry-v1.json` + `test/fixtures/golden-candidates.jsonl` pair captured
 in **M2.5**. Assert byte-identity before anything else changes; only then delete `candidates()`.
 
 The capture itself — fixture construction, the golden file, and the `(-sim, canonicalName)`
@@ -597,7 +649,7 @@ src/Evaluation/{unionFind.ts, partition.ts, clusterMetrics.ts, nilMetrics.ts, bl
 src/Resources/{AttackStix.ts, MispGalaxy.ts, Wikidata.ts}        // GeoNames, NvdCpe → E3
 bin/{app.ts, experiment.ts, evaluate.ts, gold.ts, replay.ts, downstream.ts, hash-input.ts,
      migrate-registry.ts, capture-golden.ts}
-test/fixtures/{registry-v1.json, golden-candidates.json}         // M2.5, before M3
+test/fixtures/{registry-v1.json, golden-candidates.jsonl}        // M2.5, before M3
 docs/statistical-protocol.md
 prompts/*.md          experiments/*.json          config/model-prices.json
 ```
@@ -698,7 +750,7 @@ in this column is a defect in **this** document.
    file. This is the test that makes the refactor safe. **Checkable by commit order:** the fixture
    and golden file must be committed *before* the M3 registry-v2 commit — if they arrive after, the
    gate is circular and does not count. Verify with
-   `git log --oneline -- test/fixtures/golden-candidates.json src/EntityRegistry/`.
+   `git log --oneline -- test/fixtures/golden-candidates.jsonl src/EntityRegistry/`.
 5. **Instrumentation smoke test** (M1). One 5-document run emits a decision log with non-zero token
    counts from every backend, and a run card whose cost totals equal the log's sum.
 6. **Content hash is reproducible.** `bin/hash-input.ts` run twice gives the same value, and the
@@ -745,11 +797,14 @@ in this column is a defect in **this** document.
    reference). That window is narrow and easy to miss under schedule pressure — M2.5 is small, so the
    temptation is to fold it into M4 and do M3 first, which is exactly the failure. Treat "M2.5
    committed before M3" as a hard precondition, checkable by commit order.
-7. **Determinism leaks beyond the seed.** Equal-similarity candidate ordering (fixed in **M2.5**, as
-   part of the golden capture — not M4, or the golden file bakes the bug in), `seededShuffle`'s PRNG
-   (named in M7), and `runId` excluding the git sha (fixed in M1) each make "same config → same run"
-   false in a different way. All three are cheap to close and expensive to discover after results
-   exist.
+7. **Determinism leaks beyond the seed — the largest one is now measured.** Equal-similarity
+   candidate ordering (fixed in **M2.5**, as part of the golden capture — not M4, or the golden file
+   bakes the bug in), `seededShuffle`'s PRNG (named in M7), and `runId` excluding the git sha (fixed
+   in M1) each make "same config → same run" false in a different way. All three are cheap to close
+   and expensive to discover after results exist. The candidate-ordering leak turned out to affect
+   **37.6% of all candidate lists and 54.8% of `HackerGroup` ones** (M2.5's table) — i.e. it was not
+   a corner case, and had it been discovered after E2 ran, every affected judge decision would have
+   been unreproducible.
 8. **~~The baseline is uncommitted~~ — closed.** Execution step 0 is done: the streaming pipeline and
    this document are committed and tagged **`skein-v2-baseline`**, with `npx tsc --noEmit` green at
    the tag over 32 files. Line numbers in this document are valid as of that tag and drift
