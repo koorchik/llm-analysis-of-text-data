@@ -61,18 +61,64 @@ Software:     Remote Utilities <> rutserv.exe
 These are stratum (c)/(d) rows, at similarity 0, for 295 additional adjudications on top of 1,624 —
 about 18% more work aimed entirely at the stratum that currently has nothing in it.
 
-### What it gets wrong
+### What it gets wrong: hierarchy mistaken for coreference
 
-The registry over-merges, in two systematic ways that would corrupt the gold if trusted:
+The registry over-merges, and the failure has one shape. Entity resolution asks whether two names
+denote the **same referent**. The registry answers whether two things are **related**:
 
-- **Granularity collapse.** `Domain` folds every hostname into its registrable domain —
-  `certifiedauth.in` absorbs 60 surfaces including `accounts.google2.certifiedauth.in` and
-  `admin.certifiedauth.in`. In `Software`, `Microsoft Office` absorbs 2007/2010/2013/2016/2019 plus
-  `MS Office` (11 surfaces), and `MS Exchange` merges with `Microsoft Exchange Server 2010` through
-  `2019`. This directly contradicts the `differing-digits` pre-label rule, which §4 identifies as
-  the largest source of false merges.
-- **Distinct components under one product.** `Windows Script Host` merges with both `cscript.exe`
-  and `wscript.exe`, which are different binaries.
+| pair | relation | correct merge? |
+|---|---|---|
+| `CloudFlare` / `Cloudflare Inc.` | coreference — two names, one referent | yes |
+| `MS Office` / `Microsoft Office` | coreference (abbreviation) | yes |
+| `Microsoft Office 2016` / `Microsoft Office` | instance-of — a version *of* a product | **no** |
+| `admin.certifiedauth.in` / `certifiedauth.in` | part-of — a host *under* a domain | **no** |
+| `admin.certifiedauth.in` / `analytics.certifiedauth.in` | siblings — co-located, distinct | **no** |
+
+Coreference is symmetric and identity-preserving; hierarchy is neither. Only the first is what this
+gold table scores.
+
+Classifying every `Domain` merge mechanically: of **4,551 pairs, 716 are part-of and 3,835 are
+siblings under a common parent. Zero are coreference.** The entire category contains no correct
+merge. `Software` shows the same shape more mildly — `Microsoft Office` absorbs 2007/2010/2013/2016/
+2019 alongside `MS Office`; `MS Exchange` merges with `Microsoft Exchange Server 2010`–`2019`;
+`Windows Script Host` merges with both `cscript.exe` and `wscript.exe`, which are different binaries.
+All of this contradicts the `differing-digits` rule that §4 of `GOLD-TABLE.md` identifies as the
+largest source of false merges.
+
+### Root cause
+
+`prompts/psi-norm-batch.md`, the published Ψ_norm artifact, reads:
+
+> Group **similar** entities together and provide a single normalized name for each group.
+
+Similarity, never identity. `admin.certifiedauth.in` genuinely *is* similar to `certifiedauth.in`.
+The baseline has no identity criterion, so it cannot do entity resolution — it is doing what it was
+asked. This is not model noise; it is systematic and predictable, which is why §8 treats it as a
+result rather than an obstacle.
+
+### Why this is a defect and not merely a coarser granularity
+
+Two reasons, both of which force the gold to sit at coreference granularity:
+
+1. **It is lossy in the irreversible direction.** Coarse is derivable from fine — roll hostnames up
+   with a public-suffix list, strip version tokens. Fine is not recoverable from coarse. Roll-up
+   must therefore be a separate, explicitly reported operation, never baked into the reference.
+2. **For `Domain` it erases the phenomenon under study.** Under `ssl2.site` the registry collapses
+   `docs.google.com.ssl2.site` and `docs.googie.com.ssl2.site` into one entity. That
+   `googie`/`google` substitution is the homoglyph typosquat §8 of `GOLD-TABLE.md` calls the
+   genuinely interesting part of the category.
+
+In fairness: for blocklisting, registrable-domain granularity is what an operator wants. The
+behaviour is not senseless — it is simply not entity resolution, and not what is being measured.
+
+### Why pairs and not clusters
+
+The `Microsoft Office` cluster holds 11 surfaces including **one correct merge** (`MS Office`) and
+several wrong ones. It cannot be accepted or rejected wholesale, which is why the design adjudicates
+pairs. Transitive closure is unforgiving here: accept `MS Office` = `Microsoft Office` (true) plus
+`Microsoft Office 2016` = `Microsoft Office` (false) and closure yields
+`MS Office` = `Microsoft Office 2016`. `gold build` detects *contradictions*, not
+consistent-but-wrong closures — one bad pair takes its whole cluster with it.
 
 So: the registry proposes, the annotator disposes. Same contract the string proposer already has.
 
@@ -86,13 +132,20 @@ Manual verification fixes **precision** — the annotator deletes bad merges. It
 external authority. Left unaddressed this inflates the batch arm's recall relative to the streaming
 arm, asymmetrically.
 
+Note the two failure directions are independent and both real: within the clusters it forms the
+registry **over**-merges (§2), while across the corpus it **under**-proposes — 405 non-`Domain`
+pairs against the string proposer's 1,624. Over-merging does not buy back the missed merges, so the
+recall concern stands undiminished.
+
 This is a reason to record and measure the bias, not to reject the source. The mitigation is §5.4.
 
 ## 4. Non-goals
 
 - **`Domain` stays excluded.** The registry proposes 4,551 `Domain` pairs; including them would make
-  `Domain` 74% of the worksheet, and almost all of them are the subdomain collapse described above.
-  `--skip-categories` applies to both proposers. §8 of `GOLD-TABLE.md` is unchanged.
+  `Domain` 74% of the worksheet, and by §2 not one of them is a coreference merge — they are
+  part-of (716) and sibling (3,835) relations. `--skip-categories` applies to both proposers. §8 of
+  `GOLD-TABLE.md` is unchanged, though §2's typosquat-erasure finding strengthens its case for an
+  eventual deliberate `Domain` sample aimed at the homoglyph families.
 - **No auto-`same` from the registry alone.** No registry-only pair is ever pre-labelled positive.
 - **No second-model registry.** `processed/incremental/gpt-5.4-nano` exists and is same-family, so it
   buys weak independence. Out of scope.
@@ -105,6 +158,8 @@ This is a reason to record and measure the bias, not to reject the source. The m
 export interface RegistryPair extends ProposedPair {
   /** The canonical both surfaces were mapped to. Context for the annotator, never evidence. */
   canonical: string;
+  /** Reporting-only classification of what the registry merged. Never a label. See below. */
+  relation: 'part-of' | 'sibling' | 'instance-of' | 'unclassified';
 }
 
 export interface RegistryPairsResult {
@@ -136,6 +191,19 @@ Behaviour:
 Point 4 is the load-bearing one. `'c'` is **provisional** — the registry cannot distinguish
 semantic-known from semantic-novel. The annotator promotes or demotes it in the `stratum` column,
 which `fromTsv` already reads.
+
+5. Classify each pair's `relation`, per §2:
+   - `part-of` — `Domain`, and one surface is a dot-suffix of the other.
+   - `sibling` — `Domain`, same registrable tail, neither a suffix of the other.
+   - `instance-of` — one surface is the other plus a trailing version or year token.
+   - `unclassified` — everything else, including every genuine coreference merge.
+
+   **This classification is for reporting only and must never influence a label or a suggestion.**
+   It is a heuristic: the registrable tail is taken as the last two labels, which is wrong for
+   multi-label public suffixes like `co.uk`. No such suffix appears in this corpus, and a
+   misclassification changes a number in a table, never a verdict. `registryPairsSummary()` reports
+   the breakdown by category and relation — that is what turns "it over-merges" into §2's
+   4,551 / 716 / 3,835 / 0.
 
 ### 5.2 Provenance
 
@@ -194,6 +262,20 @@ All 295 registry-only rows are `suggested: review`, `rule: registry-semantic`.
 
 In `docs/GOLD-TABLE.md`:
 
+- **§5, the decision rule — a new granularity clause.** The rule currently says "Similar type, theme,
+  vendor or product line is NOT identity", which covers the `CCR 1016`/`CCR 1036` case but not
+  hierarchy. Add, with §2's table as the examples:
+
+  > **Part-of and instance-of are `different`.** A host is not the domain it sits under
+  > (`admin.certifiedauth.in` ≠ `certifiedauth.in`), two hosts under one domain are not each other,
+  > and a version is not its product (`Microsoft Office 2016` ≠ `Microsoft Office`). Only
+  > coreference — two *names* for one *referent* — is `same`. An abbreviation is coreference
+  > (`MS Office` = `Microsoft Office`); a narrowing is not.
+
+  Component-vs-product needs a stated call because the corpus contains both readings: `MSHTA` and
+  `mshta.exe` are one tool under two names, while `Windows Script Host` covers `cscript.exe` *and*
+  `wscript.exe`, which are two. **Rule: merge only when the product has exactly one binary in this
+  corpus; otherwise the binary is a component and the pair is `different`.**
 - §2, machine/human table: registry proposal is tooling; stratum (c)/(d) *adjudication* stays human.
 - §3, step 2: `--registry ../storage/cert.gov.ua/processed/entities-unified/gpt-5/entities.json`,
   and the updated pair counts.
@@ -223,6 +305,10 @@ Added to `src/Gold/gold.test.ts`:
    `source` defaulting to `'string'`.
 7. `validate` emits the proposer-independence warning when all (c)/(d) clusters are registry-sourced,
    and not otherwise.
+8. `relation` classification: `a.b.com`/`b.com` → `part-of`; `a.b.com`/`c.b.com` → `sibling`;
+   `Office 2016`/`Office` → `instance-of`; `Cloudflare`/`CloudFlare Inc.` → `unclassified`. And a
+   test asserting `relation` reaches no pre-label rule and no suggestion — the classification is
+   reporting-only, and a regression that wired it into labelling would be silent otherwise.
 
 `test/gate.test.ts` is untouched — nothing here is on the pipeline path.
 
@@ -234,3 +320,24 @@ Added to `src/Gold/gold.test.ts`:
 | Recall bias toward the batch arm | §5.4 warning + composition-by-source reported in the paper |
 | Registry drifts from `raw-unified` | Cross-validation reports `droppedKeys`; 32 today |
 | Provisional `c` rows left as `c` when they are `d` | `gold validate` already warns on empty (d); the guide instructs demotion with evidence |
+| `relation` heuristic misclassifies a public suffix | Reporting-only by construction, asserted by test 8; a wrong row moves a count, never a label |
+
+## 8. Out of scope, but must be recorded: the prompt confound
+
+§2 shows the over-merging traces to one line of `prompts/psi-norm-batch.md` — "group **similar**
+entities". That makes it a finding worth reporting: the published baseline's objective is
+similarity, so it cannot perform entity resolution, and its errors are systematic rather than noisy.
+
+It also creates the obvious reviewer objection: *you compared a careful method against a lazy
+prompt.* The answer is **not** to edit the prompt. `RUNNING-EXPERIMENTS.md` is right that E1 must
+score the published artifact, and faithful reproduction is a legitimate claim on its own.
+
+The answer is a third arm: **batch Ψ_norm with an identity-criterion prompt**, holding everything
+else fixed. That separates *batch-ness* from *prompt wording*. If batch-with-a-good-prompt still
+collapses hierarchy, the failure is structural — no per-decision context, no mint-if-uncertain
+option — which is the claim worth making. Without it the result reads as "this prompt is bad", which
+is weaker and easier to attack.
+
+This is a separate piece of work: a new prompt, a manifest entry, a run, and a `CONDITION`. It is
+recorded here because the §2 finding is what motivates it, and because the composition-by-source
+table from §5.4 is where both land in the paper.
