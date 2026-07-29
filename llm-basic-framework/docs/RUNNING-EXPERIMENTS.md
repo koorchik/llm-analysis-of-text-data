@@ -103,12 +103,18 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `CONDITION` | `psi-norm-default` / `psi-link-default` | **Names** the arm — a label in the runId. It does *not* select behaviour; `DECISION_STRATEGY` does |
 | `LLM_PROVIDER` | `openai` | `openai`, `anthropic`, `ollama`, `vertexai` |
 | `LLM_MODEL` | `gpt-5` | |
-| `EMBEDDINGS_PROVIDER` | `ollama` | |
-| `EMBEDDINGS_MODEL` | `nomic-embed-text` | |
+| `EMBEDDINGS_PROVIDER` | `ollama` | `ollama`, `openai`, `vertexai`, `http` (§4a) |
+| `EMBEDDINGS_MODEL` | `nomic-embed-text` | Keys the vector cache, the price lookup and the runId |
+| `EMBEDDINGS_URL` | `http://localhost:8080` | `http` provider only — the sidecar's base URL |
+| `EMBEDDINGS_POOLING`, `EMBEDDINGS_NORMALIZE`, `EMBEDDINGS_API_KEY` | unset | `http` provider only. Pooling is **recorded, not applied** — the sidecar does it |
+| `OLLAMA_HOST` | unset | Point the embeddings backend at a non-local Ollama |
 | `INPUT_DIR` | `../storage/cert.gov.ua/fetched` | |
 | `OUTPUT_DIR` | `../storage/cert.gov.ua/processed` | |
 | `DECISIONS_LOG` | off | **Set to `1`.** Without it there is nothing to score or replay |
 | `DECISION_STRATEGY` | unset | Selects the decision stage (§4). Unset = the built-in `link-judge` path |
+| `CANDIDATE_GENERATOR` | unset | Selects the blocker (§4a). Unset = `string-sim`, the arm the M4 gate pins |
+| `CANDIDATE_K`, `CANDIDATE_MIN_SIM` | `5`, `0.5` | The golden fixture's values; changing either forks the runId |
+| `EMBEDDINGS` | off | `FLOW=batch` only. `1` makes `DataNormalizer` write real vectors — and moves its output into the run directory (§4a) |
 | `SEED` | none | Recorded in the run card |
 | `TEMPERATURE`, `TOP_P`, `MAX_TOKENS` | unset | Unset means *send nothing* — see below |
 | `EDGES_FROM` | `layered` | Graph build only |
@@ -194,6 +200,86 @@ as its own rate. That asymmetry is deliberate — excluding deferrals from both 
 everything" score perfectly. Only `fellegi-sunter` and a `threshold` configured with `deferBand` or
 `minMargin` ever defer; the LLM arms never do (an LLM asked to abstain will abstain, so the rate
 would reflect prompt wording rather than genuine ambiguity).
+
+---
+
+## 4a. Candidate generators — the retrieval arm (M5)
+
+`CANDIDATE_GENERATOR` selects the blocker. Unset means `string-sim`, which is what
+`EntityRegistry.candidates()` was proved byte-identical to on all 3,392 frozen pairs — so leaving it
+alone keeps the arm the gate pins. An unknown id is **fatal**, never a silent fallback.
+
+| id | Channel | Notes |
+|---|---|---|
+| `string-sim` | `string-sim` | Default. `identity` analyzer, `max(levenshtein, token-dice)` |
+| `exact` | `exact` | The E2 floor. Similarity 1 or nothing |
+| `tfidf-ngram` | `tfidf-ngram` | Char-3gram TF-IDF cosine, IDF over the live registry |
+| `bm25` | `bm25` | Word tokens, so it fuses with the char-level channels rather than duplicating them |
+| `embedding` | `embedding` | Dense cosine over `EMBEDDINGS_MODEL`. Brute force, **no ANN index** |
+
+`rrf` is deliberately absent: it takes child generators rather than plain options, so it cannot be
+built from an id alone. That arrives with M7's config loader.
+
+**This is what makes `threshold` an embedding pole.** `ThresholdDecision` reads
+`candidates[0].sim` and nothing else — it has no idea what produced it. The plan's "embedding cosine
+≥ 0.8" arm is `CANDIDATE_GENERATOR=embedding` plus `DECISION_STRATEGY=threshold`; without the first
+half, "threshold 0.8" is an edit-distance ratio wearing the name.
+
+```bash
+# Self-hosted encoder (confidentiality constraint) — needs `ollama pull bge-m3`
+FLOW=incremental CONDITION=e2-embed-threshold \
+  EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=bge-m3 \
+  CANDIDATE_GENERATOR=embedding DECISION_STRATEGY=threshold DECISIONS_LOG=1 npm start
+```
+
+Three things to know before reading the numbers:
+
+- **A cosine is clamped to `[0, 1]`, not rescaled.** A negative cosine scores 0 — "no evidence" —
+  rather than `(1+cos)/2`, which would put *orthogonal* vectors at 0.5 and let them pass
+  `minSim: 0.5`. Every threshold cited from `dong2023reveal` is a similarity threshold, so rescaling
+  would silently change what those numbers mean.
+- **`sim === 1` never happens.** Floating-point cosine of a vector with itself is `0.9999999999999998`.
+  `minSim: 1` retrieves nothing, and the `sim === 1` early exit that is valid for string metrics is
+  not valid here.
+- **`name+gloss` is currently identical to `name`.** Nothing writes glosses — `EntityRegistry.mint`
+  accepts one and `setGloss()` has no callers — so every record's gloss is null. The representation
+  ships and warns loudly when selected. Do not report it as evidence that glosses do not help.
+
+### The vector cache
+
+Vectors are cached at `{OUTPUT_DIR}/embeddings-cache/{provider}-{model}.jsonl`, content-addressed by
+`(model, text)` and **deliberately outside `experiments/{runId}/`** — a vector is run-independent, so
+per-run scoping would re-embed the whole registry on every seed, and ≥3 seeds per condition is the
+protocol.
+
+Measured on a 3-document smoke run: cold 16 embedding calls / 59.5 s, warm **0 calls / 3.6 ms**.
+
+**Read `embeddingCache` in the run card, not the call count.** Cache hits are not `CostMeter` calls,
+so a fully-cached arm reports zero embedding calls — which reads as "embeddings never ran" unless the
+hit count sits beside it. The `COST` line prints `embed cache N hit / M miss` for the same reason.
+
+### Encoders
+
+| Provider | Use | Status |
+|---|---|---|
+| `ollama` | BGE-M3, self-hosted — satisfies the confidentiality constraint | ✅ verified live |
+| `openai` | `text-embedding-3-large` — the cloud arm | ✅ batching + usage implemented; input price still `null` |
+| `http` | SecureBERT via a sidecar — settles the published encoder contradiction | ✅ unit-tested against the wire contract; see `tools/securebert-sidecar/` |
+| `vertexai` | Spare capacity for a future encoder | ⚠️ **implemented but never called** — see below |
+
+**VertexAI is unverified.** It was a stub returning `[]` before M5 — reachable, silent, and giving
+every entity a zero-length vector. It is now a real `:predict` implementation over
+`google-auth-library`, and every failure path throws. But `GOOGLE_APPLICATION_CREDENTIALS` was the
+placeholder `CHANGE_ME` in this environment, so **no call has ever been made**. Treat the first real
+run as the verification step.
+
+### `EMBEDDINGS=1` and the batch flow
+
+`FLOW=batch`'s `DataNormalizer` writes `"embedding": []` by default — exactly as it did before M5, so
+the committed `normalized/{model}/` corpus stays byte-identical and nobody pays for a re-run they did
+not ask for. With `EMBEDDINGS=1` it embeds one batched request per document (the whitelist is
+`Infrastructure`/`Sector`/`Device` × `role: Target`, unchanged) **and the batch flow's output moves to
+`{runDir}/batch/`**. That is the only way `DataAnalyzer`'s t-SNE has ever seen a real vector.
 
 ---
 
@@ -373,19 +459,30 @@ Read the run card's cost block rather than guessing — but the shape to expect:
 - `listwise-mint-candidate` — one judge call per document, so ~204 judge calls plus extraction.
 - `comem-select` — one call **per unresolved mention**, a large multiple of the above on this
   corpus. That cost is the finding, not a defect; do a 5-document slice before committing to it.
+- `CANDIDATE_GENERATOR=embedding` — one `embed-query` call per unresolved mention plus one
+  `embed-index` call per category rebuild, both under their own operator buckets, and both **free on
+  the second run** because of the vector cache. Cheap relative to the judge, but the *first* run over
+  the frozen corpus pays for every surface.
 
 Guard rail: a call on an unpriced model yields `costUsd: null` and is counted in `unpricedCalls` /
 `unpricedModels`. Dated snapshot suffixes (`-2025-01-01`) are stripped for the lookup, so one row
 per model alias is enough.
+
+**An embeddings price row needs `outputPerMTok: 0`, not `null`.** `CostMeter.priceFor` only accepts
+an entry when *both* legs are non-null, so the natural-looking `{ inputPerMTok: 0.13,
+outputPerMTok: null }` reports every embedding call as unpriced rather than as priced on input
+alone. There is a regression test for this.
 
 **Read `unpricedCalls`, not the total.** `totals().costUsd` sums the priced calls only, so a run
 where nothing was priced reports `$0.0000 (+N unpriced calls)` — a plain zero, not a null. The
 zero is not the cost; the `+N` is the warning.
 
 **`config/model-prices.json` is partly unpriced.** The Anthropic models have real rates; `gpt-5`,
-`gpt-5.4-nano` and `text-embedding-3-large` are still `null` pending the provider-dashboard check
-(verification item 11). Token counts are already correct — only the dollar conversion is missing.
-Fill those in before quoting any cost figure.
+`gpt-5.4-nano` and `text-embedding-3-large`'s *input* leg are still `null` pending the
+provider-dashboard check (verification item 11). Locally-served encoders (`bge-m3`,
+`nomic-embed-text`, `securebert`) and the `ollama`/`http` provider defaults are a real 0 — free at
+the margin, with wall-clock still metered. Token counts are already correct everywhere; only the
+dollar conversion is missing. Fill those in before quoting any cost figure.
 
 Practical advice for a first live run: point `INPUT_DIR` at a directory of 3–5 reports. The
 resulting hash will differ from the frozen corpus, which is correct — such a run is a smoke test,
@@ -399,17 +496,21 @@ Honest status, so you do not plan around something that is not there.
 
 **Works now:** both pipelines end to end; run cards and cost metering; the decision log; all five
 decision strategies, live via `DECISION_STRATEGY` and offline via `replay`; the gate; registry v2;
-analyzers and candidate generators (string-sim, exact, TF-IDF, BM25, RRF fusion); merge P/R, NIL and
-the CESI suite through `bin/evaluate.ts`.
+analyzers and candidate generators — now **selectable at runtime** via `CANDIDATE_GENERATOR`
+(string-sim, exact, TF-IDF, BM25, embedding; RRF fusion awaits M7's config loader); embeddings with
+batching, cost metering and a cross-run vector cache; merge P/R, NIL and the CESI suite through
+`bin/evaluate.ts`.
 
 **Not built yet:**
 
-- **M5 — embeddings.** `DataNormalizer` sets `entity.embedding = []`; the `embed()` call is
-  commented out. There is no embedding candidate generator, so the cosine-threshold arm the plan
-  calls for cannot run, and the SecureBERT-vs-`text-embedding-3-large` comparison is unavailable.
-  `ThresholdDecision` currently thresholds *string* similarity.
+- **Gloss writing.** `EntityRegistry` stores a `gloss` and `EmbeddingGenerator` can encode
+  `name+gloss`, but nothing ever writes one, so that arm is currently identical to `name` (it warns).
+  The judge would have to emit a one-line description at mint time.
+- **VertexAI embeddings are unverified** — implemented, never called. See §4a.
+- **The SecureBERT sidecar has not been started here** — no Docker daemon. The backend is unit
+  tested against the wire contract; the compose file is not.
 - **M7 — the experiment CLI and ordering.** No single command runs a full arm matrix; run each arm
-  by hand with `DECISION_STRATEGY` and `CONDITION`. Stream order is fixed at `numeric-id`;
+  by hand with `CANDIDATE_GENERATOR`, `DECISION_STRATEGY` and `CONDITION`. Stream order is fixed at `numeric-id`;
   `chronological` and `seededShuffle` are not implemented, which matters because the gold table's
   `order` field must match the order a run actually used.
 - **M7/M11 — significance testing in the CLI.** The bootstrap, permutation-test, Holm, blocking and

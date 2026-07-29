@@ -9,6 +9,8 @@ import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
 import { StreamingGraphBuilder, EdgesFrom } from '../src/DataProcessors/StreamingGraphBuilder';
 import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
+import { EmbeddingCache } from '../src/EmbeddingsClient/EmbeddingCache';
+import { EmbeddingsBackendHttp } from '../src/EmbeddingsClient/EmbeddingsBackendHttp';
 import { EmbeddingsBackendOllama } from '../src/EmbeddingsClient/EmbeddingsBackendOllama';
 import { EmbeddingsBackendOpenAi } from '../src/EmbeddingsClient/EmbeddingsBackendOpenAi';
 import { EmbeddingsBackendVertexAi } from '../src/EmbeddingsClient/EmbeddingsBackendVertexAi';
@@ -32,7 +34,8 @@ import {
   createOfflineStrategy,
   isOfflineStrategyId,
 } from '../src/Normalization/decision';
-import type { DecisionStrategy } from '../src/Normalization/types';
+import { resolveGenerator } from '../src/Normalization/candidates';
+import type { CandidateGenerator, DecisionStrategy } from '../src/Normalization/types';
 import { prompts } from '../src/Normalization/PromptProvider';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
@@ -77,6 +80,19 @@ const CONFIG = {
   // Normalized to undefined when empty: `DECISION_STRATEGY=` must behave exactly like unset, or the
   // run card would record an empty-string arm name that reads as "none" but is not `?? `-defaulted.
   decisionStrategy: process.env.DECISION_STRATEGY || undefined,
+
+  // M5 candidate generation. Unset means `string-sim` — the generator the M2.5 golden fixture pins
+  // and the M4 gate is scored against — so the default arm is provably unchanged. Empty behaves as
+  // unset, for the same reason DECISION_STRATEGY does.
+  candidateGenerator: process.env.CANDIDATE_GENERATOR || undefined,
+  candidateK: process.env.CANDIDATE_K === undefined ? undefined : Number(process.env.CANDIDATE_K),
+  candidateMinSim:
+    process.env.CANDIDATE_MIN_SIM === undefined ? undefined : Number(process.env.CANDIDATE_MIN_SIM),
+
+  // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
+  // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
+  embeddings: process.env.EMBEDDINGS === '1',
+
   edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
 
   // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
@@ -107,6 +123,13 @@ async function main() {
   // here, and that does not depend on the client.
   const strategyForCard = createDecisionStrategy(null as unknown as LlmClient, undefined);
 
+  // Same two-phase trick for the candidate generator (M5): its config has to enter the runId, but
+  // the embedding generator needs a client that needs the cost meter that needs the runId. An
+  // unmetered client is enough to read `.config` — the real one is built below. Without this, a
+  // string-sim run and an embedding run would share a runId, share `experiments/{runId}/`, and
+  // silently resume each other through the `existsSync` skips.
+  const generatorForCard = createCandidateGenerator(createEmbeddingsClient());
+
   const runConfig = resolveRunConfig({
     condition: CONFIG.condition,
     orchestration: CONFIG.flow,
@@ -127,6 +150,13 @@ async function main() {
       // otherwise share a directory and resume each other through the `existsSync` skips.
       decisionStrategy: CONFIG.decisionStrategy ?? 'builtin-link-judge',
       decisionStrategyConfig: strategyForCard?.config ?? null,
+      // Same argument as above, for retrieval: E4 varies the blocker while holding the judge fixed,
+      // so two arms can differ *only* here.
+      candidateGenerator: generatorForCard.id,
+      candidateGeneratorConfig: generatorForCard.config,
+      candidateK: CONFIG.candidateK ?? null,
+      candidateMinSim: CONFIG.candidateMinSim ?? null,
+      embeddings: CONFIG.embeddings,
     },
   });
 
@@ -145,10 +175,14 @@ async function main() {
     console.warn('RUN: working tree is dirty — runId includes a diff hash, but commit before a real run');
   }
 
-  const embeddingsClient = createEmbeddingsClient();
+  // The real client: metered, and backed by a cache that lives OUTSIDE the run directory, because
+  // a vector for a given (model, text) is run-independent and re-embedding per seed would dominate
+  // the cost of every encoder arm.
+  const embeddingsClient = createEmbeddingsClient(costMeter, `${CONFIG.outputDir}/embeddings-cache`);
+  const candidateGenerator = createCandidateGenerator(embeddingsClient);
 
   // Create processors
-  const processors = createProcessors(llmClient, embeddingsClient, runDir);
+  const processors = createProcessors(llmClient, embeddingsClient, runDir, candidateGenerator);
 
   // Build flow
   const batchSteps: Record<string, () => Promise<void>> = {
@@ -195,13 +229,20 @@ async function main() {
     runCard.markComplete();
   } finally {
     runCard.attachCost(costMeter);
+    // M5: a fully-cached encoder arm makes zero embedding calls, which reads as "embeddings never
+    // ran" unless the hit count is recorded beside the spend.
+    runCard.attachEmbeddingCache(embeddingsClient.cacheStats);
     await runCard.save();
     const totals = costMeter.totals();
+    const cache = embeddingsClient.cacheStats;
     console.log(
       `COST ${runConfig.runId}: ${totals.calls} calls, ` +
         `${totals.inputTokens}+${totals.outputTokens} tokens, ` +
         `$${totals.costUsd.toFixed(4)}` +
-        (totals.unpricedCalls ? ` (+${totals.unpricedCalls} unpriced calls)` : '')
+        (totals.unpricedCalls ? ` (+${totals.unpricedCalls} unpriced calls)` : '') +
+        (cache && cache.hits + cache.misses > 0
+          ? `, embed cache ${cache.hits} hit / ${cache.misses} miss`
+          : '')
     );
     if (costMeter.unpricedModels.length) {
       console.warn(`COST: no price entry for ${costMeter.unpricedModels.join(', ')} — add to config/model-prices.json`);
@@ -275,7 +316,7 @@ function createLlmClient(backend: LlmBackendBase, costMeter: CostMeter): LlmClie
   });
 }
 
-function createEmbeddingsClient(): EmbeddingsClient {
+function createEmbeddingsClient(costMeter?: CostMeter, cacheDir?: string): EmbeddingsClient {
   let backend;
 
   switch (CONFIG.embeddingsProvider) {
@@ -289,6 +330,8 @@ function createEmbeddingsClient(): EmbeddingsClient {
     case 'ollama':
       backend = new EmbeddingsBackendOllama({
         model: CONFIG.embeddingsModel,
+        apiKey: process.env.OLLAMA_API_KEY,
+        host: process.env.OLLAMA_HOST,
       });
       break;
 
@@ -300,11 +343,46 @@ function createEmbeddingsClient(): EmbeddingsClient {
       });
       break;
 
+    // M5: any OpenAI-compatible /v1/embeddings endpoint. This is the SecureBERT arm — see
+    // tools/securebert-sidecar/.
+    case 'http':
+      backend = new EmbeddingsBackendHttp({
+        model: CONFIG.embeddingsModel,
+        url: process.env.EMBEDDINGS_URL || 'http://localhost:8080',
+        apiKey: process.env.EMBEDDINGS_API_KEY,
+        pooling: process.env.EMBEDDINGS_POOLING,
+        normalize: process.env.EMBEDDINGS_NORMALIZE === undefined
+          ? undefined
+          : process.env.EMBEDDINGS_NORMALIZE === '1',
+      });
+      break;
+
     default:
       throw new Error(`Unknown embeddings provider: ${CONFIG.embeddingsProvider}`);
   }
 
-  return new EmbeddingsClient({ backend });
+  return new EmbeddingsClient({
+    backend,
+    costMeter,
+    cache: cacheDir
+      ? new EmbeddingCache({
+          dir: cacheDir,
+          provider: backend.provider,
+          model: CONFIG.embeddingsModel,
+        })
+      : undefined,
+  });
+}
+
+/**
+ * Build the generator named by `CANDIDATE_GENERATOR`, or `string-sim` when unset.
+ *
+ * `string-sim` is the default rather than an arbitrary choice: it is what `EntityRegistry`'s
+ * removed `candidates()` was proved byte-identical to on all 3,392 frozen pairs, so an unset
+ * variable keeps the arm the golden fixture pins.
+ */
+function createCandidateGenerator(embeddingsClient: EmbeddingsClient): CandidateGenerator {
+  return resolveGenerator(CONFIG.candidateGenerator ?? 'string-sim', { embeddingsClient });
 }
 
 /**
@@ -338,11 +416,20 @@ function createDecisionStrategy(
 function createProcessors(
   llmClient: LlmClient,
   embeddingsClient: EmbeddingsClient,
-  runDir: string
+  runDir: string,
+  candidateGenerator: CandidateGenerator
 ) {
   const modelDir = llmClient.modelName.replace(/:/g, '-');
   const baseDir = CONFIG.outputDir;
   const inputDir = CONFIG.inputDir;
+
+  // M5: with `EMBEDDINGS=1` the batch flow writes vectors, so its output moves into the run
+  // directory. That keeps the committed `normalized/{model}/` artifacts — 204 files, every
+  // `embedding` an empty array — byte-identical, and it means the t-SNE built from real vectors
+  // belongs to the run that paid for them. With embeddings off the paths are exactly as before.
+  const batchDir = CONFIG.embeddings ? `${runDir}/batch` : `${baseDir}`;
+  const normalizedDir = `${batchDir}/normalized/${modelDir}`;
+  const analyzedDir = `${batchDir}/analyzed/${modelDir}`;
 
   // The decision log and run card live in the run directory for BOTH flows — cost and decisions
   // are properties of a run, not of an artifact layout.
@@ -380,20 +467,21 @@ function createProcessors(
 
   const dataNormalizer = new DataNormalizer({
     inputDir: dataExtractor.outputDir,
-    outputDir: `${baseDir}/normalized/${modelDir}`,
+    outputDir: normalizedDir,
     entitiesFile: `${dataEntitiesCollector.outputDir}/entities.json`,
     countryNameNormalizer: new CountryNameNormalizer({ llmClient, decisionLog }),
     embeddingsClient,
+    embeddingsEnabled: CONFIG.embeddings,
   });
 
   const dataAnalyzer = new DataAnalyzer({
     inputDir: dataNormalizer.outputDir,
-    outputDir: `${baseDir}/analyzed/${modelDir}`,
+    outputDir: analyzedDir,
   });
 
   const dataGraphBuilder = new DataGraphBuilder({
     inputDir: dataNormalizer.outputDir,
-    outputDir: `${baseDir}/analyzed/${modelDir}`,
+    outputDir: analyzedDir,
   });
 
   // --- Incremental (streaming) flow — spec: docs/streaming-pipeline-spec.md ---
@@ -426,6 +514,11 @@ function createProcessors(
     sourceDir: inputDir,
     preprocessor,
     decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
+    // M5: previously hardcoded to StringSimilarityGenerator inside the normalizer, which left every
+    // generator M4 shipped with no live caller.
+    candidateGenerator,
+    ...(CONFIG.candidateK !== undefined ? { candidateK: CONFIG.candidateK } : {}),
+    ...(CONFIG.candidateMinSim !== undefined ? { candidateMinSim: CONFIG.candidateMinSim } : {}),
   });
 
   const streamingGraphBuilder = new StreamingGraphBuilder({

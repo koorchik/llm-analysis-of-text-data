@@ -24,14 +24,20 @@
     "$comment_openai": "Both models are in active use (gpt-5.4-nano is the current LLM_MODEL) and both are UNPRICED pending the provider-dashboard check of verification item 11. Fill these in before quoting any $ figure; token counts are already correct.",
     "gpt-5": { "inputPerMTok": null, "outputPerMTok": null },
     "gpt-5.4-nano": { "inputPerMTok": null, "outputPerMTok": null },
-    "text-embedding-3-large": { "inputPerMTok": null, "outputPerMTok": null },
 
-    "$comment_local": "Self-hosted via Ollama: no marginal API cost. Wall-clock is still metered.",
+    "$comment_embeddings": "M5. An embedding call has NO completion, so `outputPerMTok` must be 0 — NOT null. CostMeter.priceFor only accepts an entry when BOTH legs are non-null, so a null output leg makes every embedding call report as UNPRICED rather than as priced on input alone. The input rate below is still pending the dashboard check (verification item 11), which is why it is null and the model reads as unpriced overall — fill it in, keep the 0.",
+    "text-embedding-3-large": { "inputPerMTok": null, "outputPerMTok": 0.0 },
+
+    "$comment_local": "Self-hosted via Ollama or the local sidecar: no marginal API cost. Wall-clock is still metered.",
     "gpt-oss:20b": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "gemma4:e4b-64k": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+    "gemma4:e4b-64k": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
+    "bge-m3": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
+    "nomic-embed-text": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
+    "securebert": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
   },
   "providerDefaults": {
-    "$comment": "Fallback when a model id is absent from `models`. Only ollama has a defensible default (local inference is free at the margin); cloud providers stay unpriced so a missing entry is visible rather than assumed.",
-    "ollama": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+    "$comment": "Fallback when a model id is absent from `models`. Only locally-served providers have a defensible default (inference is free at the margin); cloud providers stay unpriced so a missing entry is visible rather than assumed. `http` is the SecureBERT sidecar — see tools/securebert-sidecar/.",
+    "ollama": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
+    "http": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
   }
 }

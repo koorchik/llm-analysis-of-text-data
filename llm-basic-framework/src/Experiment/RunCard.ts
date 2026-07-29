@@ -1,3 +1,4 @@
+import type { EmbeddingCacheStats } from '../EmbeddingsClient/EmbeddingCache';
 import { writeJsonAtomic } from '../utils/fsUtils';
 import type { CostMeter } from './CostMeter';
 import { hashInputDir } from './inputHash';
@@ -21,6 +22,12 @@ export interface RunCardData {
   config: ResolvedRunConfig;
   resumeEvents: ResumeEvent[];
   cost: unknown | null;
+  /**
+   * M5. Cache hits are not CostMeter calls, so a fully-cached encoder arm reports **zero embedding
+   * calls** — which reads as "embeddings never ran" unless the hit count sits next to it. Measured:
+   * a warm re-run of the smoke corpus went from 16 calls / 59.5 s to 0 calls / 3.6 ms.
+   */
+  embeddingCache: EmbeddingCacheStats | null;
   /** Set once the run finishes cleanly; a card without it describes an incomplete run. */
   completedAt: string | null;
 }
@@ -63,6 +70,7 @@ export class RunCard {
       config: params.config,
       resumeEvents: [],
       cost: null,
+      embeddingCache: null,
       completedAt: null,
     };
 
@@ -100,6 +108,11 @@ export class RunCard {
 
   attachCost(meter: CostMeter): void {
     this.#data.cost = meter.summary();
+  }
+
+  /** Null is meaningful: it says the run had no embedding cache, not that it had zero hits. */
+  attachEmbeddingCache(stats: EmbeddingCacheStats | null): void {
+    this.#data.embeddingCache = stats;
   }
 
   markComplete(): void {

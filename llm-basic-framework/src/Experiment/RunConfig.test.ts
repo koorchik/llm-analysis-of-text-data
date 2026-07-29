@@ -1,3 +1,4 @@
+import { TfidfNgramGenerator, resolveGenerator } from '../Normalization/candidates';
 import { canonicalJson, computeRunId, type GitState, type RunConfigInput } from './RunConfig';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -86,4 +87,46 @@ test('effective sampling, not requested sampling, feeds the runId', () => {
     sampling: { effective: {}, supported: { temperature: false, seed: false, topP: false } },
   };
   assert.notEqual(computeRunId(dropped, GIT, {}), computeRunId(base(), GIT, {}));
+});
+
+// --- M5: the candidates block in `extra` ------------------------------------------------------
+
+test('four candidate generators produce four DISTINCT runIds', () => {
+  // The failure this prevents: E4 varies the blocker while holding the judge fixed, so two arms can
+  // differ *only* by generator. Without the generator in `extra` they share a runId, share
+  // `experiments/{runId}/`, and silently resume each other through the `existsSync` skips.
+  const withGenerator = (id: string) => {
+    const generator = resolveGenerator(id);
+    return computeRunId(
+      { ...base(), extra: { candidateGenerator: generator.id, candidateGeneratorConfig: generator.config } },
+      GIT,
+      {}
+    );
+  };
+
+  const runIds = ['exact', 'string-sim', 'tfidf-ngram', 'bm25'].map(withGenerator);
+  assert.equal(new Set(runIds).size, 4, `expected 4 distinct runIds, got ${JSON.stringify(runIds)}`);
+});
+
+test('a generator config change alone forks the runId', () => {
+  const threeGram = new TfidfNgramGenerator({ n: 3 });
+  const fourGram = new TfidfNgramGenerator({ n: 4 });
+  const idFor = (generator: { id: string; config: Record<string, unknown> }) =>
+    computeRunId(
+      { ...base(), extra: { candidateGenerator: generator.id, candidateGeneratorConfig: generator.config } },
+      GIT,
+      {}
+    );
+
+  assert.notEqual(idFor(threeGram), idFor(fourGram));
+});
+
+test('an unknown generator id is FATAL rather than falling back to the default', () => {
+  // Silently running string similarity under the embedding arm's name would put the wrong label on
+  // a real result — the same rule createDecisionStrategy follows.
+  assert.throws(() => resolveGenerator('embeddings'), /Unknown candidate generator "embeddings"/);
+});
+
+test('the embedding generator refuses to be built without an EmbeddingsClient', () => {
+  assert.throws(() => resolveGenerator('embedding'), /requires an EmbeddingsClient/);
 });

@@ -32,7 +32,7 @@ npm start
 # 3. Data analysis and visualization
 
 # Tests: node:test via ts-node, no build step
-npm test        # 437 tests, ~12s — includes the behaviour gate (test/gate.test.ts)
+npm test        # 556 tests, ~15s — includes the behaviour gate (test/gate.test.ts)
 ```
 
 ### Typecheck
@@ -101,12 +101,14 @@ STEPS=dataExtractor npm start
 # Run full pipeline:
 STEPS=dataExtractor,dataEntitiesCollector,dataNormalizer,dataAnalyzer,dataGraphBuilder npm start
 ```
-All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-SNE, free to run). `DataNormalizer` embedding generation is currently stubbed (`entity.embedding = []`; the `embed()` call is commented out) — M5 has not been built.
+All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-SNE, free to run). `DataNormalizer` writes `entity.embedding = []` unless `EMBEDDINGS=1`, which is off by default so the committed `normalized/{model}/` corpus stays byte-identical; with it on, the batch flow's output moves under `{runDir}/batch/`.
 
 `FLOW=incremental` selects the streaming SKEIN v2 pipeline instead, with its own steps
 (`streamingPipeline`, `streamingExtractor`, `streamingNormalizer`, `streamingGraphBuilder`,
 `registryConsolidator`, `dataAnalyzer`). Set `CONDITION` to name the experimental arm and
-`DECISIONS_LOG=1` to get a scorable log. Full reference: `docs/RUNNING-EXPERIMENTS.md`.
+`DECISIONS_LOG=1` to get a scorable log. `CANDIDATE_GENERATOR` selects the blocker and
+`DECISION_STRATEGY` the judge — the two ports the experiments vary along; both are folded into the
+`runId`, so arms cannot share a directory. Full reference: `docs/RUNNING-EXPERIMENTS.md`.
 
 ### Switching LLM Models
 Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EMBEDDINGS_PROVIDER`, `EMBEDDINGS_MODEL`. See `README-CONFIGURATION.md` for details.

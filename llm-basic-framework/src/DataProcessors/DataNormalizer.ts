@@ -10,7 +10,17 @@ interface Params {
   countryNameNormalizer: CountryNameNormalizer;
   embeddingsClient: EmbeddingsClient;
   entitiesFile: string;
+  /**
+   * M5. Off by default, because turning it on changes what this processor writes and the committed
+   * `normalized/{model}/` corpus — 204 files, every `embedding` an empty array — is what the batch
+   * arm's artifacts are compared against. `bin/app.ts` redirects the output into the run directory
+   * when this is on, so the two can never be confused.
+   */
+  embeddingsEnabled?: boolean;
 }
+
+/** The entities whose vectors DataAnalyzer's t-SNE plots. Unchanged from the pre-M5 gate. */
+const EMBEDDED_CATEGORIES = ['Infrastructure', 'Sector', 'Device'];
 
 interface UnifiedEntities {
   entities: Record<string, Record<string, string>>;
@@ -23,6 +33,7 @@ export class DataNormalizer {
   #countryNameNormalizer: CountryNameNormalizer;
   #embeddingsClient: EmbeddingsClient;
   #entitiesFile: string;
+  #embeddingsEnabled: boolean;
 
   constructor(params: Params) {
     this.inputDir = params.inputDir;
@@ -30,6 +41,7 @@ export class DataNormalizer {
     this.#countryNameNormalizer = params.countryNameNormalizer;
     this.#embeddingsClient = params.embeddingsClient;
     this.#entitiesFile = params.entitiesFile;
+    this.#embeddingsEnabled = params.embeddingsEnabled ?? false;
   }
 
   async run() {
@@ -55,6 +67,8 @@ export class DataNormalizer {
   async #normalizeAndEnrich(data: UnifiedData, entities: UnifiedEntities): Promise<UnifiedData> {
     if (!data.entities) return data;
 
+    const toEmbed: UnifiedData['entities'] = [];
+
     for (const entity of data.entities) {
       // Normalize countries
       if (entity.category === 'Country') {
@@ -76,16 +90,22 @@ export class DataNormalizer {
       }
 
       // Generate embeddings for certain categories
-      if (
-        ['Infrastructure', 'Sector', 'Device'].includes(entity.category) &&
-        entity.role === 'Target'
-      ) {
-        // Uncomment when ready to generate embeddings
-        // entity.embedding = await this.#embeddingsClient.embed(
-        //   entity.normalizedName || entity.name
-        // );
+      if (EMBEDDED_CATEGORIES.includes(entity.category) && entity.role === 'Target') {
         entity.embedding = [];
+        if (this.#embeddingsEnabled) toEmbed.push(entity);
       }
+    }
+
+    // One request per document rather than one per entity — the whole point of M5's batched
+    // contract. Written after the loop so the whole document's whitelisted entities go together.
+    if (toEmbed.length > 0) {
+      const vectors = await this.#embeddingsClient.embed(
+        toEmbed.map((entity) => entity.normalizedName || entity.name),
+        { operator: 'embed-entities', docId: Number(data.metadata?.id) || null }
+      );
+      toEmbed.forEach((entity, index) => {
+        entity.embedding = vectors[index];
+      });
     }
 
     return data;

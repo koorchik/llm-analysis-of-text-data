@@ -1,0 +1,27 @@
+# SecureBERT served over an OpenAI-compatible /v1/embeddings endpoint.
+#
+# Consumed by src/EmbeddingsClient/EmbeddingsBackendHttp.ts via EMBEDDINGS_PROVIDER=http.
+# See README.md in this directory before running — the pooling flag is an experimental variable,
+# not a deployment detail.
+
+services:
+  securebert:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.8
+    ports:
+      - '8080:80'
+    volumes:
+      - ./data:/data
+    command:
+      - --model-id=ehsanaghaei/SecureBERT
+      # SecureBERT is a RoBERTa masked-language model with no sentence-transformers pooling config,
+      # so the pooling strategy must be stated explicitly. Mean over last hidden states is the
+      # convention for MLM-derived sentence vectors; `cls` would take RoBERTa's <s> token, which is
+      # not trained as a sentence summary here. Whatever is chosen must match EMBEDDINGS_POOLING,
+      # because that is what the run card records.
+      - --pooling=mean
+      - --max-client-batch-size=128
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:80/health']
+      interval: 10s
+      timeout: 5s
+      retries: 12

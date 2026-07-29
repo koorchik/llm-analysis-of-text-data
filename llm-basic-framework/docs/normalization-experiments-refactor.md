@@ -116,6 +116,11 @@ the IMPORTANT embedding-threshold conditions and the E4 ablation, so it follows.
 annotation long pole and starts as soon as M4 lands — verified to need only M1 (`llm-annotate`),
 M2 (`close`) and M4 (`pairs`).
 
+**Status (2026-07-29): M1, M2, M2.5, M3, M4, M6 and M5 are done; M7 is next on the critical path.**
+M5 was taken out of order, ahead of M7, because it turned out to carry the runtime wiring for
+candidate generators — without which every generator M4 shipped had no live caller and no runId
+identity, and M7 would have had to build it anyway.
+
 **Sequenced deliberately late:** M11 (E9 downstream impact) needs E2 runs to exist, but it is
 CRITICAL and belongs to the minimum viable article — schedule it, do not drop it.
 
@@ -549,6 +554,75 @@ Ollama backend — cheapest, reuses the confidentiality story; or (b) a small lo
 
 **Scale honesty:** brute-force cosine over ~2,674 canonicals, explicitly **no ANN index**. Write
 that into the paper as a documented rejection.
+
+**✅ M5 DONE.** 556 tests pass; gate still 3,392/3,392; `tsc --noEmit` green.
+
+- **The embeddings contract now mirrors M1's.** `embed()` takes `string | string[]`, returns
+  `{ vectors, usage, model, latencyMs, dimensions }`, and every backend reports a `provider` and a
+  `config`. The one-at-a-time loop is gone — both OpenAI and Ollama batch natively, and a test
+  asserts N texts are one request. `EmbeddingsClient` takes a `CostMeter` and records under
+  `embed-query` / `embed-index` / `embed-entities`, so the encoder arms are costable for the first
+  time. Verified live: 16 embedding calls metered on a 3-document run.
+- **SecureBERT resolved by option (b), per the user.** `EmbeddingsBackendHttp` speaks the
+  OpenAI `/v1/embeddings` shape, so HF `text-embeddings-inference` *and* a `sentence-transformers`
+  server both work with no model-specific code; `tools/securebert-sidecar/` carries the compose file
+  and the smoke test. Two properties are recorded rather than buried: pooling is an **experimental
+  variable** (SecureBERT ships no sentence-transformers pooling config, so `mean` is this project's
+  choice, recorded in the run card), and SecureBERT was **never contrastively trained for cosine
+  similarity** unlike BGE-M3 and `text-embedding-3-large`. If the domain model underperforms, that
+  is a candidate explanation — objective, not domain — and must be stated with the number, or the
+  result reads as a finding about security pretraining that the experiment does not support.
+- **VertexAI kept and implemented**, per the user's "different embedding types in future", over the
+  REST `:predict` endpoint with `google-auth-library` (the installed `@google-cloud/vertexai` has no
+  embeddings surface at all). ⚠️ **Never called** — `GOOGLE_APPLICATION_CREDENTIALS` is `CHANGE_ME`
+  here. What is certain is that the stub is gone: it used to return `[]` with no error, which gave
+  every entity a zero-length vector and did not look like a failure.
+- **`CANDIDATE_GENERATOR` selects the blocker at runtime — and this was the real gap.** M4 shipped
+  five generators and `GENERATORS` had **zero importers**: TF-IDF, BM25 and RRF had no live caller,
+  exactly the defect M6 part 4 had to fix for strategies. Worse, the generator was **not in the
+  runId**, so an embedding arm and a string arm would have shared `experiments/{runId}/` and resumed
+  each other through the `existsSync` skips. Both closed; four generators now provably yield four
+  distinct runIds, and a generator *config* change alone forks it too.
+- **`ThresholdDecision` needed no change**, which is the port design paying off: it reads
+  `candidates[0].sim` and nothing else, so the cosine pole is a generator swap. Verified live —
+  decision-log rows carry `channel: "embedding"` with cosine similarities, and the 0.8 threshold
+  minted throughout because nothing on the smoke corpus reached it.
+
+Four findings from building it, recorded so they are not rediscovered:
+
+- **A cosine must be clamped to `[0, 1]`, not rescaled.** `Candidate.sim`, `compareCandidates` and
+  `minSim` all assume `[0, 1]`; a cosine is `[-1, 1]`. `Math.max(0, cos)` means "no evidence", which
+  is what 0 means everywhere else here. The alternative `(1 + cos) / 2` would put *orthogonal*
+  vectors at **0.5** — passing a `minSim: 0.5` filter — and silently change what every threshold
+  cited from `dong2023reveal` means, making the dense arm incomparable to the string arms.
+- **`sim === 1` is unreachable for embeddings.** Measured: a vector against itself scores
+  `0.9999999999999998`. `StringSimilarityGenerator`'s `sim === 1` early exit is valid for string
+  metrics and invalid here, and `minSim: 1` retrieves nothing. Asserted in a test rather than left
+  as a trap.
+- **The vector cache is what makes the arms affordable, and it belongs outside the run directory.**
+  `onRegistryChange` is synchronous, so an index-bearing generator can only invalidate and rebuild
+  lazily — for embeddings that is an API call per canonical per mint. Keyed by `(model, text)` and
+  shared across runs, because a vector is run-independent and per-run scoping would re-embed
+  everything on every seed. Measured: cold 16 calls / 59.5 s, warm **0 calls / 3.6 ms**.
+  Consequence handled: cache hits are not `CostMeter` calls, so a fully-cached arm reports zero
+  embedding calls — the run card now carries `embeddingCache` beside `cost` so that reads as
+  "cached" rather than "embeddings never ran".
+- **An embeddings price row needs `outputPerMTok: 0`, not `null`.** `CostMeter.priceFor` requires
+  both legs non-null, so the natural-looking null output leg makes every embedding call report as
+  *unpriced* rather than as priced on input alone. Regression-tested.
+
+**One arm is blocked and it is not blocked by M5.** `name+gloss` is implemented but currently
+**identical to `name`**: `EntityRegistry` stores a gloss, `mint()` accepts one, and *nothing writes
+one* — `setGloss()` has no callers and `StreamingNormalizer` passes no extras. Selecting it logs a
+warning rather than silently producing `name`'s numbers, because a silently-identical arm would
+enter the results table as evidence that glosses do not help — a false finding about the method
+rather than a true one about the data. Writing a one-line gloss at mint time is a judge change, not
+an embeddings change.
+
+**Noted while wiring, out of M5's scope:** `RegistryConsolidator` calls `applyMerges` without
+notifying any candidate generator, so a long-lived index goes stale after consolidation. Harmless
+for the string generators (they hold no index across the consolidation step today) but a
+correctness question for any cached index — fix it when M7 owns orchestration.
 
 ### M6 — Decision strategies
 
