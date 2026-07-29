@@ -1,6 +1,7 @@
 import { GOLD_VERSION, type GoldCluster, type GoldNilLabel, type GoldTable, type Split } from '../Evaluation/gold';
 import { UnionFind } from '../Evaluation/unionFind';
 import type { Inventory } from './inventory';
+import type { PairSource } from './preLabel';
 
 /**
  * Steps 4 and 5 of E0: close adjudicated pairs under transitivity into clusters, derive the NIL
@@ -19,6 +20,8 @@ export interface AdjudicatedPair {
   label: 'same' | 'different';
   stratum: string;
   evidence?: string;
+  /** Which proposer surfaced this pair. Carried through to the cluster so the bias is reportable. */
+  source?: PairSource;
 }
 
 const fold = (value: string) => value.trim().toLowerCase();
@@ -39,12 +42,20 @@ export function closeIntoClusters(
 ): { clusters: GoldCluster[]; conflicts: AdjudicatedPair[] } {
   const union = new UnionFind<string>();
   const stratumOf = new Map<string, string>();
+  const sourcesOf = new Map<string, Set<string>>();
 
   for (const pair of pairs) {
     if (pair.label !== 'same') continue;
     const a = key(pair.category, pair.left);
     const b = key(pair.category, pair.right);
     union.union(a, b);
+    // Provenance accumulates per member, then unions with the cluster: a cluster formed by a
+    // registry pair and a string pair carries both, and is therefore not registry-only.
+    for (const member of [a, b]) {
+      const seen = sourcesOf.get(member) ?? new Set<string>();
+      seen.add(pair.source ?? 'string');
+      sourcesOf.set(member, seen);
+    }
     // The hardest stratum in a cluster wins: a cluster containing a (d) pair is a (d) cluster,
     // because that is the capability being attributed.
     for (const member of [a, b]) {
@@ -86,12 +97,39 @@ export function closeIntoClusters(
       category: resolved[0].category,
       members: resolved.map((entry) => entry.surface).sort(),
       stratum: group.map((member) => stratumOf.get(member) ?? 'a').sort().pop() ?? 'a',
+      sources: [...new Set(group.flatMap((member) => [...(sourcesOf.get(member) ?? [])]))].sort(),
       // Assigned later by assignSplit — a placeholder here would be a silently wrong default.
       split: 'test',
     });
   }
 
   return { clusters, conflicts };
+}
+
+/**
+ * True when every mergeable cluster in a judgment stratum was proposed only by the registry.
+ *
+ * The registry is the batch Ψ_norm arm's own output, and `evaluate --batch` scores that arm against
+ * the same file. Manual verification removes the registry's false merges, so precision is safe; it
+ * cannot add the merges the registry never proposed, so **recall is not**. When nothing
+ * proposer-independent contributed a (c)/(d) cluster, the batch arm's merge recall is inflated by
+ * construction and the comparison against the streaming arm is not fair.
+ *
+ * Clearing this means doing the MITRE/Wikidata pass or the manual sweep — both of which §4 of
+ * `docs/GOLD-TABLE.md` already requires. The check exists so that skipping them is visible rather
+ * than silent.
+ *
+ * Returns false when there are no judgment-stratum clusters at all: that case is already covered,
+ * and more precisely, by the empty-(d) warning.
+ */
+export function registryOnlyJudgmentStrata(clusters: GoldCluster[]): boolean {
+  const judgment = clusters.filter(
+    (cluster) => cluster.members.length > 1 && (cluster.stratum === 'c' || cluster.stratum === 'd')
+  );
+  if (judgment.length === 0) return false;
+  return judgment.every(
+    (cluster) => (cluster.sources ?? []).length > 0 && cluster.sources!.every((s) => s === 'registry')
+  );
 }
 
 /**

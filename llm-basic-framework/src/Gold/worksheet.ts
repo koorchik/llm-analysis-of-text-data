@@ -1,5 +1,5 @@
 import type { AdjudicatedPair } from './buildTable';
-import type { PreLabelled } from './preLabel';
+import type { PairSource, PreLabelled } from './preLabel';
 
 /**
  * TSV round-trip for the adjudication worksheet.
@@ -20,12 +20,14 @@ const COLUMNS = [
   'label',
   'suggested',
   'rule',
+  'source',
   'category',
   'left',
   'right',
   'stratum',
   'mechanism',
   'sim',
+  'canonical',
   'evidence',
 ] as const;
 
@@ -44,12 +46,14 @@ export function toTsv(pairs: PreLabelled[]): string {
         pair.suggested === 'review' ? '' : pair.suggested,
         pair.suggested,
         pair.rule,
+        pair.source ?? 'string',
         clean(pair.category),
         clean(pair.left),
         clean(pair.right),
         pair.stratum,
         pair.mechanism,
         String(pair.sim),
+        clean(pair.canonical ?? ''),
         clean(pair.evidence ?? ''),
       ].join('\t')
     );
@@ -85,6 +89,9 @@ export function fromTsv(tsv: string): TsvParseResult {
     right: indexOf('right'),
     stratum: indexOf('stratum'),
     evidence: header.indexOf('evidence'),
+    // Optional, unlike the columns above: worksheets written before provenance existed must still
+    // parse, and every row in one of those is string-sourced by definition.
+    source: header.indexOf('source'),
   };
 
   const pairs: AdjudicatedPair[] = [];
@@ -114,6 +121,7 @@ export function fromTsv(tsv: string): TsvParseResult {
       label,
       stratum: (cells[at.stratum] ?? 'a').trim(),
       evidence: at.evidence >= 0 ? (cells[at.evidence] ?? '').trim() : undefined,
+      source: at.source >= 0 ? ((cells[at.source] ?? '').trim() as PairSource) || 'string' : 'string',
     });
   }
 

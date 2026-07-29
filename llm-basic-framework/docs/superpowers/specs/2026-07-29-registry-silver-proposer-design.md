@@ -1,6 +1,6 @@
 # Registry as a second pair proposer for the gold table
 
-**Status:** approved, not implemented
+**Status:** implemented
 **Date:** 2026-07-29
 **Touches:** `src/Gold/`, `bin/gold.ts`, `docs/GOLD-TABLE.md`
 
@@ -27,20 +27,21 @@ Measured against `gold/inventory.json` (3,360 surfaces from `raw-unified/gpt-5`)
 | quantity | value |
 |---|---|
 | registry keys | 3,392 |
-| keys that are inventory surfaces under the same category | 3,360 |
-| keys dropped by cross-validation | 32 |
+| keys that resolve to an inventory surface in the same category | all 3,392 |
+| keys dropped by cross-validation | 0 |
 | multi-surface clusters | 280 |
-| implied pairs, both surfaces in inventory | 4,956 |
+| implied pairs, both surfaces in inventory | 4,960 |
 | …of which `Domain` | 4,551 |
 | non-`Domain` pairs | 405 |
 | non-`Domain` pairs also proposed by the string mechanisms | 110 |
 | non-`Domain` pairs the string mechanisms never propose | **295** |
 
-The 32 dropped keys are version drift between the registry and the current `raw-unified` snapshot
-(`CloudFlare`, `Ukr.Net`, `UNC1151`, `OutSteel`, `CaddyWiper`, `rclone`, and `TOR` filed under
-`Software` where the inventory has it elsewhere). Cross-validation finds them; without it they would
-silently produce pairs naming surfaces the corpus does not contain, which `gold build` drops in
-silence.
+Cross-validation drops **nothing**: the two artifacts are in exact correspondence. Matching is
+case-insensitive, because `buildInventory` folds case variants into one row keeping the first-seen
+spelling — the registry's `CloudFlare` and the inventory's `Cloudflare` are the same surface, which
+is also why there are 3,392 keys for 3,360 surfaces. The check stays regardless: without it, drift
+would silently produce pairs naming surfaces the corpus does not contain, and `gold build` discards
+those without a word.
 
 **The split by string signal is exact.** Of the 405 non-`Domain` registry pairs, 110 reproduce a
 string proposal (101 edit-similarity, 7 identifier, 2 transliteration) and the remaining 295 have no
@@ -228,21 +229,28 @@ Exactly one new rule in `PRE_LABEL_RULES`, evaluated **after** the existing rule
 
 | rule | condition | suggests | rows here |
 |---|---|---|---|
-| `registry-conflict` | `source: both` and the winning rule suggests `different` | `review` | 39 |
+| `registry-conflict` | a registry proposed the merge **and** the winning rule suggests `different` | `review` | 80 |
 
-That is the whole intervention on the overlap. The other 71 `source: both` rows keep the rule and
-verdict they have today — 19 already suggest `same` (`punctuation-only` 12, `decorated-identifier`
-5, `cross-script` 2) and 52 already resolve to `review` (`none` 36, `one-sided-digits` 16). A rule
-that re-suggests `same` where an existing rule already does would change no verdict while destroying
-the rule attribution `preLabel.ts` exists to preserve for bulk auditing. Corroboration is carried by
-the `source` column instead.
+The condition is "a registry proposed it", not "both proposers did". A registry-only row can still
+trip a `different`-suggesting rule — `Windows 10` vs `Windows 10 version 1809` is registry-only and
+`differing-digits` rejects it — and that is the same disagreement, so it gets the same treatment.
+It splits 39 from `source: both` and 41 from `source: registry`.
 
-`registry-conflict` is the highest-value queue in the worksheet: 39 rows where two independent
-proposers disagree, containing the `Microsoft Office` version family. Expect most to confirm
-`different` — the string rule is usually the correct one here. The 39 glances buy protection against
-the case where it is not.
+The other 71 `source: both` rows keep the rule and verdict they have today — 19 already suggest
+`same` (`punctuation-only` 12, `decorated-identifier` 5, `cross-script` 2) and 52 already resolve to
+`review` (`none` 36, `one-sided-digits` 16). A rule that re-suggests `same` where an existing rule
+already does would change no verdict while destroying the rule attribution `preLabel.ts` exists to
+preserve for bulk auditing. Corroboration is carried by the `source` column instead.
 
-All 295 registry-only rows are `suggested: review`, `rule: registry-semantic`.
+`registry-conflict` is the highest-value queue in the worksheet: 80 rows where the two proposers
+disagree, containing the `Microsoft Office` and `MS Exchange` version families. Expect most to
+confirm `different` — the string rule is usually the correct one here. The 80 glances buy protection
+against the case where it is not.
+
+Registry-only rows that no string rule decides become `rule: registry-semantic`, `suggested: review`
+— 252 of them. The re-attribution matters: `one-sided-digits` claims `APT44`/`Sandworm` by accident
+and offers "a model number narrows a family to a product", which explains nothing about that pair.
+Rows the string sweep also proposed keep their own rule, where the attribution is real.
 
 ### 5.4 Contamination bookkeeping
 
@@ -318,7 +326,7 @@ Added to `src/Gold/gold.test.ts`:
 |---|---|
 | Annotator anchors on the registry's verdict | Registry-only rows are `review` with no suggestion; the conflict queue is surfaced first |
 | Recall bias toward the batch arm | §5.4 warning + composition-by-source reported in the paper |
-| Registry drifts from `raw-unified` | Cross-validation reports `droppedKeys`; 32 today |
+| Registry drifts from `raw-unified` | Cross-validation reports `droppedKeys`; 0 today, so any non-zero count is new drift |
 | Provisional `c` rows left as `c` when they are `d` | `gold validate` already warns on empty (d); the guide instructs demotion with evidence |
 | `relation` heuristic misclassifies a public suffix | Reporting-only by construction, asserted by test 8; a wrong row moves a count, never a label |
 

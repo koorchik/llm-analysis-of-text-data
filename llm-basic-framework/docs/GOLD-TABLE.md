@@ -30,7 +30,8 @@ published paper this work is correcting.
 |---|---|---|
 | Export the mention inventory | **tooling** | Mechanical. Hand-curation silently drops the rare surfaces stratum (d) is made of |
 | Propose candidate pairs, strata (a)/(b) | **tooling** | Deterministic pre-labelling; you verify the residue |
-| Find strata (c)/(d) pairs | **you** | No string mechanism can find a zero-overlap alias. §4 |
+| Propose (c)/(d) *candidates* from the registry | **tooling** | `--registry`. It finds zero-overlap pairs, and it over-merges — every row arrives as `review`. §4 |
+| Find the rest of strata (c)/(d) | **you** | The registry is not independent of the systems under test. §4, §7 |
 | **Decide `same` / `different` on every pair** | **you** | This is the annotation. Everything else is bookkeeping |
 | Attach evidence to positive merges | **you** | §6 — this is what makes single-annotator gold defensible |
 | Close pairs under transitivity | **tooling** | Closure by eye misses chains |
@@ -40,7 +41,8 @@ published paper this work is correcting.
 | Validate | **tooling** | §9 |
 
 **Your actual work is the middle rows: adjudicating pairs, sourcing (c)/(d), and writing evidence.**
-On this corpus that is ~1,600 proposed pairs plus the (c)/(d) sourcing. Budget 2–4 weeks.
+On this corpus that is 1,919 proposed pairs — 539 of which no rule decides — plus the (c)/(d)
+sourcing the registry cannot supply. Budget 2–4 weeks.
 
 ---
 
@@ -54,16 +56,18 @@ npm run gold -- inventory \
   --source ../storage/cert.gov.ua/processed/raw-unified/gpt-5 \
   --out gold/inventory.json
 
-# 2. Propose candidate pairs for the mechanical strata (~1s)
+# 2. Propose candidate pairs (~1s)
 npm run gold -- pairs --inventory gold/inventory.json \
-  --skip-categories Domain --out gold/worksheet.json
+  --skip-categories Domain \
+  --registry ../storage/cert.gov.ua/processed/entities-unified/gpt-5/entities.json \
+  --out gold/worksheet.tsv
 
-# 3. ——— YOU ADJUDICATE gold/worksheet.json HERE ——— (see §5)
+# 3. ——— YOU ADJUDICATE gold/worksheet.tsv HERE ——— (see §5)
 #    Also add your stratum (c) and (d) rows (see §4)
 
 # 4. Close into clusters, add singletons, derive NIL labels, assign the split
 npm run gold -- build --inventory gold/inventory.json \
-  --pairs gold/worksheet.json --out gold/gold.json
+  --pairs gold/worksheet.tsv --out gold/gold.json
 
 # 5. Check it before trusting it
 npm run gold -- validate gold/gold.json --inventory gold/inventory.json
@@ -78,20 +82,25 @@ reshuffle what was already assigned.
 
 ### What step 2 gives you on this corpus
 
-1,624 pairs, `Domain` excluded:
+**1,919 pairs**, `Domain` excluded — 1,624 from the string mechanisms and 295 more that only the
+registry proposes. Silver pre-labels:
 
-| category | stratum | mechanism | pairs |
-|---|---|---|---|
-| Software | a | edit-similarity | 820 |
-| HackerGroup | a | edit-similarity | 683 |
-| Sector | a | edit-similarity | 59 |
-| Government Body | a | edit-similarity | 27 |
-| Device | a | edit-similarity | 15 |
-| Organization | a | edit-similarity | 8 |
-| HackerGroup | a | identifier | 6 |
-| Software | a | identifier | 2 |
-| Country / Individual | a | edit-similarity | 2 |
-| Country, Organization | **b** | transliteration | 2 |
+| rule | suggests | pairs |
+|---|---|---|
+| `differing-digits` | different | 1,356 |
+| `registry-semantic` | review | 252 |
+| `none` | review | 177 |
+| `registry-conflict` | review | 80 |
+| `one-sided-digits` | review | 30 |
+| `punctuation-only` | same | 13 |
+| `decorated-identifier` | same | 9 |
+| `cross-script` | same | 2 |
+
+1,380 arrive pre-labelled; **539 need your judgment**. Run `npm run gold -- rules` to read the
+rationale for each before bulk-accepting any of them.
+
+Where the pairs come from: 1,514 string-only, 110 both proposers, 295 registry-only. The `source`
+column records this per row, and it is not bookkeeping — see §7.4.
 
 **Two cross-script pairs is not a bug — but it is a finding you should check.** The pairs found are
 `India`/`Індія` and `NATO`/`НАТО`, both at string similarity **0**. The count is low because the
@@ -140,6 +149,21 @@ cheaper, and it is citable.
 One trap to know: in MITRE ATT&CK's STIX data, `aliases` and `x_mitre_aliases` are different fields
 with different semantics. Check which one you are reading.
 
+**Also proposed by `--registry`, which is a candidate source and not an authority.** The 295
+registry-only rows arrive as `rule: registry-semantic`, `suggested: review`, `stratum: c`
+*provisionally*. They contain the pairs no string mechanism can reach —
+
+```
+HackerGroup:  APT44 <> Sandworm          HackerGroup:  UAC-0114 <> Winter Vivern
+HackerGroup:  GhostWriter <> unc1151     Software:     CVE-2021-44228 <> Log4Shell
+Organization: ЄС <> Європейський Союз    HackerGroup:  @frwl_team <> FRwL
+```
+
+— and, mixed in among them, granularity errors: `MS Exchange` vs `Microsoft Exchange Server 2016`,
+`Windows Script Host` vs `cscript.exe`, `Remote Utilities` vs `rutserv.exe`. **Read every one. Never
+bulk-accept this rule.** For each row you keep: decide `c` or `d` by whether it is in a public
+knowledge base, and attach the §6 evidence — a registry row is not evidence of anything.
+
 ### (d) semantic-novel — the novel tail
 Zero string overlap and **not** in the training data: recent `UAC-####` designations, post-cutoff
 aliases, plus deliberately held-out registry canonicals whose mentions become gold mints.
@@ -154,22 +178,24 @@ empty, and that warning is the single most important thing the validator says.
 
 ## 5. How to adjudicate
 
-Open `gold/worksheet.json`. Each row:
+Open `gold/worksheet.tsv` in a spreadsheet. One row per pair, `label` first because it is the only
+column you must edit:
 
-```json
-{
-  "category": "HackerGroup",
-  "left": "UAC-0010",
-  "right": "UAC-0010 (Armageddon)",
-  "stratum": "a",
-  "mechanism": "identifier",
-  "sim": 0.8,
-  "label": "",
-  "evidence": ""
-}
-```
+| label | suggested | rule | source | category | left | right | stratum | mechanism | sim | canonical | evidence |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | review | registry-semantic | registry | HackerGroup | APT44 | Sandworm | c | registry | 0 | Sandworm | |
+| different | different | differing-digits | string | Device | Netgear R7000 | Netgear R8000 | a | edit-similarity | 0.9231 | | |
 
-Set `label` to `"same"` or `"different"`. That is the whole task.
+Set `label` to `same` or `different`. That is the whole task. Rows whose suggestion is `review`
+arrive with `label` empty on purpose — `review` is not a valid label, so an untouched row cannot
+slip through as a verdict.
+
+Three columns are context, not instructions. `rule` names the mechanism that produced the
+suggestion — audit it once with `npm run gold -- rules`, then accept or reject all of its rows
+together. `source` names the proposer (§7.4). `canonical` is what a registry mapped both surfaces
+to; it tells you *why* the row exists and is never evidence that the merge is right.
+
+On registry rows you may also need to correct `stratum` — it arrives as a provisional `c`.
 
 ### The decision rule
 
@@ -183,6 +209,32 @@ Link only on evidence of identity:
 
 **Similar type, theme, vendor or product line is NOT identity.** `MikroTik CCR 1016` and
 `MikroTik CCR 1036` are the same vendor and the same product line and are different devices.
+
+#### Part-of and instance-of are `different`
+
+Entity resolution asks whether two names denote the **same referent**. It does not ask whether two
+things are related. Only **coreference** — two *names* for one *referent* — is `same`.
+
+| pair | relation | verdict |
+|---|---|---|
+| `CloudFlare` / `Cloudflare Inc.` | coreference | `same` |
+| `MS Office` / `Microsoft Office` | coreference (abbreviation) | `same` |
+| `Microsoft Office 2016` / `Microsoft Office` | instance-of — a version *of* a product | `different` |
+| `admin.certifiedauth.in` / `certifiedauth.in` | part-of — a host *under* a domain | `different` |
+| `admin.certifiedauth.in` / `analytics.certifiedauth.in` | siblings — co-located, distinct | `different` |
+
+An abbreviation is coreference; a **narrowing** is not.
+
+**Component vs product** needs a stated call, because this corpus contains both readings: `MSHTA`
+and `mshta.exe` are one tool under two names, while `Windows Script Host` covers `cscript.exe` *and*
+`wscript.exe`, which are two. **Rule: merge only when the product has exactly one binary in this
+corpus; otherwise the binary is a component and the pair is `different`.** That makes `curl`/
+`curl.exe` `same`, and `Remote Utilities`/`rutserv.exe` `different` — it has `rfusclient.exe` too.
+
+Why this asymmetry rather than a coarser granularity: coarse is derivable from fine — roll hostnames
+up with a public-suffix list, strip version tokens — but fine is not recoverable from coarse. A
+gold table at coreference granularity can be rolled up later; one that already collapsed hierarchy
+cannot be taken apart. Roll-up is a separate, reported operation, never baked into the reference.
 
 **When genuinely uncertain, mark `different`.** This asymmetry is deliberate and matches the
 system's own mint-if-uncertain design: a missed merge is a recall error you can see, a wrong merge
@@ -231,7 +283,24 @@ in threats-to-validity.
    intra-annotator agreement.
 3. **If agreement is poor anywhere, fix the guideline and re-annotate — never adjust individual
    labels to improve the number.**
-4. **Log your hours.** The HITL cost is a reported result, not overhead.
+4. **Proposer independence.** `--registry` reads `entities-unified/gpt-5/entities.json` — the batch
+   Ψ_norm arm's own output, and the same file `evaluate --batch` scores. Your verification deletes
+   its false merges, so **precision is safe**; nothing you do at the worksheet can add a merge it
+   never proposed, so **recall is not**. Left alone, that inflates the batch arm's merge recall
+   relative to the streaming arm.
+
+   This is why every row carries `source`. `gold validate` prints mergeable clusters by proposer and
+   warns when *every* stratum (c)/(d) cluster is registry-sourced. Clearing that warning means doing
+   the MITRE/Wikidata pass or the Cyrillic sweep — the proposer-independent sources §4 already
+   requires. **Report the composition-by-source table in threats-to-validity**, and state that the
+   registry was a candidate generator, never a label.
+
+   A related confound to pre-empt: `prompts/psi-norm-batch.md` asks the model to "group **similar**
+   entities together" — similarity, not identity — which is why it collapses hierarchy so
+   systematically. That is a finding, but it also invites "you compared against a lazy prompt".
+   Do not edit the published prompt; E1 must score the published artifact. Answer it with a third
+   arm instead: batch Ψ_norm under an identity-criterion prompt, everything else held fixed.
+5. **Log your hours.** The HITL cost is a reported result, not overhead.
 
 ---
 
@@ -246,6 +315,13 @@ Worth knowing before you decide: 73 queries in this corpus retrieve more than on
 similarity exactly 1.0, mostly the `accounts-ukr.net` family — plausible typosquats. Those are
 genuinely interesting and genuinely hard. A small deliberate `Domain` sample aimed at them is worth
 more than a large random one.
+
+The registry strengthens that case rather than weakening it. It proposes 4,551 `Domain` merges, and
+classified mechanically **every one is hierarchy: 716 part-of and 3,835 sibling, zero coreference**.
+Under `ssl2.site` it collapses `docs.google.com.ssl2.site` and `docs.googie.com.ssl2.site` into one
+entity — deleting the exact homoglyph substitution that makes the category worth sampling. So
+`--skip-categories Domain` applies to both proposers, and a hand-picked sample remains the only
+sensible way in.
 
 **Freeze before tuning.** Split ~20/80 dev/test, then freeze and version the table. Dev is for
 prompt and configuration tuning; test is for reported results only. **No experiment may tune on
@@ -268,6 +344,8 @@ Checklist:
 - [ ] **No transitivity conflicts** from `gold build`. A conflict means the annotation contradicts
       itself: a–b and b–c are `same`, so a–c is too, whatever you marked it.
 - [ ] **No unlabelled pairs** warning. Unlabelled counts as not-merged and would understate recall.
+- [ ] **No proposer-independence warning.** If every (c)/(d) cluster came from the registry, the
+      batch arm is being scored against its own output and the comparison is not fair. §7.4.
 - [ ] **Coverage is 100%.** An uncovered surface is scored by nothing and silently shrinks the
       evaluation.
 - [ ] **Both splits have mergeable clusters.** A split with none gives empty merge P/R.
@@ -292,6 +370,7 @@ You should not need to write this by hand — `gold build` emits it — but this
     { "id": "g1", "category": "HackerGroup",
       "members": ["APT28", "Fancy Bear", "АРТ28"],
       "stratum": "b", "split": "test",
+      "sources": ["registry", "string"],
       "evidence": [{ "pair": ["APT28", "Fancy Bear"], "snippet": "...",
                      "annotator": "expert", "source": "https://attack.mitre.org/groups/G0007/" }] }
   ],
@@ -314,6 +393,9 @@ Two properties the loader enforces rather than assumes:
 Also enforced: cluster ids unique, `members` non-empty, `stratum` present (strata are reported
 separately, never averaged), `split` exactly `dev` or `test`, and **no surface in two clusters** —
 that would be a contradiction in the gold itself.
+
+`sources` is provenance, not annotation: which proposers surfaced the pairs that formed the cluster.
+The verdicts are yours either way. It is recorded because one proposer is a system under test — §7.4.
 
 `members` are **surface forms**, not canonical names — the thing the corpus actually contains.
 

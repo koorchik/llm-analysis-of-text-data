@@ -40,6 +40,16 @@ export interface GoldCluster {
   stratum: Stratum;
   split: Split;
   evidence?: GoldEvidence[];
+  /**
+   * Which proposers surfaced the pairs that formed this cluster.
+   *
+   * Provenance, not annotation: the verdicts are the annotator's either way. It is recorded because
+   * one of the proposers — the unified-entities registry — is the batch Ψ_norm arm's own output,
+   * which `evaluate --batch` scores. A cluster set whose judgment strata are entirely
+   * registry-sourced cannot constrain that arm's merge recall, and the bias has to be reportable
+   * rather than invisible.
+   */
+  sources?: string[];
 }
 
 /** One label per (docId, category, mention) occurrence, in the recorded stream order. */

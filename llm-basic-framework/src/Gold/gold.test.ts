@@ -5,10 +5,14 @@ import {
   buildGoldTable,
   closeIntoClusters,
   deriveNilLabels,
+  registryOnlyJudgmentStrata,
   type AdjudicatedPair,
 } from './buildTable';
 import type { Inventory } from './inventory';
+import { preLabel, type PairSource, type WorksheetPair } from './preLabel';
 import { proposePairs } from './proposePairs';
+import { parseRegistry, registryPairs, registryPairsSummary, unionProposals } from './registryPairs';
+import { fromTsv, toTsv } from './worksheet';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
@@ -97,6 +101,67 @@ describe('closeIntoClusters', () => {
     ]);
     const { clusters } = closeIntoClusters([pair('apt28', 'FANCY BEAR', 'same')], inv);
     assert.deepEqual(clusters[0].members, ['APT28', 'Fancy Bear']);
+  });
+});
+
+describe('cluster provenance', () => {
+  const inv = inventory([
+    ['HackerGroup', 'APT44', [1]],
+    ['HackerGroup', 'Sandworm', [2]],
+    ['HackerGroup', 'GhostWriter', [3]],
+    ['HackerGroup', 'unc1151', [4]],
+  ]);
+
+  const sourced = (
+    left: string,
+    right: string,
+    source: PairSource,
+    stratum = 'c'
+  ): AdjudicatedPair => ({
+    category: 'HackerGroup',
+    left,
+    right,
+    label: 'same',
+    stratum,
+    source,
+  });
+
+  it('records which proposers formed a cluster', () => {
+    const { clusters } = closeIntoClusters([sourced('APT44', 'Sandworm', 'registry')], inv);
+    assert.deepEqual(clusters[0].sources, ['registry']);
+  });
+
+  it('reports every distinct source once, sorted', () => {
+    const { clusters } = closeIntoClusters(
+      [sourced('APT44', 'Sandworm', 'registry'), sourced('Sandworm', 'GhostWriter', 'string')],
+      inv
+    );
+    assert.deepEqual(clusters[0].sources, ['registry', 'string']);
+  });
+
+  it('flags a gold table whose judgment strata came only from the registry', () => {
+    // The registry is the batch arm's own output, scored by `evaluate --batch`. If every (c)/(d)
+    // cluster came from it, nothing proposer-independent constrains merge recall and the batch
+    // arm's number is inflated by construction.
+    const { clusters } = closeIntoClusters(
+      [sourced('APT44', 'Sandworm', 'registry'), sourced('GhostWriter', 'unc1151', 'registry')],
+      inv
+    );
+    assert.equal(registryOnlyJudgmentStrata(clusters), true);
+  });
+
+  it('does not flag when an independent proposer contributed a judgment cluster', () => {
+    const { clusters } = closeIntoClusters(
+      [sourced('APT44', 'Sandworm', 'registry'), sourced('GhostWriter', 'unc1151', 'string')],
+      inv
+    );
+    assert.equal(registryOnlyJudgmentStrata(clusters), false);
+  });
+
+  it('does not flag a table with no judgment-stratum cluster at all', () => {
+    // That case is already covered, and more precisely, by the empty-(d) warning.
+    const { clusters } = closeIntoClusters([sourced('APT44', 'Sandworm', 'registry', 'a')], inv);
+    assert.equal(registryOnlyJudgmentStrata(clusters), false);
   });
 });
 
@@ -379,5 +444,339 @@ describe('proposePairs', () => {
   it('does not propose case variants — the inventory already folded them together', () => {
     const proposals = proposePairs(ctx([['Software', 'Cobalt Strike'], ['Software', 'cobalt strike']]));
     assert.equal(proposals.length, 0);
+  });
+});
+
+describe('preLabel with registry provenance', () => {
+  const worksheetPair = (
+    left: string,
+    right: string,
+    overrides: Partial<WorksheetPair> = {}
+  ): WorksheetPair => ({
+    category: 'Software',
+    left,
+    right,
+    stratum: 'a',
+    mechanism: 'edit-similarity',
+    sim: 0.9,
+    label: '',
+    evidence: '',
+    ...overrides,
+  });
+
+  it('sends a registry merge that differing-digits rejects back to review', () => {
+    // The registry merges Microsoft Office 2010 with 2016; differing-digits says they are distinct
+    // products. Two proposers disagreeing is the highest-information row in the worksheet, so it
+    // goes to a human rather than being silently decided either way.
+    const [labelled] = preLabel([
+      worksheetPair('Microsoft Office 2010', 'Microsoft Office 2016', {
+        source: 'both',
+        canonical: 'Microsoft Office',
+      }),
+    ]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'registry-conflict');
+  });
+
+  it('flags the conflict even when only the registry proposed the pair', () => {
+    // `Windows 10` vs `Windows 10 version 1809` is registry-only, and differing-digits still
+    // rejects it. The disagreement is what matters, not which proposer surfaced the row.
+    const [labelled] = preLabel([
+      worksheetPair('Windows 10', 'Windows 10 version 1809', {
+        source: 'registry',
+        canonical: 'Windows 10',
+      }),
+    ]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'registry-conflict');
+  });
+
+  it('keeps the string rule that claimed a registry-corroborated pair', () => {
+    // A rule that merely re-suggests `same` would destroy the attribution the rule ids exist for:
+    // you audit a rule once and accept all of its rows together.
+    const [labelled] = preLabel([
+      worksheetPair('Cobalt Strike', 'Cobalt-Strike', { source: 'both', canonical: 'Cobalt Strike' }),
+    ]);
+    assert.equal(labelled.rule, 'punctuation-only');
+    assert.equal(labelled.suggested, 'same');
+  });
+
+  it('marks a registry-only semantic pair for review under its own rule', () => {
+    const [labelled] = preLabel([
+      worksheetPair('APT44', 'Sandworm', {
+        category: 'HackerGroup',
+        stratum: 'c',
+        mechanism: 'registry',
+        sim: 0,
+        source: 'registry',
+        canonical: 'Sandworm',
+      }),
+    ]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'registry-semantic');
+  });
+
+  it('leaves string-only pairs exactly as they were', () => {
+    const [labelled] = preLabel([worksheetPair('Netgear R7000', 'Netgear R8000')]);
+    assert.equal(labelled.suggested, 'different');
+    assert.equal(labelled.rule, 'differing-digits');
+  });
+});
+
+describe('worksheet provenance columns', () => {
+  it('round-trips source and canonical', () => {
+    const labelled = preLabel([
+      {
+        category: 'Software',
+        left: 'Cobalt Strike',
+        right: 'Cobalt-Strike',
+        stratum: 'a',
+        mechanism: 'edit-similarity',
+        sim: 0.96,
+        label: '',
+        evidence: '',
+        source: 'both',
+        canonical: 'Cobalt Strike',
+      },
+    ]);
+    const parsed = fromTsv(toTsv(labelled));
+    assert.equal(parsed.pairs.length, 1);
+    assert.equal(parsed.pairs[0].source, 'both');
+  });
+
+  it('defaults source to string when the column is absent', () => {
+    // Worksheets written before provenance existed must still parse, and they are all string-sourced.
+    const tsv = 'label\tsuggested\trule\tcategory\tleft\tright\tstratum\tmechanism\tsim\tevidence\n' +
+      'same\tsame\tpunctuation-only\tSoftware\tCobalt Strike\tCobalt-Strike\ta\tedit-similarity\t0.96\t\n';
+    const parsed = fromTsv(tsv);
+    assert.equal(parsed.pairs[0].source, 'string');
+  });
+});
+
+describe('registryPairs', () => {
+  const ctx = (entries: Array<[string, string]>) =>
+    inventory(entries.map(([category, surface]) => [category, surface, [1]] as [string, string, number[]]));
+
+  it('pairs the surfaces that share a canonical', () => {
+    const result = registryPairs(
+      { entities: { HackerGroup: { Sandworm: 'Sandworm', APT44: 'Sandworm' } } },
+      ctx([['HackerGroup', 'Sandworm'], ['HackerGroup', 'APT44']])
+    );
+    assert.equal(result.pairs.length, 1);
+    assert.equal(result.pairs[0].left, 'APT44');
+    assert.equal(result.pairs[0].right, 'Sandworm');
+    assert.equal(result.pairs[0].canonical, 'Sandworm');
+  });
+
+  it('proposes nothing for a canonical with a single surface', () => {
+    const result = registryPairs(
+      { entities: { Organization: { Microsoft: 'Microsoft' } } },
+      ctx([['Organization', 'Microsoft']])
+    );
+    assert.equal(result.pairs.length, 0);
+  });
+
+  it('drops a surface the corpus never contained, and reports it', () => {
+    // A pair naming a surface absent from the inventory is silently dropped by `gold build`.
+    // Reporting it here is what catches registry/raw-unified drift instead of hiding it.
+    const result = registryPairs(
+      { entities: { HackerGroup: { Sandworm: 'Sandworm', APT44: 'Sandworm', UNC1151: 'Sandworm' } } },
+      ctx([['HackerGroup', 'Sandworm'], ['HackerGroup', 'APT44']])
+    );
+    assert.equal(result.pairs.length, 1);
+    assert.deepEqual(result.droppedKeys, [{ category: 'HackerGroup', surface: 'UNC1151' }]);
+  });
+
+  it('drops a surface that exists only under a different category', () => {
+    // `TOR` is a registry Software key while the inventory has it elsewhere. Categories are
+    // separate annotation universes, so a cross-category match is not a match.
+    const result = registryPairs(
+      { entities: { Software: { TOR: 'Tor', 'Tor Browser': 'Tor' } } },
+      ctx([['Software', 'Tor Browser'], ['Infrastructure', 'TOR']])
+    );
+    assert.equal(result.pairs.length, 0);
+    assert.deepEqual(result.droppedKeys, [{ category: 'Software', surface: 'TOR' }]);
+  });
+
+  it('honours skipCategories, so Domain stays excluded for both proposers', () => {
+    const registry = { entities: { Domain: { 'a.evil.in': 'evil.in', 'evil.in': 'evil.in' } } };
+    const inv = ctx([['Domain', 'a.evil.in'], ['Domain', 'evil.in']]);
+    assert.equal(registryPairs(registry, inv).pairs.length, 1);
+    assert.equal(registryPairs(registry, inv, { skipCategories: ['Domain'] }).pairs.length, 0);
+  });
+
+  it('keeps the string stratum when a mechanism fires', () => {
+    const result = registryPairs(
+      {
+        entities: {
+          HackerGroup: { 'UAC-0010': 'Armageddon', 'UAC-0010 (Armageddon)': 'Armageddon' },
+        },
+      },
+      ctx([['HackerGroup', 'UAC-0010'], ['HackerGroup', 'UAC-0010 (Armageddon)']])
+    );
+    assert.equal(result.pairs[0].stratum, 'a');
+    assert.equal(result.pairs[0].mechanism, 'identifier');
+  });
+
+  it('assigns provisional stratum c when no string mechanism fires', () => {
+    // The registry cannot tell semantic-known from semantic-novel, so `c` is a starting point
+    // the annotator promotes or demotes — never a finding.
+    const result = registryPairs(
+      { entities: { HackerGroup: { Sandworm: 'Sandworm', APT44: 'Sandworm' } } },
+      ctx([['HackerGroup', 'Sandworm'], ['HackerGroup', 'APT44']])
+    );
+    assert.equal(result.pairs[0].stratum, 'c');
+    assert.equal(result.pairs[0].mechanism, 'registry');
+    assert.equal(result.pairs[0].sim, 0);
+  });
+
+  it('emits one row per folded pair when the registry holds case variants of a surface', () => {
+    // The registry keys `CloudFlare` and `Cloudflare` separately; the inventory folded them into
+    // one surface. Without deduplication that group yields two rows for the same pair, and the
+    // annotator adjudicates the same question twice — with no guarantee of the same answer.
+    const result = registryPairs(
+      {
+        entities: {
+          Organization: {
+            CloudFlare: 'Cloudflare',
+            Cloudflare: 'Cloudflare',
+            'Cloudflare Inc.': 'Cloudflare',
+          },
+        },
+      },
+      ctx([['Organization', 'Cloudflare'], ['Organization', 'Cloudflare Inc.']])
+    );
+    assert.equal(result.pairs.length, 1);
+  });
+
+  it('proposes, never labels', () => {
+    const result = registryPairs(
+      { entities: { HackerGroup: { Sandworm: 'Sandworm', APT44: 'Sandworm' } } },
+      ctx([['HackerGroup', 'Sandworm'], ['HackerGroup', 'APT44']])
+    );
+    assert.equal(result.pairs[0].label, '');
+    assert.equal(result.pairs[0].evidence, '');
+  });
+
+  describe('relation classification (reporting only)', () => {
+    const relationOf = (category: string, left: string, right: string) => {
+      const result = registryPairs(
+        { entities: { [category]: { [left]: 'canon', [right]: 'canon' } } },
+        ctx([[category, left], [category, right]])
+      );
+      return result.pairs[0].relation;
+    };
+
+    it('calls a host under its domain part-of', () => {
+      assert.equal(relationOf('Domain', 'admin.certifiedauth.in', 'certifiedauth.in'), 'part-of');
+    });
+
+    it('calls two hosts under one domain siblings', () => {
+      assert.equal(
+        relationOf('Domain', 'admin.certifiedauth.in', 'analytics.certifiedauth.in'),
+        'sibling'
+      );
+    });
+
+    it('calls a version of a product instance-of', () => {
+      assert.equal(relationOf('Software', 'Microsoft Office', 'Microsoft Office 2016'), 'instance-of');
+    });
+
+    it('leaves a genuine coreference merge unclassified', () => {
+      assert.equal(relationOf('Organization', 'Cloudflare', 'Cloudflare Inc.'), 'unclassified');
+    });
+  });
+
+  describe('parseRegistry', () => {
+    it('accepts a well-formed registry', () => {
+      const registry = parseRegistry({ entities: { HackerGroup: { APT44: 'Sandworm' } } });
+      assert.equal(registry.entities.HackerGroup.APT44, 'Sandworm');
+    });
+
+    it('rejects a registry with no entities object', () => {
+      // Silently yielding zero clusters would look like a working run that found nothing.
+      assert.throws(() => parseRegistry({ HackerGroup: { APT44: 'Sandworm' } }), /entities/);
+    });
+
+    it('rejects a canonical that is not a string', () => {
+      assert.throws(
+        () => parseRegistry({ entities: { HackerGroup: { APT44: ['Sandworm'] } } }),
+        /must map to a string/
+      );
+    });
+  });
+
+  describe('unionProposals', () => {
+    const stringPair = {
+      category: 'HackerGroup',
+      left: 'UAC-0010',
+      right: 'UAC-0010 (Armageddon)',
+      stratum: 'a' as const,
+      mechanism: 'identifier',
+      sim: 0.8,
+      label: '' as const,
+      evidence: '' as const,
+    };
+
+    it('marks a pair both proposers found as `both`, keeping the string stratum', () => {
+      const merged = unionProposals(
+        [stringPair],
+        [{ ...stringPair, stratum: 'c' as const, mechanism: 'registry', sim: 0, canonical: 'Armageddon', relation: 'unclassified' as const }]
+      );
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'both');
+      assert.equal(merged[0].stratum, 'a', 'the mechanism that explains the pair wins');
+      assert.equal(merged[0].mechanism, 'identifier');
+      assert.equal(merged[0].canonical, 'Armageddon', 'the registry canonical is still shown');
+    });
+
+    it('deduplicates regardless of how each proposer ordered the pair', () => {
+      // The proposers order a pair by raw spelling, and they do not always hold the same spelling:
+      // the inventory keeps the first-seen casing, the registry keeps its own. `Zebra` sorts before
+      // `apple` while `Apple` sorts before `zebra`, so an order-sensitive key would let the same
+      // question into the worksheet twice.
+      const merged = unionProposals(
+        [{ category: 'X', left: 'Apple', right: 'zebra', stratum: 'a' as const, mechanism: 'edit-similarity', sim: 0.8, label: '' as const, evidence: '' as const }],
+        [{ category: 'X', left: 'Zebra', right: 'apple', stratum: 'c' as const, mechanism: 'registry', sim: 0, label: '' as const, evidence: '' as const, canonical: 'Fruit', relation: 'unclassified' as const }]
+      );
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'both');
+    });
+
+    it('keeps a string-only pair as string-sourced', () => {
+      const merged = unionProposals([stringPair], []);
+      assert.equal(merged[0].source, 'string');
+      assert.equal(merged[0].canonical, undefined);
+    });
+
+    it('appends a registry-only pair with its canonical', () => {
+      const merged = unionProposals(
+        [],
+        [{ category: 'HackerGroup', left: 'APT44', right: 'Sandworm', stratum: 'c' as const, mechanism: 'registry', sim: 0, label: '' as const, evidence: '' as const, canonical: 'Sandworm', relation: 'unclassified' as const }]
+      );
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'registry');
+      assert.equal(merged[0].stratum, 'c');
+    });
+  });
+
+  it('summarises by category and relation', () => {
+    const result = registryPairs(
+      {
+        entities: {
+          Domain: { 'a.evil.in': 'evil.in', 'b.evil.in': 'evil.in', 'evil.in': 'evil.in' },
+        },
+      },
+      ctx([['Domain', 'a.evil.in'], ['Domain', 'b.evil.in'], ['Domain', 'evil.in']])
+    );
+    const summary = registryPairsSummary(result.pairs);
+    assert.deepEqual(
+      summary.find((row) => row.relation === 'part-of'),
+      { category: 'Domain', relation: 'part-of', pairs: 2 }
+    );
+    assert.deepEqual(
+      summary.find((row) => row.relation === 'sibling'),
+      { category: 'Domain', relation: 'sibling', pairs: 1 }
+    );
   });
 });

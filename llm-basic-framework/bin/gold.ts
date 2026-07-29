@@ -21,11 +21,24 @@ import {
   assignSplit,
   buildGoldTable,
   closeIntoClusters,
+  registryOnlyJudgmentStrata,
   type AdjudicatedPair,
 } from '../src/Gold/buildTable';
 import { buildInventory, inventorySummary, type Inventory } from '../src/Gold/inventory';
-import { preLabel, preLabelSummary, PRE_LABEL_RULES } from '../src/Gold/preLabel';
+import {
+  preLabel,
+  preLabelSummary,
+  PRE_LABEL_RULES,
+  REGISTRY_RULES,
+  type WorksheetPair,
+} from '../src/Gold/preLabel';
 import { proposePairs, proposalSummary } from '../src/Gold/proposePairs';
+import {
+  loadRegistry,
+  registryPairs,
+  registryPairsSummary,
+  unionProposals,
+} from '../src/Gold/registryPairs';
 import { fromTsv, toTsv } from '../src/Gold/worksheet';
 import fs from 'fs/promises';
 
@@ -55,6 +68,7 @@ const USAGE = `usage:
   gold inventory --source <extractionsDir> [--out inventory.json] [--order numeric-id]
   gold pairs     --inventory <file> [--out worksheet.json] [--min-sim 0.7]
                  [--skip-categories Domain] [--max-per-category 0]
+                 [--registry <entities-unified/<model>/entities.json>]
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -96,9 +110,45 @@ async function main() {
       maxPerCategory: num('max-per-category', 0),
     });
 
-    const labelled = preLabel(proposals);
+    // A second proposer, off by default. It reaches strata (c)/(d), which no string mechanism can —
+    // and it over-merges, so every one of its rows arrives as `review`. See src/Gold/registryPairs.ts.
+    const registryPath = arg('registry');
+    let worksheetPairs: WorksheetPair[] = proposals.map((pair) => ({ ...pair, source: 'string' as const }));
 
-    console.log(`proposals:   ${labelled.length} pairs`);
+    if (registryPath) {
+      const registry = await loadRegistry(registryPath);
+      const fromRegistry = registryPairs(registry, inventory, {
+        minSim: num('min-sim', 0.7),
+        skipCategories: skip,
+      });
+      worksheetPairs = unionProposals(proposals, fromRegistry.pairs);
+
+      console.log(`registry:    ${registryPath}`);
+      console.log(`             ${fromRegistry.pairs.length} pairs, ${worksheetPairs.length - proposals.length} of them new`);
+      if (fromRegistry.droppedKeys.length > 0) {
+        // Registry/raw-unified drift. Silent here would mean pairs naming surfaces the corpus
+        // never contained, which `gold build` discards without a word.
+        console.warn(
+          `             ${fromRegistry.droppedKeys.length} registry keys are not inventory surfaces ` +
+            'under the same category and were dropped, e.g.:'
+        );
+        for (const key of fromRegistry.droppedKeys.slice(0, 5)) {
+          console.warn(`               ${key.category}: "${key.surface}"`);
+        }
+      }
+      console.log('\nwhat the registry merged (reporting only — never a label):');
+      for (const row of registryPairsSummary(fromRegistry.pairs).slice(0, 10)) {
+        console.log(`  ${row.category.padEnd(18)} ${row.relation.padEnd(14)} ${row.pairs}`);
+      }
+      console.log(
+        '  part-of and sibling are hierarchy, not coreference — a host is not the domain it sits\n' +
+          '  under, and a version is not its product. Those are `different`; see docs/GOLD-TABLE.md §5.'
+      );
+    }
+
+    const labelled = preLabel(worksheetPairs);
+
+    console.log(`\nproposals:   ${labelled.length} pairs`);
     if (skip.length > 0) console.log(`skipped:     ${skip.join(', ')}`);
     console.log('\nby category:');
     for (const row of proposalSummary(proposals).slice(0, 15)) {
@@ -121,10 +171,20 @@ async function main() {
       await writeJson(out, labelled);
     }
 
-    console.log(
-      '\nStrata (c) semantic-known and (d) semantic-novel are NOT proposed here — no string\n' +
-        'mechanism can find a zero-overlap alias. Add those rows yourself; see docs/GOLD-TABLE.md.'
-    );
+    if (registryPath) {
+      console.log(
+        '\nThe registry rows carry a PROVISIONAL stratum (c). It cannot tell semantic-known from\n' +
+          'semantic-novel — set `c` or `d` yourself, and attach evidence to every positive merge.\n' +
+          'It is also the batch arm\'s own output, so it is not an independent source: the MITRE/\n' +
+          'Wikidata pass and the Cyrillic sweep are still required. See docs/GOLD-TABLE.md §4, §7.'
+      );
+    } else {
+      console.log(
+        '\nStrata (c) semantic-known and (d) semantic-novel are NOT proposed here — no string\n' +
+          'mechanism can find a zero-overlap alias. Add those rows yourself, or pass --registry\n' +
+          'to have the unified-entities registry propose candidates; see docs/GOLD-TABLE.md.'
+      );
+    }
     return;
   }
 
@@ -220,6 +280,26 @@ async function main() {
       );
     }
 
+    // Provenance, and the bias it makes visible.
+    const sources = new Map<string, number>();
+    for (const cluster of table.clusters) {
+      if (cluster.members.length <= 1) continue;
+      const label = (cluster.sources ?? ['string']).join('+');
+      sources.set(label, (sources.get(label) ?? 0) + 1);
+    }
+    if (sources.size > 0) {
+      console.log(`  mergeable clusters by proposer: ${JSON.stringify(Object.fromEntries([...sources].sort()))}`);
+    }
+    if (registryOnlyJudgmentStrata(table.clusters)) {
+      console.warn(
+        '  WARNING: every stratum (c)/(d) cluster came from the registry, which is the batch\n' +
+          '  Ψ_norm arm\'s own output — the same file `evaluate --batch` scores. Verification\n' +
+          '  removed its false merges, but nothing here can add the merges it never proposed, so\n' +
+          '  that arm\'s merge recall is inflated by construction. Do the MITRE/Wikidata pass or\n' +
+          '  the manual sweep before reporting a comparison.'
+      );
+    }
+
     const inventoryPath = arg('inventory');
     if (inventoryPath) {
       const inventory = await readJson<Inventory>(inventoryPath);
@@ -255,7 +335,17 @@ async function main() {
       console.log(`${rule.id}  ->  ${rule.suggest}`);
       console.log(`  ${rule.rationale}\n`);
     }
-    console.log('Anything no rule claims gets "review" — most stratum-(a) pairs genuinely need you.');
+    console.log('Anything no rule claims gets "review" — most stratum-(a) pairs genuinely need you.\n');
+    console.log('Then two adjustments that depend on where the row came from, not on the two surfaces:\n');
+    for (const rule of REGISTRY_RULES) {
+      console.log(`${rule.id}  ->  ${rule.suggest}`);
+      console.log(`  ${rule.rationale}\n`);
+    }
+    console.log(
+      'Note what is missing: nothing promotes a row to `same` because a registry agreed. The\n' +
+        'string rules run first and unchanged, so a registry merge can only ever be softened to\n' +
+        '`review` — never turned into a merge you did not adjudicate.'
+    );
     return;
   }
 
