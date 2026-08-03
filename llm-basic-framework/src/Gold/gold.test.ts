@@ -1050,3 +1050,20 @@ describe('crossCategorySurfaces', () => {
     assert.equal(crossCategorySurfaces(inv).length, 1);
   });
 });
+
+describe('unionProposals worksheet hygiene', () => {
+  it('never leaks the registry\'s reporting relation into the worksheet relation column', () => {
+    // RegistryPair.relation ('part-of' | 'sibling' | …) is reporting-only. The worksheet's
+    // `relation` column is the human's rung/rename disambiguator — a prefilled 'unclassified'
+    // there would masquerade as a half-finished verdict.
+    const merged = unionProposals(
+      [],
+      [{ category: 'HackerGroup', left: 'APT44', right: 'Sandworm', stratum: 'c' as const, mechanism: 'registry', sim: 0, label: '' as const, evidence: '' as const, canonical: 'Sandworm', relation: 'part-of' as const }]
+    );
+    assert.ok(!('relation' in merged[0]) || (merged[0] as { relation?: string }).relation === undefined);
+    const tsv = toTsv(preLabel(merged));
+    const header = tsv.split('\n')[0].split('\t');
+    const cells = tsv.split('\n')[1].split('\t');
+    assert.equal(cells[header.indexOf('relation')], '', 'the relation cell starts empty');
+  });
+});

@@ -53,6 +53,15 @@ interface Options {
   skipCategories?: string[];
   /** Passed to `classifyMechanism` so re-attribution follows the shared rule. */
   minSim?: number;
+  /**
+   * The cross-script sweep's own, lower threshold; 0 disables the sweep.
+   *
+   * Genuine cross-script counterparts (USA/США, Russia/Росія) score *below* look-alike noise on
+   * bare-name encoders — near 0.5, under any sane general threshold — so the sweep admits each
+   * Cyrillic surface's single best Latin neighbour separately. This mechanizes the "sweep the
+   * Cyrillic surfaces for English counterparts" pass gold/README.md calls for by hand.
+   */
+  crossScriptMinCos?: number;
 }
 
 /** The narrow slice of EmbeddingsClient this module needs — tests inject a canned one. */
@@ -83,6 +92,7 @@ export async function embeddingPairs(
   const k = options.k ?? 10;
   const minCos = options.minCos ?? 0.6;
   const minSim = options.minSim ?? 0.7;
+  const crossScriptMinCos = options.crossScriptMinCos ?? 0.4;
   const skip = new Set((options.skipCategories ?? []).map(fold));
 
   const byCategory = new Map<string, InventoryEntry[]>();
@@ -103,7 +113,34 @@ export async function embeddingPairs(
   const pairs: EmbeddingProposal[] = [];
   const cosines: number[] = [];
   const considered = new Set<string>();
+  const proposed = new Set<string>();
   let comparisons = 0;
+
+  const keyOf = (category: string, left: string, right: string) =>
+    `${fold(category)}|${fold(left)}|${fold(right)}`;
+
+  const propose = (category: string, a: string, b: string, cos: number, mechanism?: string) => {
+    const left = a < b ? a : b;
+    const right = a < b ? b : a;
+    const key = keyOf(category, left, right);
+    if (proposed.has(key)) return;
+    proposed.add(key);
+
+    // Stratum comes from the mechanism that explains the pair, never from the proposer —
+    // the same rule the registry proposer follows.
+    const classified = classifyMechanism(left, right, category, minSim);
+    pairs.push({
+      category,
+      left,
+      right,
+      stratum: classified?.stratum ?? 'c',
+      mechanism: classified?.mechanism ?? mechanism ?? 'embedding',
+      sim: Number((classified?.sim ?? cos).toFixed(4)),
+      label: '',
+      evidence: '',
+      cos: Number(cos.toFixed(4)),
+    });
+  };
 
   for (const [category, entries] of byCategory) {
     for (let i = 0; i < entries.length; i++) {
@@ -121,28 +158,36 @@ export async function embeddingPairs(
       neighbours.sort((a, b) => b.cos - a.cos);
 
       for (const { j, cos } of neighbours.slice(0, k)) {
-        const left = entries[i].surface < entries[j].surface ? entries[i].surface : entries[j].surface;
-        const right = entries[i].surface < entries[j].surface ? entries[j].surface : entries[i].surface;
-        const key = `${fold(category)}|${fold(left)}|${fold(right)}`;
-        if (considered.has(key)) continue;
-        considered.add(key);
-        cosines.push(Number(cos.toFixed(4)));
-        if (cos < minCos) continue;
-
-        // Stratum comes from the mechanism that explains the pair, never from the proposer —
-        // the same rule the registry proposer follows.
-        const classified = classifyMechanism(left, right, category, minSim);
-        pairs.push({
+        const key = keyOf(
           category,
-          left,
-          right,
-          stratum: classified?.stratum ?? 'c',
-          mechanism: classified?.mechanism ?? 'embedding',
-          sim: Number((classified?.sim ?? cos).toFixed(4)),
-          label: '',
-          evidence: '',
-          cos: Number(cos.toFixed(4)),
-        });
+          entries[i].surface < entries[j].surface ? entries[i].surface : entries[j].surface,
+          entries[i].surface < entries[j].surface ? entries[j].surface : entries[i].surface
+        );
+        if (!considered.has(key)) {
+          considered.add(key);
+          cosines.push(Number(cos.toFixed(4)));
+        }
+        if (cos < minCos) continue;
+        propose(category, entries[i].surface, entries[j].surface, cos);
+      }
+    }
+
+    // The cross-script sweep: each Cyrillic surface's single best Latin neighbour, admitted down
+    // to its own threshold — see the option's doc comment.
+    if (crossScriptMinCos > 0) {
+      const hasCyrillic = (value: string) => /[Ѐ-ӿ]/.test(value);
+      for (const entry of entries) {
+        if (!hasCyrillic(entry.surface)) continue;
+        let best: { surface: string; cos: number } | null = null;
+        for (const other of entries) {
+          if (hasCyrillic(other.surface)) continue;
+          if (fold(entry.surface) === fold(other.surface)) continue;
+          const cos = cosine(vectorOf.get(entry.surface)!, vectorOf.get(other.surface)!);
+          if (best === null || cos > best.cos) best = { surface: other.surface, cos };
+        }
+        if (best && best.cos >= crossScriptMinCos) {
+          propose(category, entry.surface, best.surface, best.cos, 'embedding-xscript');
+        }
       }
     }
   }

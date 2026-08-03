@@ -145,3 +145,58 @@ describe('embeddingPairs', () => {
     assert.equal(cosines.length, 1, 'the rejected candidate cosine is still reported');
   });
 });
+
+describe('embeddingPairs cross-script sweep', () => {
+  it('proposes the top-1 Latin counterpart of a Cyrillic surface below the general threshold', async () => {
+    // USA/США sits near cos 0.5 with real encoders and no string analyzer explains it — under the
+    // general 0.6 threshold, yet it is exactly the pair the channel exists to find. The sweep
+    // admits each Cyrillic surface's single best Latin neighbour down to its own, lower threshold.
+    const { pairs } = await embeddingPairs(
+      inventory([
+        ['Country', 'USA'],
+        ['Country', 'США'],
+        ['Country', 'Poland'],
+      ]),
+      fakeClient({
+        USA: [1, 0, 0],
+        США: [0.5, Math.sqrt(1 - 0.25), 0], // cos 0.5 with USA
+        Poland: [0, 0, 1],
+      }),
+      { minCos: 0.6, crossScriptMinCos: 0.4 }
+    );
+    assert.equal(pairs.length, 1);
+    assert.equal(pairs[0].mechanism, 'embedding-xscript');
+    assert.equal(pairs[0].sim, 0.5);
+    assert.deepEqual([pairs[0].left, pairs[0].right], ['USA', 'США']);
+  });
+
+  it('admits only the single best counterpart, not the whole band', async () => {
+    const { pairs } = await embeddingPairs(
+      inventory([
+        ['Country', 'Росія'],
+        ['Country', 'Russia'],
+        ['Country', 'Ukraine'],
+      ]),
+      fakeClient({
+        Росія: [1, 0, 0],
+        Russia: [0.55, Math.sqrt(1 - 0.55 ** 2), 0],
+        Ukraine: [0.45, 0, Math.sqrt(1 - 0.45 ** 2)],
+      }),
+      { minCos: 0.6, crossScriptMinCos: 0.4 }
+    );
+    assert.equal(pairs.length, 1, 'only the top-1 neighbour, not every pair above 0.4');
+    assert.ok(pairs.some((pair) => pair.left === 'Russia' || pair.right === 'Russia'));
+  });
+
+  it('can be disabled', async () => {
+    const { pairs } = await embeddingPairs(
+      inventory([
+        ['Country', 'India'],
+        ['Country', 'Індія'],
+      ]),
+      fakeClient({ India: [1, 0], Індія: [0.5, Math.sqrt(0.75)] }),
+      { minCos: 0.6, crossScriptMinCos: 0 }
+    );
+    assert.equal(pairs.length, 0);
+  });
+});

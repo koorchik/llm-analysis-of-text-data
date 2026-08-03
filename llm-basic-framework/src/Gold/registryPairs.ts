@@ -269,7 +269,10 @@ export function unionProposals(
     const key = keyOf(pair);
     if (seen.has(key)) continue;
     seen.add(key); // belt and braces: never append the same folded pair twice
-    merged.push({ ...pair, source: joinSources(sourcesOf.get(key)!) });
+    // `relation` stays behind: it is this proposer's reporting-only classification, and the
+    // worksheet column of that name belongs to the human's rung/rename verdict.
+    const { relation: _reportingOnly, ...rest } = pair;
+    merged.push({ ...rest, source: joinSources(sourcesOf.get(key)!) });
   }
 
   for (const pair of embeddingProposals) {

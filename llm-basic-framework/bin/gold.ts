@@ -86,7 +86,8 @@ const USAGE = `usage:
   gold pairs     --inventory <file> [--out worksheet.json] [--min-sim 0.7]
                  [--skip-categories Domain] [--max-per-category 0]
                  [--registry <entities-unified/<model>/entities.json>]
-                 [--embeddings] [--emb-k 10] [--emb-min-cos 0.6] [--emb-cache gold/embeddings-cache]
+                 [--embeddings] [--emb-k 10] [--emb-min-cos 0.6] [--emb-xscript-min-cos 0.4]
+                 [--emb-cache gold/embeddings-cache]
                  [--docs <fetchedDir>]  — fill the snippet column with document evidence
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
@@ -141,6 +142,7 @@ async function main() {
     const embModel = process.env.EMBEDDINGS_MODEL || 'text-embedding-3-large';
     const embK = num('emb-k', 10);
     const embMinCos = num('emb-min-cos', 0.6);
+    const embXscriptMinCos = num('emb-xscript-min-cos', 0.4);
 
     if (has('embeddings')) {
       const client = createEmbeddingsClient({
@@ -151,12 +153,16 @@ async function main() {
       const result = await embeddingPairs(inventory, client, {
         k: embK,
         minCos: embMinCos,
+        crossScriptMinCos: embXscriptMinCos,
         skipCategories: skip,
         minSim: num('min-sim', 0.7),
       });
       embeddingProposals = result.pairs;
 
-      console.log(`embeddings:  ${embProvider}/${embModel}, k=${embK}, minCos=${embMinCos}`);
+      console.log(
+        `embeddings:  ${embProvider}/${embModel}, k=${embK}, minCos=${embMinCos}, ` +
+          `xscriptMinCos=${embXscriptMinCos}`
+      );
       console.log(
         `             ${result.stats.surfaces} surfaces, ${result.stats.comparisons} comparisons, ` +
           `${result.stats.proposed} proposals`
@@ -292,7 +298,14 @@ async function main() {
         string: { pairs: proposals.length },
         registry: registryPath ? { path: registryPath, pairs: registryProposals.length } : null,
         embeddings: has('embeddings')
-          ? { provider: embProvider, model: embModel, k: embK, minCos: embMinCos, pairs: embeddingProposals.length }
+          ? {
+              provider: embProvider,
+              model: embModel,
+              k: embK,
+              minCos: embMinCos,
+              crossScriptMinCos: embXscriptMinCos,
+              pairs: embeddingProposals.length,
+            }
           : null,
       },
       snippets: docsDir ? { docsDir, missingSides: snippetMisses } : null,

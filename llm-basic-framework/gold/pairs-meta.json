@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-08-03T11:14:45.174Z",
+  "inventory": {
+    "path": "gold/inventory.json",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff"
+  },
+  "options": {
+    "minSim": 0.7,
+    "skipCategories": [
+      "Domain"
+    ],
+    "maxPerCategory": 0
+  },
+  "proposers": {
+    "string": {
+      "pairs": 1624
+    },
+    "registry": {
+      "path": "../storage/cert.gov.ua/processed/entities-unified/gpt-5/entities.json",
+      "pairs": 405
+    },
+    "embeddings": {
+      "provider": "openai",
+      "model": "text-embedding-3-large",
+      "k": 10,
+      "minCos": 0.6,
+      "crossScriptMinCos": 0.4,
+      "pairs": 2675
+    }
+  },
+  "snippets": {
+    "docsDir": "../storage/cert.gov.ua/fetched",
+    "missingSides": 1366
+  },
+  "union": {
+    "pairs": 3446,
+    "bySource": {
+      "string": 670,
+      "embedding+registry+string": 107,
+      "embedding+string": 844,
+      "registry+string": 3,
+      "embedding+registry": 197,
+      "registry": 98,
+      "embedding": 1527
+    }
+  },
+  "crossCategorySurfaces": 9
+}
