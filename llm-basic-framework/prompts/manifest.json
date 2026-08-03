@@ -1,122 +1,129 @@
 {
-  "comem-select": {
-    "file": "prompts/comem-select.md",
-    "extractedFrom": null,
-    "authoredFor": "src/Normalization/decision/ComemSelectDecision.ts",
-    "sha256": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
-    "variables": [],
-    "bytes": 545
-  },
-  "consolidate-merge": {
-    "file": "prompts/consolidate-merge.md",
-    "extractedFrom": "src/Consolidator/RegistryConsolidator.ts",
-    "sha256": "e011226b8e7f58978df625162714b313082ea581f9d2092b7e9d535a3b3d0052",
-    "variables": [
-      {
-        "placeholder": "subject",
-        "source": "subject"
-      }
-    ],
-    "bytes": 632
-  },
-  "country-normalize": {
-    "file": "prompts/country-normalize.md",
-    "extractedFrom": "src/CountryNameNormalizer/CountryNameNormalizer.ts",
-    "sha256": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
-    "variables": [
-      {
-        "placeholder": "countryCodes",
-        "source": "Object.keys(countries).join(', ')"
-      }
-    ],
-    "bytes": 245
-  },
-  "extract-batch": {
-    "file": "prompts/extract-batch.md",
-    "extractedFrom": "src/DataProcessors/DataExtractor.ts",
-    "sha256": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
-    "variables": [],
-    "bytes": 7064
-  },
-  "extract-streaming": {
-    "file": "prompts/extract-streaming.md",
-    "extractedFrom": "src/DataProcessors/StreamingExtractor.ts",
-    "sha256": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
-    "variables": [
-      {
-        "placeholder": "knownCategories",
-        "source": "this.#schemaRegistry.renderKnownCategories()"
-      },
-      {
-        "placeholder": "knownRelationTypes",
-        "source": "this.#schemaRegistry.renderKnownRelationTypes()"
-      }
-    ],
-    "bytes": 4994
-  },
-  "link-judge": {
-    "file": "prompts/link-judge.md",
-    "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
-    "sha256": "e247090f85cc6f968b84a06f70dc2385b42eda5915e109dd2d86d36da72efc75",
-    "variables": [],
-    "bytes": 738
-  },
-  "listwise-select": {
-    "file": "prompts/listwise-select.md",
-    "extractedFrom": null,
-    "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-    "sha256": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
-    "variables": [],
-    "bytes": 901
-  },
-  "normalize-country": {
-    "file": "prompts/normalize-country.md",
-    "extractedFrom": "src/Normalizer/Normalizer.ts",
-    "sha256": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
-    "variables": [
-      {
-        "placeholder": "countryCodes",
-        "source": "Object.keys(countries).join(\", \")"
-      }
-    ],
-    "bytes": 246
-  },
-  "normalize-target": {
-    "file": "prompts/normalize-target.md",
-    "extractedFrom": "src/Normalizer/Normalizer.ts",
-    "sha256": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
-    "variables": [],
-    "bytes": 501
-  },
-  "pair-rule": {
-    "file": "prompts/pair-rule.md",
-    "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
-    "sha256": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
-    "variables": [
-      {
-        "placeholder": "knownRelationTypes",
-        "source": "this.#schemaRegistry.renderKnownRelationTypes()"
-      }
-    ],
-    "bytes": 844
-  },
-  "psi-norm-batch": {
-    "file": "prompts/psi-norm-batch.md",
-    "extractedFrom": "src/DataProcessors/DataEntitiesCollector.ts",
-    "sha256": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
-    "variables": [
-      {
-        "placeholder": "entityType",
-        "source": "entityType"
-      }
-    ],
-    "bytes": 756
-  },
-  "type-judge": {
-    "file": "prompts/type-judge.md",
-    "extractedFrom": "src/DataProcessors/StreamingExtractor.ts",
-    "sha256": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16",
-    "variables": [],
-    "bytes": 632
-  }
+ "comem-select": {
+  "file": "prompts/comem-select.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ComemSelectDecision.ts",
+  "sha256": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+  "variables": [],
+  "bytes": 545
+ },
+ "consolidate-merge": {
+  "file": "prompts/consolidate-merge.md",
+  "extractedFrom": "src/Consolidator/RegistryConsolidator.ts",
+  "sha256": "e011226b8e7f58978df625162714b313082ea581f9d2092b7e9d535a3b3d0052",
+  "variables": [
+   {
+    "placeholder": "subject",
+    "source": "subject"
+   }
+  ],
+  "bytes": 632
+ },
+ "country-normalize": {
+  "file": "prompts/country-normalize.md",
+  "extractedFrom": "src/CountryNameNormalizer/CountryNameNormalizer.ts",
+  "sha256": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+  "variables": [
+   {
+    "placeholder": "countryCodes",
+    "source": "Object.keys(countries).join(', ')"
+   }
+  ],
+  "bytes": 245
+ },
+ "extract-batch": {
+  "file": "prompts/extract-batch.md",
+  "extractedFrom": "src/DataProcessors/DataExtractor.ts",
+  "sha256": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+  "variables": [],
+  "bytes": 7064
+ },
+ "extract-streaming": {
+  "file": "prompts/extract-streaming.md",
+  "extractedFrom": "src/DataProcessors/StreamingExtractor.ts",
+  "sha256": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+  "variables": [
+   {
+    "placeholder": "knownCategories",
+    "source": "this.#schemaRegistry.renderKnownCategories()"
+   },
+   {
+    "placeholder": "knownRelationTypes",
+    "source": "this.#schemaRegistry.renderKnownRelationTypes()"
+   }
+  ],
+  "bytes": 4994
+ },
+ "gold-pair-label": {
+  "file": "prompts/gold-pair-label.md",
+  "extractedFrom": null,
+  "sha256": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+  "variables": [],
+  "bytes": 3973
+ },
+ "link-judge": {
+  "file": "prompts/link-judge.md",
+  "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
+  "sha256": "e247090f85cc6f968b84a06f70dc2385b42eda5915e109dd2d86d36da72efc75",
+  "variables": [],
+  "bytes": 738
+ },
+ "listwise-select": {
+  "file": "prompts/listwise-select.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "sha256": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+  "variables": [],
+  "bytes": 901
+ },
+ "normalize-country": {
+  "file": "prompts/normalize-country.md",
+  "extractedFrom": "src/Normalizer/Normalizer.ts",
+  "sha256": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+  "variables": [
+   {
+    "placeholder": "countryCodes",
+    "source": "Object.keys(countries).join(\", \")"
+   }
+  ],
+  "bytes": 246
+ },
+ "normalize-target": {
+  "file": "prompts/normalize-target.md",
+  "extractedFrom": "src/Normalizer/Normalizer.ts",
+  "sha256": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+  "variables": [],
+  "bytes": 501
+ },
+ "pair-rule": {
+  "file": "prompts/pair-rule.md",
+  "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
+  "sha256": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+  "variables": [
+   {
+    "placeholder": "knownRelationTypes",
+    "source": "this.#schemaRegistry.renderKnownRelationTypes()"
+   }
+  ],
+  "bytes": 844
+ },
+ "psi-norm-batch": {
+  "file": "prompts/psi-norm-batch.md",
+  "extractedFrom": "src/DataProcessors/DataEntitiesCollector.ts",
+  "sha256": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+  "variables": [
+   {
+    "placeholder": "entityType",
+    "source": "entityType"
+   }
+  ],
+  "bytes": 756
+ },
+ "type-judge": {
+  "file": "prompts/type-judge.md",
+  "extractedFrom": "src/DataProcessors/StreamingExtractor.ts",
+  "sha256": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16",
+  "variables": [],
+  "bytes": 632
+ }
 }

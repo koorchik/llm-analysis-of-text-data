@@ -19,10 +19,7 @@ import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import type { LlmBackendBase, LlmCallOptions } from '../src/LlmClient/LlmClientBackendBase';
-import { LlmClientBackendAnthropic } from '../src/LlmClient/LlmClientBackendAnthropic';
-import { LlmClientBackendOllama } from '../src/LlmClient/LlmClientBackendOllama';
-import { LlmClientBackendOpenAi } from '../src/LlmClient/LlmClientBackendOpenAi';
-import { LlmClientBackendVertexAi } from '../src/LlmClient/LlmClientBackendVertexAi';
+import { createLlmBackend as buildLlmBackend } from '../src/LlmClient/createBackend';
 import {
   DECISION_STRATEGIES,
   ComemSelectDecision,
@@ -258,43 +255,9 @@ async function describeInput(dir: string) {
 }
 
 function createLlmBackend(): LlmBackendBase {
-  let backend;
-
-  switch (CONFIG.llmProvider) {
-    case 'openai':
-      backend = new LlmClientBackendOpenAi({
-        model: CONFIG.llmModel,
-        apiKey: process.env.OPENAI_API_KEY!,
-      });
-      break;
-
-    case 'ollama':
-      backend = new LlmClientBackendOllama({
-        model: CONFIG.llmModel,
-        apiKey: process.env.OLLAMA_API_KEY,
-      });
-      break;
-
-    case 'vertexai':
-      backend = new LlmClientBackendVertexAi({
-        model: CONFIG.llmModel,
-        project: process.env.VERTEXAI_PROJECT!,
-        location: process.env.VERTEXAI_LOCATION!,
-      });
-      break;
-
-    case 'anthropic':
-      backend = new LlmClientBackendAnthropic({
-        model: CONFIG.llmModel,
-        apiKey: process.env.ANTHROPIC_API_KEY!,
-      });
-      break;
-
-    default:
-      throw new Error(`Unknown LLM provider: ${CONFIG.llmProvider}`);
-  }
-
-  return backend;
+  // The provider switch lives in src/LlmClient/createBackend.ts, shared with `bin/gold.ts` so
+  // the ensemble annotator and the pipeline build backends identically.
+  return buildLlmBackend({ provider: CONFIG.llmProvider, model: CONFIG.llmModel });
 }
 
 function createLlmClient(backend: LlmBackendBase, costMeter: CostMeter): LlmClient {

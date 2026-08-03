@@ -414,3 +414,83 @@ export function normalizeTypeJudgeVerdicts(data: RawData): TypeJudgeVerdict[] | 
       return verdict;
     });
 }
+
+export interface PairLabelVerdict {
+  pair: number;
+  verdict: 'same' | 'different' | 'rung' | 'rename' | 'unsure';
+  relation: string;
+  direction: string;
+  rationale: string;
+  quote: string;
+}
+
+const PAIR_LABEL_VERDICTS = ['same', 'different', 'rung', 'rename', 'unsure'];
+const RUNG_RELATIONS = ['isa', 'part-of'];
+const PAIR_DIRECTIONS = ['left', 'right'];
+
+const pairLabelVerdictsValidator = new LIVR.Validator({
+  verdicts: [
+    { default: [] },
+    {
+      listOfObjects: [
+        {
+          pair: [{ default: 0 }, 'positive_integer'],
+          verdict: [{ default: 'unsure' }, 'string', { oneOf: PAIR_LABEL_VERDICTS }],
+          relation: [{ default: '' }, 'string'],
+          direction: [{ default: '' }, 'string'],
+          rationale: [{ default: '' }, 'string'],
+          quote: [{ default: '' }, 'string'],
+        },
+      ],
+    },
+  ],
+});
+
+/**
+ * Validate a gold-pair-label response (see prompts/gold-pair-label.md).
+ *
+ * The coercion posture is the house one — invalid means `unsure`, never a guess: an unknown
+ * verdict, a `rung` without a legal relation+direction, or a `rename` without a direction all
+ * demote to `unsure`, which routes the row to the human queue. Flat verdicts get their
+ * relation/direction cleared so a model that decorates "same" with "isa" cannot smuggle
+ * structure past the worksheet's own validation.
+ */
+export function normalizePairLabelVerdicts(data: RawData): PairLabelVerdict[] | undefined {
+  if (!data || typeof data !== 'object') return;
+
+  if (Array.isArray(data.verdicts)) {
+    for (const verdict of data.verdicts) {
+      if (!verdict || typeof verdict !== 'object') continue;
+      // LIVR defaults apply to `undefined` only; the prompt's schema says `null` explicitly.
+      if (verdict.relation === null || verdict.relation === undefined) verdict.relation = '';
+      if (verdict.direction === null || verdict.direction === undefined) verdict.direction = '';
+      if (verdict.rationale === null || verdict.rationale === undefined) verdict.rationale = '';
+      if (verdict.quote === null || verdict.quote === undefined) verdict.quote = '';
+      if (!PAIR_LABEL_VERDICTS.includes(verdict.verdict)) {
+        verdict.verdict = 'unsure'; // conservative default, per the prompt's own instruction
+      }
+    }
+  }
+
+  const validData = pairLabelVerdictsValidator.validate(data);
+  if (!validData) {
+    console.log({ ERROR: pairLabelVerdictsValidator.getErrors() });
+    return;
+  }
+
+  return validData.verdicts.map((verdict: PairLabelVerdict) => {
+    if (verdict.verdict === 'rung') {
+      if (!RUNG_RELATIONS.includes(verdict.relation) || !PAIR_DIRECTIONS.includes(verdict.direction)) {
+        return { ...verdict, verdict: 'unsure' as const, relation: '', direction: '' };
+      }
+      return verdict;
+    }
+    if (verdict.verdict === 'rename') {
+      if (!PAIR_DIRECTIONS.includes(verdict.direction)) {
+        return { ...verdict, verdict: 'unsure' as const, relation: '', direction: '' };
+      }
+      return { ...verdict, relation: 'renamed-to' };
+    }
+    return { ...verdict, relation: '', direction: '' };
+  });
+}

@@ -47,7 +47,18 @@ import {
   registryPairsSummary,
   unionProposals,
 } from '../src/Gold/registryPairs';
-import { fromTsv, toTsv } from '../src/Gold/worksheet';
+import {
+  annotatePairs,
+  applyEnsemble,
+  JsonlAnnotationCache,
+  rowKey,
+  selectForAnnotation,
+} from '../src/Gold/llmAnnotate';
+import { fromTsv, readRows, toTsv } from '../src/Gold/worksheet';
+import { CostMeter } from '../src/Experiment/CostMeter';
+import { LlmClient } from '../src/LlmClient/LlmClient';
+import { createLlmBackend } from '../src/LlmClient/createBackend';
+import { prompts } from '../src/Normalization/PromptProvider';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
@@ -89,6 +100,12 @@ const USAGE = `usage:
                  [--embeddings] [--emb-k 10] [--emb-min-cos 0.6] [--emb-xscript-min-cos 0.4]
                  [--emb-cache gold/embeddings-cache]
                  [--docs <fetchedDir>]  — fill the snippet column with document evidence
+  gold llm-annotate --worksheet gold/worksheet.tsv --inventory gold/inventory.json
+                 --docs <fetchedDir>
+                 [--models anthropic:claude-opus-5,openai:gpt-5] [--batch-size 20]
+                 [--skip-rules differing-digits] [--spot-check 60] [--seed 42]
+                 [--limit 0]  — annotate only the first N eligible rows (dry run)
+                 [--out <worksheet>]  — defaults to --worksheet, rewritten in review order
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -327,6 +344,120 @@ async function main() {
           'to have the unified-entities registry propose candidates; see docs/GOLD-TABLE.md.'
       );
     }
+    return;
+  }
+
+  if (command === 'llm-annotate') {
+    const worksheetPath = arg('worksheet') ?? 'gold/worksheet.tsv';
+    const inventoryPath = arg('inventory') ?? 'gold/inventory.json';
+    const docsDir = arg('docs');
+    if (!docsDir) throw new Error(`--docs <fetchedDir> is required — evidence context is the point\n${USAGE}`);
+
+    const rows = readRows(await fs.readFile(worksheetPath, 'utf8'));
+    const inventory = await readJson<Inventory>(inventoryPath);
+    const corpus = await loadCorpus(docsDir);
+
+    // Document context per surface, memoized: up to two snippets, the same passages the human
+    // will see. A surface the corpus never spells literally contributes nothing — the prompt
+    // tells the models that absence of context is a reason for `unsure`, not for recall.
+    const docIdsOf = new Map(
+      inventory.entries.map((entry) => [
+        `${entry.category.toLowerCase()}|${entry.surface.trim().toLowerCase()}`,
+        entry.docIds,
+      ])
+    );
+    const contextCache = new Map<string, string[]>();
+    const context = (category: string, surface: string): string[] => {
+      const key = `${category.toLowerCase()}|${surface.trim().toLowerCase()}`;
+      if (!contextCache.has(key)) {
+        contextCache.set(key, snippetsFor(surface, docIdsOf.get(key) ?? [], corpus, { maxDocs: 2 }));
+      }
+      return contextCache.get(key)!;
+    };
+
+    const skipRules = (arg('skip-rules') ?? 'differing-digits').split(',').map((s) => s.trim()).filter(Boolean);
+    const { selected, spotCheckKeys } = selectForAnnotation(rows, {
+      skipRules,
+      spotCheck: num('spot-check', 60),
+      seed: num('seed', 42),
+    });
+    const limit = num('limit', 0);
+    const toAnnotate = limit > 0 ? selected.slice(0, limit) : selected;
+
+    console.log(`worksheet:   ${worksheetPath} — ${rows.length} rows`);
+    console.log(
+      `selected:    ${toAnnotate.length} for annotation` +
+        (limit > 0 ? ` (--limit ${limit} of ${selected.length})` : '') +
+        ` — incl. ${[...spotCheckKeys].filter((key) => toAnnotate.some((row) => rowKey(row) === key)).length} spot-check rows from [${skipRules.join(', ')}]`
+    );
+
+    const specs = (arg('models') ?? 'anthropic:claude-opus-5,openai:gpt-5')
+      .split(',')
+      .map((spec) => spec.trim())
+      .filter(Boolean)
+      .map((spec) => {
+        const [provider, ...model] = spec.split(':');
+        if (model.length === 0) throw new Error(`--models entries must be provider:model, got "${spec}"`);
+        return { provider, model: model.join(':') };
+      });
+    if (specs.length !== 2) throw new Error('--models must name exactly two provider:model entries');
+
+    const template = prompts.get('gold-pair-label');
+    const instructions = prompts.render('gold-pair-label');
+
+    const annotate = (spec: { provider: string; model: string }) => {
+      const costMeter = new CostMeter({ runId: `gold-annotate-${spec.provider}-${spec.model}` });
+      const client = new LlmClient({ backend: createLlmBackend(spec), costMeter });
+      const slug = `${spec.provider}-${spec.model}`.replace(/[^a-zA-Z0-9._-]+/g, '-');
+      const cache = new JsonlAnnotationCache(`gold/llm-annotations/${slug}.jsonl`);
+      console.log(`model:       ${spec.provider}/${spec.model} — ${cache.size} cached verdicts on disk`);
+      return annotatePairs(toAnnotate, {
+        client,
+        instructions,
+        promptSha: template.sha256,
+        cache,
+        batchSize: num('batch-size', 20),
+        context,
+        onProgress: (done, total) => {
+          if (done % 100 < num('batch-size', 20)) console.log(`  ${spec.model}: ${done}/${total}`);
+        },
+      }).then((votes) => ({ votes, costMeter }));
+    };
+
+    // Both models run concurrently — independent APIs, independent caches.
+    const [first, second] = await Promise.all(specs.map(annotate));
+
+    const { rows: annotated, summary } = applyEnsemble(rows, first.votes, second.votes, spotCheckKeys);
+
+    const out = arg('out') ?? worksheetPath;
+    await fs.writeFile(out, toTsv(annotated));
+    console.log(`\nwrote ${out} (sorted by review queue)`);
+
+    console.log('\nensemble summary:');
+    console.log(`  agree:                    ${summary.agree} (${summary.prefilled} labels prefilled)`);
+    console.log(`  disagree:                 ${summary.disagree}  <- queue 1, start here`);
+    console.log(`  unsure:                   ${summary.unsure}  <- queue 2`);
+    console.log(`  rule-only bulk:           ${summary.ruleOnly}`);
+    console.log(`  spot-check contradictions: ${summary.spotCheckContradictions}`);
+
+    const missingContext = toAnnotate.filter(
+      (row) => context(row.category, row.left).length === 0 && context(row.category, row.right).length === 0
+    ).length;
+    console.log(`  rows with no document context on either side: ${missingContext}`);
+
+    for (const [index, spec] of specs.entries()) {
+      const totals = (index === 0 ? first : second).costMeter.totals();
+      console.log(
+        `\n${spec.provider}/${spec.model}: ${totals.calls} calls, ` +
+          `${totals.inputTokens} in / ${totals.outputTokens} out tokens, ` +
+          `$${totals.costUsd.toFixed(2)}${totals.unpricedCalls > 0 ? ` (+${totals.unpricedCalls} unpriced calls)` : ''}`
+      );
+    }
+
+    console.log(
+      '\nAnnotation cost and agreement rates are reported results — keep gold/llm-annotations/*.jsonl.\n' +
+        'Review order: open the worksheet and work top-down by the queue column.'
+    );
     return;
   }
 
