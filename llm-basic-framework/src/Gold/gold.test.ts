@@ -8,7 +8,7 @@ import {
   registryOnlyJudgmentStrata,
   type AdjudicatedPair,
 } from './buildTable';
-import type { Inventory } from './inventory';
+import { crossCategorySurfaces, type Inventory } from './inventory';
 import { preLabel, type PairSource, type WorksheetPair } from './preLabel';
 import { proposePairs } from './proposePairs';
 import { parseRegistry, registryPairs, registryPairsSummary, unionProposals } from './registryPairs';
@@ -719,13 +719,13 @@ describe('registryPairs', () => {
       evidence: '' as const,
     };
 
-    it('marks a pair both proposers found as `both`, keeping the string stratum', () => {
+    it('marks a pair both proposers found as registry+string, keeping the string stratum', () => {
       const merged = unionProposals(
         [stringPair],
         [{ ...stringPair, stratum: 'c' as const, mechanism: 'registry', sim: 0, canonical: 'Armageddon', relation: 'unclassified' as const }]
       );
       assert.equal(merged.length, 1);
-      assert.equal(merged[0].source, 'both');
+      assert.equal(merged[0].source, 'registry+string');
       assert.equal(merged[0].stratum, 'a', 'the mechanism that explains the pair wins');
       assert.equal(merged[0].mechanism, 'identifier');
       assert.equal(merged[0].canonical, 'Armageddon', 'the registry canonical is still shown');
@@ -741,7 +741,7 @@ describe('registryPairs', () => {
         [{ category: 'X', left: 'Zebra', right: 'apple', stratum: 'c' as const, mechanism: 'registry', sim: 0, label: '' as const, evidence: '' as const, canonical: 'Fruit', relation: 'unclassified' as const }]
       );
       assert.equal(merged.length, 1);
-      assert.equal(merged[0].source, 'both');
+      assert.equal(merged[0].source, 'registry+string');
     });
 
     it('keeps a string-only pair as string-sourced', () => {
@@ -758,6 +758,49 @@ describe('registryPairs', () => {
       assert.equal(merged.length, 1);
       assert.equal(merged[0].source, 'registry');
       assert.equal(merged[0].stratum, 'c');
+    });
+
+    const embeddingPair = (left: string, right: string, cos = 0.85) => ({
+      category: 'HackerGroup',
+      left,
+      right,
+      stratum: 'c',
+      mechanism: 'embedding',
+      sim: cos,
+      label: '' as const,
+      evidence: '' as const,
+      cos,
+    });
+
+    it('appends an embedding-only pair with source embedding', () => {
+      const merged = unionProposals([], [], [embeddingPair('Fancy Bear', 'Sofacy')]);
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'embedding');
+      assert.equal(merged[0].mechanism, 'embedding');
+    });
+
+    it('merges a string+embedding pair under the string fields', () => {
+      const merged = unionProposals(
+        [stringPair],
+        [],
+        [embeddingPair('UAC-0010', 'UAC-0010 (Armageddon)')]
+      );
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'embedding+string');
+      assert.equal(merged[0].mechanism, 'identifier', 'the mechanism that explains the pair wins');
+      assert.equal(merged[0].sim, 0.8);
+    });
+
+    it('merges a registry+embedding pair under the registry fields, keeping the canonical', () => {
+      const merged = unionProposals(
+        [],
+        [{ category: 'HackerGroup', left: 'APT44', right: 'Sandworm', stratum: 'c' as const, mechanism: 'registry', sim: 0, label: '' as const, evidence: '' as const, canonical: 'Sandworm', relation: 'unclassified' as const }],
+        [embeddingPair('APT44', 'Sandworm')]
+      );
+      assert.equal(merged.length, 1);
+      assert.equal(merged[0].source, 'embedding+registry');
+      assert.equal(merged[0].mechanism, 'registry');
+      assert.equal(merged[0].canonical, 'Sandworm');
     });
   });
 
@@ -980,5 +1023,30 @@ describe('worksheet v2', () => {
     assert.equal(rows.length, 2);
     assert.equal(rows[0].label, '');
     assert.equal(toTsv(rows), tsv);
+  });
+});
+
+describe('crossCategorySurfaces', () => {
+  it('reports surfaces the extractor filed under more than one category', () => {
+    // The SKEIN deck's "upstream category noise" threat: `Sandworm` as HackerGroup in one document
+    // and Organization in another silos into two annotation universes and no within-category pair
+    // can ever connect them. The statistic makes the exposure visible in the pairs report.
+    const inv = inventory([
+      ['HackerGroup', 'Sandworm', [1]],
+      ['Organization', 'Sandworm', [2]],
+      ['Software', 'Tool', [3]],
+    ]);
+    const rows = crossCategorySurfaces(inv);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].surface, 'Sandworm');
+    assert.deepEqual(rows[0].categories, ['HackerGroup', 'Organization']);
+  });
+
+  it('folds case when matching surfaces across categories', () => {
+    const inv = inventory([
+      ['HackerGroup', 'SANDWORM', [1]],
+      ['Organization', 'Sandworm', [2]],
+    ]);
+    assert.equal(crossCategorySurfaces(inv).length, 1);
   });
 });

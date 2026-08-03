@@ -1,5 +1,6 @@
+import type { EmbeddingProposal } from './embeddingPairs';
 import { classifyMechanism, type ProposedPair, type ProposedStratum } from './proposePairs';
-import type { WorksheetPair } from './preLabel';
+import { joinSources, type WorksheetPair } from './preLabel';
 import type { Inventory } from './inventory';
 import fs from 'fs/promises';
 
@@ -211,20 +212,26 @@ export function registryPairs(
 }
 
 /**
- * Union the two proposers into one worksheet, deduplicated on `(category, left, right)`.
+ * Union the proposers into one worksheet, deduplicated on `(category, left, right)`.
  *
- * **The string proposal wins on collision**, keeping its stratum, mechanism and similarity. A
- * pair's stratum must describe the mechanism that explains it: `UAC-0010`/`UAC-0010 (Armageddon)`
- * is an identifier variant — stratum (a) — whether or not a registry also merged it. Only the
- * `canonical` is taken from the registry side, because it is context the annotator wants and the
- * string proposer has nothing to say about it.
+ * **Field priority is string > registry > embedding.** A pair's stratum must describe the
+ * mechanism that explains it: `UAC-0010`/`UAC-0010 (Armageddon)` is an identifier variant —
+ * stratum (a) — whichever proposers also surfaced it. The registry beats the embedding side
+ * because it carries the `canonical` the annotator wants and its provisional-stratum semantics
+ * are the documented ones; an embedding neighbour contributes only its cosine.
  *
- * Ordering is string proposals first, in their similarity order, then registry-only rows. That
- * keeps a worksheet diff readable when the registry is added to an existing run.
+ * The `source` cell records *every* contributing proposer as the canonical `+`-joined sorted
+ * spelling (`registry+string`, `embedding+registry`, …) — the composition-by-source table in the
+ * paper reads straight off it.
+ *
+ * Ordering is string proposals first, in their similarity order, then registry-only rows, then
+ * embedding-only rows. That keeps a worksheet diff readable when a proposer is added to an
+ * existing run.
  */
 export function unionProposals(
   stringPairs: ProposedPair[],
-  registryProposals: RegistryPair[]
+  registryProposals: RegistryPair[],
+  embeddingProposals: EmbeddingProposal[] = []
 ): WorksheetPair[] {
   // Order-independent on purpose. Each proposer orders a pair by raw spelling and they do not
   // always hold the same spelling — the inventory keeps the first-seen casing, the registry keeps
@@ -233,22 +240,43 @@ export function unionProposals(
     `${fold(pair.category)}|${[fold(pair.left), fold(pair.right)].sort().join('|')}`;
 
   const fromRegistry = new Map(registryProposals.map((pair) => [keyOf(pair), pair]));
-  const seen = new Set<string>();
+  const fromEmbedding = new Map(embeddingProposals.map((pair) => [keyOf(pair), pair]));
 
-  const merged: WorksheetPair[] = stringPairs.map((pair) => {
+  const sourcesOf = new Map<string, string[]>();
+  const note = (key: string, source: string) => {
+    const list = sourcesOf.get(key) ?? [];
+    list.push(source);
+    sourcesOf.set(key, list);
+  };
+  for (const pair of stringPairs) note(keyOf(pair), 'string');
+  for (const pair of registryProposals) note(keyOf(pair), 'registry');
+  for (const pair of embeddingProposals) note(keyOf(pair), 'embedding');
+
+  const seen = new Set<string>();
+  const merged: WorksheetPair[] = [];
+
+  for (const pair of stringPairs) {
     const key = keyOf(pair);
     seen.add(key);
-    const counterpart = fromRegistry.get(key);
-    return counterpart
-      ? { ...pair, source: 'both' as const, canonical: counterpart.canonical }
-      : { ...pair, source: 'string' as const };
-  });
+    merged.push({
+      ...pair,
+      source: joinSources(sourcesOf.get(key)!),
+      canonical: fromRegistry.get(key)?.canonical,
+    });
+  }
 
   for (const pair of registryProposals) {
     const key = keyOf(pair);
     if (seen.has(key)) continue;
     seen.add(key); // belt and braces: never append the same folded pair twice
-    merged.push({ ...pair, source: 'registry' as const });
+    merged.push({ ...pair, source: joinSources(sourcesOf.get(key)!) });
+  }
+
+  for (const pair of embeddingProposals) {
+    const key = keyOf(pair);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push({ ...pair, source: joinSources(sourcesOf.get(key)!) });
   }
 
   return merged;

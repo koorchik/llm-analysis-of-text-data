@@ -9,12 +9,8 @@ import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
 import { StreamingGraphBuilder, EdgesFrom } from '../src/DataProcessors/StreamingGraphBuilder';
 import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
-import { EmbeddingCache } from '../src/EmbeddingsClient/EmbeddingCache';
-import { EmbeddingsBackendHttp } from '../src/EmbeddingsClient/EmbeddingsBackendHttp';
-import { EmbeddingsBackendOllama } from '../src/EmbeddingsClient/EmbeddingsBackendOllama';
-import { EmbeddingsBackendOpenAi } from '../src/EmbeddingsClient/EmbeddingsBackendOpenAi';
-import { EmbeddingsBackendVertexAi } from '../src/EmbeddingsClient/EmbeddingsBackendVertexAi';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
+import { createEmbeddingsClient as buildEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { RunCard } from '../src/Experiment/RunCard';
@@ -317,70 +313,16 @@ function createLlmClient(backend: LlmBackendBase, costMeter: CostMeter): LlmClie
 }
 
 function createEmbeddingsClient(costMeter?: CostMeter, cacheDir?: string): EmbeddingsClient {
-  let backend;
-
-  switch (CONFIG.embeddingsProvider) {
-    case 'openai':
-      backend = new EmbeddingsBackendOpenAi({
-        model: CONFIG.embeddingsModel,
-        apiKey: process.env.OPENAI_API_KEY!,
-      });
-      break;
-
-    case 'ollama':
-      backend = new EmbeddingsBackendOllama({
-        model: CONFIG.embeddingsModel,
-        apiKey: process.env.OLLAMA_API_KEY,
-        host: process.env.OLLAMA_HOST,
-      });
-      break;
-
-    case 'vertexai':
-      backend = new EmbeddingsBackendVertexAi({
-        model: CONFIG.embeddingsModel,
-        project: process.env.VERTEXAI_PROJECT!,
-        location: process.env.VERTEXAI_LOCATION!,
-      });
-      break;
-
-    // M5: any OpenAI-compatible /v1/embeddings endpoint. This is the SecureBERT arm — see
-    // tools/securebert-sidecar/.
-    case 'http':
-      backend = new EmbeddingsBackendHttp({
-        model: CONFIG.embeddingsModel,
-        url: process.env.EMBEDDINGS_URL || 'http://localhost:8080',
-        apiKey: process.env.EMBEDDINGS_API_KEY,
-        pooling: process.env.EMBEDDINGS_POOLING,
-        normalize: process.env.EMBEDDINGS_NORMALIZE === undefined
-          ? undefined
-          : process.env.EMBEDDINGS_NORMALIZE === '1',
-      });
-      break;
-
-    default:
-      throw new Error(`Unknown embeddings provider: ${CONFIG.embeddingsProvider}`);
-  }
-
-  return new EmbeddingsClient({
-    backend,
+  // The provider switch lives in src/EmbeddingsClient/createEmbeddingsClient.ts, shared with
+  // `bin/gold.ts` so the pair proposer and the pipeline build clients identically.
+  return buildEmbeddingsClient({
+    provider: CONFIG.embeddingsProvider,
+    model: CONFIG.embeddingsModel,
+    cacheDir,
     costMeter,
-    cache: cacheDir
-      ? new EmbeddingCache({
-          dir: cacheDir,
-          provider: backend.provider,
-          model: CONFIG.embeddingsModel,
-        })
-      : undefined,
   });
 }
 
-/**
- * Build the generator named by `CANDIDATE_GENERATOR`, or `string-sim` when unset.
- *
- * `string-sim` is the default rather than an arbitrary choice: it is what `EntityRegistry`'s
- * removed `candidates()` was proved byte-identical to on all 3,392 frozen pairs, so an unset
- * variable keeps the arm the golden fixture pins.
- */
 function createCandidateGenerator(embeddingsClient: EmbeddingsClient): CandidateGenerator {
   return resolveGenerator(CONFIG.candidateGenerator ?? 'string-sim', { embeddingsClient });
 }

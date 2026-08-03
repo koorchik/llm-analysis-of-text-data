@@ -14,6 +14,7 @@
  *
  * Nothing here calls an LLM. Run it as often as you like.
  */
+import { createEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
 import { hashInputDir } from '../src/Experiment/inputHash';
 import { loadGoldTable, selectSplit, goldSummary } from '../src/Evaluation/gold';
 import {
@@ -24,7 +25,14 @@ import {
   registryOnlyJudgmentStrata,
   type AdjudicatedPair,
 } from '../src/Gold/buildTable';
-import { buildInventory, inventorySummary, type Inventory } from '../src/Gold/inventory';
+import { cosineHistogram, embeddingPairs, type EmbeddingProposal } from '../src/Gold/embeddingPairs';
+import { loadCorpus, snippetsFor } from '../src/Gold/evidence';
+import {
+  buildInventory,
+  crossCategorySurfaces,
+  inventorySummary,
+  type Inventory,
+} from '../src/Gold/inventory';
 import {
   preLabel,
   preLabelSummary,
@@ -40,11 +48,20 @@ import {
   unionProposals,
 } from '../src/Gold/registryPairs';
 import { fromTsv, toTsv } from '../src/Gold/worksheet';
+import dotenv from 'dotenv';
 import fs from 'fs/promises';
+import path from 'path';
+
+dotenv.config();
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
   return index >= 0 ? process.argv[index + 1] : undefined;
+}
+
+/** A boolean flag: present or not, takes no value. */
+function has(name: string): boolean {
+  return process.argv.includes(`--${name}`);
 }
 
 function num(name: string, fallback: number): number {
@@ -69,6 +86,8 @@ const USAGE = `usage:
   gold pairs     --inventory <file> [--out worksheet.json] [--min-sim 0.7]
                  [--skip-categories Domain] [--max-per-category 0]
                  [--registry <entities-unified/<model>/entities.json>]
+                 [--embeddings] [--emb-k 10] [--emb-min-cos 0.6] [--emb-cache gold/embeddings-cache]
+                 [--docs <fetchedDir>]  — fill the snippet column with document evidence
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -113,7 +132,40 @@ async function main() {
     // A second proposer, off by default. It reaches strata (c)/(d), which no string mechanism can —
     // and it over-merges, so every one of its rows arrives as `review`. See src/Gold/registryPairs.ts.
     const registryPath = arg('registry');
-    let worksheetPairs: WorksheetPair[] = proposals.map((pair) => ({ ...pair, source: 'string' as const }));
+    let registryProposals: ReturnType<typeof registryPairs>['pairs'] = [];
+
+    // A third proposer, also off by default: dense-embedding neighbours — the one channel
+    // independent of both string mechanics and the systems under test. See src/Gold/embeddingPairs.ts.
+    let embeddingProposals: EmbeddingProposal[] = [];
+    const embProvider = process.env.EMBEDDINGS_PROVIDER || 'openai';
+    const embModel = process.env.EMBEDDINGS_MODEL || 'text-embedding-3-large';
+    const embK = num('emb-k', 10);
+    const embMinCos = num('emb-min-cos', 0.6);
+
+    if (has('embeddings')) {
+      const client = createEmbeddingsClient({
+        provider: embProvider,
+        model: embModel,
+        cacheDir: arg('emb-cache') ?? 'gold/embeddings-cache',
+      });
+      const result = await embeddingPairs(inventory, client, {
+        k: embK,
+        minCos: embMinCos,
+        skipCategories: skip,
+        minSim: num('min-sim', 0.7),
+      });
+      embeddingProposals = result.pairs;
+
+      console.log(`embeddings:  ${embProvider}/${embModel}, k=${embK}, minCos=${embMinCos}`);
+      console.log(
+        `             ${result.stats.surfaces} surfaces, ${result.stats.comparisons} comparisons, ` +
+          `${result.stats.proposed} proposals`
+      );
+      console.log('             candidate-cosine histogram (tune --emb-min-cos from this):');
+      for (const row of cosineHistogram(result.cosines)) {
+        if (row.count > 0) console.log(`               ${row.bucket}  ${row.count}`);
+      }
+    }
 
     if (registryPath) {
       const registry = await loadRegistry(registryPath);
@@ -121,10 +173,10 @@ async function main() {
         minSim: num('min-sim', 0.7),
         skipCategories: skip,
       });
-      worksheetPairs = unionProposals(proposals, fromRegistry.pairs);
+      registryProposals = fromRegistry.pairs;
 
       console.log(`registry:    ${registryPath}`);
-      console.log(`             ${fromRegistry.pairs.length} pairs, ${worksheetPairs.length - proposals.length} of them new`);
+      console.log(`             ${fromRegistry.pairs.length} pairs proposed`);
       if (fromRegistry.droppedKeys.length > 0) {
         // Registry/raw-unified drift. Silent here would mean pairs naming surfaces the corpus
         // never contained, which `gold build` discards without a word.
@@ -146,7 +198,54 @@ async function main() {
       );
     }
 
+    const worksheetPairs: WorksheetPair[] = unionProposals(proposals, registryProposals, embeddingProposals);
     const labelled = preLabel(worksheetPairs);
+
+    // Document-evidence snippets, when the fetched corpus is at hand. These feed both the LLM
+    // annotators and the human reviewer — same passage for everyone.
+    const docsDir = arg('docs');
+    let snippetMisses = 0;
+    if (docsDir) {
+      const corpus = await loadCorpus(docsDir);
+      const docIdsOf = new Map(
+        inventory.entries.map((entry) => [
+          `${entry.category.toLowerCase()}|${entry.surface.trim().toLowerCase()}`,
+          entry.docIds,
+        ])
+      );
+      const snippetOf = new Map<string, string>();
+      const lookup = (category: string, surface: string): string => {
+        const key = `${category.toLowerCase()}|${surface.trim().toLowerCase()}`;
+        if (!snippetOf.has(key)) {
+          const found = snippetsFor(surface, docIdsOf.get(key) ?? [], corpus, { maxDocs: 1 });
+          snippetOf.set(key, found[0] ?? '');
+        }
+        return snippetOf.get(key)!;
+      };
+      for (const row of labelled as Array<(typeof labelled)[number] & { snippet?: string }>) {
+        const left = lookup(row.category, row.left);
+        const right = lookup(row.category, row.right);
+        if (left === '') snippetMisses++;
+        if (right === '') snippetMisses++;
+        row.snippet = left === '' && right === '' ? '' : `left: ${left || '—'} ‖ right: ${right || '—'}`;
+      }
+      console.log(
+        `\nsnippets:    from ${docsDir} — ${snippetMisses} pair sides have no literal occurrence ` +
+          '(extraction normalized the spelling); those lean on the annotators\' unsure discipline'
+      );
+    }
+
+    // The deck's "upstream category noise" threat, made visible: a surface filed under two
+    // categories is invisible to every within-category pair below. Reported, not repaired —
+    // repair belongs to the consolidator's cross-category sweep.
+    const crossCategory = crossCategorySurfaces(inventory);
+    if (crossCategory.length > 0) {
+      console.log(`\ncross-category surfaces: ${crossCategory.length} appear under >1 category, e.g.:`);
+      for (const row of crossCategory.slice(0, 5)) {
+        console.log(`  "${row.surface}"  ${row.categories.join(' / ')}`);
+      }
+      console.log('  (within-category pairs cannot connect these — see the GOLD-TABLE amendment)');
+    }
 
     console.log(`\nproposals:   ${labelled.length} pairs`);
     if (skip.length > 0) console.log(`skipped:     ${skip.join(', ')}`);
@@ -162,6 +261,14 @@ async function main() {
     const needsReview = labelled.filter((pair) => pair.suggested === 'review').length;
     console.log(`\n${labelled.length - needsReview} pre-labelled, ${needsReview} need your judgment.`);
 
+    // Composition by source — the threat-to-validity table reads straight off this.
+    const bySource = new Map<string, number>();
+    for (const row of labelled) bySource.set(row.source ?? 'string', (bySource.get(row.source ?? 'string') ?? 0) + 1);
+    console.log('\nby source:');
+    for (const [source, count] of [...bySource].sort((a, b) => b[1] - a[1])) {
+      console.log(`  ${source.padEnd(26)} ${count}`);
+    }
+
     const out = arg('out') ?? 'worksheet.tsv';
     if (out.endsWith('.tsv')) {
       await fs.writeFile(out, toTsv(labelled));
@@ -170,6 +277,28 @@ async function main() {
     } else {
       await writeJson(out, labelled);
     }
+
+    // A sidecar recording how this worksheet was proposed — the paper's composition table and the
+    // reproduction command read from here, not from anyone's memory.
+    await writeJson(path.join(path.dirname(out), 'pairs-meta.json'), {
+      generatedAt: new Date().toISOString(),
+      inventory: { path: inventoryPath, inputContentHash: inventory.inputContentHash },
+      options: {
+        minSim: num('min-sim', 0.7),
+        skipCategories: skip,
+        maxPerCategory: num('max-per-category', 0),
+      },
+      proposers: {
+        string: { pairs: proposals.length },
+        registry: registryPath ? { path: registryPath, pairs: registryProposals.length } : null,
+        embeddings: has('embeddings')
+          ? { provider: embProvider, model: embModel, k: embK, minCos: embMinCos, pairs: embeddingProposals.length }
+          : null,
+      },
+      snippets: docsDir ? { docsDir, missingSides: snippetMisses } : null,
+      union: { pairs: labelled.length, bySource: Object.fromEntries(bySource) },
+      crossCategorySurfaces: crossCategory.length,
+    });
 
     if (registryPath) {
       console.log(
