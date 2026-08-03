@@ -12,7 +12,7 @@ import type { Inventory } from './inventory';
 import { preLabel, type PairSource, type WorksheetPair } from './preLabel';
 import { proposePairs } from './proposePairs';
 import { parseRegistry, registryPairs, registryPairsSummary, unionProposals } from './registryPairs';
-import { fromTsv, toTsv } from './worksheet';
+import { fromTsv, readRows, toTsv, type WorksheetRow } from './worksheet';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
@@ -541,7 +541,8 @@ describe('worksheet provenance columns', () => {
     ]);
     const parsed = fromTsv(toTsv(labelled));
     assert.equal(parsed.pairs.length, 1);
-    assert.equal(parsed.pairs[0].source, 'both');
+    // The legacy `both` spelling normalizes to the canonical N-source form on read.
+    assert.equal(parsed.pairs[0].source, 'registry+string');
   });
 
   it('defaults source to string when the column is absent', () => {
@@ -778,5 +779,206 @@ describe('registryPairs', () => {
       summary.find((row) => row.relation === 'sibling'),
       { category: 'Domain', relation: 'sibling', pairs: 1 }
     );
+  });
+});
+
+describe('closeIntoClusters with rung and rename labels', () => {
+  const inv = inventory([
+    ['HackerGroup', 'UAC-0002', [1]],
+    ['HackerGroup', 'Sandworm', [2]],
+    ['HackerGroup', 'APT44', [3]],
+  ]);
+
+  it('never merges a rung pair — cross-granularity co-reference is an edge, not an identity', () => {
+    const { clusters, conflicts } = closeIntoClusters(
+      [
+        {
+          category: 'HackerGroup',
+          left: 'UAC-0002',
+          right: 'Sandworm',
+          label: 'rung',
+          relation: 'part-of',
+          direction: 'left',
+          stratum: 'c',
+        },
+      ],
+      inv
+    );
+    assert.equal(clusters.length, 0, 'a rung verdict creates no cluster');
+    assert.equal(conflicts.length, 0);
+  });
+
+  it('never merges a rename pair — a rename is not an alias', () => {
+    const { clusters } = closeIntoClusters(
+      [
+        {
+          category: 'HackerGroup',
+          left: 'APT44',
+          right: 'Sandworm',
+          label: 'rename',
+          relation: 'renamed-to',
+          direction: 'right',
+          stratum: 'c',
+        },
+      ],
+      inv
+    );
+    assert.equal(clusters.length, 0);
+  });
+
+  it('reports a rung pair whose endpoints a same-chain merged as a conflict', () => {
+    // If UAC-0002 and Sandworm are one cluster via `same` verdicts, a rung verdict between them
+    // contradicts the annotation: one node cannot sit on two rungs of itself.
+    const { conflicts } = closeIntoClusters(
+      [
+        { category: 'HackerGroup', left: 'UAC-0002', right: 'Sandworm', label: 'same', stratum: 'c' },
+        {
+          category: 'HackerGroup',
+          left: 'UAC-0002',
+          right: 'Sandworm',
+          label: 'rung',
+          relation: 'part-of',
+          direction: 'left',
+          stratum: 'c',
+        },
+      ],
+      inv
+    );
+    assert.equal(conflicts.length, 1);
+    assert.equal(conflicts[0].label, 'rung');
+  });
+});
+
+describe('preLabel with embedding provenance', () => {
+  const embPair = (
+    left: string,
+    right: string,
+    overrides: Partial<WorksheetPair> = {}
+  ): WorksheetPair => ({
+    category: 'HackerGroup',
+    left,
+    right,
+    stratum: 'c',
+    mechanism: 'embedding',
+    sim: 0.82,
+    label: '',
+    evidence: '',
+    source: 'embedding',
+    ...overrides,
+  });
+
+  it('re-attributes an embedding-only row that no string rule claims', () => {
+    // `one-sided-digits` would fire on APT44/Sandworm-like rows and offer an explanation that
+    // explains nothing; embedding-only rows get their own rule, exactly like registry-semantic.
+    const [labelled] = preLabel([embPair('Fancy Bear', 'Sofacy')]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'embedding-neighbour');
+  });
+
+  it('keeps the string rule that claimed an embedding-corroborated pair', () => {
+    const [labelled] = preLabel([
+      embPair('Cobalt Strike', 'Cobalt-Strike', { category: 'Software', stratum: 'a' }),
+    ]);
+    assert.equal(labelled.rule, 'punctuation-only');
+    assert.equal(labelled.suggested, 'same');
+  });
+
+  it('does not soften differing-digits for an embedding neighbour', () => {
+    // A registry row softens `different` to review because the registry asserted a merge. An
+    // embedding neighbour asserts nothing but proximity, so there is no conflict to surface.
+    const [labelled] = preLabel([
+      embPair('UAC-0010', 'UAC-0018', { stratum: 'a' }),
+    ]);
+    assert.equal(labelled.suggested, 'different');
+    assert.equal(labelled.rule, 'differing-digits');
+  });
+
+  it('treats registry+string exactly like the legacy both value', () => {
+    const [labelled] = preLabel([
+      embPair('Microsoft Office 2010', 'Microsoft Office 2016', {
+        category: 'Software',
+        stratum: 'a',
+        mechanism: 'edit-similarity',
+        source: 'registry+string',
+      }),
+    ]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'registry-conflict');
+  });
+
+  it('lets registry guidance win on a registry+embedding row', () => {
+    // Both proposers are non-string, but the registry one carries the stratum instructions the
+    // annotator needs — registry-semantic explains what to do with the row.
+    const [labelled] = preLabel([embPair('APT44', 'Sandworm', { source: 'embedding+registry' })]);
+    assert.equal(labelled.suggested, 'review');
+    assert.equal(labelled.rule, 'registry-semantic');
+  });
+});
+
+describe('worksheet v2', () => {
+  const row = (overrides: Partial<WorksheetRow> = {}): WorksheetRow => ({
+    category: 'HackerGroup',
+    left: 'UAC-0002',
+    right: 'Sandworm',
+    stratum: 'c',
+    mechanism: 'registry',
+    sim: 0,
+    label: '',
+    evidence: '',
+    suggested: 'review',
+    rule: 'registry-semantic',
+    source: 'registry',
+    ...overrides,
+  });
+
+  it('round-trips the four labels with relation and direction', () => {
+    const parsed = fromTsv(
+      toTsv([row({ label: 'rung', relation: 'part-of', direction: 'left' })])
+    );
+    assert.equal(parsed.pairs.length, 1);
+    assert.equal(parsed.pairs[0].label, 'rung');
+    assert.equal(parsed.pairs[0].relation, 'part-of');
+    assert.equal(parsed.pairs[0].direction, 'left');
+  });
+
+  it('parses the 12-column v1 worksheet unchanged', () => {
+    const tsv =
+      'label\tsuggested\trule\tsource\tcategory\tleft\tright\tstratum\tmechanism\tsim\tcanonical\tevidence\n' +
+      'same\tsame\tcross-script\tboth\tCountry\tIndia\tІндія\tb\ttransliteration\t0\tIndia\t\n';
+    const parsed = fromTsv(tsv);
+    assert.equal(parsed.pairs.length, 1);
+    assert.equal(parsed.pairs[0].label, 'same');
+    assert.equal(parsed.pairs[0].source, 'registry+string', 'legacy both normalizes to the v2 spelling');
+  });
+
+  it('rejects a rung label without a relation, naming the line', () => {
+    const bad = toTsv([row({ label: 'rung', direction: 'left' })]);
+    assert.throws(() => fromTsv(bad), /line 2.*relation/);
+  });
+
+  it('rejects a rename label without a direction, naming the line', () => {
+    const bad = toTsv([row({ label: 'rename', relation: 'renamed-to' })]);
+    assert.throws(() => fromTsv(bad), /line 2.*direction/);
+  });
+
+  it('counts corrections against the ensemble verdict when one is present', () => {
+    const parsed = fromTsv(
+      toTsv([
+        row({ label: 'different', ensemble: 'same', agreement: 'agree', suggested: 'review' }),
+        row({ left: 'A', right: 'B', label: 'same', ensemble: 'same', suggested: 'review' }),
+      ])
+    );
+    assert.equal(parsed.corrected, 1, 'only the row where the human overrode the ensemble counts');
+  });
+
+  it('readRows keeps unlabelled rows and round-trips the file byte-identically', () => {
+    const tsv = toTsv([
+      row(),
+      row({ left: 'APT44', right: 'Sandworm', label: 'rename', relation: 'renamed-to', direction: 'left', queue: 1, ensemble: 'rename:renamed-to:left', agreement: 'agree', claudeVerdict: 'rename:renamed-to:left', gptVerdict: 'rename:renamed-to:left', snippet: '[doc 3] …', llmRationale: 'stated rename', evidence: '[doc 3] "Sandworm (now APT44)"' }),
+    ]);
+    const rows = readRows(tsv);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0].label, '');
+    assert.equal(toTsv(rows), tsv);
   });
 });

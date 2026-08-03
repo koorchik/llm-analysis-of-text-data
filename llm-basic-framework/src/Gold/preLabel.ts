@@ -19,8 +19,29 @@ import type { ProposedPair } from './proposePairs';
 
 export type Suggestion = 'same' | 'different' | 'review';
 
-/** Which proposer surfaced a row. `both` means the string sweep and the registry agree it is a candidate. */
-export type PairSource = 'string' | 'registry' | 'both';
+/**
+ * Which proposer(s) surfaced a row: `+`-joined sorted source names — `string`, `registry`,
+ * `embedding`, `registry+string`, `embedding+string`, … The legacy spelling `both`
+ * (= `registry+string`) still parses; `sourceSet` is the one place that knows it.
+ */
+export type PairSource = string;
+
+/** Parse a source cell into the set of proposers. Absent means the string sweep. */
+export function sourceSet(source: string | undefined): Set<string> {
+  if (source === undefined || source.trim() === '') return new Set(['string']);
+  if (source === 'both') return new Set(['registry', 'string']);
+  return new Set(
+    source
+      .split('+')
+      .map((name) => name.trim())
+      .filter(Boolean)
+  );
+}
+
+/** Serialize a set of proposers back to the canonical `+`-joined sorted spelling. */
+export function joinSources(sources: Iterable<string>): PairSource {
+  return [...new Set(sources)].sort().join('+');
+}
 
 /**
  * A worksheet row before adjudication: a proposal from either proposer.
@@ -139,7 +160,7 @@ export const PRE_LABEL_RULES: PreLabelRule[] = [
  * and the rule ids are what let you audit a rule once and accept all of its rows together. The
  * corroboration is carried by the `source` column instead.
  */
-export const REGISTRY_RULES = [
+export const PROVENANCE_RULES = [
   {
     id: 'registry-conflict',
     rationale:
@@ -158,6 +179,16 @@ export const REGISTRY_RULES = [
       'reach, and they are also where the registry\'s granularity errors live ("MS Exchange" vs ' +
       '"Microsoft Exchange Server 2016"). Never bulk-accept them: read each one, set the stratum ' +
       'to `c` or `d`, and attach evidence to every positive merge.',
+    suggest: 'review' as const,
+  },
+  {
+    id: 'embedding-neighbour',
+    rationale:
+      'A dense-embedding sweep proposed this pair and no string mechanism explains it — the ' +
+      'channel that can surface zero-overlap aliases ("Fancy Bear"/"APT28") and cross-script ' +
+      'pairs. Unlike a registry row, an embedding neighbour asserts nothing but proximity in ' +
+      'vector space, and proximity is not identity: expect mostly `different` with the occasional ' +
+      'real find. The stratum is provisional (c) for the same reason as registry rows.',
     suggest: 'review' as const,
   },
 ];
@@ -192,17 +223,23 @@ export function preLabel(pairs: WorksheetPair[]): PreLabelled[] {
       }
     }
 
-    const fromRegistry = pair.source === 'registry' || pair.source === 'both';
-    if (fromRegistry && suggested === 'different') {
+    const sources = sourceSet(pair.source);
+    // A registry merge that a string rule rejects goes to a human: two proposers disagreeing is
+    // the highest-information row. An embedding neighbour gets no such softening — it asserts
+    // nothing but proximity, so there is no conflicting claim to surface.
+    if (sources.has('registry') && suggested === 'different') {
       return { ...pair, suggested: 'review' as const, rule: 'registry-conflict' };
     }
-    // Registry-*only* rows that no string rule decides are re-attributed, because on these the
-    // string rule that claimed them is a coincidence: `one-sided-digits` fires on `APT44`/`Sandworm`
-    // and offers "a model number narrows a family to a product", which explains nothing about that
-    // pair. `registry-semantic` tells the annotator why the row is here and what to do with it.
-    // Rows the string sweep also proposed keep their rule — there the attribution is real.
-    if (pair.source === 'registry' && suggested === 'review') {
-      return { ...pair, suggested, rule: 'registry-semantic' };
+    // Rows the string sweep did NOT propose and no string rule decides are re-attributed, because
+    // on these the string rule that claimed them is a coincidence: `one-sided-digits` fires on
+    // `APT44`/`Sandworm` and offers "a model number narrows a family to a product", which explains
+    // nothing about that pair. The provenance rule tells the annotator why the row is here and
+    // what to do with it; registry guidance wins over embedding because it carries the stratum
+    // instructions. Rows the string sweep also proposed keep their rule — there the attribution
+    // is real.
+    if (!sources.has('string') && suggested === 'review') {
+      if (sources.has('registry')) return { ...pair, suggested, rule: 'registry-semantic' };
+      if (sources.has('embedding')) return { ...pair, suggested, rule: 'embedding-neighbour' };
     }
     return { ...pair, suggested, rule };
   });

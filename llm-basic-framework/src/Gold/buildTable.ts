@@ -12,12 +12,28 @@ import type { PairSource } from './preLabel';
  * per-mention rather than per-cluster leaks aliases across it.
  */
 
+/**
+ * The four final verdicts, per the gold-by-projection amendment (SKEIN v2 deck, 2026-08-03):
+ * `same` is an alias at the same grain; `rung` is finer/coarser of one thing (a ladder edge, never
+ * a merge); `rename` is one referent re-designated over time (`Sandworm` → `APT44`); `different`
+ * is everything else. The pre-amendment table collapsed `rung` and `rename` into `different`,
+ * which threw away exactly the edges the granularity-error metrics need.
+ */
+export type PairLabel = 'same' | 'different' | 'rung' | 'rename';
+export type PairRelation = 'isa' | 'part-of' | 'renamed-to';
+/** Which side is the finer node (`rung`) or the older designation (`rename`). */
+export type PairDirection = 'left' | 'right';
+
 /** One adjudicated pair: the annotator's verdict on a proposal. */
 export interface AdjudicatedPair {
   category: string;
   left: string;
   right: string;
-  label: 'same' | 'different';
+  label: PairLabel;
+  /** Required when label is `rung` (isa | part-of) or `rename` (renamed-to). */
+  relation?: PairRelation;
+  /** Required when label is `rung` or `rename` — see PairDirection. */
+  direction?: PairDirection;
   stratum: string;
   evidence?: string;
   /** Which proposer surfaced this pair. Carried through to the cluster so the bias is reportable. */
@@ -35,6 +51,11 @@ const key = (category: string, surface: string) => `${fold(category)}|${fold(sur
  * combination is a contradiction in the annotation, not a smaller cluster. `conflicts` reports every
  * such case so it can be resolved rather than silently resolved *for* you — an unreported conflict
  * is a gold table that disagrees with itself.
+ *
+ * **Only `same` merges.** `rung` and `rename` verdicts never enter the union-find — they become
+ * edges *between* clusters (the deck's "hard non-merge plus a connecting edge"). A rung or rename
+ * pair whose endpoints a `same` chain merged anyway is the same kind of contradiction as a merged
+ * `different` pair, and is reported in `conflicts` alongside it.
  */
 export function closeIntoClusters(
   pairs: AdjudicatedPair[],
@@ -65,7 +86,10 @@ export function closeIntoClusters(
   }
 
   const conflicts = pairs.filter((pair) => {
-    if (pair.label !== 'different') return false;
+    // Every non-merging verdict conflicts with a `same` chain that connected its endpoints:
+    // `different` is a straight contradiction, and `rung`/`rename` would put a node on a rung of
+    // itself (or rename it to itself).
+    if (pair.label === 'same') return false;
     const a = key(pair.category, pair.left);
     const b = key(pair.category, pair.right);
     // `has` first: `connected` calls `find`, which *adds* an unknown element. Querying a pair that

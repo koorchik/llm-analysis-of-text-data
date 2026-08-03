@@ -29,7 +29,7 @@ import {
   preLabel,
   preLabelSummary,
   PRE_LABEL_RULES,
-  REGISTRY_RULES,
+  PROVENANCE_RULES,
   type WorksheetPair,
 } from '../src/Gold/preLabel';
 import { proposePairs, proposalSummary } from '../src/Gold/proposePairs';
@@ -207,7 +207,9 @@ async function main() {
       console.log(`corrections: ${parsed.corrected} rows where you overrode the silver suggestion`);
     } else {
       const raw = await readJson<AdjudicatedPair[]>(pairsPath);
-      allPairs = raw.filter((pair) => pair.label === 'same' || pair.label === 'different');
+      allPairs = raw.filter((pair) =>
+        ['same', 'different', 'rung', 'rename'].includes(pair.label)
+      );
       unlabelledCount = raw.length - allPairs.length;
       total = raw.length;
     }
@@ -336,8 +338,8 @@ async function main() {
       console.log(`  ${rule.rationale}\n`);
     }
     console.log('Anything no rule claims gets "review" — most stratum-(a) pairs genuinely need you.\n');
-    console.log('Then two adjustments that depend on where the row came from, not on the two surfaces:\n');
-    for (const rule of REGISTRY_RULES) {
+    console.log('Then adjustments that depend on where the row came from, not on the two surfaces:\n');
+    for (const rule of PROVENANCE_RULES) {
       console.log(`${rule.id}  ->  ${rule.suggest}`);
       console.log(`  ${rule.rationale}\n`);
     }
