@@ -418,9 +418,7 @@ async function main() {
         cache,
         batchSize: num('batch-size', 20),
         context,
-        onProgress: (done, total) => {
-          if (done % 100 < num('batch-size', 20)) console.log(`  ${spec.model}: ${done}/${total}`);
-        },
+        onProgress: (done, total) => console.log(`  ${spec.model}: ${done}/${total}`),
       }).then((votes) => ({ votes, costMeter }));
     };
 
@@ -439,6 +437,7 @@ async function main() {
     console.log(`  unsure:                   ${summary.unsure}  <- queue 2`);
     console.log(`  rule-only bulk:           ${summary.ruleOnly}`);
     console.log(`  spot-check contradictions: ${summary.spotCheckContradictions}`);
+    console.log(`  rule contradictions:      ${summary.ruleContradictions}`);
 
     const missingContext = toAnnotate.filter(
       (row) => context(row.category, row.left).length === 0 && context(row.category, row.right).length === 0
@@ -510,11 +509,12 @@ async function main() {
 
     const withSingletons = addSingletons(merged, inventory);
     const split = assignSplit(withSingletons, num('dev-fraction', 0.2));
-    const table = buildGoldTable({ clusters: split, inventory });
+    const table = buildGoldTable({ clusters: split, inventory, pairs: allPairs });
 
     const multi = table.clusters.filter((cluster) => cluster.members.length > 1);
     console.log(`\nclusters:    ${table.clusters.length} (${multi.length} with >1 member)`);
     console.log(`singletons:  ${table.clusters.length - multi.length} — these are the gold mints`);
+    console.log(`edges:       ${table.edges.length} (rung/rename verdicts — gold-by-projection)`);
     console.log(`nilLabels:   ${table.nilLabels.length} (derived, not hand-written)`);
     console.log(`dev/test:    ${table.clusters.filter((c) => c.split === 'dev').length} / ${table.clusters.filter((c) => c.split === 'test').length}`);
     await writeJson(arg('out') ?? 'gold.json', table);
@@ -539,6 +539,21 @@ async function main() {
       if (multi === 0) {
         console.warn(`  WARNING: the ${split} split has no multi-member cluster — merge P/R will be empty`);
       }
+    }
+
+    // Edges by kind and category — the gold-by-projection half of the table.
+    if (table.edges.length > 0) {
+      const byKind = new Map<string, number>();
+      for (const edge of table.edges) {
+        const key = `${edge.category} ${edge.kind}`;
+        byKind.set(key, (byKind.get(key) ?? 0) + 1);
+      }
+      console.log(`  edges by kind: ${JSON.stringify(Object.fromEntries([...byKind].sort()))}`);
+    } else if (table.version === 'gold-aliases-v2') {
+      console.warn(
+        '  WARNING: a v2 table with zero edges — if any worksheet rows carry rung/rename labels,\n' +
+          '  they did not survive the build; if none do yet, granularity error is unmeasurable.'
+      );
     }
 
     // The strata exist to be reported separately; an empty (d) means the paper's second claim is

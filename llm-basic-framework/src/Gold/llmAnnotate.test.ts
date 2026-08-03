@@ -195,11 +195,13 @@ describe('annotatePairs', () => {
 });
 
 describe('selectForAnnotation', () => {
+  // As written by `gold pairs`: rule rows arrive with the label PRE-FILLED to the suggestion.
+  // A label equal to the suggestion is the machine's, not the human's.
   const sheet = [
-    row({ left: 'U1', right: 'U2', rule: 'differing-digits', suggested: 'different' }),
-    row({ left: 'U3', right: 'U4', rule: 'differing-digits', suggested: 'different' }),
-    row({ left: 'U5', right: 'U6', rule: 'differing-digits', suggested: 'different' }),
-    row({ left: 'P1', right: 'P2', rule: 'punctuation-only', suggested: 'same' }),
+    row({ left: 'U1', right: 'U2', rule: 'differing-digits', suggested: 'different', label: 'different' }),
+    row({ left: 'U3', right: 'U4', rule: 'differing-digits', suggested: 'different', label: 'different' }),
+    row({ left: 'U5', right: 'U6', rule: 'differing-digits', suggested: 'different', label: 'different' }),
+    row({ left: 'P1', right: 'P2', rule: 'punctuation-only', suggested: 'same', label: 'same' }),
     row({ left: 'R1', right: 'R2', rule: 'registry-semantic', suggested: 'review' }),
   ];
 
@@ -222,8 +224,25 @@ describe('selectForAnnotation', () => {
   });
 
   it('never re-annotates a row the human already labelled', () => {
-    const { selected } = selectForAnnotation([row({ label: 'same', rule: 'none' })], {});
+    // suggested 'review' arrives with an empty label; a non-empty one is a human's deviation.
+    const { selected } = selectForAnnotation([row({ label: 'same', rule: 'none', suggested: 'review' })], {});
     assert.equal(selected.length, 0);
+  });
+
+  it('treats a human override of a rule label as final', () => {
+    const { selected } = selectForAnnotation(
+      [row({ label: 'same', rule: 'differing-digits', suggested: 'different' })],
+      { spotCheck: 10 }
+    );
+    assert.equal(selected.length, 0, 'label ≠ suggestion means a human already decided');
+  });
+
+  it('re-selects rows a previous annotate run already ensembled — the cache answers them', () => {
+    const { selected } = selectForAnnotation(
+      [row({ label: 'same', suggested: 'review', agreement: 'agree', ensemble: 'same' })],
+      {}
+    );
+    assert.equal(selected.length, 1);
   });
 });
 
@@ -294,6 +313,18 @@ describe('applyEnsemble', () => {
     const key = rowKey(rows[0]);
     const same = annotation({ verdict: 'same' });
     const { rows: out } = applyEnsemble(rows, vote({ [key]: same }), vote({ [key]: same }), new Set([key]));
+    assert.equal(out[0].queue, 1);
+    assert.equal(out[0].label, '', 'the contradicted rule label is cleared for review');
+  });
+
+  it('promotes any rule-prefilled label the ensemble contradicts, spot-check or not', () => {
+    // The 24 punctuation-only/decorated-identifier/cross-script rows arrive prefilled `same`.
+    // If both models agree they are NOT the same, that contradiction must not sink into tier 4
+    // wearing the rule's label.
+    const rows = [row({ rule: 'punctuation-only', suggested: 'same', label: 'same' })];
+    const key = rowKey(rows[0]);
+    const diff = annotation();
+    const { rows: out } = applyEnsemble(rows, vote({ [key]: diff }), vote({ [key]: diff }));
     assert.equal(out[0].queue, 1);
     assert.equal(out[0].label, '', 'the contradicted rule label is cleared for review');
   });

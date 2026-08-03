@@ -262,6 +262,10 @@ export function fromTsv(tsv: string): TsvParseResult {
       evidence: row.evidence,
       // Normalized to the canonical `+`-joined spelling, so the legacy `both` disappears on read.
       source: joinSources(sourceSet(row.source)),
+      // Edge provenance: which rule claimed the row and how each ensemble member voted.
+      rule: row.rule === 'none' ? undefined : row.rule,
+      claudeVerdict: row.claudeVerdict,
+      gptVerdict: row.gptVerdict,
     });
   }
 

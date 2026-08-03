@@ -263,8 +263,14 @@ export function selectForAnnotation(
   const selected: WorksheetRow[] = [];
   const skipped: WorksheetRow[] = [];
   for (const row of rows) {
-    if (row.label !== '') continue;
-    (skipRules.has(row.rule) ? skipped : selected).push(row);
+    // Whose label is it? `gold pairs` PRE-FILLS the label with the rule suggestion, and a prior
+    // annotate run prefills the ensemble verdict (marked by `agreement`). Both are machine labels
+    // — re-annotatable, the second for free via the cache. Only a label that deviates from both
+    // is a human verdict, and a human verdict is final.
+    const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
+    const ensemblePrefill = row.agreement !== undefined && row.agreement !== '';
+    if (row.label !== '' && !rulePrefill && !ensemblePrefill) continue;
+    (skipRules.has(row.rule) && !ensemblePrefill ? skipped : selected).push(row);
   }
 
   const sample = [...skipped]
@@ -291,6 +297,8 @@ export interface EnsembleSummary {
   ruleOnly: number;
   prefilled: number;
   spotCheckContradictions: number;
+  /** Agreed ensemble verdicts that contradicted a rule-prefilled label outside the spot-check. */
+  ruleContradictions: number;
 }
 
 /**
@@ -315,6 +323,7 @@ export function applyEnsemble(
     ruleOnly: 0,
     prefilled: 0,
     spotCheckContradictions: 0,
+    ruleContradictions: 0,
   };
 
   const out = rows.map((row) => {
@@ -363,6 +372,16 @@ export function applyEnsemble(
         return { ...next, ensemble, agreement: 'agree', label: '', queue: 1 };
       }
       return { ...next, ensemble, agreement: 'agree', queue: 5 };
+    }
+
+    // A rule-prefilled label the ensemble contradicts is the registry-conflict situation again —
+    // two mechanisms disagreeing — and must surface at the top, not sink into a bulk tier
+    // wearing the rule's label. Only machine prefills (label === suggestion) are voidable; a
+    // human's deviation from the suggestion is final here exactly as in selectForAnnotation.
+    const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
+    if (rulePrefill && agreed.verdict !== row.label) {
+      summary.ruleContradictions++;
+      return { ...next, ensemble, agreement: 'agree', label: '', queue: 1 };
     }
 
     const prefill = row.label === '';

@@ -1,4 +1,11 @@
-import { GOLD_VERSION, type GoldCluster, type GoldNilLabel, type GoldTable, type Split } from '../Evaluation/gold';
+import {
+  GOLD_VERSION_2,
+  type GoldCluster,
+  type GoldEdge,
+  type GoldNilLabel,
+  type GoldTable,
+  type Split,
+} from '../Evaluation/gold';
 import { UnionFind } from '../Evaluation/unionFind';
 import type { Inventory } from './inventory';
 import type { PairSource } from './preLabel';
@@ -38,6 +45,11 @@ export interface AdjudicatedPair {
   evidence?: string;
   /** Which proposer surfaced this pair. Carried through to the cluster so the bias is reportable. */
   source?: PairSource;
+  /** The pre-label rule that claimed the row — edge provenance. */
+  rule?: string;
+  /** Compact ensemble votes from the worksheet's model columns — edge provenance. */
+  claudeVerdict?: string;
+  gptVerdict?: string;
 }
 
 const fold = (value: string) => value.trim().toLowerCase();
@@ -297,16 +309,83 @@ export function deriveNilLabels(clusters: GoldCluster[], inventory: Inventory): 
     }));
 }
 
-/** Assemble a complete, loadable gold table. */
+/**
+ * Derive gold ladder + rename edges from the rung/rename verdicts — gold-by-projection.
+ *
+ * Direction is explicit in the pair (`direction` = the finer side for rungs, the older
+ * designation for renames) and becomes `from` → `to` = finer → coarser / old → new. Endpoints
+ * resolve to their *cluster* — the edge connects clusters, whichever member surface the
+ * annotator happened to adjudicate. The same edge asserted through several pairs (two aliases of
+ * one endpoint, two proposers) is emitted once with merged provenance.
+ *
+ * Skipped, deliberately: pairs whose endpoints share a cluster (a contradiction —
+ * `closeIntoClusters` already reports it in `conflicts`) and pairs naming a surface no cluster
+ * contains (not in the inventory; `gold build` discards those labels the same way).
+ */
+export function deriveEdges(pairs: AdjudicatedPair[], clusters: GoldCluster[]): GoldEdge[] {
+  const clusterOf = new Map<string, GoldCluster>();
+  for (const cluster of clusters) {
+    for (const member of cluster.members) clusterOf.set(key(cluster.category, member), cluster);
+  }
+
+  const edges = new Map<string, GoldEdge>();
+  for (const pair of pairs) {
+    if (pair.label !== 'rung' && pair.label !== 'rename') continue;
+    if (!pair.relation || !pair.direction) continue; // the worksheet parser enforces these; belt and braces
+
+    const from = pair.direction === 'left' ? pair.left : pair.right;
+    const to = pair.direction === 'left' ? pair.right : pair.left;
+    const fromCluster = clusterOf.get(key(pair.category, from));
+    const toCluster = clusterOf.get(key(pair.category, to));
+    if (!fromCluster || !toCluster || fromCluster.id === toCluster.id) continue;
+
+    const edgeKey = `${fold(pair.category)}|${fromCluster.id}|${toCluster.id}|${pair.relation}`;
+    const existing = edges.get(edgeKey);
+    const evidence = pair.evidence
+      ? [{ pair: [pair.left, pair.right] as [string, string], snippet: pair.evidence, annotator: 'expert' as const }]
+      : [];
+    const sources = pair.source ? pair.source.split('+') : [];
+    const models: Record<string, string> = {
+      ...(pair.claudeVerdict ? { claude: pair.claudeVerdict } : {}),
+      ...(pair.gptVerdict ? { gpt: pair.gptVerdict } : {}),
+    };
+
+    if (existing) {
+      existing.evidence = [...(existing.evidence ?? []), ...evidence];
+      existing.sources = [...new Set([...(existing.sources ?? []), ...sources])].sort();
+      existing.models = { ...models, ...existing.models };
+    } else {
+      edges.set(edgeKey, {
+        category: pair.category,
+        from,
+        to,
+        kind: pair.relation,
+        fromClusterId: fromCluster.id,
+        toClusterId: toCluster.id,
+        ...(evidence.length > 0 ? { evidence } : {}),
+        ...(sources.length > 0 ? { sources: [...sources].sort() } : {}),
+        ...(Object.keys(models).length > 0 ? { models } : {}),
+        ...(pair.rule ? { rule: pair.rule } : {}),
+      });
+    }
+  }
+
+  return [...edges.values()];
+}
+
+/** Assemble a complete, loadable gold table (v2 — clusters + edges). */
 export function buildGoldTable(params: {
   clusters: GoldCluster[];
   inventory: Inventory;
+  /** The adjudicated pairs, for edge derivation. Omitting them builds an edgeless table. */
+  pairs?: AdjudicatedPair[];
 }): GoldTable {
   return {
-    version: GOLD_VERSION,
+    version: GOLD_VERSION_2,
     inputContentHash: params.inventory.inputContentHash,
     order: params.inventory.order,
     clusters: params.clusters,
+    edges: deriveEdges(params.pairs ?? [], params.clusters),
     nilLabels: deriveNilLabels(params.clusters, params.inventory),
   };
 }

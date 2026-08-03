@@ -1,4 +1,4 @@
-import { validateGoldTable } from '../Evaluation/gold';
+import { goldEdges, labeledPairs, validateGoldTable } from '../Evaluation/gold';
 import {
   addSingletons,
   assignSplit,
@@ -363,7 +363,8 @@ describe('buildGoldTable', () => {
     });
 
     const validated = validateGoldTable(table);
-    assert.equal(validated.version, 'gold-aliases-v1');
+    // The builder emits v2 since the gold-by-projection amendment; the loader accepts both.
+    assert.equal(validated.version, 'gold-aliases-v2');
     assert.equal(validated.inputContentHash, 'hash');
     assert.equal(validated.order, 'numeric-id');
     assert.ok(validated.nilLabels.length > 0);
@@ -1065,5 +1066,147 @@ describe('unionProposals worksheet hygiene', () => {
     const header = tsv.split('\n')[0].split('\t');
     const cells = tsv.split('\n')[1].split('\t');
     assert.equal(cells[header.indexOf('relation')], '', 'the relation cell starts empty');
+  });
+});
+
+describe('gold-aliases-v2 edges', () => {
+  const inv = inventory([
+    ['HackerGroup', 'UAC-0002', [1]],
+    ['HackerGroup', 'Sandworm', [2]],
+    ['HackerGroup', 'APT44', [3]],
+    ['HackerGroup', 'Voodoo Bear', [4]],
+  ]);
+
+  const rung = (overrides: Partial<AdjudicatedPair> = {}): AdjudicatedPair => ({
+    category: 'HackerGroup',
+    left: 'UAC-0002',
+    right: 'Sandworm',
+    label: 'rung',
+    relation: 'part-of',
+    direction: 'left',
+    stratum: 'c',
+    source: 'registry',
+    evidence: '[doc 3] UAC-0002 (Sandworm)',
+    ...overrides,
+  });
+
+  it('emits a rung edge finer→coarser with resolved cluster ids', () => {
+    const { clusters } = closeIntoClusters([rung()], inv);
+    const all = addSingletons(clusters, inv);
+    const table = buildGoldTable({ clusters: all, inventory: inv, pairs: [rung()] });
+    assert.equal(table.version, 'gold-aliases-v2');
+    assert.equal(table.edges.length, 1);
+    const edge = table.edges[0];
+    assert.equal(edge.from, 'UAC-0002', 'direction left = left side is finer');
+    assert.equal(edge.to, 'Sandworm');
+    assert.equal(edge.kind, 'part-of');
+    const fromCluster = all.find((c) => c.members.includes('UAC-0002'))!;
+    const toCluster = all.find((c) => c.members.includes('Sandworm'))!;
+    assert.equal(edge.fromClusterId, fromCluster.id);
+    assert.equal(edge.toClusterId, toCluster.id);
+    assert.deepEqual(edge.sources, ['registry']);
+    assert.equal(edge.evidence?.[0]?.snippet, '[doc 3] UAC-0002 (Sandworm)');
+  });
+
+  it('emits a rename edge old→new', () => {
+    const pair = rung({ left: 'APT44', right: 'Sandworm', label: 'rename', relation: 'renamed-to', direction: 'right' });
+    const { clusters } = closeIntoClusters([pair], inv);
+    const all = addSingletons(clusters, inv);
+    const table = buildGoldTable({ clusters: all, inventory: inv, pairs: [pair] });
+    const edge = table.edges[0];
+    assert.equal(edge.kind, 'renamed-to');
+    assert.equal(edge.from, 'Sandworm', 'direction right = right side is the older designation');
+    assert.equal(edge.to, 'APT44');
+  });
+
+  it('attaches the edge to the whole cluster — an alias of the coarser node resolves to its cluster id', () => {
+    const samePair: AdjudicatedPair = {
+      category: 'HackerGroup',
+      left: 'Sandworm',
+      right: 'Voodoo Bear',
+      label: 'same',
+      stratum: 'c',
+    };
+    const { clusters } = closeIntoClusters([samePair, rung()], inv);
+    const all = addSingletons(clusters, inv);
+    const table = buildGoldTable({ clusters: all, inventory: inv, pairs: [samePair, rung()] });
+    const merged = all.find((c) => c.members.includes('Voodoo Bear'))!;
+    assert.equal(table.edges[0].toClusterId, merged.id);
+  });
+
+  it('deduplicates the same edge asserted twice, merging provenance', () => {
+    const twice = [rung({ source: 'registry' }), rung({ source: 'embedding', evidence: '' })];
+    const { clusters } = closeIntoClusters(twice, inv);
+    const all = addSingletons(clusters, inv);
+    const table = buildGoldTable({ clusters: all, inventory: inv, pairs: twice });
+    assert.equal(table.edges.length, 1);
+    assert.deepEqual(table.edges[0].sources, ['embedding', 'registry']);
+  });
+
+  it('still builds a v2 table with no edges when every pair is flat', () => {
+    const { clusters } = closeIntoClusters([pair('APT44', 'Sandworm', 'same', 'c')], inv);
+    const table = buildGoldTable({ clusters: addSingletons(clusters, inv), inventory: inv, pairs: [] });
+    assert.equal(table.version, 'gold-aliases-v2');
+    assert.deepEqual(table.edges, []);
+  });
+});
+
+describe('gold-aliases-v2 loader', () => {
+  const v2 = () => ({
+    version: 'gold-aliases-v2',
+    inputContentHash: 'hash',
+    order: 'numeric-id',
+    clusters: [
+      { id: 'g1', category: 'HackerGroup', members: ['UAC-0002'], stratum: 'c', split: 'test' },
+      { id: 'g2', category: 'HackerGroup', members: ['Sandworm', 'Voodoo Bear'], stratum: 'c', split: 'test' },
+    ],
+    edges: [
+      { category: 'HackerGroup', from: 'UAC-0002', to: 'Sandworm', kind: 'part-of', fromClusterId: 'g1', toClusterId: 'g2' },
+    ],
+    nilLabels: [],
+  });
+
+  it('accepts a valid v2 table and exposes its edges', () => {
+    const table = validateGoldTable(v2());
+    assert.equal(goldEdges(table).length, 1);
+    assert.equal(goldEdges(table)[0].kind, 'part-of');
+  });
+
+  it('still accepts v1 — a v1 table is a v2 table with no edges', () => {
+    const flat = { ...v2(), version: 'gold-aliases-v1' } as Record<string, unknown>;
+    delete flat.edges;
+    const table = validateGoldTable(flat);
+    assert.deepEqual(goldEdges(table), []);
+  });
+
+  it('rejects an unknown edge kind', () => {
+    const bad = v2();
+    (bad.edges[0] as { kind: string }).kind = 'related-to';
+    assert.throws(() => validateGoldTable(bad), /kind/);
+  });
+
+  it('rejects an edge whose endpoint is in no cluster of its category', () => {
+    const bad = v2();
+    bad.edges[0].to = 'Fancy Bear';
+    assert.throws(() => validateGoldTable(bad), /Fancy Bear/);
+  });
+
+  it('rejects an edge whose endpoints share a cluster', () => {
+    const bad = v2();
+    bad.edges[0].to = 'UAC-0002';
+    bad.edges[0].from = 'UAC-0002';
+    assert.throws(() => validateGoldTable(bad));
+  });
+
+  it('rejects a duplicate edge', () => {
+    const bad = v2();
+    bad.edges.push({ ...bad.edges[0] });
+    assert.throws(() => validateGoldTable(bad), /duplicate/i);
+  });
+
+  it('keeps labeledPairs blind to edges — a rung pair stays a coreference negative', () => {
+    const table = validateGoldTable(v2());
+    const flat = validateGoldTable({ ...v2(), version: 'gold-aliases-v1', edges: undefined });
+    assert.deepEqual(labeledPairs(table), labeledPairs(flat));
   });
 });
