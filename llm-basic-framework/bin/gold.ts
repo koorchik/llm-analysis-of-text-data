@@ -102,7 +102,7 @@ const USAGE = `usage:
                  [--docs <fetchedDir>]  — fill the snippet column with document evidence
   gold llm-annotate --worksheet gold/worksheet.tsv --inventory gold/inventory.json
                  --docs <fetchedDir>
-                 [--models anthropic:claude-opus-5,openai:gpt-5] [--batch-size 20]
+                 [--models anthropic:claude-opus-5,openai:gpt-5] [--batch-size 20] [--concurrency 6]
                  [--skip-rules differing-digits] [--spot-check 60] [--seed 42]
                  [--limit 0]  — annotate only the first N eligible rows (dry run)
                  [--out <worksheet>]  — defaults to --worksheet, rewritten in review order
@@ -417,6 +417,7 @@ async function main() {
         promptSha: template.sha256,
         cache,
         batchSize: num('batch-size', 20),
+        concurrency: num('concurrency', 6),
         context,
         onProgress: (done, total) => console.log(`  ${spec.model}: ${done}/${total}`),
       }).then((votes) => ({ votes, costMeter }));

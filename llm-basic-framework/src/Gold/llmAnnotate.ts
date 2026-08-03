@@ -107,6 +107,9 @@ interface AnnotateOptions {
   batchSize?: number;
   /** Document context per (category, surface); empty array when the corpus never spells it. */
   context?: (category: string, surface: string) => string[];
+  /** Batches in flight at once. Default 1 (sequential); batches are independent, so raising this
+   * is bounded only by the provider's rate limits. */
+  concurrency?: number;
   onProgress?: (done: number, total: number) => void;
 }
 
@@ -169,11 +172,27 @@ export async function annotatePairs(
     options.onProgress?.(done, total);
   };
 
+  // Flatten to a batch list and drain it with a small worker pool. Batches are independent —
+  // each writes its own rows into the map and appends its own cache lines — so the only ordering
+  // that matters is within a batch, which runBatch preserves.
+  const batches: WorksheetRow[][] = [];
   for (const list of byCategory.values()) {
     for (let start = 0; start < list.length; start += batchSize) {
-      await runBatch(list.slice(start, start + batchSize), true);
+      batches.push(list.slice(start, start + batchSize));
     }
   }
+
+  const concurrency = Math.max(1, options.concurrency ?? 1);
+  let nextBatch = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, batches.length) }, async () => {
+      while (true) {
+        const index = nextBatch++;
+        if (index >= batches.length) return;
+        await runBatch(batches[index], true);
+      }
+    })
+  );
 
   return result;
 }

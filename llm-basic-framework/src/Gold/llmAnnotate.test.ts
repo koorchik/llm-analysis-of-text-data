@@ -194,6 +194,55 @@ describe('annotatePairs', () => {
   });
 });
 
+describe('annotatePairs concurrency', () => {
+  const slowClient = (inFlight: { now: number; max: number }) => ({
+    send: async (_i: string, text: string) => {
+      inFlight.now++;
+      inFlight.max = Math.max(inFlight.max, inFlight.now);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      inFlight.now--;
+      const count = (text.match(/^\d+\. /gm) ?? []).length;
+      return {
+        text: JSON.stringify({
+          verdicts: Array.from({ length: count }, (_, i) => ({
+            pair: i + 1,
+            verdict: 'different',
+            relation: null,
+            direction: null,
+            rationale: '',
+            quote: '',
+          })),
+        }),
+      };
+    },
+  });
+
+  it('runs up to `concurrency` batches at once', async () => {
+    const inFlight = { now: 0, max: 0 };
+    const rows = Array.from({ length: 6 }, (_, i) => row({ left: `L${i}`, right: `R${i}` }));
+    await annotatePairs(rows, {
+      client: slowClient(inFlight),
+      instructions: 'i',
+      promptSha: 's',
+      batchSize: 1,
+      concurrency: 3,
+    });
+    assert.equal(inFlight.max, 3);
+  });
+
+  it('stays sequential by default', async () => {
+    const inFlight = { now: 0, max: 0 };
+    const rows = Array.from({ length: 3 }, (_, i) => row({ left: `L${i}`, right: `R${i}` }));
+    await annotatePairs(rows, {
+      client: slowClient(inFlight),
+      instructions: 'i',
+      promptSha: 's',
+      batchSize: 1,
+    });
+    assert.equal(inFlight.max, 1);
+  });
+});
+
 describe('selectForAnnotation', () => {
   // As written by `gold pairs`: rule rows arrive with the label PRE-FILLED to the suggestion.
   // A label equal to the suggestion is the machine's, not the human's.
