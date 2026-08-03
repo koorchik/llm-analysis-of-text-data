@@ -83,10 +83,13 @@ export function closeIntoClusters(
     const b = key(pair.category, pair.right);
     union.union(a, b);
     // Provenance accumulates per member, then unions with the cluster: a cluster formed by a
-    // registry pair and a string pair carries both, and is therefore not registry-only.
+    // registry pair and a string pair carries both, and is therefore not registry-only. Compound
+    // spellings (`embedding+registry`) split into components — the set holds proposers, not rows.
     for (const member of [a, b]) {
       const seen = sourcesOf.get(member) ?? new Set<string>();
-      seen.add(pair.source ?? 'string');
+      for (const component of (pair.source ?? 'string').split('+')) {
+        if (component.trim()) seen.add(component.trim());
+      }
       sourcesOf.set(member, seen);
     }
     // The hardest stratum in a cluster wins: a cluster containing a (d) pair is a (d) cluster,

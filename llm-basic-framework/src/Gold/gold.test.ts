@@ -1210,3 +1210,17 @@ describe('gold-aliases-v2 loader', () => {
     assert.deepEqual(labeledPairs(table), labeledPairs(flat));
   });
 });
+
+describe('cluster provenance with N-source pairs', () => {
+  it('splits compound source spellings into components', () => {
+    const inv = inventory([
+      ['HackerGroup', 'APT44', [1]],
+      ['HackerGroup', 'Sandworm', [2]],
+    ]);
+    const { clusters } = closeIntoClusters(
+      [{ category: 'HackerGroup', left: 'APT44', right: 'Sandworm', label: 'same', stratum: 'c', source: 'embedding+registry' }],
+      inv
+    );
+    assert.deepEqual(clusters[0].sources, ['embedding', 'registry']);
+  });
+});
