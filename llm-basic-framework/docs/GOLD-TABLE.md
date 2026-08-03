@@ -407,3 +407,97 @@ Nothing forces you through the tooling. Write a `gold-aliases-v1` JSON yourself 
 `npm run gold -- validate` it. But derive the NIL labels programmatically even so — ~4,000
 position-dependent rows is not a hand-editing task, and
 `deriveNilLabels(clusters, inventory)` in `src/Gold/buildTable.ts` will do it from your clusters.
+
+---
+
+## Amendment 2026-08-03 — gold-by-projection, the embedding proposer, and ensemble silver labelling
+
+Per the SKEIN v2 method deck (`dissert/wiki/presentations/skein-v2-method.md`), which governs on
+divergence. This section amends by addition; nothing above is edited in place.
+
+### A1. The label vocabulary: `rung` and `rename` join `same`/`different`
+
+§5's decision rule **stands for cluster membership**: a part-of or instance-of pair is never
+`same`, and only coreference merges. Amended is what happens to those pairs — they are no longer
+discarded as bare `different`. The worksheet takes four final labels:
+
+| label | meaning | extra columns |
+|---|---|---|
+| `same` | one referent, one grain — merges into a cluster | — |
+| `rung` | same thing at different grain, or part and whole — a **gold ladder edge**, never a merge | `relation` = `isa` \| `part-of`; `direction` = the **finer** side |
+| `rename` | one referent re-designated over time (`Sandworm` → `APT44`) | `relation` = `renamed-to`; `direction` = the **older** side |
+| `different` | distinct referents | — |
+
+The built table is **`gold-aliases-v2`**: `clusters` exactly as v1, plus `edges`
+(finer→coarser / old→new, endpoints resolved to cluster ids, per-edge provenance: proposer
+sources, per-model ensemble votes, the pre-label rule, evidence). Every flat consumer scores v2
+exactly as v1 — `labeledPairs`, the partition and the NIL logic are blind to edges; a rung pair
+remains a coreference negative. The edges are what the granularity-error metrics (borrowed
+hP/hR/hF) will read, and every coarser gold view derives from g0 clusters + edges by the same
+fold the system uses — one labelling effort scores every λ view. The flat v1 projection is
+recovered by ignoring `edges`.
+
+Worked example, the deck's trap case: `UAC-0002` / `Sandworm` is a **hard non-merge plus a
+connecting edge** — label `rung`, relation `part-of`, direction pointing at `UAC-0002` as finer.
+Under v1 rules this pair was an undifferentiated `different` and the connection was lost.
+
+### A2. Third pair proposer: dense embeddings (plus a targeted cross-script sweep)
+
+`gold pairs --embeddings` adds a proposer over multilingual dense embeddings
+(`text-embedding-3-large` by default; model, `k`, thresholds and per-source counts recorded in
+`gold/pairs-meta.json`): top-k cosine neighbours per surface within a category, threshold picked
+from the reported candidate-cosine histogram. It is the only channel independent of both string
+mechanics and every system under test — the registry proposer's §7.4 problem does not apply to it.
+
+Measured caveat, reported rather than assumed: on bare surface strings this encoder scores known
+zero-overlap aliases *low* (`APT44`/`Sandworm` ≈ 0.15) and known-different look-alikes *high*
+(`cscript.exe`/`wscript.exe` ≈ 0.90). The channel's real contributions are orthographic and
+cross-lingual recall, not world-knowledge aliases — stratum (c)/(d) authority sources remain
+required, exactly as §4 says. Genuine cross-script counterparts (`USA`/`США` ≈ 0.5) score *below*
+look-alike noise, so no single threshold can admit them: a **targeted sweep** proposes each
+Cyrillic surface's single best Latin neighbour down to its own lower threshold
+(`--emb-xscript-min-cos`, default 0.4). This mechanizes the manual Cyrillic sweep the README
+called for.
+
+### A3. Silver labelling: a two-model ensemble drafts, the human decides
+
+`gold llm-annotate` sends every unadjudicated pair (with up to two document snippets per side,
+extracted from the frozen corpus — the same passages the reviewer sees) to **two models
+independently** — `claude-opus-5` and `gpt-5` — under the manifest-registered
+`gold-pair-label` prompt, which carries §5's decision rule, the worked examples, and the
+if-uncertain-answer-`unsure` doctrine (never a guessed `same`).
+
+- **Agreement** = identical `(verdict, relation, direction)`, neither `unsure`. Only agreement
+  prefills a silver label; an agreed positive with a verbatim quote is born evidence-bearing
+  (annotator kind `llm`).
+- **The worksheet is rewritten sorted by a `queue` column** — the file is the review order:
+  1 disagreements and rule contradictions · 2 either model `unsure` · 3 agreed positives (every
+  positive is human-confirmed; a wrong `same` corrupts a cluster through closure) · 4 agreed
+  `different` (skim) · 5 rule-labelled bulk.
+- **`differing-digits` rows are rule-labelled, not LLM-labelled**, except a seeded spot-check
+  sample (default 60, `--seed 42`) sent to both models: zero observed errors bounds the rule's
+  error rate at ≲5% (rule of three), and the observed rate is reported either way.
+  Contradictions jump to queue 1 with the rule label cleared.
+- Per-row model votes stay in `claudeVerdict`/`gptVerdict` and survive into the v2 table's edges
+  — per-edge provenance.
+- Verdicts are cached append-only in `gold/llm-annotations/{provider}-{model}.jsonl`, keyed by
+  the prompt hash (a prompt edit invalidates every cached verdict by construction). The Anthropic
+  backend has no sampling lever, so the run is **reproducible by artifact, not by seed**: the
+  JSONL files are committed and are the audit trail. Annotation cost and agreement rates are
+  reported results.
+
+**Contamination statement.** Both ensemble families are systems under test elsewhere in this
+framework (gpt-5 ran extraction and the batch Ψ_norm arm; Claude is a streaming backbone). The
+ensemble is therefore *triage*, never ground truth: the human verdict is the label, every
+positive is individually confirmed, and the votes are recorded so anchoring is measurable.
+§7.1's independent-family cross-annotation (e.g. Gemini via the existing VertexAi backend)
+remains a separate, open obligation.
+
+### A4. Recorded limitation: within-category only
+
+Pairs, clusters and edges all live inside one category. Upstream extractor miscategorization
+(`Sandworm` filed as HackerGroup in one document and Organization in another — the deck's
+"upstream category noise" threat) is therefore invisible to this table by construction:
+`gold pairs` prints the exposure (surfaces appearing under >1 category, currently 9), repair
+belongs to the consolidator's cross-category sweep, and the residual rate is reported from that
+sweep's category-correction log — never patched here.
