@@ -1,5 +1,10 @@
 # Gold table working directory
 
+> **2026-08-03:** `silver-pairs.tsv` and `silver.json` moved to `archive/` — they predate the
+> registry proposer and the v2 worksheet. The current worksheet is `worksheet.tsv` (string +
+> registry proposers); the rest of this README still describes the archived era and will be
+> rewritten when the LLM silver-labelling pipeline lands. Do not build against `archive/`.
+
 Machine-generated draft. **`silver.json` is not gold yet** — see "What's missing" below.
 
 Full guide: `../docs/GOLD-TABLE.md`. This file is just what's in this directory and what to do next.
