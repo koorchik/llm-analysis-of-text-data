@@ -1,0 +1,55 @@
+# Inferred annotation policy
+
+Stated by anthropic/claude-opus-5 while applying 68 human exemplars (2026-08-04). Audit these — they are the model's reading of your rules, not your rules.
+
+- Grammatical inflection, case, transliteration, abbreviation, or a parenthetical alias of the same name = 'same'.
+- Longer official titles with extra descriptive words ('...та протидії кіберзагрозам') are aliases of the short form = 'same'; a name plus a genuine narrowing qualifier/subunit is a rung.
+- An organizational parent vs one of its offices/units = rung:part-of, finer side = the unit.
+- A broader category vs a narrower type inside it = rung:isa, finer side = the narrower type; a coordinate sibling type is still rung:isa toward the narrower one only when one is contained in the other, otherwise 'different'.
+- Cross-language equivalents (EN/UA) of the same concept are 'same'; national scoping ('X' vs 'X of Ukraine') does not by itself change identity.
+- Within a domain vocabulary, lexically similar but conceptually distinct referents (bodies vs officials, органи vs організації, web-sites vs web-resources of different sets) = 'different'.
+- A specifically named system/programme is a distinct referent from a generic class of systems, even if operated in the same domain = 'different'.
+- Domain names and the company they belong to are the same entity when the context equates them (e.g. brand ↔ its website); if a domain maps to a different brand than the named legal entity, they are different.
+- A legal-entity name is only 'same' as a domain when evidence in context ties that exact domain to that entity; otherwise 'different'.
+- Aliases across vendor naming schemes for one referent are 'same'; a referent re-designated over time is 'rename' with direction = older name.
+- Name-plus-qualifier or a unit inside a larger body is a rung (isa / part-of), never 'same'.
+- Distinct sibling brands or subsidiaries with their own identity are 'different', however similar the context.
+- Filename/domain/executable forms of a product name (adding .exe, .dll, .com) are typography → same.
+- Grammatical inflections, transliterations, abbreviations and parenthetical aliases of one product name → same.
+- A name plus a functional qualifier that denotes a component or sub-program of the coarser named thing → rung:part-of, direction pointing to the finer (component) side.
+- A distinct bundled component or front-end shipped as part of a larger named tool is a part, not an alias → rung:part-of toward the component.
+- Two clearly separate products in the same family/vocabulary (sibling tools, sibling modules) → different, not same.
+- Where a report explicitly equates a family label with the vendor/product string it drops on disk or in the registry, treat as alias → same.
+- HackerGroup identifiers that co-occur as parenthetical equivalences in CERT-UA text (APT28 = UAC-0001 = UAC-0028) are aliases of one group => same.
+- A UAC-code with a parenthetical common name (e.g. 'UAC-0028 (APT28)') is a typographic alias, not a finer granularity => same as the bare code or bare name.
+- Different UAC codes that both resolve to the same named group are treated as aliases of one entity, not distinct referents.
+- Distinct named groups with no alias evidence (e.g. Turla vs APT28) would be different; only alias-linked codes merge.
+- Government-Body names for one named centre are 'same' across abbreviations, expansions, and differing scope qualifiers (ІТС / ЗСУ / Держспецзв'язку) as long as the head noun and referent coincide.
+- Parenthetical additions that are identifiers or acronyms of the same body (e.g. '(ЦКБ)', '(в/ч А0334)') are aliases → same; parenthetical additions naming an internal unit (e.g. '(CSIRT-NBU)') make that side finer → rung:part-of.
+- A short form and its full official title (with unit numbers, expanded departmental names) are the same entity at one granularity.
+- When one name is a parent organisation and the other a subordinate centre/service, verdict is rung:part-of with direction pointing at the finer (subordinate) side.
+- Only genuinely distinct referents within the same vocabulary get 'different'; national scoping ('of Ukraine') does not split an entity.
+- National scoping is neutral: 'X' and 'X of/України' are the same rung; ignore 'України' when comparing heads.
+- Cross-language (English↔Ukrainian) translations of the same head are 'same', including 'government bodies' ≈ 'державні органи/державні організації' as adjudicated.
+- Within Ukrainian vocabulary: 'державні органи' ≈ 'державні установи' ≈ 'органи державної влади' (same); 'державні органи' vs 'державні організації' unscoped = different (органи narrower institution type).
+- Enumerated compounds ('X та Y', 'bodies and enterprises') are the coarser side; the single-member name is finer → rung:part-of, direction = the single-member side.
+- 'установи' is a finer type inside 'організації' → rung:isa when compared to organizations.
+- Compound 'установи та підприємства' ≈ 'організації' as a whole; a single institution type inside it is part-of.
+- Different populations (officials vs bodies, enterprises vs providers) are different or isa, never merged.
+- Grammatical inflection, plural/singular, case, capitalisation, transliteration and UA↔EN translation of the same wording = same.
+- National scoping is ignored: 'X' vs 'X України' / 'українські X' / 'X of Ukraine' = same (no rung).
+- A different country scope (США, країни ЄС) versus the default Ukrainian scope makes the referents different, not a rung.
+- Compound/union names ('X та Y', 'bodies and enterprises') are coarser than either component: rung, finer side = the single component.
+- Within the Ukrainian state vocabulary: 'державні органи' ≈ 'державні установи' ≈ 'органи державної влади' (same); 'державні організації' is the umbrella that also covers enterprises, hence a rung above the bodies/institutions terms.
+- 'організації України' / generic organisations is coarser than 'державні організації' → rung with finer = the state-qualified side.
+- Sub-sector or narrower-qualifier vocabulary inside one domain (energy vs heat supply, enterprises vs providers, media vs local media) = rung:isa, finer = the narrower term.
+- Organisational forces/units sitting inside a sector are part-of that sector (rung), not aliases of it.
+- Categorically different populations (bodies vs officials, government orgs vs generic orgs) = different.
+- Domain vocabulary clusters: 'державні органи' = 'державні установи' = 'органи державної влади' = 'government bodies' (one BODY cluster, mutual aliases); 'державні організації' = 'державні установи та підприємства' = 'government bodies and enterprises' (one ORG cluster).
+- Number (singular/plural) and grammatical inflection are never distinguishing; nor is Ukrainian↔English translation.
+- National scoping ('X' vs 'X of Ukraine'/'українські X') alone does not block a merge when the head term is the same or an alias; it also does not block a rung when a real hierarchy exists.
+- BODY ⊂ ORG: when the two clusters meet as plural class names, the BODY side is the finer rung (relation part-of / isa toward the bodies side); recorded as rung, never same.
+- Exception honoured from the examples: the bare label 'державна організація' (singular, unqualified) is treated as a distinct label from any 'державні органи / органи державної влади' label → different; likewise the exact adjudicated pair 'державні органи' vs 'державні організації' stays different.
+- Adding a type qualifier or a union of narrower classes makes a label finer (isa) relative to the plain broader head; a component alone is finer than a union containing it.
+- Web-resource variants: 'вебресурси' ≈ 'вебсайти' ≈ 'веб-ресурси' of the same body class → same; if the underlying body class differs (органів vs організацій) the органів side is the finer rung.
+- Different attribute of a class (officials vs bodies, state orgs vs Ukrainian orgs in general) → different.

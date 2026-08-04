@@ -111,6 +111,8 @@ interface AnnotateOptions {
    * is bounded only by the provider's rate limits. */
   concurrency?: number;
   onProgress?: (done: number, total: number) => void;
+  /** Raw response text per successful call — for callers that read fields beyond the verdicts. */
+  onResponse?: (text: string) => void;
 }
 
 const UNSURE: PairAnnotation = { verdict: 'unsure', relation: '', direction: '', rationale: '', quote: '' };
@@ -149,6 +151,7 @@ export async function annotatePairs(
         operator: 'gold-pair-label',
         docId: null,
       });
+      options.onResponse?.(response.text);
       annotations = alignVerdicts(response.text, batch.length);
     } catch (error) {
       if (mayHalve && batch.length > 1) {
@@ -373,6 +376,11 @@ export function applyEnsemble(
 
   const out = rows.map((row) => {
     const key = rowKey(row);
+
+    // Machine conclusions with their own provenance and their own commands: propagation owns
+    // `derived`, policy induction owns `policy`. The generic ensemble neither re-derives them nor
+    // relabels them — a policy label deliberately overrode the very votes this function folds.
+    if (row.agreement === 'derived' || row.agreement === 'policy') return { ...row };
 
     const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
     const ensemblePrefill =

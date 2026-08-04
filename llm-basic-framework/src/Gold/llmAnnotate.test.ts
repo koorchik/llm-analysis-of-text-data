@@ -556,3 +556,15 @@ describe('applyEnsemble with derived labels', () => {
     assert.equal(out[0].queue, 5);
   });
 });
+
+describe('applyEnsemble with policy labels', () => {
+  it('preserves a policy verdict verbatim instead of re-deriving it from generic votes', () => {
+    // gold llm-policy wrote this label under the human's inferred policy; the generic ensemble's
+    // cached majority (which the policy deliberately overrode) must not resurrect itself.
+    const vote = new Map([[rowKey(row()), { verdict: 'rung' as const, relation: 'isa', direction: 'left', rationale: '', quote: '' }]]);
+    const rows = [row({ label: 'same', ensemble: 'same', agreement: 'policy', queue: 3 })];
+    const { rows: out } = applyEnsemble(rows, { claude: vote, gpt: vote, gemini: vote });
+    assert.equal(out[0].label, 'same');
+    assert.equal(out[0].agreement, 'policy');
+  });
+});

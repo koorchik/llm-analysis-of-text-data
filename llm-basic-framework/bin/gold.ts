@@ -55,12 +55,15 @@ import {
   selectForAnnotation,
   type EnsembleVotes,
 } from '../src/Gold/llmAnnotate';
+import { applyPolicyVerdicts, humanExemplars, renderExemplars, selectPolicyTargets } from '../src/Gold/policy';
 import { propagateVerdicts } from '../src/Gold/propagate';
 import { fromTsv, readRows, toTsv } from '../src/Gold/worksheet';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import { createLlmBackend } from '../src/LlmClient/createBackend';
 import { prompts } from '../src/Normalization/PromptProvider';
+import { extractAndParseJson } from '../src/utils/validationUtils';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
@@ -111,6 +114,9 @@ const USAGE = `usage:
                  [--out <worksheet>]  — defaults to --worksheet, rewritten in review order
   gold propagate --worksheet gold/worksheet.tsv [--out <worksheet>]
                  — fill unlabelled rows whose verdict adjudicated rows already imply (no LLM)
+  gold llm-policy --worksheet gold/worksheet.tsv --inventory gold/inventory.json --docs <fetchedDir>
+                 [--model anthropic:claude-opus-5] [--batch-size 20] [--concurrency 6] [--out <worksheet>]
+                 — infer the human's decision rules from their verdicts, apply to the leftovers
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -504,6 +510,116 @@ async function main() {
     const out = arg('out') ?? worksheetPath;
     await fs.writeFile(out, toTsv(propagated));
     console.log(`\nwrote ${out} (derived rows sunk to queue 5, marked agreement=derived)`);
+    return;
+  }
+
+  if (command === 'llm-policy') {
+    const worksheetPath = arg('worksheet') ?? 'gold/worksheet.tsv';
+    const inventoryPath = arg('inventory') ?? 'gold/inventory.json';
+    const docsDir = arg('docs');
+    if (!docsDir) throw new Error(`--docs <fetchedDir> is required\n${USAGE}`);
+
+    const rows = readRows(await fs.readFile(worksheetPath, 'utf8'));
+    const inventory = await readJson<Inventory>(inventoryPath);
+    const corpus = await loadCorpus(docsDir);
+
+    const exemplars = humanExemplars(rows);
+    if (exemplars.length < 10) {
+      throw new Error(
+        `only ${exemplars.length} human verdicts to learn from — adjudicate more rows first; ` +
+          'policy induction from a handful of examples would be guessing with extra steps'
+      );
+    }
+    const { conflicts } = propagateVerdicts(rows);
+    const targets = selectPolicyTargets(rows, conflicts);
+    console.log(`worksheet:   ${worksheetPath} — ${rows.length} rows`);
+    console.log(`exemplars:   ${exemplars.length} human verdicts`);
+    console.log(`targets:     ${targets.length} (unlabelled + contradiction-involved machine labels)`);
+    if (targets.length === 0) {
+      console.log('nothing to do');
+      return;
+    }
+
+    const docIdsOf = new Map(
+      inventory.entries.map((entry) => [
+        `${entry.category.toLowerCase()}|${entry.surface.trim().toLowerCase()}`,
+        entry.docIds,
+      ])
+    );
+    const contextCache = new Map<string, string[]>();
+    const context = (category: string, surface: string): string[] => {
+      const key = `${category.toLowerCase()}|${surface.trim().toLowerCase()}`;
+      if (!contextCache.has(key)) {
+        contextCache.set(key, snippetsFor(surface, docIdsOf.get(key) ?? [], corpus, { maxDocs: 2 }));
+      }
+      return contextCache.get(key)!;
+    };
+
+    const spec = (() => {
+      const raw = arg('model') ?? 'anthropic:claude-opus-5';
+      const [provider, ...model] = raw.split(':');
+      if (model.length === 0) throw new Error(`--model must be provider:model, got "${raw}"`);
+      return { provider, model: model.join(':') };
+    })();
+
+    const instructions = prompts.render('gold-policy-label', {
+      examples: renderExemplars(exemplars),
+    });
+    // Keyed on the RENDERED prompt: new human exemplars change the policy, which must invalidate
+    // every cached policy verdict — the same reasoning as the prompt-hash keying, one level up.
+    const renderedSha = crypto.createHash('sha256').update(instructions, 'utf8').digest('hex');
+
+    const costMeter = new CostMeter({ runId: `gold-policy-${spec.provider}-${spec.model}` });
+    const client = new LlmClient({ backend: createLlmBackend(spec), costMeter });
+    const slug = `policy-${spec.provider}-${spec.model}`.replace(/[^a-zA-Z0-9._-]+/g, '-');
+    const cache = new JsonlAnnotationCache(`gold/llm-annotations/${slug}.jsonl`);
+    console.log(`model:       ${spec.provider}/${spec.model} — ${cache.size} cached policy verdicts`);
+
+    const statedRules = new Set<string>();
+    const votes = await annotatePairs(targets, {
+      client,
+      instructions,
+      promptSha: renderedSha,
+      cache,
+      batchSize: num('batch-size', 20),
+      concurrency: num('concurrency', 6),
+      context,
+      onProgress: (done, total) => console.log(`  ${spec.model}: ${done}/${total}`),
+      onResponse: (text) => {
+        const parsed = extractAndParseJson(text) as { policy?: unknown } | undefined;
+        if (Array.isArray(parsed?.policy)) {
+          for (const rule of parsed.policy) if (typeof rule === 'string') statedRules.add(rule);
+        }
+      },
+    });
+
+    const { rows: applied, summary } = applyPolicyVerdicts(rows, votes);
+    const out = arg('out') ?? worksheetPath;
+    await fs.writeFile(out, toTsv(applied));
+    console.log(`\nwrote ${out}`);
+    console.log(`filled:      ${summary.filled} previously unlabelled rows`);
+    console.log(`replaced:    ${summary.replaced} contradiction-involved machine labels`);
+    console.log(`unsure:      ${summary.unsure} left untouched for you`);
+    console.log('all policy verdicts land in queue 3 (confirm) as agreement=policy');
+
+    if (statedRules.size > 0) {
+      const lines = [...statedRules].map((rule) => `- ${rule}`);
+      await fs.writeFile(
+        'gold/policy-inferred.md',
+        `# Inferred annotation policy\n\nStated by ${spec.provider}/${spec.model} while applying ` +
+          `${exemplars.length} human exemplars (${new Date().toISOString().slice(0, 10)}). ` +
+          `Audit these — they are the model's reading of your rules, not your rules.\n\n${lines.join('\n')}\n`
+      );
+      console.log(`\ninferred policy (${statedRules.size} rules) written to gold/policy-inferred.md:`);
+      for (const rule of [...statedRules].slice(0, 12)) console.log(`  - ${rule}`);
+    }
+
+    const totals = costMeter.totals();
+    console.log(
+      `\n${spec.provider}/${spec.model}: ${totals.calls} calls, ${totals.inputTokens} in / ` +
+        `${totals.outputTokens} out tokens, $${totals.costUsd.toFixed(2)}` +
+        `${totals.unpricedCalls > 0 ? ` (+${totals.unpricedCalls} unpriced calls)` : ''}`
+    );
     return;
   }
 

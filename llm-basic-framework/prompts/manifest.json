@@ -61,6 +61,17 @@
   "variables": [],
   "bytes": 3973
  },
+ "gold-policy-label": {
+  "file": "prompts/gold-policy-label.md",
+  "extractedFrom": null,
+  "sha256": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+  "variables": [
+   {
+    "placeholder": "examples"
+   }
+  ],
+  "bytes": 2322
+ },
  "link-judge": {
   "file": "prompts/link-judge.md",
   "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
