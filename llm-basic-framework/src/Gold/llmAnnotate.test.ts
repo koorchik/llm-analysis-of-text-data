@@ -544,3 +544,15 @@ describe('regressions from the three-model dry run', () => {
     assert.equal(out[0].claudeVerdict, 'same');
   });
 });
+
+describe('applyEnsemble with derived labels', () => {
+  it('keeps a derived label and its derived marking on later runs', () => {
+    // propagateVerdicts filled this row from closure; a later annotate run must not relabel it
+    // 'human' (it is a machine conclusion) nor re-derive it from votes.
+    const rows = [row({ label: 'same', suggested: 'review', agreement: 'derived', queue: 5, llmRationale: 'derived: …' })];
+    const { rows: out } = applyEnsemble(rows, { claude: new Map(), gpt: new Map(), gemini: new Map() });
+    assert.equal(out[0].label, 'same');
+    assert.equal(out[0].agreement, 'derived');
+    assert.equal(out[0].queue, 5);
+  });
+});

@@ -380,9 +380,11 @@ export function applyEnsemble(
     const humanLabel = row.label !== '' && !rulePrefill && !ensemblePrefill;
 
     if (humanLabel) {
-      // Final. Not re-judged, not re-sorted into a review tier — done.
+      // Final. Not re-judged, not re-sorted into a review tier — done. A propagation-derived
+      // label keeps its own marking: it is a machine conclusion about human labels, not a human
+      // verdict, and the distinction must stay auditable.
       summary.human++;
-      return { ...row, agreement: 'human', queue: 5 };
+      return { ...row, agreement: row.agreement === 'derived' ? 'derived' : 'human', queue: 5 };
     }
 
     const cast = voters

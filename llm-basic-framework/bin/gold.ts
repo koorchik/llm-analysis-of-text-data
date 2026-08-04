@@ -55,6 +55,7 @@ import {
   selectForAnnotation,
   type EnsembleVotes,
 } from '../src/Gold/llmAnnotate';
+import { propagateVerdicts } from '../src/Gold/propagate';
 import { fromTsv, readRows, toTsv } from '../src/Gold/worksheet';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { LlmClient } from '../src/LlmClient/LlmClient';
@@ -108,6 +109,8 @@ const USAGE = `usage:
                  [--skip-rules differing-digits] [--spot-check 60] [--seed 42]
                  [--limit 0]  — annotate only the first N eligible rows (dry run)
                  [--out <worksheet>]  — defaults to --worksheet, rewritten in review order
+  gold propagate --worksheet gold/worksheet.tsv [--out <worksheet>]
+                 — fill unlabelled rows whose verdict adjudicated rows already imply (no LLM)
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -477,6 +480,30 @@ async function main() {
       '\nAnnotation cost and agreement rates are reported results — keep gold/llm-annotations/*.jsonl.\n' +
         'Review order: open the worksheet and work top-down by the queue column.'
     );
+    return;
+  }
+
+  if (command === 'propagate') {
+    const worksheetPath = arg('worksheet') ?? 'gold/worksheet.tsv';
+    const rows = readRows(await fs.readFile(worksheetPath, 'utf8'));
+
+    const before = rows.filter((row) => row.label === '').length;
+    const { rows: propagated, derived, conflicts } = propagateVerdicts(rows);
+
+    console.log(`worksheet:   ${worksheetPath} — ${rows.length} rows, ${before} unlabelled`);
+    console.log(`derived:     ${derived} verdicts implied by adjudicated rows`);
+    const remaining = propagated.filter((row) => row.label === '').length;
+    console.log(`unlabelled:  ${remaining} remain for manual review`);
+
+    if (conflicts.length > 0) {
+      console.error(`\nCONTRADICTIONS: ${conflicts.length} — resolve these while reviewing:`);
+      for (const conflict of conflicts.slice(0, 15)) console.error(`  ${conflict.reason}`);
+      if (conflicts.length > 15) console.error(`  … and ${conflicts.length - 15} more`);
+    }
+
+    const out = arg('out') ?? worksheetPath;
+    await fs.writeFile(out, toTsv(propagated));
+    console.log(`\nwrote ${out} (derived rows sunk to queue 5, marked agreement=derived)`);
     return;
   }
 
