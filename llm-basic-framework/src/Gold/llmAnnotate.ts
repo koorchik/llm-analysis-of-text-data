@@ -283,11 +283,12 @@ export function selectForAnnotation(
   const skipped: WorksheetRow[] = [];
   for (const row of rows) {
     // Whose label is it? `gold pairs` PRE-FILLS the label with the rule suggestion, and a prior
-    // annotate run prefills the ensemble verdict (marked by `agreement`). Both are machine labels
-    // — re-annotatable, the second for free via the cache. Only a label that deviates from both
-    // is a human verdict, and a human verdict is final.
+    // annotate run prefills the agreed ensemble verdict. Both are machine labels — re-annotatable,
+    // the second for free via the cache. Only a label that deviates from both is a human verdict,
+    // and a human verdict is final — the same ownership rule applyEnsemble applies.
     const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
-    const ensemblePrefill = row.agreement !== undefined && row.agreement !== '';
+    const ensemblePrefill =
+      row.ensemble !== undefined && row.label !== '' && row.label === row.ensemble.split(':')[0];
     if (row.label !== '' && !rulePrefill && !ensemblePrefill) continue;
     (skipRules.has(row.rule) && !ensemblePrefill ? skipped : selected).push(row);
   }
@@ -389,6 +390,9 @@ export function applyEnsemble(
       .filter((entry): entry is { name: (typeof voters)[number]; vote: PairAnnotation } => entry.vote !== undefined);
 
     if (cast.length === 0) {
+      // A --limit run annotates a slice; anything already carrying ensemble columns from an
+      // earlier run keeps them verbatim rather than being stamped back to rule-only.
+      if (row.agreement !== undefined && row.agreement !== '') return { ...row };
       summary.ruleOnly++;
       return { ...row, agreement: 'rule-only', queue: 5 };
     }

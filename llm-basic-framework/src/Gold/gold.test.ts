@@ -1224,3 +1224,43 @@ describe('cluster provenance with N-source pairs', () => {
     assert.deepEqual(clusters[0].sources, ['embedding', 'registry']);
   });
 });
+
+describe('worksheet label round-trip after clearing', () => {
+  it('writes a cleared label as empty — never re-prefilled from the suggestion', () => {
+    // The ensemble clears a contradicted rule label so the row returns to the human queue; a
+    // write that silently restores `suggested` would undo exactly that.
+    const cleared: WorksheetRow = {
+      label: '',
+      suggested: 'same',
+      rule: 'punctuation-only',
+      source: 'string',
+      category: 'Software',
+      left: 'A',
+      right: 'B',
+      stratum: 'a',
+      mechanism: 'edit-similarity',
+      sim: 0.9,
+      evidence: '',
+    };
+    const tsv = toTsv([cleared]);
+    const parsed = readRows(tsv);
+    assert.equal(parsed[0].label, '', 'the cleared label survives the round-trip');
+  });
+
+  it('preLabel prefills confident suggestions into the label at proposal time', () => {
+    const [labelled] = preLabel([
+      {
+        category: 'Software',
+        left: 'Cobalt Strike',
+        right: 'Cobalt-Strike',
+        stratum: 'a',
+        mechanism: 'edit-similarity',
+        sim: 0.96,
+        label: '',
+        evidence: '',
+      },
+    ]);
+    assert.equal(labelled.suggested, 'same');
+    assert.equal(labelled.label, 'same', 'the prefill happens at proposal time, not at write time');
+  });
+});

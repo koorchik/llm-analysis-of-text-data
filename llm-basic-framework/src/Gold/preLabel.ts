@@ -193,12 +193,17 @@ export const PROVENANCE_RULES = [
   },
 ];
 
-export interface PreLabelled extends WorksheetPair {
+export interface PreLabelled extends Omit<WorksheetPair, 'label'> {
+  /** Prefilled with the suggestion ('' for `review`) — the human overwrites it. */
+  label: string;
   /** The rule's verdict: 'same' | 'different' | 'review'. You overwrite this in `label`. */
   suggested: Suggestion;
   /** Which rule fired, or 'none'. Audit the rule once, then accept its rows together. */
   rule: string;
 }
+
+/** The label a suggestion prefills: a confident verdict verbatim, `review` deliberately nothing. */
+const prefillOf = (suggested: Suggestion): string => (suggested === 'review' ? '' : suggested);
 
 /**
  * Apply the rules in order; the first that fires wins. Then apply the provenance adjustments.
@@ -228,7 +233,7 @@ export function preLabel(pairs: WorksheetPair[]): PreLabelled[] {
     // the highest-information row. An embedding neighbour gets no such softening — it asserts
     // nothing but proximity, so there is no conflicting claim to surface.
     if (sources.has('registry') && suggested === 'different') {
-      return { ...pair, suggested: 'review' as const, rule: 'registry-conflict' };
+      return { ...pair, label: '', suggested: 'review' as const, rule: 'registry-conflict' };
     }
     // Rows the string sweep did NOT propose and no string rule decides are re-attributed, because
     // on these the string rule that claimed them is a coincidence: `one-sided-digits` fires on
@@ -238,10 +243,10 @@ export function preLabel(pairs: WorksheetPair[]): PreLabelled[] {
     // instructions. Rows the string sweep also proposed keep their rule — there the attribution
     // is real.
     if (!sources.has('string') && suggested === 'review') {
-      if (sources.has('registry')) return { ...pair, suggested, rule: 'registry-semantic' };
-      if (sources.has('embedding')) return { ...pair, suggested, rule: 'embedding-neighbour' };
+      if (sources.has('registry')) return { ...pair, label: '', suggested, rule: 'registry-semantic' };
+      if (sources.has('embedding')) return { ...pair, label: '', suggested, rule: 'embedding-neighbour' };
     }
-    return { ...pair, suggested, rule };
+    return { ...pair, label: prefillOf(suggested), suggested, rule };
   });
 }
 

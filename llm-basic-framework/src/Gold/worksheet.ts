@@ -97,10 +97,10 @@ function cellOf(row: WorksheetRow, column: Column): string {
     case 'queue':
       return row.queue === undefined ? '' : String(row.queue);
     case 'label':
-      // Pre-filled with the suggestion so an untouched row is already a usable verdict — except
-      // for `review`, which is deliberately not a valid label and so cannot slip through.
-      if (row.label !== '') return clean(row.label);
-      return row.suggested === 'review' ? '' : row.suggested;
+      // Verbatim — the suggestion prefill happens once, in preLabel(), at proposal time. A write
+      // that re-derived the label from `suggested` would silently restore labels the ensemble
+      // deliberately cleared back to the review queue.
+      return clean(row.label);
     case 'sim':
       return String(row.sim);
     case 'suggested':

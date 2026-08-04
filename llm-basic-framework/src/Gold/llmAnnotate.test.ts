@@ -512,3 +512,35 @@ describe('applyEnsemble with three models (majority voting)', () => {
     assert.equal(out[0].queue, 4, 'two-model agreed different stays a skim row, never auto-done');
   });
 });
+
+describe('regressions from the three-model dry run', () => {
+  const vote = (map: Record<string, PairAnnotation>) => new Map(Object.entries(map));
+
+  it('never re-annotates a human override of a previous ensemble verdict', () => {
+    // The human worked queue 1: label set to `same` where last run's ensemble said rung and
+    // recorded agreement `disagree`. That row is decided — re-asking wastes calls and the votes
+    // would be discarded anyway.
+    const { selected } = selectForAnnotation(
+      [row({ label: 'same', suggested: 'review', ensemble: 'rung:part-of:left', agreement: 'disagree' })],
+      {}
+    );
+    assert.equal(selected.length, 0);
+  });
+
+  it('still re-annotates a row whose label is the previous ensemble prefill', () => {
+    const { selected } = selectForAnnotation(
+      [row({ label: 'same', suggested: 'review', ensemble: 'same', agreement: 'agree' })],
+      {}
+    );
+    assert.equal(selected.length, 1);
+  });
+
+  it('leaves a previously-ensembled row untouched when this run cast no votes on it', () => {
+    // A --limit run annotates a slice; the rest must keep their columns, not be stamped rule-only.
+    const rows = [row({ label: 'same', suggested: 'review', ensemble: 'same', agreement: 'agree', queue: 3, claudeVerdict: 'same', gptVerdict: 'same' })];
+    const { rows: out } = applyEnsemble(rows, { claude: new Map(), gpt: new Map(), gemini: new Map() });
+    assert.equal(out[0].agreement, 'agree');
+    assert.equal(out[0].queue, 3);
+    assert.equal(out[0].claudeVerdict, 'same');
+  });
+});
