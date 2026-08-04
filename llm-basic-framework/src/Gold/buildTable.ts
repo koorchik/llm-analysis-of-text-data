@@ -50,6 +50,7 @@ export interface AdjudicatedPair {
   /** Compact ensemble votes from the worksheet's model columns — edge provenance. */
   claudeVerdict?: string;
   gptVerdict?: string;
+  geminiVerdict?: string;
 }
 
 const fold = (value: string) => value.trim().toLowerCase();
@@ -351,6 +352,7 @@ export function deriveEdges(pairs: AdjudicatedPair[], clusters: GoldCluster[]): 
     const models: Record<string, string> = {
       ...(pair.claudeVerdict ? { claude: pair.claudeVerdict } : {}),
       ...(pair.gptVerdict ? { gpt: pair.gptVerdict } : {}),
+      ...(pair.geminiVerdict ? { gemini: pair.geminiVerdict } : {}),
     };
 
     if (existing) {

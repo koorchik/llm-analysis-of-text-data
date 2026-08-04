@@ -53,6 +53,7 @@ import {
   JsonlAnnotationCache,
   rowKey,
   selectForAnnotation,
+  type EnsembleVotes,
 } from '../src/Gold/llmAnnotate';
 import { fromTsv, readRows, toTsv } from '../src/Gold/worksheet';
 import { CostMeter } from '../src/Experiment/CostMeter';
@@ -102,7 +103,8 @@ const USAGE = `usage:
                  [--docs <fetchedDir>]  — fill the snippet column with document evidence
   gold llm-annotate --worksheet gold/worksheet.tsv --inventory gold/inventory.json
                  --docs <fetchedDir>
-                 [--models anthropic:claude-opus-5,openai:gpt-5] [--batch-size 20] [--concurrency 6]
+                 [--models anthropic:claude-opus-5,openai:gpt-5,gemini:gemini-3.1-pro-preview]
+                 [--batch-size 20] [--concurrency 6]
                  [--skip-rules differing-digits] [--spot-check 60] [--seed 42]
                  [--limit 0]  — annotate only the first N eligible rows (dry run)
                  [--out <worksheet>]  — defaults to --worksheet, rewritten in review order
@@ -391,7 +393,7 @@ async function main() {
         ` — incl. ${[...spotCheckKeys].filter((key) => toAnnotate.some((row) => rowKey(row) === key)).length} spot-check rows from [${skipRules.join(', ')}]`
     );
 
-    const specs = (arg('models') ?? 'anthropic:claude-opus-5,openai:gpt-5')
+    const specs = (arg('models') ?? 'anthropic:claude-opus-5,openai:gpt-5,gemini:gemini-3.1-pro-preview')
       .split(',')
       .map((spec) => spec.trim())
       .filter(Boolean)
@@ -400,7 +402,20 @@ async function main() {
         if (model.length === 0) throw new Error(`--models entries must be provider:model, got "${spec}"`);
         return { provider, model: model.join(':') };
       });
-    if (specs.length !== 2) throw new Error('--models must name exactly two provider:model entries');
+    if (specs.length < 2 || specs.length > 3) {
+      throw new Error('--models must name two or three provider:model entries');
+    }
+    // Vote-column slot by provider: the worksheet columns are claudeVerdict/gptVerdict/geminiVerdict.
+    const slotOf = (provider: string): 'claude' | 'gpt' | 'gemini' => {
+      if (provider === 'anthropic') return 'claude';
+      if (provider === 'openai') return 'gpt';
+      if (provider === 'gemini' || provider === 'vertexai') return 'gemini';
+      throw new Error(`no worksheet vote column for provider "${provider}"`);
+    };
+    const slots = specs.map((spec) => slotOf(spec.provider));
+    if (new Set(slots).size !== slots.length) {
+      throw new Error('--models providers must map to distinct vote columns');
+    }
 
     const template = prompts.get('gold-pair-label');
     const instructions = prompts.render('gold-pair-label');
@@ -423,20 +438,24 @@ async function main() {
       }).then((votes) => ({ votes, costMeter }));
     };
 
-    // Both models run concurrently — independent APIs, independent caches.
-    const [first, second] = await Promise.all(specs.map(annotate));
+    // All models run concurrently — independent APIs, independent caches.
+    const results = await Promise.all(specs.map(annotate));
 
-    const { rows: annotated, summary } = applyEnsemble(rows, first.votes, second.votes, spotCheckKeys);
+    const ensembleVotes: EnsembleVotes = {};
+    for (const [index, result] of results.entries()) ensembleVotes[slots[index]] = result.votes;
+
+    const { rows: annotated, summary } = applyEnsemble(rows, ensembleVotes, spotCheckKeys);
 
     const out = arg('out') ?? worksheetPath;
     await fs.writeFile(out, toTsv(annotated));
     console.log(`\nwrote ${out} (sorted by review queue)`);
 
     console.log('\nensemble summary:');
-    console.log(`  agree:                    ${summary.agree} (${summary.prefilled} labels prefilled)`);
+    console.log(`  agree:                    ${summary.agree} (${summary.unanimous} unanimous; ${summary.prefilled} labels prefilled)`);
     console.log(`  disagree:                 ${summary.disagree}  <- queue 1, start here`);
     console.log(`  unsure:                   ${summary.unsure}  <- queue 2`);
     console.log(`  rule-only bulk:           ${summary.ruleOnly}`);
+    console.log(`  human verdicts kept:      ${summary.human}`);
     console.log(`  spot-check contradictions: ${summary.spotCheckContradictions}`);
     console.log(`  rule contradictions:      ${summary.ruleContradictions}`);
 
@@ -446,7 +465,7 @@ async function main() {
     console.log(`  rows with no document context on either side: ${missingContext}`);
 
     for (const [index, spec] of specs.entries()) {
-      const totals = (index === 0 ? first : second).costMeter.totals();
+      const totals = results[index].costMeter.totals();
       console.log(
         `\n${spec.provider}/${spec.model}: ${totals.calls} calls, ` +
           `${totals.inputTokens} in / ${totals.outputTokens} out tokens, ` +

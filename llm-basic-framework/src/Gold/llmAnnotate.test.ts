@@ -303,7 +303,7 @@ describe('applyEnsemble', () => {
     const rows = [row({ left: 'UAC-0002', right: 'Sandworm', stratum: 'c' })];
     const key = rowKey(rows[0]);
     const rung = annotation({ verdict: 'rung', relation: 'part-of', direction: 'left', rationale: 'designator', quote: 'UAC-0002 (Sandworm)' });
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: rung }), vote({ [key]: rung }));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: rung }), gpt: vote({ [key]: rung }) });
     assert.equal(out[0].queue, 3);
     assert.equal(out[0].agreement, 'agree');
     assert.equal(out[0].label, 'rung');
@@ -317,7 +317,7 @@ describe('applyEnsemble', () => {
   it('queues an agreed different in tier 4 without prefilling evidence', () => {
     const rows = [row()];
     const key = rowKey(rows[0]);
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: annotation() }), vote({ [key]: annotation() }));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: annotation() }), gpt: vote({ [key]: annotation() }) });
     assert.equal(out[0].queue, 4);
     assert.equal(out[0].label, 'different');
     assert.equal(out[0].evidence, '');
@@ -326,11 +326,10 @@ describe('applyEnsemble', () => {
   it('treats a relation mismatch as disagreement — tier 1, no label', () => {
     const rows = [row()];
     const key = rowKey(rows[0]);
-    const { rows: out } = applyEnsemble(
-      rows,
-      vote({ [key]: annotation({ verdict: 'rung', relation: 'isa', direction: 'left' }) }),
-      vote({ [key]: annotation({ verdict: 'rung', relation: 'part-of', direction: 'left' }) })
-    );
+    const { rows: out } = applyEnsemble(rows, {
+      claude: vote({ [key]: annotation({ verdict: 'rung', relation: 'isa', direction: 'left' }) }),
+      gpt: vote({ [key]: annotation({ verdict: 'rung', relation: 'part-of', direction: 'left' }) }),
+    });
     assert.equal(out[0].queue, 1);
     assert.equal(out[0].agreement, 'disagree');
     assert.equal(out[0].label, '');
@@ -339,11 +338,10 @@ describe('applyEnsemble', () => {
   it('queues an unsure vote in tier 2 even when the other model was confident', () => {
     const rows = [row()];
     const key = rowKey(rows[0]);
-    const { rows: out } = applyEnsemble(
-      rows,
-      vote({ [key]: annotation({ verdict: 'unsure' }) }),
-      vote({ [key]: annotation({ verdict: 'same' }) })
-    );
+    const { rows: out } = applyEnsemble(rows, {
+      claude: vote({ [key]: annotation({ verdict: 'unsure' }) }),
+      gpt: vote({ [key]: annotation({ verdict: 'same' }) }),
+    });
     assert.equal(out[0].queue, 2);
     assert.equal(out[0].agreement, 'unsure');
     assert.equal(out[0].label, '');
@@ -351,7 +349,7 @@ describe('applyEnsemble', () => {
 
   it('leaves un-annotated rule rows in tier 5 as rule-only', () => {
     const rows = [row({ rule: 'differing-digits', suggested: 'different', label: 'different' })];
-    const { rows: out } = applyEnsemble(rows, new Map(), new Map());
+    const { rows: out } = applyEnsemble(rows, { claude: new Map(), gpt: new Map() });
     assert.equal(out[0].queue, 5);
     assert.equal(out[0].agreement, 'rule-only');
     assert.equal(out[0].label, 'different', 'the rule label stands');
@@ -361,7 +359,7 @@ describe('applyEnsemble', () => {
     const rows = [row({ rule: 'differing-digits', suggested: 'different', label: 'different' })];
     const key = rowKey(rows[0]);
     const same = annotation({ verdict: 'same' });
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: same }), vote({ [key]: same }), new Set([key]));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: same }), gpt: vote({ [key]: same }) }, new Set([key]));
     assert.equal(out[0].queue, 1);
     assert.equal(out[0].label, '', 'the contradicted rule label is cleared for review');
   });
@@ -373,7 +371,7 @@ describe('applyEnsemble', () => {
     const rows = [row({ rule: 'punctuation-only', suggested: 'same', label: 'same' })];
     const key = rowKey(rows[0]);
     const diff = annotation();
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: diff }), vote({ [key]: diff }));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: diff }), gpt: vote({ [key]: diff }) });
     assert.equal(out[0].queue, 1);
     assert.equal(out[0].label, '', 'the contradicted rule label is cleared for review');
   });
@@ -382,7 +380,7 @@ describe('applyEnsemble', () => {
     const rows = [row({ rule: 'differing-digits', suggested: 'different', label: 'different' })];
     const key = rowKey(rows[0]);
     const diff = annotation();
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: diff }), vote({ [key]: diff }), new Set([key]));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: diff }), gpt: vote({ [key]: diff }) }, new Set([key]));
     assert.equal(out[0].queue, 5);
     assert.equal(out[0].label, 'different');
   });
@@ -396,7 +394,7 @@ describe('applyEnsemble', () => {
       [rowKey(b)]: annotation(),
       [rowKey(c)]: annotation({ verdict: 'unsure' }),
     });
-    const { rows: out } = applyEnsemble([a, b, c], votes, votes);
+    const { rows: out } = applyEnsemble([a, b, c], { claude: votes, gpt: votes });
     assert.deepEqual(
       out.map((r) => r.left),
       ['C1', 'B1', 'A1'],
@@ -408,7 +406,109 @@ describe('applyEnsemble', () => {
     const rows = [row({ label: 'different' })];
     const key = rowKey(rows[0]);
     const same = annotation({ verdict: 'same' });
-    const { rows: out } = applyEnsemble(rows, vote({ [key]: same }), vote({ [key]: same }));
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: same }), gpt: vote({ [key]: same }) });
     assert.equal(out[0].label, 'different');
+  });
+});
+
+describe('applyEnsemble with three models (majority voting)', () => {
+  const vote = (map: Record<string, PairAnnotation>) => new Map(Object.entries(map));
+  const same = annotation({ verdict: 'same', rationale: 'alias' });
+  const diff = annotation();
+  const rung = annotation({ verdict: 'rung', relation: 'part-of', direction: 'left' });
+  const unsure = annotation({ verdict: 'unsure' });
+
+  const one = (claude: PairAnnotation, gpt: PairAnnotation, gemini: PairAnnotation, overrides: Partial<WorksheetRow> = {}) => {
+    const rows = [row(overrides)];
+    const key = rowKey(rows[0]);
+    return applyEnsemble(
+      rows,
+      { claude: vote({ [key]: claude }), gpt: vote({ [key]: gpt }), gemini: vote({ [key]: gemini }) },
+    ).rows[0];
+  };
+
+  it('a unanimous positive prefills and lands in the confirm tier with all three votes recorded', () => {
+    const out = one(same, same, same);
+    assert.equal(out.agreement, 'unanimous');
+    assert.equal(out.queue, 3);
+    assert.equal(out.label, 'same');
+    assert.equal(out.geminiVerdict, 'same');
+  });
+
+  it('a 2-of-3 majority positive prefills — the dissent stays visible in the vote columns', () => {
+    const out = one(same, diff, same);
+    assert.equal(out.agreement, 'majority');
+    assert.equal(out.queue, 3);
+    assert.equal(out.label, 'same');
+    assert.equal(out.gptVerdict, 'different');
+  });
+
+  it('a majority over an unsure abstention wins', () => {
+    const out = one(unsure, same, same);
+    assert.equal(out.agreement, 'majority');
+    assert.equal(out.label, 'same');
+  });
+
+  it('a unanimous different sinks out of review entirely', () => {
+    const out = one(diff, diff, diff);
+    assert.equal(out.agreement, 'unanimous');
+    assert.equal(out.queue, 5, 'three independent models agreeing different needs no human');
+    assert.equal(out.label, 'different');
+  });
+
+  it('a majority different stays a skim row', () => {
+    const out = one(diff, diff, same);
+    assert.equal(out.queue, 4);
+    assert.equal(out.label, 'different');
+  });
+
+  it('a three-way split is a tier-1 disagreement with no label', () => {
+    const out = one(same, diff, rung);
+    assert.equal(out.agreement, 'disagree');
+    assert.equal(out.queue, 1);
+    assert.equal(out.label, '');
+  });
+
+  it('two active disagreers plus an abstainer is still a disagreement', () => {
+    const out = one(same, diff, unsure);
+    assert.equal(out.agreement, 'disagree');
+    assert.equal(out.queue, 1);
+  });
+
+  it('two abstentions leave the row unsure in tier 2', () => {
+    const out = one(unsure, unsure, same);
+    assert.equal(out.agreement, 'unsure');
+    assert.equal(out.queue, 2);
+    assert.equal(out.label, '');
+  });
+
+  it('updates a label the PREVIOUS ensemble prefilled when the new majority differs', () => {
+    // Last run: claude+gpt agreed `same`, label prefilled. Gemini joins and flips the majority.
+    const out = one(diff, diff, same, {
+      label: 'same',
+      ensemble: 'same',
+      agreement: 'agree',
+      suggested: 'review',
+    });
+    assert.equal(out.label, 'different', 'machine prefill follows the new majority');
+    assert.equal(out.queue, 4);
+  });
+
+  it('never touches a human label — it is preserved verbatim with its row sunk to the done tier', () => {
+    // The human overrode last run's ensemble (label ≠ ensemble verdict) — final, not re-judged.
+    const rows = [row({ label: 'rung', relation: 'part-of', direction: 'left', ensemble: 'same', agreement: 'agree', suggested: 'review' })];
+    const { rows: out } = applyEnsemble(rows, { claude: new Map(), gpt: new Map(), gemini: new Map() });
+    assert.equal(out[0].label, 'rung');
+    assert.equal(out[0].relation, 'part-of');
+    assert.equal(out[0].agreement, 'human');
+    assert.equal(out[0].queue, 5);
+  });
+
+  it('keeps two-model semantics unchanged when no gemini map is given', () => {
+    const rows = [row()];
+    const key = rowKey(rows[0]);
+    const { rows: out } = applyEnsemble(rows, { claude: vote({ [key]: diff }), gpt: vote({ [key]: diff }) });
+    assert.equal(out[0].agreement, 'agree');
+    assert.equal(out[0].queue, 4, 'two-model agreed different stays a skim row, never auto-done');
   });
 });

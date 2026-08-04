@@ -3,7 +3,7 @@
     "USD per 1M tokens, consumed by src/Experiment/CostMeter.ts.",
     "Keys may be an alias (`gpt-5.4-nano`): CostMeter also matches the dated snapshot the provider",
     "actually returns (`gpt-5.4-nano-2026-03-17`) by stripping a -YYYY-MM-DD or -YYYYMMDD suffix,",
-    "so one row per alias is enough. Verified on a live run — the response carries the snapshot id.",
+    "so one row per alias is enough. Verified on a live run \u2014 the response carries the snapshot id.",
     "A model with null prices is treated as UNPRICED, not free: CostMeter records its token",
     "counts, leaves costUsd null, and reports the model in `unpricedModels` so the run card",
     "and bin/evaluate.ts can flag it rather than silently under-reporting spend.",
@@ -12,32 +12,87 @@
     "Anthropic prices are first-party API list rates; Bedrock/Vertex-brokered Claude differs."
   ],
   "models": {
-    "claude-fable-5": { "inputPerMTok": 10.0, "outputPerMTok": 50.0 },
-    "claude-opus-5": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
-    "claude-opus-4-8": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
-    "claude-opus-4-7": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
-    "claude-opus-4-6": { "inputPerMTok": 5.0, "outputPerMTok": 25.0 },
-    "claude-sonnet-5": { "inputPerMTok": 3.0, "outputPerMTok": 15.0 },
-    "claude-sonnet-4-6": { "inputPerMTok": 3.0, "outputPerMTok": 15.0 },
-    "claude-haiku-4-5": { "inputPerMTok": 1.0, "outputPerMTok": 5.0 },
-
+    "claude-fable-5": {
+      "inputPerMTok": 10.0,
+      "outputPerMTok": 50.0
+    },
+    "claude-opus-5": {
+      "inputPerMTok": 5.0,
+      "outputPerMTok": 25.0
+    },
+    "claude-opus-4-8": {
+      "inputPerMTok": 5.0,
+      "outputPerMTok": 25.0
+    },
+    "claude-opus-4-7": {
+      "inputPerMTok": 5.0,
+      "outputPerMTok": 25.0
+    },
+    "claude-opus-4-6": {
+      "inputPerMTok": 5.0,
+      "outputPerMTok": 25.0
+    },
+    "claude-sonnet-5": {
+      "inputPerMTok": 3.0,
+      "outputPerMTok": 15.0
+    },
+    "claude-sonnet-4-6": {
+      "inputPerMTok": 3.0,
+      "outputPerMTok": 15.0
+    },
+    "claude-haiku-4-5": {
+      "inputPerMTok": 1.0,
+      "outputPerMTok": 5.0
+    },
     "$comment_openai": "Both models are in active use (gpt-5.4-nano is the current LLM_MODEL) and both are UNPRICED pending the provider-dashboard check of verification item 11. Fill these in before quoting any $ figure; token counts are already correct.",
-    "gpt-5": { "inputPerMTok": null, "outputPerMTok": null },
-    "gpt-5.4-nano": { "inputPerMTok": null, "outputPerMTok": null },
-
-    "$comment_embeddings": "M5. An embedding call has NO completion, so `outputPerMTok` must be 0 — NOT null. CostMeter.priceFor only accepts an entry when BOTH legs are non-null, so a null output leg makes every embedding call report as UNPRICED rather than as priced on input alone. The input rate below is still pending the dashboard check (verification item 11), which is why it is null and the model reads as unpriced overall — fill it in, keep the 0.",
-    "text-embedding-3-large": { "inputPerMTok": null, "outputPerMTok": 0.0 },
-
+    "gpt-5": {
+      "inputPerMTok": null,
+      "outputPerMTok": null
+    },
+    "gpt-5.4-nano": {
+      "inputPerMTok": null,
+      "outputPerMTok": null
+    },
+    "$comment_embeddings": "M5. An embedding call has NO completion, so `outputPerMTok` must be 0 \u2014 NOT null. CostMeter.priceFor only accepts an entry when BOTH legs are non-null, so a null output leg makes every embedding call report as UNPRICED rather than as priced on input alone. The input rate below is still pending the dashboard check (verification item 11), which is why it is null and the model reads as unpriced overall \u2014 fill it in, keep the 0.",
+    "text-embedding-3-large": {
+      "inputPerMTok": null,
+      "outputPerMTok": 0.0
+    },
     "$comment_local": "Self-hosted via Ollama or the local sidecar: no marginal API cost. Wall-clock is still metered.",
-    "gpt-oss:20b": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "gemma4:e4b-64k": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "bge-m3": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "nomic-embed-text": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "securebert": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+    "gpt-oss:20b": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "gemma4:e4b-64k": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "bge-m3": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "nomic-embed-text": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "securebert": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "gemini-3.1-pro-preview": {
+      "inputPerMTok": null,
+      "outputPerMTok": null
+    }
   },
   "providerDefaults": {
-    "$comment": "Fallback when a model id is absent from `models`. Only locally-served providers have a defensible default (inference is free at the margin); cloud providers stay unpriced so a missing entry is visible rather than assumed. `http` is the SecureBERT sidecar — see tools/securebert-sidecar/.",
-    "ollama": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 },
-    "http": { "inputPerMTok": 0.0, "outputPerMTok": 0.0 }
+    "$comment": "Fallback when a model id is absent from `models`. Only locally-served providers have a defensible default (inference is free at the margin); cloud providers stay unpriced so a missing entry is visible rather than assumed. `http` is the SecureBERT sidecar \u2014 see tools/securebert-sidecar/.",
+    "ollama": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
+    "http": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    }
   }
 }

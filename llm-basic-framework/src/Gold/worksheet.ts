@@ -36,6 +36,7 @@ const COLUMNS = [
   'agreement',
   'claudeVerdict',
   'gptVerdict',
+  'geminiVerdict',
   'rule',
   'source',
   // The pair itself and its context.
@@ -68,6 +69,7 @@ export interface WorksheetRow {
   agreement?: string;
   claudeVerdict?: string;
   gptVerdict?: string;
+  geminiVerdict?: string;
   rule: string;
   source?: PairSource;
   category: string;
@@ -161,6 +163,7 @@ export function readRows(tsv: string): WorksheetRow[] {
       agreement: optional('agreement'),
       claudeVerdict: optional('claudeVerdict'),
       gptVerdict: optional('gptVerdict'),
+      geminiVerdict: optional('geminiVerdict'),
       rule: cell(cells, 'rule') || 'none',
       source: optional('source'),
       category: cell(cells, 'category'),
@@ -266,6 +269,7 @@ export function fromTsv(tsv: string): TsvParseResult {
       rule: row.rule === 'none' ? undefined : row.rule,
       claudeVerdict: row.claudeVerdict,
       gptVerdict: row.gptVerdict,
+      geminiVerdict: row.geminiVerdict,
     });
   }
 

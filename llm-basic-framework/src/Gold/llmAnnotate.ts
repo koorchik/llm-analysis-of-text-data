@@ -311,115 +311,162 @@ const POSITIVE = new Set(['same', 'rung', 'rename']);
 
 export interface EnsembleSummary {
   agree: number;
+  /** Of `agree`: rows where every voter concurred with none unsure. */
+  unanimous: number;
   disagree: number;
   unsure: number;
   ruleOnly: number;
+  /** Rows whose label the human set — untouchable, sunk to the done tier. */
+  human: number;
   prefilled: number;
   spotCheckContradictions: number;
   /** Agreed ensemble verdicts that contradicted a rule-prefilled label outside the spot-check. */
   ruleContradictions: number;
 }
 
+/** The ensemble's votes, one map per model. `gemini` optional — two voters keep the old semantics. */
+export interface EnsembleVotes {
+  claude?: Map<string, PairAnnotation>;
+  gpt?: Map<string, PairAnnotation>;
+  gemini?: Map<string, PairAnnotation>;
+}
+
 /**
- * Fold two models' annotations into the worksheet: per-model vote columns, agreement, the
- * prefilled silver label where the models agree, and the review-queue tier the file is sorted by.
+ * Fold the models' annotations into the worksheet: per-model vote columns, agreement, the
+ * prefilled silver label where a majority exists, and the review-queue tier the file is sorted by.
  *
- * Queue tiers: 1 disagreement (highest information — including spot-check rows that contradict
- * their rule) · 2 either model unsure · 3 agreed positive (the human confirms every positive; a
- * wrong `same` corrupts a cluster through closure, so positives are never auto-final) · 4 agreed
- * `different` (skim) · 5 rule-labelled bulk.
+ * **Majority voting.** A verdict needs ≥2 identical `(verdict, relation, direction)` votes. With
+ * two voters that is unanimity (`agree`, the original semantics); with three, a 2-of-3 majority
+ * (`majority`) also prefills — the dissenting vote stays visible in its column — and full
+ * concurrence is `unanimous`. Fewer than two concurring non-unsure votes is `disagree` when two
+ * voters actively conflict, `unsure` when the votes are mostly abstentions.
+ *
+ * Queue tiers: 1 disagreement (highest information — including rows that contradict a rule) ·
+ * 2 unsure · 3 majority/unanimous positive (the human confirms every positive; a wrong `same`
+ * corrupts a cluster through closure) · 4 majority `different` (skim) · 5 done: rule bulk, human
+ * verdicts, and — with three voters — unanimous `different`, which three independent models is
+ * enough certainty for.
+ *
+ * **Label ownership.** A rule prefill (`label === suggested`) and a previous ensemble prefill
+ * (`label` matches the recorded `ensemble`) are machine labels — re-derived freely. Anything else
+ * a non-empty label could be is the human's: preserved verbatim, row sunk to tier 5 as `human`.
  */
 export function applyEnsemble(
   rows: WorksheetRow[],
-  claude: Map<string, PairAnnotation>,
-  gpt: Map<string, PairAnnotation>,
+  votes: EnsembleVotes,
   spotCheckKeys: Set<string> = new Set()
 ): { rows: WorksheetRow[]; summary: EnsembleSummary } {
   const summary: EnsembleSummary = {
     agree: 0,
+    unanimous: 0,
     disagree: 0,
     unsure: 0,
     ruleOnly: 0,
+    human: 0,
     prefilled: 0,
     spotCheckContradictions: 0,
     ruleContradictions: 0,
   };
 
+  const voters = (['claude', 'gpt', 'gemini'] as const).filter((name) => votes[name] !== undefined);
+
   const out = rows.map((row) => {
     const key = rowKey(row);
-    const claudeVote = claude.get(key);
-    const gptVote = gpt.get(key);
 
-    if (!claudeVote && !gptVote) {
+    const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
+    const ensemblePrefill =
+      row.label !== '' && row.ensemble !== undefined && row.label === row.ensemble.split(':')[0];
+    const humanLabel = row.label !== '' && !rulePrefill && !ensemblePrefill;
+
+    if (humanLabel) {
+      // Final. Not re-judged, not re-sorted into a review tier — done.
+      summary.human++;
+      return { ...row, agreement: 'human', queue: 5 };
+    }
+
+    const cast = voters
+      .map((name) => ({ name, vote: votes[name]!.get(key) }))
+      .filter((entry): entry is { name: (typeof voters)[number]; vote: PairAnnotation } => entry.vote !== undefined);
+
+    if (cast.length === 0) {
       summary.ruleOnly++;
       return { ...row, agreement: 'rule-only', queue: 5 };
     }
 
     const next: WorksheetRow = {
       ...row,
-      claudeVerdict: claudeVote ? compactVerdict(claudeVote) : undefined,
-      gptVerdict: gptVote ? compactVerdict(gptVote) : undefined,
+      claudeVerdict: votes.claude?.get(key) ? compactVerdict(votes.claude.get(key)!) : row.claudeVerdict,
+      gptVerdict: votes.gpt?.get(key) ? compactVerdict(votes.gpt.get(key)!) : row.gptVerdict,
+      geminiVerdict: votes.gemini?.get(key) ? compactVerdict(votes.gemini.get(key)!) : row.geminiVerdict,
     };
 
-    // A missing side (model errored even after halving) reads as unsure: human decides.
-    const a = claudeVote ?? UNSURE;
-    const b = gptVote ?? UNSURE;
+    // Tally non-unsure votes by compact verdict. A voter whose map lacks the row (errored even
+    // after halving) is an abstention, exactly like an explicit unsure.
+    const groups = new Map<string, PairAnnotation[]>();
+    for (const { vote } of cast) {
+      if (vote.verdict === 'unsure') continue;
+      const compact = compactVerdict(vote);
+      groups.set(compact, [...(groups.get(compact) ?? []), vote]);
+    }
+    const top = [...groups.values()].sort((a, b) => b.length - a.length)[0] ?? [];
 
-    if (a.verdict === 'unsure' || b.verdict === 'unsure') {
+    if (top.length < 2) {
+      // No majority. Two actively conflicting verdicts are a disagreement; otherwise it is
+      // abstention-dominated and lands as unsure. A machine prefill loses its support either way.
+      const label = rulePrefill && !spotCheckKeys.has(key) ? row.label : '';
+      if (groups.size >= 2) {
+        summary.disagree++;
+        return { ...next, ensemble: undefined, agreement: 'disagree', label, queue: 1 };
+      }
       summary.unsure++;
-      return { ...next, agreement: 'unsure', queue: 2 };
+      return { ...next, ensemble: undefined, agreement: 'unsure', label, queue: 2 };
     }
 
-    if (compactVerdict(a) !== compactVerdict(b)) {
-      summary.disagree++;
-      // A disagreement on a rule-labelled spot-check row also voids the prefilled rule label —
-      // the whole point of the sample is that these rows get looked at.
-      const cleared = spotCheckKeys.has(key) ? { ...next, label: '' } : next;
-      return { ...cleared, agreement: 'disagree', queue: 1 };
-    }
-
-    // Agreement.
-    const agreed = a;
+    // Majority. Prefer a vote that carries a quote, then one with a rationale, as the row's face.
+    const agreed = top.find((vote) => vote.quote) ?? top.find((vote) => vote.rationale) ?? top[0];
     const ensemble = compactVerdict(agreed);
+    const isUnanimous = top.length === voters.length;
     summary.agree++;
+    if (isUnanimous) summary.unanimous++;
+    const agreement = voters.length === 2 ? 'agree' : isUnanimous ? 'unanimous' : 'majority';
 
     if (spotCheckKeys.has(key)) {
       // The sample exists to test the rule. Confirmation stays bulk; contradiction goes first.
       const confirms = row.label !== '' && agreed.verdict === row.label;
       if (!confirms) {
         summary.spotCheckContradictions++;
-        return { ...next, ensemble, agreement: 'agree', label: '', queue: 1 };
+        return { ...next, ensemble, agreement, label: '', queue: 1 };
       }
-      return { ...next, ensemble, agreement: 'agree', queue: 5 };
+      return { ...next, ensemble, agreement, queue: 5 };
     }
 
-    // A rule-prefilled label the ensemble contradicts is the registry-conflict situation again —
+    // A rule-prefilled label the majority contradicts is the registry-conflict situation again —
     // two mechanisms disagreeing — and must surface at the top, not sink into a bulk tier
-    // wearing the rule's label. Only machine prefills (label === suggestion) are voidable; a
-    // human's deviation from the suggestion is final here exactly as in selectForAnnotation.
-    const rulePrefill = row.suggested !== 'review' && row.label === row.suggested;
+    // wearing the rule's label.
     if (rulePrefill && agreed.verdict !== row.label) {
       summary.ruleContradictions++;
-      return { ...next, ensemble, agreement: 'agree', label: '', queue: 1 };
+      return { ...next, ensemble, agreement, label: '', queue: 1 };
     }
 
-    const prefill = row.label === '';
+    const prefill = row.label === '' || ensemblePrefill;
     if (prefill) summary.prefilled++;
-    const rationale = agreed.rationale || b.rationale;
-    const quote = agreed.quote || b.quote;
+    const rationale = agreed.rationale || top.map((vote) => vote.rationale).find(Boolean) || '';
+    const quote = agreed.quote || top.map((vote) => vote.quote).find(Boolean) || '';
     return {
       ...next,
       ensemble,
-      agreement: 'agree',
+      agreement,
       label: prefill ? agreed.verdict : row.label,
       relation: prefill ? agreed.relation || undefined : row.relation,
       direction: prefill ? agreed.direction || undefined : row.direction,
-      llmRationale: rationale || undefined,
-      // Born evidence-bearing: an agreed positive grounded in a quoted snippet fills the evidence
+      llmRationale: rationale || row.llmRationale,
+      // Born evidence-bearing: a majority positive grounded in a quoted snippet fills the evidence
       // column (annotator kind `llm` in the eventual table); `different` needs no evidence.
       evidence:
         prefill && POSITIVE.has(agreed.verdict) && quote && !row.evidence ? quote : row.evidence,
-      queue: POSITIVE.has(agreed.verdict) ? 3 : 4,
+      // With three voters, unanimous `different` needs no human at all; everything else keeps the
+      // confirm/skim split.
+      queue: POSITIVE.has(agreed.verdict) ? 3 : isUnanimous && voters.length >= 3 ? 5 : 4,
     };
   });
 

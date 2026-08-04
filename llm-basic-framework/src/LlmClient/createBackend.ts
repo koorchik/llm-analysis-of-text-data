@@ -1,5 +1,6 @@
 import type { LlmBackendBase } from './LlmClientBackendBase';
 import { LlmClientBackendAnthropic } from './LlmClientBackendAnthropic';
+import { LlmClientBackendGemini } from './LlmClientBackendGemini';
 import { LlmClientBackendOllama } from './LlmClientBackendOllama';
 import { LlmClientBackendOpenAi } from './LlmClientBackendOpenAi';
 import { LlmClientBackendVertexAi } from './LlmClientBackendVertexAi';
@@ -36,6 +37,13 @@ export function createLlmBackend(params: { provider: string; model: string }): L
       return new LlmClientBackendAnthropic({
         model: params.model,
         apiKey: process.env.ANTHROPIC_API_KEY!,
+      });
+
+    // Google AI Studio (GEMINI_API_KEY) — distinct from 'vertexai', which needs a GCP project.
+    case 'gemini':
+      return new LlmClientBackendGemini({
+        model: params.model,
+        apiKey: process.env.GEMINI_API_KEY!,
       });
 
     default:
