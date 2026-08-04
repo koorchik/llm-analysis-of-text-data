@@ -57,6 +57,7 @@ import {
 } from '../src/Gold/llmAnnotate';
 import { applyPolicyVerdicts, humanExemplars, renderExemplars, selectPolicyTargets } from '../src/Gold/policy';
 import { propagateVerdicts } from '../src/Gold/propagate';
+import { renderRegistryHtml } from '../src/Gold/registryView';
 import { fromTsv, readRows, toTsv } from '../src/Gold/worksheet';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { LlmClient } from '../src/LlmClient/LlmClient';
@@ -117,6 +118,8 @@ const USAGE = `usage:
   gold llm-policy --worksheet gold/worksheet.tsv --inventory gold/inventory.json --docs <fetchedDir>
                  [--model anthropic:claude-opus-5] [--batch-size 20] [--concurrency 6] [--out <worksheet>]
                  — infer the human's decision rules from their verdicts, apply to the leftovers
+  gold view      --table gold/gold.json [--out gold/registry-view.html]
+                 — render the built table as a browsable granularity tree (no LLM)
   gold build     --inventory <file> --pairs <adjudicated.tsv|.json> [--out gold.json] [--dev-fraction 0.2]
   gold validate  <gold.json> [--inventory <file>]
   gold rules     — explain every pre-labelling rule before you bulk-accept it`;
@@ -620,6 +623,16 @@ async function main() {
         `${totals.outputTokens} out tokens, $${totals.costUsd.toFixed(2)}` +
         `${totals.unpricedCalls > 0 ? ` (+${totals.unpricedCalls} unpriced calls)` : ''}`
     );
+    return;
+  }
+
+  if (command === 'view') {
+    const tablePath = arg('table') ?? 'gold/gold.json';
+    const table = await loadGoldTable(tablePath);
+    const out = arg('out') ?? 'gold/registry-view.html';
+    const title = `Gold registry — ${path.basename(tablePath)}`;
+    await fs.writeFile(out, `<!doctype html>\n<meta charset="utf-8">\n${renderRegistryHtml(table, { title })}`);
+    console.log(`wrote ${out} — open it in a browser; the filter box searches every member name`);
     return;
   }
 

@@ -1,0 +1,1146 @@
+- generic [ref=f1e2]:
+  - heading "Gold registry — gold.json" [level=1] [ref=f1e3]
+  - paragraph [ref=f1e4]: 3199 clusters (110 merged) · 247 edges · corpus 37d57e4712f1…
+  - paragraph [ref=f1e5]:
+    - generic [ref=f1e6]: isa
+    - text: version/qualifier of the same thing (folds by default)
+    - generic [ref=f1e7]: part-of
+    - text: finer sits inside coarser (edge, not merge)
+    - generic [ref=f1e8]: renamed-to
+    - text: same referent, re-designated over time
+  - searchbox "filter by any member name…" [ref=f1e9]
+  - generic [ref=f1e10]:
+    - heading "Country 0 trees · 0 renames · 6 flat merges · 18 singletons" [level=2] [ref=f1e11]
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e12]
+    - list [ref=f1e13]:
+      - listitem [ref=f1e14]: IndiaІндіяg1 · b · embedding+registry+string
+      - listitem [ref=f1e15]: KyrgyzstanКиргизька Республікаg2 · c · embedding+registry
+      - listitem [ref=f1e16]: PolandПольщаg3 · c · embedding+registry
+      - listitem [ref=f1e17]: RussiaRussian FederationРосійська ФедераціяРосіяg4 · c · embedding+registry
+      - listitem [ref=f1e18]: UkraineУкраїнаg5 · c · embedding+registry
+      - listitem [ref=f1e19]: USAСШАg6 · c · embedding+registry
+    - group [ref=f1e20]:
+      - generic "18 singletons (gold mints)" [ref=f1e21] [cursor=pointer]
+  - generic [ref=f1e22]:
+    - heading "Device 2 trees · 0 renames · 0 flat merges · 23 singletons" [level=2] [ref=f1e23]
+    - heading "Granularity forest" [level=3] [ref=f1e24]
+    - list [ref=f1e25]:
+      - listitem [ref=f1e26]:
+        - text: Cisco routerss133 · a
+        - list [ref=f1e27]:
+          - listitem [ref=f1e28]:
+            - generic [ref=f1e29]: isa
+            - text: Cisco WRVS4400Ns132 · a
+      - listitem [ref=f1e30]:
+        - text: активне мережеве обладнанняs157 · a
+        - list [ref=f1e31]:
+          - listitem [ref=f1e32]:
+            - generic [ref=f1e33]: isa
+            - text: Mikrotik equipments142 · a
+            - list [ref=f1e34]:
+              - listitem [ref=f1e35]:
+                - generic [ref=f1e36]: isa
+                - text: MikroTik CCR 1036s140 · a
+              - listitem [ref=f1e37]:
+                - generic [ref=f1e38]: isa
+                - text: MikroTik CCR 1016s139 · a
+              - listitem [ref=f1e39]:
+                - generic [ref=f1e40]: isa
+                - text: MikroTik CCR 1072s141 · a
+              - listitem [ref=f1e41]:
+                - generic [ref=f1e42]: isa
+                - text: маршрутизатори Mikrotiks158 · a
+                - list [ref=f1e43]:
+                  - listitem [ref=f1e44]:
+                    - generic [ref=f1e45]: isa
+                    - text: MikroTik CCR 1036s140 · a↑ repeated
+                  - listitem [ref=f1e46]:
+                    - generic [ref=f1e47]: isa
+                    - text: MikroTik CCR 1072s141 · a↑ repeated
+                  - listitem [ref=f1e48]:
+                    - generic [ref=f1e49]: isa
+                    - text: MikroTik CCR 1016s139 · a↑ repeated
+    - group [ref=f1e50]:
+      - generic "23 singletons (gold mints)" [ref=f1e51] [cursor=pointer]
+  - generic [ref=f1e52]:
+    - heading "Domain 0 trees · 0 renames · 0 flat merges · 1929 singletons" [level=2] [ref=f1e53]
+    - group [ref=f1e54]:
+      - generic "1929 singletons (gold mints)" [ref=f1e55] [cursor=pointer]
+  - generic [ref=f1e56]:
+    - heading "Government Body 8 trees · 0 renames · 5 flat merges · 27 singletons" [level=2] [ref=f1e57]
+    - heading "Granularity forest" [level=3] [ref=f1e58]
+    - list [ref=f1e59]:
+      - listitem [ref=f1e60]:
+        - text: CISAАгентство з питань кібербезпеки та інфраструктури (CISA)g7 · c · embedding+registry
+        - list [ref=f1e61]:
+          - listitem [ref=f1e62]:
+            - generic [ref=f1e63]: part-of
+            - text: Національний центр інтеграції кібербезпеки і комунікацій (NCCIC)s2115 · a
+      - listitem [ref=f1e64]:
+        - text: Security and Defense Forces of UkraineСили оборони Україниg11 · c · embedding+registry
+        - list [ref=f1e65]:
+          - listitem [ref=f1e66]:
+            - generic [ref=f1e67]: part-of
+            - text: ЗСУЗбройні Сили Україниg19 · c · registry
+            - list [ref=f1e68]:
+              - listitem [ref=f1e69]:
+                - generic [ref=f1e70]: part-of
+                - text: ССО ЗС Україниs2123 · a
+          - listitem [ref=f1e71]:
+            - generic [ref=f1e72]: part-of
+            - text: ССО ЗС Україниs2123 · a↑ repeated
+          - listitem [ref=f1e73]:
+            - generic [ref=f1e74]: part-of
+            - text: Security Service of Ukraine (SBU)СБ УкраїниСБУСлужба безпеки УкраїниСлужба безпеки України (СБУ)g12 · c · embedding+registry+string
+            - list [ref=f1e75]:
+              - listitem [ref=f1e76]:
+                - generic [ref=f1e77]: part-of
+                - text: Департамент контррозвідувального захисту інтересів держави у сфері інформаційної безпеки СБУs2102 · a
+              - listitem [ref=f1e78]:
+                - generic [ref=f1e79]: part-of
+                - text: Ситуаційний центр забезпечення кібербезпеки СБУs2124 · a
+              - listitem [ref=f1e80]:
+                - generic [ref=f1e81]: part-of
+                - text: ГУ СБУ в АР Кримs2099 · a
+          - listitem [ref=f1e82]:
+            - generic [ref=f1e83]: part-of
+            - text: ДСНС УкраїниДержавна служба України з надзвичайних ситуаційg17 · c · registry
+          - listitem [ref=f1e84]:
+            - generic [ref=f1e85]: part-of
+            - text: Пресслужба Генштабу ЗСУs2121 · a
+          - listitem [ref=f1e86]:
+            - generic [ref=f1e87]: part-of
+            - text: Центральний спортивний клуб Збройних Сил Україниs2128 · a
+      - listitem [ref=f1e88]:
+        - text: Державна служба спеціального зв’язку та захисту інформації УкраїниДержспецзв'язкуДержспецзв’язкуg16 · c · embedding+registry+string
+        - list [ref=f1e89]:
+          - listitem [ref=f1e90]:
+            - generic [ref=f1e91]: part-of
+            - text: Адміністрація Держспецзв'язкуАдміністрації Держспецзв’язкуg13 · a · embedding+registry+string
+            - list [ref=f1e92]:
+              - listitem [ref=f1e93]:
+                - generic [ref=f1e94]: part-of
+                - text: ДЦКЗ Держспецзв'язкуДержавний центр кіберзахистуДержавний центр кіберзахисту Державної служби спеціального зв’язку та захисту інформації УкраїниДержавний центр кіберзахисту Держспецзв’язкуДержавний центр кіберзахисту та протидії кіберзагрозам Держспецзв’язкуg18 · c · embedding+registry+string
+                - list [ref=f1e95]:
+                  - listitem [ref=f1e96]:
+                    - generic [ref=f1e97]: part-of
+                    - text: Оперативний центр реагування на кіберінцидентиОперативний центр реагування на кіберінциденти Державного центру кіберзахисту Держспецзв’язкуОперативний центр реагування на кіберінциденти та кібератаки (SOC) Державного центру кіберзахистуg24 · c · embedding+registry+string
+                  - listitem [ref=f1e98]:
+                    - generic [ref=f1e99]: part-of
+                    - text: Оперативно-технічну службу Державного центру кіберзахистуs2117 · a
+          - listitem [ref=f1e100]:
+            - generic [ref=f1e101]: part-of
+            - text: ДЦКЗ Держспецзв'язкуДержавний центр кіберзахистуДержавний центр кіберзахисту Державної служби спеціального зв’язку та захисту інформації УкраїниДержавний центр кіберзахисту Держспецзв’язкуДержавний центр кіберзахисту та протидії кіберзагрозам Держспецзв’язкуg18 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e102]:
+            - generic [ref=f1e103]: part-of
+            - text: Оперативний центр реагування на кіберінцидентиОперативний центр реагування на кіберінциденти Державного центру кіберзахисту Держспецзв’язкуОперативний центр реагування на кіберінциденти та кібератаки (SOC) Державного центру кіберзахистуg24 · c · embedding+registry+string↑ repeated
+      - listitem [ref=f1e104]:
+        - text: МЗСМіністерство закордонних справ Україниg20 · c · registry
+        - list [ref=f1e105]:
+          - listitem [ref=f1e106]:
+            - generic [ref=f1e107]: part-of
+            - text: Mission of Ukraine to NATOs2093 · a
+      - listitem [ref=f1e108]:
+        - text: НБУНаціональний банк УкраїниНаціональний банк України (НБУ)Національного банку Україниg22 · c · embedding+registry+string
+        - list [ref=f1e109]:
+          - listitem [ref=f1e110]:
+            - generic [ref=f1e111]: part-of
+            - text: CSIRT-NBUНаціональний банк України (CSIRT-NBU)g8 · c · embedding+registry
+      - listitem [ref=f1e112]:
+        - text: Міністерство оборони Україниs2111 · a
+        - list [ref=f1e113]:
+          - listitem [ref=f1e114]:
+            - generic [ref=f1e115]: part-of
+            - text: Центр інновацій та розвитку оборонних технологій Міністерства оборони Україниs2126 · a
+      - listitem [ref=f1e116]:
+        - text: Національна поліція Україниs2113 · a
+        - list [ref=f1e117]:
+          - listitem [ref=f1e118]:
+            - generic [ref=f1e119]: part-of
+            - text: Департамент кіберполіції Національної поліції УкраїниДепартаменту кіберполіції Національної поліції УкраїниКіберполіціяg15 · c · embedding+registry+string
+      - listitem [ref=f1e120]:
+        - text: Рада національної безпеки та оборони Україниs2122 · a
+        - list [ref=f1e121]:
+          - listitem [ref=f1e122]:
+            - generic [ref=f1e123]: part-of
+            - text: Апарату Ради національної безпеки і оборони Україниs2097 · a
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e124]
+    - list [ref=f1e125]:
+      - listitem [ref=f1e126]: FSB of RussiaFederal Security Service of Russia (FSB)ФСБg9 · c · embedding+registry
+      - listitem [ref=f1e127]: MIL.CERT-UAMILCERTg10 · c · embedding+registry
+      - listitem [ref=f1e128]: Центр кібербезпеки ІТСЦентр кібербезпеки ІТС (в/ч А0334)Центр кібербезпеки ЗСУ (ЦКБ)Центр кібернетичної безпеки інформаційно-телекомунікаційних систем військової частини А0334 (ЦКБ ІТС в/ч А0334)в/ч A0334g14 · c · embedding+registry
+      - listitem [ref=f1e129]: МОНМОН УкраїниМіністерство освіти та науки Україниg21 · c · embedding+registry
+      - listitem [ref=f1e130]: НКЦК РНБОНаціональний координаційний центр кібербезпекиНаціональний координаційний центр кібербезпеки РНБО України (НКЦК)g23 · c · embedding+registry+string
+    - group [ref=f1e131]:
+      - generic "27 singletons (gold mints)" [ref=f1e132] [cursor=pointer]
+  - generic [ref=f1e133]:
+    - heading "HackerGroup 2 trees · 0 renames · 6 flat merges · 68 singletons" [level=2] [ref=f1e134]
+    - heading "Granularity forest" [level=3] [ref=f1e135]
+    - list [ref=f1e136]:
+      - listitem [ref=f1e137]:
+        - text: GhostWriterunc1151g30 · c · registry
+        - list [ref=f1e138]:
+          - listitem [ref=f1e139]:
+            - generic [ref=f1e140]: part-of
+            - text: UAC-0057UAC-0057 (GhostWriter)g31 · a · embedding+registry+string
+      - listitem [ref=f1e141]:
+        - text: Turlas2145 · a
+        - list [ref=f1e142]:
+          - listitem [ref=f1e143]:
+            - generic [ref=f1e144]: part-of
+            - text: UAC-0003 (Turla)s2147 · a
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e145]
+    - list [ref=f1e146]:
+      - listitem [ref=f1e147]: "@CyberArmyofRussia_RebornCyberArmyofRussia_Reborng25 · a · embedding+registry+string"
+      - listitem [ref=f1e148]: "@frwl_teamFRwLg26 · c · embedding+registry"
+      - listitem [ref=f1e149]: APT28APT28 (UAC-0028)UAC-0001UAC-0001 (APT28)UAC-0028UAC-0028 (APT28)g27 · c · embedding+registry+string
+      - listitem [ref=f1e150]: APT44Sandwormg28 · c · registry
+      - listitem [ref=f1e151]: ArmageddonArmageddon/GamaredonUAC-0010UAC-0010 (Armageddon)g29 · c · embedding+registry+string
+      - listitem [ref=f1e152]: UAC-0114Winter Viverng32 · c · registry
+    - group [ref=f1e153]:
+      - generic "68 singletons (gold mints)" [ref=f1e154] [cursor=pointer]
+  - generic [ref=f1e155]:
+    - heading "Individual 0 trees · 0 renames · 2 flat merges · 15 singletons" [level=2] [ref=f1e156]
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e157]
+    - list [ref=f1e158]:
+      - listitem [ref=f1e159]: Dmytro Oleksiukcr4shg33 · c · registry
+      - listitem [ref=f1e160]: Микола ХудинцевХудинцев Микола Миколайовичg34 · a · embedding+registry+string
+    - group [ref=f1e161]:
+      - generic "15 singletons (gold mints)" [ref=f1e162] [cursor=pointer]
+  - generic [ref=f1e163]:
+    - heading "Infrastructure 1 trees · 0 renames · 1 flat merges · 8 singletons" [level=2] [ref=f1e164]
+    - heading "Granularity forest" [level=3] [ref=f1e165]
+    - list [ref=f1e166]:
+      - listitem [ref=f1e167]:
+        - text: об'єкт критичної енергетичної інфраструктури Україниs2226 · a
+        - list [ref=f1e168]:
+          - listitem [ref=f1e169]:
+            - generic [ref=f1e170]: part-of
+            - text: Information and communication systems of Ukrainian critical infrastructures2218 · a
+            - list [ref=f1e171]:
+              - listitem [ref=f1e172]:
+                - generic [ref=f1e173]: part-of
+                - text: Єдина судова інформаційно-телекомунікаційна система (ЄСІТС)s2219 · a
+                - list [ref=f1e174]:
+                  - listitem [ref=f1e175]:
+                    - generic [ref=f1e176]: part-of
+                    - text: Електронний судs2222 · a
+              - listitem [ref=f1e177]:
+                - generic [ref=f1e178]: part-of
+                - text: Державні реєстри Україниs2221 · a
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e179]
+    - list [ref=f1e180]:
+      - listitem [ref=f1e181]: TORTOR networkg35 · c · registry
+    - group [ref=f1e182]:
+      - generic "8 singletons (gold mints)" [ref=f1e183] [cursor=pointer]
+  - generic [ref=f1e184]:
+    - heading "Organization 5 trees · 1 renames · 11 flat merges · 137 singletons" [level=2] [ref=f1e185]
+    - heading "Granularity forest" [level=3] [ref=f1e186]
+    - list [ref=f1e187]:
+      - listitem [ref=f1e188]:
+        - text: Check Points2243 · a
+        - list [ref=f1e189]:
+          - listitem [ref=f1e190]:
+            - generic [ref=f1e191]: part-of
+            - text: Check Point Researchs2244 · a
+      - listitem [ref=f1e192]:
+        - text: Кіберцентр UA30s2348 · a
+        - list [ref=f1e193]:
+          - listitem [ref=f1e194]:
+            - generic [ref=f1e195]: part-of
+            - text: Тренінговий кіберцентрs2369 · a
+      - listitem [ref=f1e196]:
+        - text: Міжнародною фундацією виборчих систем (IFES)s2349 · a
+        - list [ref=f1e197]:
+          - listitem [ref=f1e198]:
+            - generic [ref=f1e199]: part-of
+            - text: IFES Українаs2269 · a
+      - listitem [ref=f1e200]:
+        - text: Національний технічний університет України «Київський політехнічний інститут імені Ігоря Сікорського»s2351 · a
+        - list [ref=f1e201]:
+          - listitem [ref=f1e202]:
+            - generic [ref=f1e203]: part-of
+            - text: Інститут спеціального зв’язку та захисту інформації Національного технічного університету України «Київський політехнічний інститут імені Ігоря Сікорського»s2335 · a
+      - listitem [ref=f1e204]:
+        - text: Нотаріальна палата Україниs2353 · a
+        - list [ref=f1e205]:
+          - listitem [ref=f1e206]:
+            - generic [ref=f1e207]: part-of
+            - text: Комісія з питань інформатизації, цифрової трансформації та запобігання кіберзлочинності Нотаріальної палати Україниs2347 · a
+    - heading "Renames" [level=3] [ref=f1e208]
+    - list [ref=f1e209]:
+      - listitem [ref=f1e210]:
+        - text: FireEyes2258 · a
+        - generic [ref=f1e211]: renamed-to
+        - text: Mandiants2278 · a
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e212]
+    - list [ref=f1e213]:
+      - listitem [ref=f1e214]: Cherry Serverscherryservers.comg36 · a · embedding+registry+string
+      - listitem [ref=f1e215]: CloudflareCloudflare Inc.g37 · c · embedding+registry
+      - listitem [ref=f1e216]: DigitalOceandigitalocean.comg38 · a · embedding+registry+string
+      - listitem [ref=f1e217]: NameSilonamesilo.comg39 · c · embedding+registry
+      - listitem [ref=f1e218]: NATOНАТОg40 · b · embedding+registry+string
+      - listitem [ref=f1e219]: NO-IPNoIPg41 · a · embedding+registry+string
+      - listitem [ref=f1e220]: STARK INDUSTRIES SOLUTIONS LTDstark-industries.solutionsg42 · a · embedding+registry+string
+      - listitem [ref=f1e221]: Trend MicroTrendmicrog43 · a · embedding+registry+string
+      - listitem [ref=f1e222]: UKR.NETUkrnetg44 · a · embedding+registry+string
+      - listitem [ref=f1e223]: UkrinformУкраїнське національне інформаційне агентство "Укрінформ"g45 · c · embedding+registry
+      - listitem [ref=f1e224]: ЄСЄвропейський Союзg46 · c · embedding+registry
+    - group [ref=f1e225]:
+      - generic "137 singletons (gold mints)" [ref=f1e226] [cursor=pointer]
+  - generic [ref=f1e227]:
+    - heading "Sector 13 trees · 0 renames · 0 flat merges · 20 singletons" [level=2] [ref=f1e228]
+    - heading "Granularity forest" [level=3] [ref=f1e229]
+    - list [ref=f1e230]:
+      - listitem [ref=f1e231]:
+        - text: Ukrainian defense sectorСектор оборониg52 · c · embedding
+        - list [ref=f1e232]:
+          - listitem [ref=f1e233]:
+            - generic [ref=f1e234]: part-of
+            - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string
+          - listitem [ref=f1e235]:
+            - generic [ref=f1e236]: part-of
+            - text: Ukrainian militarys2398 · a
+            - list [ref=f1e237]:
+              - listitem [ref=f1e238]:
+                - generic [ref=f1e239]: part-of
+                - text: військовослужбовціs2417 · a
+                - list [ref=f1e240]:
+                  - listitem [ref=f1e241]:
+                    - generic [ref=f1e242]: isa
+                    - text: військовослужбовці Збройних Сил Україниs2418 · a
+                  - listitem [ref=f1e243]:
+                    - generic [ref=f1e244]: isa
+                    - text: Військовослужбовці Україниs2408 · a
+                    - list [ref=f1e245]:
+                      - listitem [ref=f1e246]:
+                        - generic [ref=f1e247]: isa
+                        - text: військовослужбовці Збройних Сил Україниs2418 · a↑ repeated
+              - listitem [ref=f1e248]:
+                - generic [ref=f1e249]: part-of
+                - text: військові формуванняs2419 · a
+                - list [ref=f1e250]:
+                  - listitem [ref=f1e251]:
+                    - generic [ref=f1e252]: part-of
+                    - text: військовослужбовціs2417 · a↑ repeated
+              - listitem [ref=f1e253]:
+                - generic [ref=f1e254]: part-of
+                - text: Військовослужбовці Україниs2408 · a↑ repeated
+              - listitem [ref=f1e255]:
+                - generic [ref=f1e256]: part-of
+                - text: військовослужбовці Збройних Сил Україниs2418 · a↑ repeated
+          - listitem [ref=f1e257]:
+            - generic [ref=f1e258]: part-of
+            - text: Сили безпеки та оборони Україниs2413 · a
+            - list [ref=f1e259]:
+              - listitem [ref=f1e260]:
+                - generic [ref=f1e261]: part-of
+                - text: сили оборониs2441 · a
+              - listitem [ref=f1e262]:
+                - generic [ref=f1e263]: part-of
+                - text: Військовослужбовці Україниs2408 · a↑ repeated
+              - listitem [ref=f1e264]:
+                - generic [ref=f1e265]: part-of
+                - text: військовослужбовці Збройних Сил Україниs2418 · a↑ repeated
+          - listitem [ref=f1e266]:
+            - generic [ref=f1e267]: part-of
+            - text: сили оборониs2441 · a↑ repeated
+      - listitem [ref=f1e268]:
+        - text: державні та приватні установи, організації та підприємствапідприємства, установи та організації різної форми власностіg59 · c · embedding
+        - list [ref=f1e269]:
+          - listitem [ref=f1e270]:
+            - generic [ref=f1e271]: part-of
+            - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string
+            - list [ref=f1e272]:
+              - listitem [ref=f1e273]:
+                - generic [ref=f1e274]: isa
+                - text: Державні фінансові установи Україниs2410 · a
+              - listitem [ref=f1e275]:
+                - generic [ref=f1e276]: isa
+                - text: органи державної влади Польщіs2433 · a
+              - listitem [ref=f1e277]:
+                - generic [ref=f1e278]: isa
+                - text: державні установи СШАs2423 · a
+              - listitem [ref=f1e279]:
+                - generic [ref=f1e280]: part-of
+                - text: Веб-ресурси державних органів Українивебресурси державних організаційвебсайти державних органіввебсайти державних організаційсайти державних органівg58 · c · embedding+registry+string
+              - listitem [ref=f1e281]:
+                - generic [ref=f1e282]: isa
+                - text: державні органи країн Європейського Союзуs2421 · a
+              - listitem [ref=f1e283]:
+                - generic [ref=f1e284]: part-of
+                - text: Commercial sector of UkraineUkrainian enterprisesg47 · c · embedding
+                - list [ref=f1e285]:
+                  - listitem [ref=f1e286]:
+                    - generic [ref=f1e287]: isa
+                    - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string↑ repeated
+                  - listitem [ref=f1e288]:
+                    - generic [ref=f1e289]: part-of
+                    - text: Information systems of Ukrainian enterprisess2387 · a
+                    - list [ref=f1e290]:
+                      - listitem [ref=f1e291]:
+                        - generic [ref=f1e292]: part-of
+                        - text: ЕОМ бухгалтерівавтоматизовані робочі місця бухгалтерівg57 · c · embedding+registry
+                  - listitem [ref=f1e293]:
+                    - generic [ref=f1e294]: isa
+                    - text: Ukrainian logistics companiess2397 · a
+                  - listitem [ref=f1e295]:
+                    - generic [ref=f1e296]: isa
+                    - text: Ukrainian telecommunications providersОператори та провайдери телекомунікацій Україниg56 · c · embedding+registry
+                    - list [ref=f1e297]:
+                      - listitem [ref=f1e298]:
+                        - generic [ref=f1e299]: isa
+                        - text: Інтернет сервіс провайдери Україниs2404 · a
+                  - listitem [ref=f1e300]:
+                    - generic [ref=f1e301]: part-of
+                    - text: Ukrainian enterprises and sole proprietorss2393 · a
+                    - list [ref=f1e302]:
+                      - listitem [ref=f1e303]:
+                        - generic [ref=f1e304]: part-of
+                        - text: Commercial sector of UkraineUkrainian enterprisesg47 · c · embedding↑ repeated
+                      - listitem [ref=f1e305]:
+                        - generic [ref=f1e306]: isa
+                        - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string↑ repeated
+                      - listitem [ref=f1e307]:
+                        - generic [ref=f1e308]: isa
+                        - text: Ukrainian providerss2399 · a
+                        - list [ref=f1e309]:
+                          - listitem [ref=f1e310]:
+                            - generic [ref=f1e311]: isa
+                            - text: Ukrainian telecommunications providersОператори та провайдери телекомунікацій Україниg56 · c · embedding+registry↑ repeated
+                          - listitem [ref=f1e312]:
+                            - generic [ref=f1e313]: isa
+                            - text: Інтернет сервіс провайдери Україниs2404 · a↑ repeated
+                      - listitem [ref=f1e314]:
+                        - generic [ref=f1e315]: part-of
+                        - text: Information systems of Ukrainian enterprisess2387 · a↑ repeated
+                  - listitem [ref=f1e316]:
+                    - generic [ref=f1e317]: part-of
+                    - text: Ukrainian grain handling equipment manufacturerss2395 · a
+                  - listitem [ref=f1e318]:
+                    - generic [ref=f1e319]: isa
+                    - text: підприємства основних галузей промисловостіs2440 · a
+                  - listitem [ref=f1e320]:
+                    - generic [ref=f1e321]: isa
+                    - text: Ukrainian providerss2399 · a↑ repeated
+              - listitem [ref=f1e322]:
+                - generic [ref=f1e323]: isa
+                - text: органи юстиції та нотаріату Україниs2435 · a
+                - list [ref=f1e324]:
+                  - listitem [ref=f1e325]:
+                    - generic [ref=f1e326]: part-of
+                    - text: Нотаріуси Україниs2412 · a
+              - listitem [ref=f1e327]:
+                - generic [ref=f1e328]: part-of
+                - text: Ukrainian government officialss2394 · a
+              - listitem [ref=f1e329]:
+                - generic [ref=f1e330]: part-of
+                - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e331]:
+            - generic [ref=f1e332]: part-of
+            - text: підприємстваs2439 · a
+            - list [ref=f1e333]:
+              - listitem [ref=f1e334]:
+                - generic [ref=f1e335]: isa
+                - text: Commercial sector of UkraineUkrainian enterprisesg47 · c · embedding↑ repeated
+              - listitem [ref=f1e336]:
+                - generic [ref=f1e337]: isa
+                - text: комунальні підприємстваs2426 · a
+                - list [ref=f1e338]:
+                  - listitem [ref=f1e339]:
+                    - generic [ref=f1e340]: isa
+                    - text: Ukrainian water supply sectors2400 · a
+              - listitem [ref=f1e341]:
+                - generic [ref=f1e342]: isa
+                - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string↑ repeated
+              - listitem [ref=f1e343]:
+                - generic [ref=f1e344]: isa
+                - text: підприємства основних галузей промисловостіs2440 · a↑ repeated
+              - listitem [ref=f1e345]:
+                - generic [ref=f1e346]: part-of
+                - text: Бухгалтери підприємствs2406 · a
+              - listitem [ref=f1e347]:
+                - generic [ref=f1e348]: isa
+                - text: Українські підприємства та організаціїs2414 · a
+                - list [ref=f1e349]:
+                  - listitem [ref=f1e350]:
+                    - generic [ref=f1e351]: part-of
+                    - text: Ukrainian organizationsорганізації Україниукраїнські організаціїg55 · c · embedding+registry
+                    - list [ref=f1e352]:
+                      - listitem [ref=f1e353]:
+                        - generic [ref=f1e354]: isa
+                        - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+                      - listitem [ref=f1e355]:
+                        - generic [ref=f1e356]: isa
+                        - text: Ukrainian media organizationsМедійні організації Україниg54 · c · embedding+registry
+                        - list [ref=f1e357]:
+                          - listitem [ref=f1e358]:
+                            - generic [ref=f1e359]: part-of
+                            - text: представники засобів масової інформації (редактори) Україниs2438 · a
+                          - listitem [ref=f1e360]:
+                            - generic [ref=f1e361]: isa
+                            - text: місцеві ЗМІs2428 · a
+                      - listitem [ref=f1e362]:
+                        - generic [ref=f1e363]: part-of
+                        - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+                      - listitem [ref=f1e364]:
+                        - generic [ref=f1e365]: isa
+                        - text: Commercial sector of UkraineUkrainian enterprisesg47 · c · embedding↑ repeated
+                      - listitem [ref=f1e366]:
+                        - generic [ref=f1e367]: isa
+                        - text: Ukrainian defense enterprisesПідприємства оборонно-промислового комплексупідприємств оборонно-промислового комплексуукраїнські оборонні підприємстваg51 · c · embedding+registry+string↑ repeated
+                      - listitem [ref=f1e368]:
+                        - generic [ref=f1e369]: part-of
+                        - text: Ukrainian government officialss2394 · a↑ repeated
+                      - listitem [ref=f1e370]:
+                        - generic [ref=f1e371]: part-of
+                        - text: органи місцевого самоврядування Україниs2434 · a
+                      - listitem [ref=f1e372]:
+                        - generic [ref=f1e373]: isa
+                        - text: українські науково-дослідні установиs2443 · a
+                      - listitem [ref=f1e374]:
+                        - generic [ref=f1e375]: part-of
+                        - text: Ukrainian providerss2399 · a↑ repeated
+                  - listitem [ref=f1e376]:
+                    - generic [ref=f1e377]: part-of
+                    - text: Commercial sector of UkraineUkrainian enterprisesg47 · c · embedding↑ repeated
+                  - listitem [ref=f1e378]:
+                    - generic [ref=f1e379]: part-of
+                    - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+                  - listitem [ref=f1e380]:
+                    - generic [ref=f1e381]: part-of
+                    - text: Ukrainian media organizationsМедійні організації Україниg54 · c · embedding+registry↑ repeated
+                  - listitem [ref=f1e382]:
+                    - generic [ref=f1e383]: isa
+                    - text: українські науково-дослідні установиs2443 · a↑ repeated
+          - listitem [ref=f1e384]:
+            - generic [ref=f1e385]: isa
+            - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e386]:
+            - generic [ref=f1e387]: isa
+            - text: Українські підприємства та організаціїs2414 · a↑ repeated
+          - listitem [ref=f1e388]:
+            - generic [ref=f1e389]: part-of
+            - text: Державний секторs2409 · a
+            - list [ref=f1e390]:
+              - listitem [ref=f1e391]:
+                - generic [ref=f1e392]: isa
+                - text: Government sector of UkraineUkrainian government sectorg49 · c · embedding+registry
+                - list [ref=f1e393]:
+                  - listitem [ref=f1e394]:
+                    - generic [ref=f1e395]: part-of
+                    - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+                  - listitem [ref=f1e396]:
+                    - generic [ref=f1e397]: part-of
+                    - text: Ukrainian government officialss2394 · a↑ repeated
+              - listitem [ref=f1e398]:
+                - generic [ref=f1e399]: part-of
+                - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+      - listitem [ref=f1e400]:
+        - text: Energy sectors2379 · a
+        - list [ref=f1e401]:
+          - listitem [ref=f1e402]:
+            - generic [ref=f1e403]: isa
+            - text: Ukrainian energy sectorенергетичний сектор Україниg53 · c · embedding+registry
+            - list [ref=f1e404]:
+              - listitem [ref=f1e405]:
+                - generic [ref=f1e406]: part-of
+                - text: Ukrainian heat supply sectors2396 · a
+              - listitem [ref=f1e407]:
+                - generic [ref=f1e408]: isa
+                - text: Ukrainian heat supply sectors2396 · a↑ repeated
+          - listitem [ref=f1e409]:
+            - generic [ref=f1e410]: isa
+            - text: Heat supply sectors2385 · a
+            - list [ref=f1e411]:
+              - listitem [ref=f1e412]:
+                - generic [ref=f1e413]: isa
+                - text: Ukrainian heat supply sectors2396 · a↑ repeated
+      - listitem [ref=f1e414]:
+        - text: Financial sectors2382 · a
+        - list [ref=f1e415]:
+          - listitem [ref=f1e416]:
+            - generic [ref=f1e417]: part-of
+            - text: Financial institutionss2380 · a
+            - list [ref=f1e418]:
+              - listitem [ref=f1e419]:
+                - generic [ref=f1e420]: isa
+                - text: Insurance institutionss2389 · a
+          - listitem [ref=f1e421]:
+            - generic [ref=f1e422]: part-of
+            - text: Банківський секторs2405 · a
+      - listitem [ref=f1e423]:
+        - text: Water supply sectors2401 · a
+        - list [ref=f1e424]:
+          - listitem [ref=f1e425]:
+            - generic [ref=f1e426]: isa
+            - text: Ukrainian water supply sectors2400 · a↑ repeated
+      - listitem [ref=f1e427]:
+        - text: Фінансові установи Україниs2415 · a
+        - list [ref=f1e428]:
+          - listitem [ref=f1e429]:
+            - generic [ref=f1e430]: isa
+            - text: Державні фінансові установи Україниs2410 · a↑ repeated
+          - listitem [ref=f1e431]:
+            - generic [ref=f1e432]: part-of
+            - text: Веб-ресурси українських банківs2407 · a
+      - listitem [ref=f1e433]:
+        - text: веб-ресурси в зоні .uas2416 · a
+        - list [ref=f1e434]:
+          - listitem [ref=f1e435]:
+            - generic [ref=f1e436]: part-of
+            - text: Веб-ресурси державних органів Українивебресурси державних організаційвебсайти державних органіввебсайти державних організаційсайти державних органівg58 · c · embedding+registry+string↑ repeated
+      - listitem [ref=f1e437]:
+        - text: громадяниs2420 · a
+        - list [ref=f1e438]:
+          - listitem [ref=f1e439]:
+            - generic [ref=f1e440]: isa
+            - text: Ukrainian citizensгромадяни Україниg50 · c · embedding+registry
+            - list [ref=f1e441]:
+              - listitem [ref=f1e442]:
+                - generic [ref=f1e443]: isa
+                - text: Ukrainian government officialss2394 · a↑ repeated
+              - listitem [ref=f1e444]:
+                - generic [ref=f1e445]: isa
+                - text: українські біженціs2442 · a
+              - listitem [ref=f1e446]:
+                - generic [ref=f1e447]: part-of
+                - text: Нотаріуси Україниs2412 · a↑ repeated
+      - listitem [ref=f1e448]:
+        - text: державні органи та органи місцевого самоврядування Україниs2422 · a
+        - list [ref=f1e449]:
+          - listitem [ref=f1e450]:
+            - generic [ref=f1e451]: part-of
+            - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e452]:
+            - generic [ref=f1e453]: part-of
+            - text: органи місцевого самоврядування Україниs2434 · a↑ repeated
+          - listitem [ref=f1e454]:
+            - generic [ref=f1e455]: part-of
+            - text: місцеве самоврядуванняоргани місцевого самоврядуванняg60 · c · embedding
+            - list [ref=f1e456]:
+              - listitem [ref=f1e457]:
+                - generic [ref=f1e458]: isa
+                - text: органи місцевого самоврядування Україниs2434 · a↑ repeated
+          - listitem [ref=f1e459]:
+            - generic [ref=f1e460]: isa
+            - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+      - listitem [ref=f1e461]:
+        - text: державні інформаційні ресурсиs2424 · a
+        - list [ref=f1e462]:
+          - listitem [ref=f1e463]:
+            - generic [ref=f1e464]: isa
+            - text: Веб-ресурси державних органів Українивебресурси державних організаційвебсайти державних органіввебсайти державних організаційсайти державних органівg58 · c · embedding+registry+string↑ repeated
+      - listitem [ref=f1e465]:
+        - text: об’єкти критичної інфраструктуриs2431 · a
+        - list [ref=f1e466]:
+          - listitem [ref=f1e467]:
+            - generic [ref=f1e468]: isa
+            - text: об'єкти критичної інфраструктури в Центральній та Східній Європіs2429 · a
+          - listitem [ref=f1e469]:
+            - generic [ref=f1e470]: part-of
+            - text: Ukrainian water supply sectors2400 · a↑ repeated
+      - listitem [ref=f1e471]:
+        - text: оператори телекомунікаційs2432 · a
+        - list [ref=f1e472]:
+          - listitem [ref=f1e473]:
+            - generic [ref=f1e474]: isa
+            - text: Ukrainian telecommunications providersОператори та провайдери телекомунікацій Україниg56 · c · embedding+registry↑ repeated
+      - listitem [ref=f1e475]:
+        - text: організаціїs2436 · a
+        - list [ref=f1e476]:
+          - listitem [ref=f1e477]:
+            - generic [ref=f1e478]: isa
+            - text: Ukrainian organizationsорганізації Україниукраїнські організаціїg55 · c · embedding+registry↑ repeated
+          - listitem [ref=f1e479]:
+            - generic [ref=f1e480]: isa
+            - text: Government bodies and enterprises of UkraineGovernment bodies of UkraineUkrainian government bodiesUkrainian government organizationsОргани державної владидержавна організаціядержавна організація Українидержавні органидержавні органи Українидержавні організаціїдержавні організації Українидержавні установидержавні установи Українидержавні установи та підприємстваоргани державної влади Україниукраїнські органи державної владиg48 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e481]:
+            - generic [ref=f1e482]: isa
+            - text: Українські підприємства та організаціїs2414 · a↑ repeated
+    - group [ref=f1e483]:
+      - generic "20 singletons (gold mints)" [ref=f1e484] [cursor=pointer]
+  - generic [ref=f1e485]:
+    - heading "Software 41 trees · 1 renames · 29 flat merges · 647 singletons" [level=2] [ref=f1e486]
+    - heading "Granularity forest" [level=3] [ref=f1e487]
+    - list [ref=f1e488]:
+      - listitem [ref=f1e489]:
+        - text: DARKCRYSTALRAT (DCRAT)Dark Crystal RAT (DCRAT)DarkCrystal RATg72 · c · embedding+registry+string
+        - list [ref=f1e490]:
+          - listitem [ref=f1e491]:
+            - generic [ref=f1e492]: part-of
+            - text: MSCommonDriver.DCRat.exes2766 · a
+      - listitem [ref=f1e493]:
+        - text: FirefoxMozilla Firefoxg74 · c · embedding+registry
+        - list [ref=f1e494]:
+          - listitem [ref=f1e495]:
+            - generic [ref=f1e496]: isa
+            - text: Firefox ESRs2669 · a
+          - listitem [ref=f1e497]:
+            - generic [ref=f1e498]: isa
+            - text: Firefox для iOSs2670 · a
+      - listitem [ref=f1e499]:
+        - text: Formbookformbook.exeg75 · c · embedding+registry
+        - list [ref=f1e500]:
+          - listitem [ref=f1e501]:
+            - generic [ref=f1e502]: isa
+            - text: Formbook/XLoader v2.5s2671 · a
+      - listitem [ref=f1e503]:
+        - text: GammaLoadGammaLoad.PS1g76 · c · embedding+registry
+        - list [ref=f1e504]:
+          - listitem [ref=f1e505]:
+            - generic [ref=f1e506]: isa
+            - text: GammaLoad.PS1_v2s2683 · a
+      - listitem [ref=f1e507]:
+        - text: MS ExchangeMicrosoft Exchange Serverg82 · c · embedding+registry
+        - list [ref=f1e508]:
+          - listitem [ref=f1e509]:
+            - generic [ref=f1e510]: isa
+            - text: Microsoft Exchange Server 2010s2781 · a
+          - listitem [ref=f1e511]:
+            - generic [ref=f1e512]: isa
+            - text: Microsoft Exchange Server 2013s2782 · a
+          - listitem [ref=f1e513]:
+            - generic [ref=f1e514]: isa
+            - text: Microsoft Exchange Server 2016s2783 · a
+          - listitem [ref=f1e515]:
+            - generic [ref=f1e516]: isa
+            - text: Microsoft Exchange Server 2019s2784 · a
+      - listitem [ref=f1e517]:
+        - text: MS OfficeMicrosoft Officeg83 · c · embedding+registry
+        - list [ref=f1e518]:
+          - listitem [ref=f1e519]:
+            - generic [ref=f1e520]: isa
+            - text: Microsoft Office 2007Office 2007g84 · a · embedding+registry+string
+            - list [ref=f1e521]:
+              - listitem [ref=f1e522]:
+                - generic [ref=f1e523]: part-of
+                - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string
+          - listitem [ref=f1e524]:
+            - generic [ref=f1e525]: isa
+            - text: Microsoft Office 2010Office 2010g85 · a · embedding+registry+string
+            - list [ref=f1e526]:
+              - listitem [ref=f1e527]:
+                - generic [ref=f1e528]: part-of
+                - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e529]:
+            - generic [ref=f1e530]: isa
+            - text: Microsoft Office 2013Office 2013g86 · a · embedding+registry+string
+            - list [ref=f1e531]:
+              - listitem [ref=f1e532]:
+                - generic [ref=f1e533]: part-of
+                - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e534]:
+            - generic [ref=f1e535]: isa
+            - text: Microsoft Office 2016Office 2016g87 · a · embedding+registry+string
+            - list [ref=f1e536]:
+              - listitem [ref=f1e537]:
+                - generic [ref=f1e538]: part-of
+                - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string↑ repeated
+              - listitem [ref=f1e539]:
+                - generic [ref=f1e540]: part-of
+                - text: Microsoft OutlookOutlookg89 · c · embedding+registry
+          - listitem [ref=f1e541]:
+            - generic [ref=f1e542]: isa
+            - text: Microsoft Office 2019s2785 · a
+            - list [ref=f1e543]:
+              - listitem [ref=f1e544]:
+                - generic [ref=f1e545]: part-of
+                - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e546]:
+            - generic [ref=f1e547]: part-of
+            - text: MS WordMicrosoft Office WordMicrosoft WordWINWORD.EXEg88 · c · embedding+registry+string↑ repeated
+          - listitem [ref=f1e548]:
+            - generic [ref=f1e549]: part-of
+            - text: MS PowerPoints2765 · a
+          - listitem [ref=f1e550]:
+            - generic [ref=f1e551]: part-of
+            - text: MS ExcelMicrosoft Excelg81 · c · embedding+registry
+          - listitem [ref=f1e552]:
+            - generic [ref=f1e553]: part-of
+            - text: Microsoft OutlookOutlookg89 · c · embedding+registry↑ repeated
+          - listitem [ref=f1e554]:
+            - generic [ref=f1e555]: part-of
+            - text: Microsoft Accesss2776 · a
+      - listitem [ref=f1e556]:
+        - text: Microsoft WindowsWindowsg90 · c · embedding+registry
+        - list [ref=f1e557]:
+          - listitem [ref=f1e558]:
+            - generic [ref=f1e559]: isa
+            - text: Microsoft Windows XPs2797 · a
+          - listitem [ref=f1e560]:
+            - generic [ref=f1e561]: isa
+            - text: Windows 7s3014 · a
+            - list [ref=f1e562]:
+              - listitem [ref=f1e563]:
+                - generic [ref=f1e564]: isa
+                - text: Microsoft Windows 7 for 32-bit Systems SP1s2789 · a
+              - listitem [ref=f1e565]:
+                - generic [ref=f1e566]: isa
+                - text: Microsoft Windows 7 for x64-based Systems SP1s2790 · a
+          - listitem [ref=f1e567]:
+            - generic [ref=f1e568]: isa
+            - text: Windows 10s3011 · a
+            - list [ref=f1e569]:
+              - listitem [ref=f1e570]:
+                - generic [ref=f1e571]: isa
+                - text: Windows 10 version 1809s3012 · a
+          - listitem [ref=f1e572]:
+            - generic [ref=f1e573]: isa
+            - text: Microsoft Windows Server 2003s2791 · a
+          - listitem [ref=f1e574]:
+            - generic [ref=f1e575]: isa
+            - text: Windows Vistas3024 · a
+          - listitem [ref=f1e576]:
+            - generic [ref=f1e577]: isa
+            - text: Microsoft Windows 7 for x64-based Systems SP1s2790 · a↑ repeated
+          - listitem [ref=f1e578]:
+            - generic [ref=f1e579]: isa
+            - text: Microsoft Windows 7 for 32-bit Systems SP1s2789 · a↑ repeated
+      - listitem [ref=f1e580]:
+        - text: Remote UtilitiesRemoteUtilitiesg100 · a · embedding+registry+string
+        - list [ref=f1e581]:
+          - listitem [ref=f1e582]:
+            - generic [ref=f1e583]: part-of
+            - text: Remote Utilities - Hosts2888 · a
+            - list [ref=f1e584]:
+              - listitem [ref=f1e585]:
+                - generic [ref=f1e586]: part-of
+                - text: rfusclient.exes3122 · a
+              - listitem [ref=f1e587]:
+                - generic [ref=f1e588]: part-of
+                - text: rutserv.exes3127 · a
+          - listitem [ref=f1e589]:
+            - generic [ref=f1e590]: part-of
+            - text: rfusclient.exes3122 · a↑ repeated
+          - listitem [ref=f1e591]:
+            - generic [ref=f1e592]: part-of
+            - text: rutserv.exes3127 · a↑ repeated
+      - listitem [ref=f1e593]:
+        - text: 501_25_103.zips2457 · a
+        - list [ref=f1e594]:
+          - listitem [ref=f1e595]:
+            - generic [ref=f1e596]: part-of
+            - text: 501_25_103.lnks2456 · a
+      - listitem [ref=f1e597]:
+        - text: Adobe Acrobat Readers2470 · a
+        - list [ref=f1e598]:
+          - listitem [ref=f1e599]:
+            - generic [ref=f1e600]: isa
+            - text: Adobe Reader DCs2476 · a
+      - listitem [ref=f1e601]:
+        - text: ArmyPlusInstaller-v.0.10.23672.exes2485 · a
+        - list [ref=f1e602]:
+          - listitem [ref=f1e603]:
+            - generic [ref=f1e604]: part-of
+            - text: ArmyPlus.exes2484 · a
+      - listitem [ref=f1e605]:
+        - text: ArmyPlusInstaller-v.0.10.23722.exes2486 · a
+        - list [ref=f1e606]:
+          - listitem [ref=f1e607]:
+            - generic [ref=f1e608]: part-of
+            - text: ArmyPlus.exes2484 · a↑ repeated
+      - listitem [ref=f1e609]:
+        - text: AutoIts2489 · a
+        - list [ref=f1e610]:
+          - listitem [ref=f1e611]:
+            - generic [ref=f1e612]: isa
+            - text: AutoIt3s2490 · a
+      - listitem [ref=f1e613]:
+        - text: Browserss2508 · a
+        - list [ref=f1e614]:
+          - listitem [ref=f1e615]:
+            - generic [ref=f1e616]: isa
+            - text: Opera Browsers2824 · a
+      - listitem [ref=f1e617]:
+        - text: Cobalt Strike Beacons2616 · a
+        - list [ref=f1e618]:
+          - listitem [ref=f1e619]:
+            - generic [ref=f1e620]: isa
+            - text: shellcode.x64 (Cobalt Strike Beacon)shellcode.x64.bing103 · c · embedding+registry
+          - listitem [ref=f1e621]:
+            - generic [ref=f1e622]: isa
+            - text: shellcode.x86 (Cobalt Strike Beacon)shellcode.x86.bing104 · c · embedding+registry
+          - listitem [ref=f1e623]:
+            - generic [ref=f1e624]: part-of
+            - text: CobaltStrikeBeacon.shellcodes2617 · a
+          - listitem [ref=f1e625]:
+            - generic [ref=f1e626]: part-of
+            - text: csbeacon.bins3052 · a
+          - listitem [ref=f1e627]:
+            - generic [ref=f1e628]: part-of
+            - text: shellcode.x64 (Cobalt Strike Beacon)shellcode.x64.bing103 · c · embedding+registry↑ repeated
+          - listitem [ref=f1e629]:
+            - generic [ref=f1e630]: part-of
+            - text: shellcode.x86 (Cobalt Strike Beacon)shellcode.x86.bing104 · c · embedding+registry↑ repeated
+      - listitem [ref=f1e631]:
+        - text: CredoMaps2627 · a
+        - list [ref=f1e632]:
+          - listitem [ref=f1e633]:
+            - generic [ref=f1e634]: isa
+            - text: CredoMap_v2scan.exe (CredoMap_v2)g65 · c · embedding+registry
+      - listitem [ref=f1e635]:
+        - text: DoubleZeros2647 · a
+        - list [ref=f1e636]:
+          - listitem [ref=f1e637]:
+            - generic [ref=f1e638]: part-of
+            - text: cpcrs.exe (DoubleZero)s3050 · a
+          - listitem [ref=f1e639]:
+            - generic [ref=f1e640]: part-of
+            - text: csrss.execsrss.exe (DoubleZero)g66 · a · embedding+string
+      - listitem [ref=f1e641]:
+        - text: ESET_scanner.rars2652 · a
+        - list [ref=f1e642]:
+          - listitem [ref=f1e643]:
+            - generic [ref=f1e644]: part-of
+            - text: ESET Online Scanner.exes2651 · a
+      - listitem [ref=f1e645]:
+        - text: GAMMASTEELs2675 · a
+        - list [ref=f1e646]:
+          - listitem [ref=f1e647]:
+            - generic [ref=f1e648]: isa
+            - text: GammaSteel.NETs2684 · a
+          - listitem [ref=f1e649]:
+            - generic [ref=f1e650]: isa
+            - text: GammaSteel.PS1s2685 · a
+      - listitem [ref=f1e651]:
+        - text: GandCrab v4s2686 · a
+        - list [ref=f1e652]:
+          - listitem [ref=f1e653]:
+            - generic [ref=f1e654]: isa
+            - text: GandCrab v4.1s2687 · a
+      - listitem [ref=f1e655]:
+        - text: Gazprombank.zakaz.docx.zips2688 · a
+        - list [ref=f1e656]:
+          - listitem [ref=f1e657]:
+            - generic [ref=f1e658]: part-of
+            - text: Газпромбанк заказ.jss3171 · a
+      - listitem [ref=f1e659]:
+        - text: GreyEnergys2694 · a
+        - list [ref=f1e660]:
+          - listitem [ref=f1e661]:
+            - generic [ref=f1e662]: isa
+            - text: GreyEnergy minis2695 · a
+      - listitem [ref=f1e663]:
+        - text: LightRopes2752 · a
+        - list [ref=f1e664]:
+          - listitem [ref=f1e665]:
+            - generic [ref=f1e666]: isa
+            - text: LightRope_v2s2753 · a
+      - listitem [ref=f1e667]:
+        - text: LiteManagers2756 · a
+        - list [ref=f1e668]:
+          - listitem [ref=f1e669]:
+            - generic [ref=f1e670]: isa
+            - text: LiteManager Pro - Servers2757 · a
+            - list [ref=f1e671]:
+              - listitem [ref=f1e672]:
+                - generic [ref=f1e673]: part-of
+                - text: ROMFUSClient.exes2874 · a
+              - listitem [ref=f1e674]:
+                - generic [ref=f1e675]: part-of
+                - text: ROMServer.exes2875 · a
+          - listitem [ref=f1e676]:
+            - generic [ref=f1e677]: part-of
+            - text: ROMFUSClient.exes2874 · a↑ repeated
+          - listitem [ref=f1e678]:
+            - generic [ref=f1e679]: part-of
+            - text: ROMServer.exes2875 · a↑ repeated
+      - listitem [ref=f1e680]:
+        - text: METASPLOITs2764 · a
+        - list [ref=f1e681]:
+          - listitem [ref=f1e682]:
+            - generic [ref=f1e683]: part-of
+            - text: Meterpreters2775 · a
+      - listitem [ref=f1e684]:
+        - text: OpenSSLs2822 · a
+        - list [ref=f1e685]:
+          - listitem [ref=f1e686]:
+            - generic [ref=f1e687]: part-of
+            - text: libcrypto.dlls3095 · a
+      - listitem [ref=f1e688]:
+        - text: Pythons2858 · a
+        - list [ref=f1e689]:
+          - listitem [ref=f1e690]:
+            - generic [ref=f1e691]: isa
+            - text: Python 2.7.18s2859 · a
+          - listitem [ref=f1e692]:
+            - generic [ref=f1e693]: part-of
+            - text: Python interpreters2861 · a
+            - list [ref=f1e694]:
+              - listitem [ref=f1e695]:
+                - generic [ref=f1e696]: isa
+                - text: Python 2.7.18s2859 · a↑ repeated
+      - listitem [ref=f1e697]:
+        - text: SMB протоколs2905 · a
+        - list [ref=f1e698]:
+          - listitem [ref=f1e699]:
+            - generic [ref=f1e700]: isa
+            - text: Windows SMBv1s3018 · a
+      - listitem [ref=f1e701]:
+        - text: SPECTRs2909 · a
+        - list [ref=f1e702]:
+          - listitem [ref=f1e703]:
+            - generic [ref=f1e704]: part-of
+            - text: SPECTR.Archivers2910 · a
+          - listitem [ref=f1e705]:
+            - generic [ref=f1e706]: part-of
+            - text: SPECTR.Fss2911 · a
+          - listitem [ref=f1e707]:
+            - generic [ref=f1e708]: part-of
+            - text: SPECTR.Infos2912 · a
+          - listitem [ref=f1e709]:
+            - generic [ref=f1e710]: part-of
+            - text: SPECTR.Installers2913 · a
+          - listitem [ref=f1e711]:
+            - generic [ref=f1e712]: part-of
+            - text: SPECTR.PluginLoaders2914 · a
+          - listitem [ref=f1e713]:
+            - generic [ref=f1e714]: part-of
+            - text: SPECTR.Shells2915 · a
+          - listitem [ref=f1e715]:
+            - generic [ref=f1e716]: part-of
+            - text: SPECTR.Spectator2s2916 · a
+          - listitem [ref=f1e717]:
+            - generic [ref=f1e718]: part-of
+            - text: SPECTR.Usbs2917 · a
+      - listitem [ref=f1e719]:
+        - text: SSHs2919 · a
+        - list [ref=f1e720]:
+          - listitem [ref=f1e721]:
+            - generic [ref=f1e722]: isa
+            - text: OpenSSHs2820 · a
+            - list [ref=f1e723]:
+              - listitem [ref=f1e724]:
+                - generic [ref=f1e725]: part-of
+                - text: ssh.exes3137 · a
+              - listitem [ref=f1e726]:
+                - generic [ref=f1e727]: part-of
+                - text: OpenSSH servers2821 · a
+          - listitem [ref=f1e728]:
+            - generic [ref=f1e729]: part-of
+            - text: ssh.exes3137 · a↑ repeated
+      - listitem [ref=f1e730]:
+        - text: Sonokos2942 · a
+        - list [ref=f1e731]:
+          - listitem [ref=f1e732]:
+            - generic [ref=f1e733]: isa
+            - text: Trojan:Win32/Sonoko.A!mss2967 · a
+      - listitem [ref=f1e734]:
+        - text: VMware Fusions2980 · a
+        - list [ref=f1e735]:
+          - listitem [ref=f1e736]:
+            - generic [ref=f1e737]: isa
+            - text: VMware Fusion Pros2981 · a
+      - listitem [ref=f1e738]:
+        - text: WinRARs3008 · a
+        - list [ref=f1e739]:
+          - listitem [ref=f1e740]:
+            - generic [ref=f1e741]: isa
+            - text: WinRAR 5.70 Beta 1s3009 · a
+      - listitem [ref=f1e742]:
+        - text: Windows 2008 R2s3013 · a
+        - list [ref=f1e743]:
+          - listitem [ref=f1e744]:
+            - generic [ref=f1e745]: isa
+            - text: Microsoft Windows Server 2008 R2 for Itanium-based Systems SP1s2792 · a
+          - listitem [ref=f1e746]:
+            - generic [ref=f1e747]: isa
+            - text: Microsoft Windows Server 2008 R2 for x64-based Systems SP1s2793 · a
+      - listitem [ref=f1e748]:
+        - text: Windows Script Hosts3019 · a
+        - list [ref=f1e749]:
+          - listitem [ref=f1e750]:
+            - generic [ref=f1e751]: part-of
+            - text: cscript.exes3053 · a
+          - listitem [ref=f1e752]:
+            - generic [ref=f1e753]: part-of
+            - text: Windows Script Host (wscript.exe)wscript.exeg108 · c · embedding+registry
+      - listitem [ref=f1e754]:
+        - text: Windows Server 2008s3020 · a
+        - list [ref=f1e755]:
+          - listitem [ref=f1e756]:
+            - generic [ref=f1e757]: isa
+            - text: Microsoft Windows Server 2008 for 32-bit Systems SP2s2794 · a
+          - listitem [ref=f1e758]:
+            - generic [ref=f1e759]: isa
+            - text: Microsoft Windows Server 2008 for Itanium-based Systems SP2s2795 · a
+          - listitem [ref=f1e760]:
+            - generic [ref=f1e761]: isa
+            - text: Microsoft Windows Server 2008 for x64-based Systems SP2s2796 · a
+      - listitem [ref=f1e762]:
+        - text: info.zips3085 · a
+        - list [ref=f1e763]:
+          - listitem [ref=f1e764]:
+            - generic [ref=f1e765]: part-of
+            - text: inf.zips3084 · a
+      - listitem [ref=f1e766]:
+        - text: nmaps3106 · a
+        - list [ref=f1e767]:
+          - listitem [ref=f1e768]:
+            - generic [ref=f1e769]: part-of
+            - text: Zenmaps3036 · a
+      - listitem [ref=f1e770]:
+        - text: shahed-136.rars3130 · a
+        - list [ref=f1e771]:
+          - listitem [ref=f1e772]:
+            - generic [ref=f1e773]: part-of
+            - text: shahed.ppsxs3131 · a
+      - listitem [ref=f1e774]:
+        - text: Диверсанти.rars3174 · a
+        - list [ref=f1e775]:
+          - listitem [ref=f1e776]:
+            - generic [ref=f1e777]: part-of
+            - text: Диверсанти filercs.rarДиверсанти file‮‮rar.scrg110 · a · embedding+string
+          - listitem [ref=f1e778]:
+            - generic [ref=f1e779]: part-of
+            - text: Диверсанти 21.03.rars3173 · a
+            - list [ref=f1e780]:
+              - listitem [ref=f1e781]:
+                - generic [ref=f1e782]: part-of
+                - text: Диверсанти filercs.rarДиверсанти file‮‮rar.scrg110 · a · embedding+string↑ repeated
+      - listitem [ref=f1e783]:
+        - text: рахунки компания технік.zips3199 · a
+        - list [ref=f1e784]:
+          - listitem [ref=f1e785]:
+            - generic [ref=f1e786]: part-of
+            - text: рахунки компания технік.lzhs3198 · a
+    - heading "Renames" [level=3] [ref=f1e787]
+    - list [ref=f1e788]:
+      - listitem [ref=f1e789]:
+        - text: Windows Defenders3015 · a
+        - generic [ref=f1e790]: renamed-to
+        - text: Microsoft Defenders2778 · a
+    - heading "Merged clusters (no hierarchy)" [level=3] [ref=f1e791]
+    - list [ref=f1e792]:
+      - listitem [ref=f1e793]: Agent TeslaAgentTeslag61 · a · embedding+registry+string
+      - listitem [ref=f1e794]: Apache Log4jLog4jg62 · c · embedding+registry
+      - listitem [ref=f1e795]: Base-Update.exebase_update.exeg63 · a · embedding+string
+      - listitem [ref=f1e796]: ChromeGoogle Chromeg64 · c · embedding+registry
+      - listitem [ref=f1e797]: curlcurl.exeg67 · c · embedding+registry
+      - listitem [ref=f1e798]: CVE-2018-7600Drupalgeddon2g68 · c · registry
+      - listitem [ref=f1e799]: CVE-2018-8174Double Killg69 · c · registry
+      - listitem [ref=f1e800]: CVE-2021-44228Log4Shellg70 · c · registry
+      - listitem [ref=f1e801]: CVE-2023-38831WinRAR CVE-2023-38831g71 · a · embedding+registry+string
+      - listitem [ref=f1e802]: Encrpt3d RansomwareWhiteBlackCrypt Ransomwareg73 · c · embedding
+      - listitem [ref=f1e803]: IISIIS (Internet Information Services)g77 · c · embedding+registry
+      - listitem [ref=f1e804]: MISPMalware Information Sharing Platform (MISP)g78 · c · embedding+registry
+      - listitem [ref=f1e805]: MESHAGENTMeshCentral Assistantg79 · c · registry
+      - listitem [ref=f1e806]: MicroBackdoormicrobackdoor.dllg80 · a · embedding+registry+string
+      - listitem [ref=f1e807]: Mozilla ThunderbirdThunderbirdg91 · c · embedding+registry
+      - listitem [ref=f1e808]: MSHTAmshta.exeg92 · c · embedding+registry
+      - listitem [ref=f1e809]: Windows Remote Desktop Clientmstsc.exeg93 · c · embedding
+      - listitem [ref=f1e810]: October CMSOctoberCMSg94 · a · embedding+registry+string
+      - listitem [ref=f1e811]: PowerShellPowerShell (powershell.exe)powershell.exeg95 · c · embedding+registry+string
+      - listitem [ref=f1e812]: PropagatePropagate/Unwadersg96 · c · embedding+registry
+      - listitem [ref=f1e813]: QUASAR RATQuasarRATg97 · a · embedding+registry+string
+      - listitem [ref=f1e814]: RDP WrapperRDPWrapperg98 · a · embedding+registry+string
+      - listitem [ref=f1e815]: RemcosRemcos RATRemcosRATg99 · c · embedding+registry+string
+      - listitem [ref=f1e816]: RMSTEKTONITRMSg101 · c · registry
+      - listitem [ref=f1e817]: ShadeTroldeshTroldesh/Shadeg102 · c · embedding+registry
+      - listitem [ref=f1e818]: SmartAssemblySmartAssembly .NETg105 · a · embedding+string
+      - listitem [ref=f1e819]: SRPSoftware Restriction Policies (SRP)g106 · c · registry
+      - listitem [ref=f1e820]: USB.dllUsbg107 · c · embedding
+      - listitem [ref=f1e821]: ZimbraZimbra Collaboration Suiteg109 · c · embedding+registry
+    - group [ref=f1e822]:
+      - generic "647 singletons (gold mints)" [ref=f1e823] [cursor=pointer]
