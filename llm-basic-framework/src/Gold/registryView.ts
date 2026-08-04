@@ -115,10 +115,15 @@ const escapeHtml = (value: string): string =>
 const clusterHtml = (cluster: GoldCluster, edge?: GoldEdge, repeated?: boolean): string => {
   const [head, ...aliases] = cluster.members;
   const kind = edge ? `<span class="kind kind-${edge.kind}">${edge.kind}</span>` : '';
-  const aliasChips = aliases.map((alias) => `<span class="alias">${escapeHtml(alias)}</span>`).join('');
   const meta = `<span class="meta">${cluster.id} · ${cluster.stratum}${cluster.sources ? ' · ' + cluster.sources.join('+') : ''}</span>`;
   const repeat = repeated ? '<span class="meta">↑ repeated</span>' : '';
-  return `${kind}<span class="name">${escapeHtml(head)}</span>${aliasChips}${meta}${repeat}`;
+  // Aliases go on their own wrapped block line, never inline with the tree line: official
+  // Ukrainian names run long, and a clipped alias is an invisible merge — the one thing this
+  // page exists to show. The '=' prefix reads as "same entity as".
+  const aliasBlock = aliases.length
+    ? `<div class="aliases">${aliases.map((alias) => `<span class="alias">= ${escapeHtml(alias)}</span>`).join('')}</div>`
+    : '';
+  return `${kind}<span class="name">${escapeHtml(head)}</span>${meta}${repeat}${aliasBlock}`;
 };
 
 const nodeHtml = (node: TreeNode): string => {
@@ -172,6 +177,7 @@ export function renderRegistryHtml(table: GoldTable, options: { title: string })
     --kind-isa: #2a78d6; --kind-part-of: #eb6834; --kind-renamed-to: #1baf7a;
     font: 14px/1.5 system-ui, sans-serif; background: var(--surface-1); color: var(--text-primary);
     max-width: 1100px; margin: 0 auto; padding: 24px; display: block;
+    overflow-wrap: anywhere;
   }
   @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .viz-root {
     color-scheme: dark;
@@ -193,7 +199,8 @@ export function renderRegistryHtml(table: GoldTable, options: { title: string })
   ul.tree ul { list-style: none; padding-left: 22px; border-left: 1px solid var(--line); margin: 2px 0 2px 7px; }
   .node { padding: 2px 0; }
   .name { font-weight: 600; }
-  .alias { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 0 7px; margin-left: 6px; font-size: 0.85em; white-space: nowrap; }
+  .aliases { margin: 1px 0 2px 14px; }
+  .alias { display: inline-block; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 0 7px; margin: 1px 6px 1px 0; font-size: 0.85em; overflow-wrap: anywhere; }
   .kind { font-size: 0.75em; font-weight: 600; border-radius: 4px; padding: 0 5px; margin-right: 7px; color: var(--surface-1); white-space: nowrap; display: inline-block; }
   .kind-isa { background: var(--kind-isa); }
   .kind-part-of { background: var(--kind-part-of); }
