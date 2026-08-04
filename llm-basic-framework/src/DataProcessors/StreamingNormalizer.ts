@@ -1,7 +1,8 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { EntityRegistry, GranularityEdgeKind } from '../EntityRegistry/EntityRegistry';
+import { LadderDiscovery } from '../Ladder/LadderDiscovery';
 import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
 import type { CandidateGenerator, Decision, DecisionRequest, DecisionStrategy } from '../Normalization/types';
 import type { LlmClient } from '../LlmClient/LlmClient';
@@ -9,6 +10,7 @@ import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import {
+  MentionRung,
   StreamingEntity,
   StreamingExtraction,
   extractAndParseJson,
@@ -42,21 +44,39 @@ interface Params {
    */
   prompts?: PromptProvider;
   /**
-   * The decision stage (M6). Omitted means the built-in `link-judge` path — the published Ψ_link
-   * behaviour the golden fixture pins — so the default arm is unaffected by this port existing.
+   * The decision stage (M6). Omitted means the built-in `link-judge` path — since 2026-08-04 the
+   * SKEIN v2 three-verdict judge (link | mint | defer with rung + parent-edge structure).
    *
    * Set it to run E1/E3/E8's alternative decision rules live. `bin/app.ts` wires it from
    * `DECISION_STRATEGY`.
    */
   decisionStrategy?: DecisionStrategy;
+  /**
+   * Granularity-ladder bootstrap (SKEIN v2). Optional so ladder-free arms remain runnable;
+   * `bin/app.ts` wires it for the incremental flow.
+   */
+  ladderDiscovery?: LadderDiscovery;
+}
+
+/** What the judge (built-in or strategy port) decided for one mention. */
+interface JudgeOutcome {
+  kind: 'link' | 'mint' | 'defer';
+  /** Validated candidate canonical, only for `link`. */
+  target?: string;
+  mentionRung?: MentionRung;
+  /** Validated candidate canonical the mint sits under, when the judge related them. */
+  parentCandidate?: string;
+  edgeKind?: GranularityEdgeKind;
+  reasoning?: string;
 }
 
 interface MentionPlan {
   entity: StreamingEntity;
   category: string; // canonical
   canonical?: string; // resolution result once known
-  candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string }>;
+  candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string; rung?: string }>;
   action: 'resolved' | 'mint' | 'judge';
+  outcome?: JudgeOutcome;
 }
 
 /**
@@ -96,10 +116,12 @@ export class StreamingNormalizer {
 
   #prompts: PromptProvider;
   #decisionStrategy?: DecisionStrategy;
+  #ladderDiscovery?: LadderDiscovery;
 
   constructor(params: Params) {
     this.#prompts = params.prompts ?? prompts;
     this.#decisionStrategy = params.decisionStrategy;
+    this.#ladderDiscovery = params.ladderDiscovery;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
@@ -174,6 +196,14 @@ export class StreamingNormalizer {
       return { entity, category, candidates: [], action: 'mint' as const };
     });
 
+    // Ladder bootstrap (SKEIN v2): fire/refresh the granularity ladder for every category this
+    // document touches, before judging — the judge's candidate lists label rungs from it.
+    if (this.#ladderDiscovery) {
+      for (const category of new Set(plans.map((plan) => plan.category))) {
+        await this.#ladderDiscovery.maybeDiscover(category, docId);
+      }
+    }
+
     // Exact fast path, then candidates
     for (const plan of plans) {
       const resolved = this.#entityRegistry.resolve(plan.category, plan.entity.name);
@@ -196,6 +226,8 @@ export class StreamingNormalizer {
         sim: candidate.sim,
         aliases: candidate.surfaces,
         channel: candidate.channel,
+        // Rung-aware candidates: the judge's list labels which ladder rung each candidate sits on.
+        rung: this.#entityRegistry.rungOf(plan.category, candidate.canonical),
       }));
       plan.action = plan.candidates.length > 0 ? 'judge' : 'mint';
     }
@@ -210,19 +242,19 @@ export class StreamingNormalizer {
     }
 
     if (judgeBatch.size > 0) {
-      // M6: the decision stage is a port. With no strategy injected this keeps using the built-in
-      // `link-judge` path, which is the published Ψ_link behaviour the golden fixture pins — so the
-      // default arm is unchanged and `psi-link-default` still measures what it always measured.
-      const verdictMap = this.#decisionStrategy
+      // M6: the decision stage is a port. With no strategy injected this uses the built-in
+      // `link-judge` path — the SKEIN v2 three-verdict judge since 2026-08-04.
+      const outcomeMap = this.#decisionStrategy
         ? await this.#strategyJudge([...judgeBatch.values()], extraction, docId, file)
         : await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
 
       for (const plan of plans) {
         if (plan.action !== 'judge') continue;
-        const verdict = verdictMap.get(mentionKey(plan.category, plan.entity.name));
-        if (verdict) {
-          plan.canonical = verdict;
-        } // else: link declined, or deferred — stays a mint
+        const outcome = outcomeMap.get(mentionKey(plan.category, plan.entity.name));
+        if (outcome) {
+          plan.outcome = outcome;
+          if (outcome.kind === 'link' && outcome.target) plan.canonical = outcome.target;
+        } // else: judge failed or dropped the mention — stays a mint
       }
     }
 
@@ -250,6 +282,7 @@ export class StreamingNormalizer {
         // link verdict
         this.#entityRegistry.link(plan.category, plan.canonical, plan.entity.name, {
           docId,
+          evidence: plan.outcome?.reasoning ?? null,
         });
         this.#candidateGenerator.onRegistryChange({
           type: 'link',
@@ -265,24 +298,79 @@ export class StreamingNormalizer {
           target: plan.canonical,
         });
       } else if (!plan.canonical) {
-        // mint (zero candidates, judge said mint, or judge failed)
+        // mint (zero candidates, judge said mint or defer, or judge failed).
+        // A defer is a PROVISIONAL mint: same registry write, plus a defer-queue entry the
+        // consolidator reviews — and it scores as a withheld decision (protocol §5), so the
+        // decision event stays `defer` with a null target.
+        const deferred = plan.outcome?.kind === 'defer';
         plan.canonical = this.#entityRegistry.mint(plan.category, plan.entity.name, {
           doc: docId,
           date: docDate,
         });
+        if (plan.outcome?.mentionRung) {
+          this.#entityRegistry.setRung(plan.category, plan.canonical, plan.outcome.mentionRung);
+        }
         this.#candidateGenerator.onRegistryChange({
           type: 'mint',
           category: plan.category,
           canonical: plan.canonical,
         });
-        await this.#decisionLog.logDecision({
-          docId,
-          mention: plan.entity.name,
-          category: plan.category,
-          candidates: describeCandidates(plan.candidates),
-          decision: 'mint',
-          target: plan.canonical,
-        });
+
+        // A mint may carry a validated parent candidate — the "hard non-merge plus a connecting
+        // edge" outcome. The edge kind came from the judge's preserving reading; provenance makes
+        // it consolidator-confirmable.
+        if (!deferred && plan.outcome?.parentCandidate && plan.outcome.edgeKind) {
+          const added = this.#entityRegistry.addGranularityEdge(plan.category, {
+            from: plan.canonical,
+            to: plan.outcome.parentCandidate,
+            kind: plan.outcome.edgeKind,
+            docId,
+            decision: 'judge',
+            evidence: plan.outcome.reasoning ?? null,
+          });
+          if (added) {
+            await this.#decisionLog.log({
+              op: 'granularity-edge',
+              doc: docId,
+              category: plan.category,
+              from: plan.canonical,
+              to: plan.outcome.parentCandidate,
+              kind: plan.outcome.edgeKind,
+              mentionRung: plan.outcome.mentionRung ?? null,
+              evidence: plan.outcome.reasoning ?? null,
+            });
+          }
+        }
+
+        if (deferred) {
+          this.#entityRegistry.pushDeferred({
+            category: plan.category,
+            mention: plan.entity.name,
+            mintedAs: plan.canonical,
+            candidates: plan.candidates.map((candidate) => candidate.name),
+            docId,
+          });
+          await this.#decisionLog.log({
+            op: 'decision',
+            docId,
+            mention: plan.entity.name,
+            category: plan.category,
+            candidates: describeCandidates(plan.candidates),
+            decision: 'defer',
+            target: null,
+            // Not part of the scoring contract — the provisional canonical, for state replay.
+            mintedAs: plan.canonical,
+          });
+        } else {
+          await this.#decisionLog.logDecision({
+            docId,
+            mention: plan.entity.name,
+            category: plan.category,
+            candidates: describeCandidates(plan.candidates),
+            decision: 'mint',
+            target: plan.canonical,
+          });
+        }
       }
     }
 
@@ -312,6 +400,9 @@ export class StreamingNormalizer {
     for (const plan of plans) {
       plan.entity.category = plan.category;
       plan.entity.normalizedName = plan.canonical;
+      // The registry surface this mention hit, in stored casing — what a consolidator split
+      // reassigns by. Registry writes above guarantee the lookup now resolves.
+      plan.entity.matchedVia = this.#entityRegistry.matchedSurface(plan.category, plan.entity.name);
       if (plan.category.toLowerCase() === 'country') {
         const code = await this.#countryNameNormalizer.normalizeCountry(plan.entity.name, docId);
         if (code) plan.entity.code = code;
@@ -363,17 +454,17 @@ export class StreamingNormalizer {
   /**
    * The M6 decision port, in place of the built-in `link-judge` call.
    *
-   * Returns the same shape `#linkJudge` does — `mentionKey → canonical` for links only — so the
-   * caller is identical either way. A `mint` or a `defer` is simply absent from the map; the
-   * difference between them is recorded in the decision log, not here, because the registry has
-   * nothing to record for either (see §5 of docs/statistical-protocol.md).
+   * Returns the same `mentionKey → JudgeOutcome` shape `#linkJudge` does, so the caller is
+   * identical either way. A strategy `defer` gets the same provisional-mint + defer-queue
+   * treatment as the built-in judge's (scored per §5 of docs/statistical-protocol.md); strategy
+   * ports carry no rung/parent structure.
    */
   async #strategyJudge(
     batch: MentionPlan[],
     extraction: StreamingExtraction,
     docId: number,
     file: string
-  ): Promise<Map<string, string>> {
+  ): Promise<Map<string, JudgeOutcome>> {
     const strategy = this.#decisionStrategy!;
     const title = String(extraction.metadata?.title || 'untitled');
     const snippet = await this.#loadSnippet(file);
@@ -410,53 +501,80 @@ export class StreamingNormalizer {
       );
     }
 
-    const verdictMap = new Map<string, string>();
+    const outcomeMap = new Map<string, JudgeOutcome>();
     decisions.forEach((decision, index) => {
       const plan = batch[index];
-      if (decision.kind !== 'link' || !decision.target) return;
-      // Accept links to actual candidates only, exactly as the built-in path does.
-      const target = plan.candidates.find(
-        (candidate) => candidate.name.toLowerCase() === decision.target!.trim().toLowerCase()
-      );
-      if (target) verdictMap.set(mentionKey(plan.category, plan.entity.name), target.name);
+      const key = mentionKey(plan.category, plan.entity.name);
+      if (decision.kind === 'link' && decision.target) {
+        // Accept links to actual candidates only, exactly as the built-in path does.
+        const target = plan.candidates.find(
+          (candidate) => candidate.name.toLowerCase() === decision.target!.trim().toLowerCase()
+        );
+        outcomeMap.set(
+          key,
+          target ? { kind: 'link', target: target.name } : { kind: 'mint' }
+        );
+        return;
+      }
+      outcomeMap.set(key, { kind: decision.kind === 'defer' ? 'defer' : 'mint' });
     });
-    return verdictMap;
+    return outcomeMap;
   }
 
+  /**
+   * The built-in SKEIN v2 linking judge: ONE batched call per document against
+   * `prompts/link-judge.md` (copied verbatim from the wiki prompt library). Everything the model
+   * sees goes through the prompt's `{{docTitle}}/{{docSnippet}}/{{mentionsBatch}}` placeholders.
+   *
+   * Post-checks (code, belt and braces — the prompt states them too):
+   * - `link` target must case-insensitively match a listed candidate, else the verdict is demoted
+   *   to `mint`;
+   * - `parentCandidate` must match a listed candidate, else the parent edge is dropped and the
+   *   mint stands;
+   * - `defer` is passed through — the caller mints provisionally and queues the pair.
+   */
   async #linkJudge(
     batch: MentionPlan[],
     extraction: StreamingExtraction,
     docId: number,
     file: string
-  ): Promise<Map<string, string>> {
+  ): Promise<Map<string, JudgeOutcome>> {
     const title = String(extraction.metadata?.title || 'untitled');
     const snippet = await this.#loadSnippet(file);
 
     const lines = batch.map((plan, index) => {
-      const candidates = plan.candidates
-        .map((c) => `${c.name} [aliases: ${c.aliases.join(', ')}]`)
-        .join('; ');
+      const candidates =
+        plan.candidates
+          .map((candidate) => {
+            const rung = candidate.rung ? ` [${candidate.rung}]` : ' [rung unknown]';
+            return `${candidate.name}${rung} (aliases: ${candidate.aliases.join(', ')})`;
+          })
+          .join('; ') || '(none)';
       return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
     });
 
-    const instructions = this.#prompts.render('link-judge');
-
-    const text = `Document: "${title}" — context: ${snippet}
-Mentions:
-${lines.join('\n')}`;
+    const instructions = this.#prompts.render('link-judge', {
+      docTitle: title,
+      docSnippet: snippet,
+      mentionsBatch: lines.join('\n'),
+    });
 
     const started = Date.now();
     console.time(`LINK-JUDGE doc ${docId}`);
     // Hoisted so the finally block can log tokens for a call that may have thrown.
     let response: LlmResponse | undefined;
     try {
-      response = await this.#llmClient.send(instructions, text, {
-        operator: 'link-judge',
-        docId,
-      });
+      response = await this.#llmClient.send(
+        instructions,
+        'Resolve the mentions listed in your instructions. Output the JSON verdicts object only.',
+        {
+          operator: 'link-judge',
+          docId,
+        }
+      );
       const verdicts = normalizeLinkVerdicts(extractAndParseJson(response.text) || {}) || [];
 
-      const verdictMap = new Map<string, string>();
+      const outcomeMap = new Map<string, JudgeOutcome>();
       // Key by category|mention, exactly as the caller does. Keying by mention alone silently lost a
       // verdict whenever one document carried the same surface under two categories — confirmed on
       // `atera`, extracted as both Organization and Software in doc 6280099. Both reach the judge as
@@ -466,7 +584,6 @@ ${lines.join('\n')}`;
         batch.map((plan) => [mentionKey(plan.category, plan.entity.name), plan])
       );
       for (const verdict of verdicts) {
-        if (verdict.verdict !== 'link') continue;
         // `category` has a LIVR default of '' — a model that omits it falls through to a name-only
         // lookup, but only when that surface is unambiguous in this batch. Guessing when two
         // categories share a surface is the very failure being fixed here.
@@ -474,15 +591,54 @@ ${lines.join('\n')}`;
           batchByMention.get(mentionKey(verdict.category ?? '', verdict.mention)) ??
           unambiguousPlan(batch, verdict.mention);
         if (!plan) continue;
-        // Only accept links to actual candidates' canonical names
-        const target = plan.candidates.find(
-          (c) => c.name.toLowerCase() === verdict.target.trim().toLowerCase()
-        );
-        if (target) {
-          verdictMap.set(mentionKey(plan.category, plan.entity.name), target.name);
+        const key = mentionKey(plan.category, plan.entity.name);
+        const findCandidate = (name: string) =>
+          plan.candidates.find(
+            (candidate) => candidate.name.toLowerCase() === name.trim().toLowerCase()
+          );
+
+        const mentionRung = verdict.mentionRung || undefined;
+        if (verdict.verdict === 'link') {
+          const target = findCandidate(verdict.target);
+          if (target) {
+            outcomeMap.set(key, {
+              kind: 'link',
+              target: target.name,
+              mentionRung,
+              reasoning: verdict.reasoning || undefined,
+            });
+          } else {
+            // Strict candidate matching: a link to an unlisted name is demoted to mint.
+            outcomeMap.set(key, { kind: 'mint', mentionRung });
+          }
+          continue;
         }
+
+        if (verdict.verdict === 'defer') {
+          outcomeMap.set(key, {
+            kind: 'defer',
+            mentionRung,
+            reasoning: verdict.reasoning || undefined,
+          });
+          continue;
+        }
+
+        // mint — possibly under a validated parent candidate
+        const parent = verdict.parentCandidate ? findCandidate(verdict.parentCandidate) : undefined;
+        if (verdict.parentCandidate && !parent) {
+          console.warn(
+            `LINK-JUDGE: parentCandidate "${verdict.parentCandidate}" for "${verdict.mention}" is not a listed candidate — edge dropped, mint stands`
+          );
+        }
+        outcomeMap.set(key, {
+          kind: 'mint',
+          mentionRung,
+          parentCandidate: parent?.name,
+          edgeKind: parent ? (verdict.edgeKind || 'part-of') : undefined,
+          reasoning: verdict.reasoning || undefined,
+        });
       }
-      return verdictMap;
+      return outcomeMap;
     } catch (error) {
       // Mint-all is conservative and repairable by the consolidator — never abort the doc
       console.error(`LINK-JUDGE failed for doc ${docId}, minting all:`, error);

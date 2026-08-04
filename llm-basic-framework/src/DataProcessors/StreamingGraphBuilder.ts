@@ -1,3 +1,4 @@
+import { EntityRegistry, GranularityEdge, Rung } from '../EntityRegistry/EntityRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId } from '../utils/fsUtils';
 import { StreamingArtifact, StreamingEntity } from '../utils/validationUtils';
@@ -5,7 +6,34 @@ import fs from 'fs/promises';
 
 export type EdgesFrom = 'layered' | 'extracted' | 'cooccurrence';
 
+/** Edge *provenance* — not to be confused with the registry's granularity edge kinds. */
 type EdgeKind = 'extracted' | 'inferred';
+
+/**
+ * Merge granularity as a fold-time parameter (SKEIN v2): a per-category rung choice, parsed from
+ * `LAMBDA` ("Software=g2,default=g0"). Artifacts always stamp g0; every coarser view is computed
+ * here at fold time and never stored — so views cannot drift.
+ */
+export interface LambdaSpec {
+  default: Rung;
+  perCategory: Record<string, Rung>;
+}
+
+const RUNG_ORDER: Record<Rung, number> = { g0: 0, g1: 1, g2: 2, g3: 3 };
+
+export function parseLambda(value: string | undefined): LambdaSpec {
+  const spec: LambdaSpec = { default: 'g0', perCategory: {} };
+  if (!value?.trim()) return spec;
+  for (const part of value.split(',')) {
+    const [rawKey, rawRung] = part.split('=').map((piece) => piece?.trim());
+    if (!rawKey || !rawRung || !(rawRung in RUNG_ORDER)) {
+      throw new Error(`LAMBDA entry "${part}" is not <category|default>=<g0..g3>`);
+    }
+    if (rawKey === 'default') spec.default = rawRung as Rung;
+    else spec.perCategory[rawKey] = rawRung as Rung;
+  }
+  return spec;
+}
 
 interface GraphNode {
   id: number;
@@ -30,6 +58,16 @@ interface Params {
   outputDir: string; // .../graph
   schemaRegistry: SchemaRegistry;
   edgesFrom?: EdgesFrom;
+  /** Identity graph holding the granularity edges λ folds along. Optional: no registry, no fold. */
+  entityRegistry?: EntityRegistry;
+  /** Per-category rung choice. Default λ = g0 everywhere — the unfolded, detailed view. */
+  lambda?: LambdaSpec;
+  /**
+   * Opt-in to folding `part-of` (widening) edges. Such a view is an INTERPRETATION — attribution
+   * widening ("Unit 74455 did X" read as "the GRU did X") — so every fold through a `part-of`
+   * edge marks the touched edges `inferred`, and `lambda.json` labels the view interpretive.
+   */
+  interpretive?: boolean;
 }
 
 export class StreamingGraphBuilder {
@@ -37,18 +75,28 @@ export class StreamingGraphBuilder {
   public readonly outputDir: string;
 
   #schemaRegistry: SchemaRegistry;
+  #entityRegistry?: EntityRegistry;
   #edgesFrom: EdgesFrom;
+  #lambda: LambdaSpec;
+  #interpretive: boolean;
+  /** (category → canonical → projection), built once per run from the registry's edge layer. */
+  #projection = new Map<string, Map<string, { label: string; widened: boolean }>>();
 
   constructor(params: Params) {
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#schemaRegistry = params.schemaRegistry;
+    this.#entityRegistry = params.entityRegistry;
     this.#edgesFrom = params.edgesFrom ?? 'layered';
+    this.#lambda = params.lambda ?? { default: 'g0', perCategory: {} };
+    this.#interpretive = params.interpretive ?? false;
   }
 
   async run() {
     await ensureDir(this.outputDir);
     await this.#schemaRegistry.load();
+    if (this.#entityRegistry) await this.#entityRegistry.load();
+    this.#buildProjection();
 
     const files = sortByNumericId(await fs.readdir(this.inputDir));
     const allData: StreamingArtifact[] = [];
@@ -58,6 +106,83 @@ export class StreamingGraphBuilder {
       allData.push(JSON.parse(content.toString()) as StreamingArtifact);
     }
     await this.#buildGraph(allData);
+  }
+
+  /**
+   * λ-projection along the registry's granularity layer, computed once per fold.
+   *
+   * Per canonical: climb finer→coarser edges toward the category's λ rung, **rounding down to the
+   * nearest populated rung** (the climb stops rather than overshoot, and stops when no eligible
+   * edge continues). `coarsens-to` edges fold freely; `part-of` only when the view is
+   * interpretive. Diamonds (several eligible parents) resolve deterministically: the oldest edge
+   * (lowest docId, then lexicographic target) wins — a documented path choice, so the fold is
+   * reproducible.
+   */
+  #buildProjection(): void {
+    this.#projection.clear();
+    if (!this.#entityRegistry) return;
+
+    for (const category of this.#entityRegistry.categories()) {
+      const target = this.#lambda.perCategory[category] ?? this.#lambda.default;
+      if (RUNG_ORDER[target] === 0) continue; // λ=g0: nothing folds, projection is identity
+
+      const edges = this.#entityRegistry.granularityEdges(category);
+      if (edges.length === 0) continue;
+      const eligible = edges.filter(
+        (edge) => edge.kind === 'coarsens-to' || (this.#interpretive && edge.kind === 'part-of')
+      );
+      if (eligible.length === 0) continue;
+
+      const byFrom = new Map<string, GranularityEdge[]>();
+      for (const edge of eligible) {
+        byFrom.set(edge.from, [...(byFrom.get(edge.from) ?? []), edge]);
+      }
+
+      const registry = this.#entityRegistry;
+      const rungIndex = (name: string): number | undefined => {
+        const rung = registry.rungOf(category, name);
+        return rung === undefined ? undefined : RUNG_ORDER[rung];
+      };
+
+      const map = new Map<string, { label: string; widened: boolean }>();
+      for (const canonical of Object.keys(registry.records(category))) {
+        let current = canonical;
+        let widened = false;
+        const seen = new Set<string>([current]);
+
+        for (;;) {
+          const options = byFrom.get(current);
+          if (!options || options.length === 0) break;
+          const chosen = [...options].sort(
+            (a, b) => a.docId - b.docId || (a.to < b.to ? -1 : a.to > b.to ? 1 : 0)
+          )[0];
+          // Round down: never climb PAST the λ rung. An unknown parent rung counts as one step
+          // coarser than the current node, so unrung chains still terminate at the target.
+          const currentIndex = rungIndex(current) ?? 0;
+          const parentIndex = rungIndex(chosen.to) ?? currentIndex + 1;
+          if (parentIndex > RUNG_ORDER[target]) break;
+          if (seen.has(chosen.to)) break; // acyclicity is checked on write; belt and braces
+          seen.add(chosen.to);
+          if (chosen.kind === 'part-of') widened = true;
+          current = chosen.to;
+          if (parentIndex === RUNG_ORDER[target]) break;
+        }
+
+        if (current !== canonical) map.set(canonical, { label: current, widened });
+      }
+      if (map.size > 0) this.#projection.set(category, map);
+    }
+
+    const folded = [...this.#projection.values()].reduce((sum, map) => sum + map.size, 0);
+    if (folded > 0) {
+      console.log(
+        `λ-fold: ${folded} canonical(s) project coarser (interpretive=${this.#interpretive})`
+      );
+    }
+  }
+
+  #project(category: string, name: string): { label: string; widened: boolean } {
+    return this.#projection.get(category)?.get(name) ?? { label: name, widened: false };
   }
 
   // Copied from DataGraphBuilder — emergent categories fall through to the default branches
@@ -218,9 +343,13 @@ export class StreamingGraphBuilder {
     const nodeKey = (category: string, normalizedName: string) =>
       `${category}\u0000${normalizedName}`; // NUL join: safe even if a name contains ":"
 
-    const getOrCreateNode = (entity: StreamingEntity, date: string): GraphNode => {
+    const getOrCreateNode = (
+      entity: StreamingEntity,
+      date: string
+    ): { node: GraphNode; widened: boolean } => {
       const entityType = entity.category;
-      const label = entity.normalizedName || entity.name;
+      const projected = this.#project(entityType, entity.normalizedName || entity.name);
+      const label = projected.label;
       const key = nodeKey(entityType, label);
 
       if (!nodeMap.has(key)) {
@@ -240,7 +369,7 @@ export class StreamingGraphBuilder {
           existingNode.firstSeenDate = date;
         }
       }
-      return nodeMap.get(key)!;
+      return { node: nodeMap.get(key)!, widened: projected.widened };
     };
 
     const convertToISO8601 = (dateStr: string): string => {
@@ -263,14 +392,17 @@ export class StreamingGraphBuilder {
       edgeType: string,
       kind: EdgeKind,
       date: string,
-      incidentId: number
+      incidentId: number,
+      // Projection contract: an endpoint folded through a `part-of` edge makes the edge an
+      // interpretation — `inferred` propagates, `extracted` does not survive a widening fold.
+      widened = false
     ) => {
       if (source.id === target.id) return;
       edges.push({
         source: source.id,
         target: target.id,
         edgeType,
-        kind,
+        kind: widened ? 'inferred' : kind,
         date,
         incidentIds: new Set([incidentId]),
       });
@@ -290,8 +422,16 @@ export class StreamingGraphBuilder {
       const extractedPairs = new Set<string>();
       if (this.#edgesFrom !== 'cooccurrence') {
         for (const relation of relations || []) {
-          const headKey = nodeKey(relation.headCategory, relation.normalizedHead || relation.head);
-          const tailKey = nodeKey(relation.tailCategory, relation.normalizedTail || relation.tail);
+          const headProjection = this.#project(
+            relation.headCategory,
+            relation.normalizedHead || relation.head
+          );
+          const tailProjection = this.#project(
+            relation.tailCategory,
+            relation.normalizedTail || relation.tail
+          );
+          const headKey = nodeKey(relation.headCategory, headProjection.label);
+          const tailKey = nodeKey(relation.tailCategory, tailProjection.label);
           const headNode = nodeMap.get(headKey);
           const tailNode = nodeMap.get(tailKey);
           if (!headNode || !tailNode) {
@@ -302,7 +442,15 @@ export class StreamingGraphBuilder {
           }
           const edgeType =
             this.#schemaRegistry.resolveRelationType(relation.type) || relation.type;
-          addEdge(headNode, tailNode, edgeType, 'extracted', date, incidentId);
+          addEdge(
+            headNode,
+            tailNode,
+            edgeType,
+            'extracted',
+            date,
+            incidentId,
+            headProjection.widened || tailProjection.widened
+          );
           extractedPairs.add([headKey, tailKey].sort().join('|'));
         }
       }
@@ -318,21 +466,30 @@ export class StreamingGraphBuilder {
               // Legacy 2025-baseline: hardcoded rules over every pair
               const relationship = this.#inferRelationship(entity1, entity2);
               if (relationship) {
+                const source = getOrCreateNode(relationship.source, date);
+                const target = getOrCreateNode(relationship.target, date);
                 addEdge(
-                  getOrCreateNode(relationship.source, date),
-                  getOrCreateNode(relationship.target, date),
+                  source.node,
+                  target.node,
                   relationship.edgeType,
                   'inferred',
                   date,
-                  incidentId
+                  incidentId,
+                  source.widened || target.widened
                 );
               }
               continue;
             }
 
             // Layered: pair-rule fallback only where no extracted relation covers the pair
-            const key1 = nodeKey(entity1.category, entity1.normalizedName || entity1.name);
-            const key2 = nodeKey(entity2.category, entity2.normalizedName || entity2.name);
+            const key1 = nodeKey(
+              entity1.category,
+              this.#project(entity1.category, entity1.normalizedName || entity1.name).label
+            );
+            const key2 = nodeKey(
+              entity2.category,
+              this.#project(entity2.category, entity2.normalizedName || entity2.name).label
+            );
             if (extractedPairs.has([key1, key2].sort().join('|'))) continue;
 
             const rule = this.#schemaRegistry.getPairRule(
@@ -350,13 +507,16 @@ export class StreamingGraphBuilder {
               ? [entity1, entity2]
               : [entity2, entity1];
 
+            const sourceNode = getOrCreateNode(source, date);
+            const targetNode = getOrCreateNode(target, date);
             addEdge(
-              getOrCreateNode(source, date),
-              getOrCreateNode(target, date),
+              sourceNode.node,
+              targetNode.node,
               rule.relation,
               'inferred',
               date,
-              incidentId
+              incidentId,
+              sourceNode.widened || targetNode.widened
             );
           }
         }
@@ -404,6 +564,21 @@ export class StreamingGraphBuilder {
       );
     }
     await fs.writeFile(`${this.outputDir}/edges.csv`, edgesContent.join('\n'));
+
+    // Record which fold produced these CSVs — λ is a fold-time parameter, never stored state, so
+    // the view's parameters travel beside it rather than inside the runId.
+    await fs.writeFile(
+      `${this.outputDir}/lambda.json`,
+      JSON.stringify(
+        {
+          lambda: this.#lambda,
+          interpretive: this.#interpretive,
+          foldedCanonicals: [...this.#projection.values()].reduce((sum, map) => sum + map.size, 0),
+        },
+        undefined,
+        2
+      )
+    );
 
     console.log(`Graph built with ${nodes.length} nodes and ${aggregatedEdges.length} edges`);
     console.log(`Output files: ${this.outputDir}/nodes.csv and ${this.outputDir}/edges.csv`);

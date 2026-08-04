@@ -87,14 +87,14 @@ test('an explicit constructor policy wins over the file’s', async () => {
   assert.equal(registry.canonicalPolicy, 'highest-degree');
 });
 
-test('writes v2 and round-trips through the reader', async () => {
+test('writes v3 and round-trips through the reader', async () => {
   const registry = await seeded([
     { category: 'HackerGroup', canonical: 'APT28', aliases: ['Fancy Bear'], doc: 5 },
   ]);
   await registry.save();
 
   const written = JSON.parse(await fs.readFile(registry.filePath, 'utf8'));
-  assert.equal(written.version, 2);
+  assert.equal(written.version, 3);
   assert.equal(written.canonicalPolicy, 'first-seen');
   assert.equal(written.categories.HackerGroup.APT28.aliases[0].surface, 'APT28');
   assert.equal(written.categories.HackerGroup.APT28.aliases[0].decision, 'mint');
@@ -558,4 +558,158 @@ test('v2 is written with a recorded policy, so a reload cannot silently change m
   const reloaded = new EntityRegistry({ filePath: registry.filePath });
   await reloaded.load();
   assert.equal(reloaded.canonicalPolicy, 'frequency-weighted');
+});
+
+// --- v3: identity-graph layers --------------------------------------------------------------------
+
+test('v3 round-trips rungs, granularity/rename edges and the defer queue', async () => {
+  const registry = await seeded([
+    { category: 'Software', canonical: 'Microsoft Office 2010 SP2', doc: 1 },
+    { category: 'Software', canonical: 'Microsoft Office', doc: 2 },
+    { category: 'HackerGroup', canonical: 'Sandworm', doc: 3 },
+    { category: 'HackerGroup', canonical: 'APT44', doc: 4 },
+  ]);
+
+  registry.setRung('Software', 'Microsoft Office 2010 SP2', 'g0');
+  registry.setRung('Software', 'Microsoft Office', 'g2');
+  assert.ok(
+    registry.addGranularityEdge('Software', {
+      from: 'Microsoft Office 2010 SP2',
+      to: 'Microsoft Office',
+      kind: 'coarsens-to',
+      docId: 5,
+      decision: 'judge',
+      evidence: 'service pack blurred',
+    })
+  );
+  assert.ok(
+    registry.addRenameEdge('HackerGroup', {
+      from: 'Sandworm',
+      to: 'APT44',
+      docId: 6,
+      decision: 'consolidator',
+      validFrom: '2024-01-01',
+    })
+  );
+  registry.pushDeferred({
+    category: 'HackerGroup',
+    mention: 'UAC-0002',
+    mintedAs: 'UAC-0002',
+    candidates: ['Sandworm'],
+    docId: 7,
+  });
+  await registry.save();
+
+  const raw = JSON.parse(await fs.readFile(registry.filePath, 'utf8'));
+  assert.equal(raw.version, 3);
+
+  const reloaded = new EntityRegistry({ filePath: registry.filePath });
+  await reloaded.load();
+  assert.equal(reloaded.rungOf('Software', 'Microsoft Office 2010 SP2'), 'g0');
+  assert.equal(reloaded.granularityEdges('Software').length, 1);
+  assert.equal(reloaded.granularityEdges('Software')[0].kind, 'coarsens-to');
+  assert.equal(reloaded.renameEdges('HackerGroup')[0].to, 'APT44');
+  assert.equal(reloaded.deferred().length, 1);
+});
+
+test('a v2 file loads with empty v3 layers', async () => {
+  const filePath = await tmpPath();
+  const v2: RegistryDataV2 = {
+    version: 2,
+    canonicalPolicy: 'first-seen',
+    categories: {
+      C: {
+        A: {
+          aliases: [{ surface: 'A', docId: 1, decision: 'mint' }],
+          firstSeen: { doc: 1, date: '' },
+        },
+      },
+    },
+  };
+  await fs.writeFile(filePath, JSON.stringify(v2));
+  const registry = new EntityRegistry({ filePath });
+  await registry.load();
+  assert.equal(registry.resolve('C', 'a'), 'A');
+  assert.deepEqual(registry.granularityEdges('C'), []);
+  assert.deepEqual(registry.deferred(), []);
+});
+
+test('granularity edges reject self-loops, unknown endpoints and cycles', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+    { category: 'C', canonical: 'D', doc: 3 },
+  ]);
+  const edge = (from: string, to: string) =>
+    registry.addGranularityEdge('C', { from, to, kind: 'coarsens-to', docId: 1, decision: 'judge' });
+
+  assert.equal(edge('A', 'A'), false, 'self-loop');
+  assert.equal(edge('A', 'nope'), false, 'unknown endpoint');
+  assert.equal(edge('A', 'B'), true);
+  assert.equal(edge('B', 'D'), true);
+  assert.equal(edge('D', 'A'), false, 'would close a cycle');
+  assert.equal(edge('A', 'B'), true, 'idempotent re-add');
+  assert.equal(registry.granularityEdges('C').length, 2);
+
+  assert.equal(registry.removeGranularityEdge('C', 'B', 'D'), true);
+  assert.equal(edge('D', 'A'), true, 'edge is legal once the path is gone');
+});
+
+test('setRung is first-write-wins', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', doc: 1 }]);
+  registry.setRung('C', 'A', 'g1');
+  registry.setRung('C', 'A', 'g3');
+  assert.equal(registry.rungOf('C', 'A'), 'g1');
+});
+
+test('applyMerges rewrites edges and defer entries to the survivor and drops self-loops', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+    { category: 'C', canonical: 'Parent', doc: 3 },
+  ]);
+  registry.addGranularityEdge('C', { from: 'A', to: 'Parent', kind: 'part-of', docId: 1, decision: 'judge' });
+  registry.addGranularityEdge('C', { from: 'B', to: 'Parent', kind: 'part-of', docId: 2, decision: 'judge' });
+  registry.addGranularityEdge('C', { from: 'B', to: 'A', kind: 'coarsens-to', docId: 2, decision: 'judge' });
+  registry.pushDeferred({ category: 'C', mention: 'b', mintedAs: 'B', candidates: ['A'], docId: 9 });
+
+  registry.applyMerges('C', [{ from: 'B', into: 'A' }]);
+
+  const edges = registry.granularityEdges('C');
+  assert.deepEqual(
+    edges.map((e) => `${e.from}->${e.to}`),
+    ['A->Parent'],
+    'B\'s duplicate edge deduped, B->A self-loop dropped'
+  );
+  assert.equal(registry.deferred()[0].mintedAs, 'A', 'defer entry follows the survivor');
+});
+
+test('move drops edges touching the departing canonical; moveCategory migrates the whole layer', async () => {
+  const registry = await seeded([
+    { category: 'X', canonical: 'A', doc: 1 },
+    { category: 'X', canonical: 'B', doc: 2 },
+  ]);
+  registry.addGranularityEdge('X', { from: 'A', to: 'B', kind: 'coarsens-to', docId: 1, decision: 'judge' });
+
+  registry.move('X', 'A', 'Y');
+  assert.deepEqual(registry.granularityEdges('X'), [], 'edge touching moved canonical dropped');
+
+  // Rebuild the pair inside one category, then migrate the bucket wholesale.
+  registry.move('Y', 'A', 'X');
+  registry.addGranularityEdge('X', { from: 'A', to: 'B', kind: 'coarsens-to', docId: 1, decision: 'judge' });
+  registry.pushDeferred({ category: 'X', mention: 'a', mintedAs: 'A', candidates: [], docId: 3 });
+  registry.moveCategory('X', 'Z');
+  assert.equal(registry.granularityEdges('Z').length, 1, 'granularity layer migrated with the bucket');
+  assert.equal(registry.deferred()[0].category, 'Z', 'defer entries follow the category merge');
+});
+
+test('clearDeferred removes only consumed entries', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', doc: 1 }]);
+  registry.pushDeferred({ category: 'C', mention: 'x', mintedAs: 'A', candidates: [], docId: 1 });
+  registry.pushDeferred({ category: 'C', mention: 'y', mintedAs: 'A', candidates: [], docId: 2 });
+  registry.pushDeferred({ category: 'C', mention: 'x', mintedAs: 'A', candidates: [], docId: 1 }); // dup ignored
+  assert.equal(registry.deferred().length, 2);
+
+  registry.clearDeferred([{ category: 'C', mention: 'x', mintedAs: 'A', candidates: [], docId: 1 }]);
+  assert.deepEqual(registry.deferred().map((d) => d.mention), ['y']);
 });

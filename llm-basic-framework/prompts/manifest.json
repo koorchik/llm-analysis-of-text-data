@@ -10,14 +10,15 @@
  "consolidate-merge": {
   "file": "prompts/consolidate-merge.md",
   "extractedFrom": "src/Consolidator/RegistryConsolidator.ts",
-  "sha256": "e011226b8e7f58978df625162714b313082ea581f9d2092b7e9d535a3b3d0052",
+  "note": "2026-08-04: extended from merge-only to the full SKEIN v2 repair vocabulary (merge / edge / rename / split)",
+  "sha256": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
   "variables": [
    {
     "placeholder": "subject",
     "source": "subject"
    }
   ],
-  "bytes": 632
+  "bytes": 1972
  },
  "country-normalize": {
   "file": "prompts/country-normalize.md",
@@ -72,12 +73,49 @@
   ],
   "bytes": 2322
  },
+ "ladder": {
+  "file": "prompts/ladder.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Ladder/LadderDiscovery.ts",
+  "copiedFrom": "dissert/wiki/notes/prompts.md § Category → granularity ladder (g0–g3), verbatim fenced block",
+  "sha256": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+  "variables": [
+   {
+    "placeholder": "CATEGORY",
+    "source": "category name from schema.json"
+   },
+   {
+    "placeholder": "DEFINITION",
+    "source": "one-line category definition from schema.json"
+   },
+   {
+    "placeholder": "EXAMPLES",
+    "source": "8–20 real surface forms sampled from the registry, first-seen order"
+   }
+  ],
+  "bytes": 13945
+ },
  "link-judge": {
   "file": "prompts/link-judge.md",
-  "extractedFrom": "src/DataProcessors/StreamingNormalizer.ts",
-  "sha256": "e247090f85cc6f968b84a06f70dc2385b42eda5915e109dd2d86d36da72efc75",
-  "variables": [],
-  "bytes": 738
+  "extractedFrom": null,
+  "authoredFor": "src/DataProcessors/StreamingNormalizer.ts",
+  "copiedFrom": "dissert/wiki/notes/prompts.md § Document entities streaming linking judge (Ψ_link), verbatim fenced block (replaced the pre-redesign two-verdict prompt 2026-08-04)",
+  "sha256": "04514b756ee24c46644f5b9f3cae1bf965f940f618d50c4cb2674db98cc4c8ec",
+  "variables": [
+   {
+    "placeholder": "docTitle",
+    "source": "extraction.metadata.title"
+   },
+   {
+    "placeholder": "docSnippet",
+    "source": "first 600 chars of the source document, whitespace-collapsed"
+   },
+   {
+    "placeholder": "mentionsBatch",
+    "source": "numbered unresolved mentions with candidate sets (canonical, rung, aliases)"
+   }
+  ],
+  "bytes": 2999
  },
  "listwise-select": {
   "file": "prompts/listwise-select.md",

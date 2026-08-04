@@ -6,7 +6,7 @@ import { DataExtractor } from '../src/DataProcessors/DataExtractor';
 import { DataGraphBuilder } from '../src/DataProcessors/DataGraphBuilder';
 import { DataNormalizer } from '../src/DataProcessors/DataNormalizer';
 import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
-import { StreamingGraphBuilder, EdgesFrom } from '../src/DataProcessors/StreamingGraphBuilder';
+import { StreamingGraphBuilder, EdgesFrom, parseLambda } from '../src/DataProcessors/StreamingGraphBuilder';
 import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
@@ -17,6 +17,7 @@ import { RunCard } from '../src/Experiment/RunCard';
 import { resolveRunConfig, type ResolvedRunConfig } from '../src/Experiment/RunConfig';
 import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
+import { LadderDiscovery } from '../src/Ladder/LadderDiscovery';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import type { LlmBackendBase, LlmCallOptions } from '../src/LlmClient/LlmClientBackendBase';
 import { createLlmBackend as buildLlmBackend } from '../src/LlmClient/createBackend';
@@ -82,11 +83,25 @@ const CONFIG = {
   candidateMinSim:
     process.env.CANDIDATE_MIN_SIM === undefined ? undefined : Number(process.env.CANDIDATE_MIN_SIM),
 
+  // SKEIN v2 ladder bootstrap. N same-model ensemble runs by default (spec floor 3); a
+  // comma-separated `provider:model` list switches to a multi-model ensemble. All three knobs
+  // fold into the runId — two arms differing only in ladder policy must not share a directory.
+  ladderEnsembleN:
+    process.env.LADDER_ENSEMBLE_N === undefined ? 3 : Number(process.env.LADDER_ENSEMBLE_N),
+  ladderEnsembleModels: process.env.LADDER_ENSEMBLE_MODELS || undefined,
+  ladderMinExamples:
+    process.env.LADDER_MIN_EXAMPLES === undefined ? 8 : Number(process.env.LADDER_MIN_EXAMPLES),
+
   // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
   embeddings: process.env.EMBEDDINGS === '1',
 
   edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
+
+  // SKEIN v2 λ: merge granularity at fold time (streamingGraphBuilder only, zero LLM calls).
+  // e.g. LAMBDA="Software=g2,default=g0"; LAMBDA_INTERPRETIVE=1 opts into folding part-of edges.
+  lambda: process.env.LAMBDA || undefined,
+  lambdaInterpretive: process.env.LAMBDA_INTERPRETIVE === '1',
 
   // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
   // share an output directory, so they cannot silently resume each other.
@@ -150,6 +165,11 @@ async function main() {
       candidateK: CONFIG.candidateK ?? null,
       candidateMinSim: CONFIG.candidateMinSim ?? null,
       embeddings: CONFIG.embeddings,
+      ladder: {
+        ensembleN: CONFIG.ladderEnsembleN,
+        ensembleModels: CONFIG.ladderEnsembleModels ?? null,
+        minExamples: CONFIG.ladderMinExamples,
+      },
     },
   });
 
@@ -175,7 +195,7 @@ async function main() {
   const candidateGenerator = createCandidateGenerator(embeddingsClient);
 
   // Create processors
-  const processors = createProcessors(llmClient, embeddingsClient, runDir, candidateGenerator);
+  const processors = createProcessors(llmClient, embeddingsClient, runDir, candidateGenerator, costMeter);
 
   // Build flow
   const batchSteps: Record<string, () => Promise<void>> = {
@@ -322,7 +342,8 @@ function createProcessors(
   llmClient: LlmClient,
   embeddingsClient: EmbeddingsClient,
   runDir: string,
-  candidateGenerator: CandidateGenerator
+  candidateGenerator: CandidateGenerator,
+  costMeter?: CostMeter
 ) {
   const modelDir = llmClient.modelName.replace(/:/g, '-');
   const baseDir = CONFIG.outputDir;
@@ -408,6 +429,39 @@ function createProcessors(
     decisionLog,
   });
 
+  // SKEIN v2 ladder bootstrap. Ensemble members: either LADDER_ENSEMBLE_MODELS
+  // ("provider:model,provider:model" — the gold annotator's spec format) or N runs of the
+  // session model. Member clients share the run's cost meter, so ladder calls are priced.
+  const ladderMembers = CONFIG.ladderEnsembleModels
+    ?.split(',')
+    .map((spec) => spec.trim())
+    .filter(Boolean)
+    .map((spec) => {
+      const [provider, ...modelParts] = spec.split(':');
+      const model = modelParts.join(':');
+      if (!provider || !model) {
+        throw new Error(
+          `LADDER_ENSEMBLE_MODELS entry "${spec}" is not provider:model (e.g. anthropic:claude-opus-5)`
+        );
+      }
+      return {
+        label: spec,
+        client: costMeter
+          ? createLlmClient(buildLlmBackend({ provider, model }), costMeter)
+          : llmClient,
+      };
+    });
+
+  const ladderDiscovery = new LadderDiscovery({
+    llmClient,
+    schemaRegistry,
+    entityRegistry,
+    decisionLog,
+    ensembleN: CONFIG.ladderEnsembleN,
+    ...(ladderMembers && ladderMembers.length > 0 ? { members: ladderMembers } : {}),
+    minExamples: CONFIG.ladderMinExamples,
+  });
+
   const streamingNormalizer = new StreamingNormalizer({
     inputDir: streamingExtractor.outputDir,
     outputDir: `${incrementalDir}/artifacts`,
@@ -418,6 +472,7 @@ function createProcessors(
     decisionLog,
     sourceDir: inputDir,
     preprocessor,
+    ladderDiscovery,
     decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
     // M5: previously hardcoded to StringSimilarityGenerator inside the normalizer, which left every
     // generator M4 shipped with no live caller.
@@ -430,7 +485,10 @@ function createProcessors(
     inputDir: streamingNormalizer.outputDir,
     outputDir: `${incrementalDir}/graph`,
     schemaRegistry,
+    entityRegistry,
     edgesFrom: CONFIG.edgesFrom,
+    lambda: parseLambda(CONFIG.lambda),
+    interpretive: CONFIG.lambdaInterpretive,
   });
 
   const registryConsolidator = new RegistryConsolidator({

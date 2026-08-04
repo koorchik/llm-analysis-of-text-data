@@ -54,7 +54,67 @@ export interface CanonicalRecord {
   externalIds?: Record<string, string | null>;
   /** Observations per category — the input for soft category blocking later. */
   categoryCounts?: Record<string, number>;
+  /**
+   * Position on the category's granularity ladder, as judged at mint time (`mentionRung`).
+   * Absent on pre-v3 records and on entities minted before their category had a ladder.
+   */
+  rung?: Rung;
   firstSeen: { doc: number; date: string };
+}
+
+// --- v3: identity-graph layers ---------------------------------------------------------------
+
+export type Rung = 'g0' | 'g1' | 'g2' | 'g3';
+
+/**
+ * Granularity edge kinds are DERIVED from the LLM's `preserving` verdict — `coarsens-to` when
+ * folding keeps a fact's subject (preserving: true), `part-of` when it widens attribution
+ * (preserving: false). The name `isa` is retired (wiki note `isa-vs-partof-flags`, 2026-08-04).
+ * Not to be confused with the graph builder's `extracted|inferred` edge *provenance* kinds.
+ */
+export type GranularityEdgeKind = 'coarsens-to' | 'part-of';
+
+export type EdgeDecision = 'judge' | 'consolidator' | 'ladder-binding' | 'migrated';
+
+/** Finer → coarser, same category. Per-edge provenance mirrors `AliasRecord` — the precondition
+ * for a *local* split (one bad edge deletes without unpicking a transitive merge). */
+export interface GranularityEdge {
+  /** Finer canonical. */
+  from: string;
+  /** Coarser canonical. */
+  to: string;
+  kind: GranularityEdgeKind;
+  docId: number;
+  decision: EdgeDecision;
+  evidence?: string | null;
+  addedBy?: string | null;
+}
+
+/** Old designation → new, same referent over time. Never an alias, never auto-folded. */
+export interface RenameEdge {
+  from: string;
+  to: string;
+  kind: 'renamed-to';
+  /** ISO date the new designation takes effect, when known. */
+  validFrom?: string | null;
+  docId: number;
+  decision: EdgeDecision;
+  evidence?: string | null;
+  addedBy?: string | null;
+}
+
+/**
+ * A judge `defer` = provisional mint + this queue entry. The consolidator reviews the queue;
+ * decisions.jsonl is never read at runtime (deck rule 10), so the queue lives in registry state.
+ */
+export interface DeferredPair {
+  category: string;
+  mention: string;
+  /** The provisional canonical the mention was minted as. */
+  mintedAs: string;
+  /** Candidate canonical names the judge could not decide between. */
+  candidates: string[];
+  docId: number;
 }
 
 /**
@@ -75,6 +135,22 @@ export interface RegistryDataV2 {
   version: 2;
   canonicalPolicy: CanonicalPolicy;
   categories: Record<string, Record<string, CanonicalRecord>>;
+}
+
+/**
+ * v3 — the registry as an **identity graph** (SKEIN v2 deck): the v2 alias layer plus strictly
+ * separated granularity and rename edge layers and the consolidator's defer queue. Assertional
+ * relations never enter this file.
+ */
+export interface RegistryDataV3 {
+  version: 3;
+  canonicalPolicy: CanonicalPolicy;
+  categories: Record<string, Record<string, CanonicalRecord>>;
+  /** category → granularity edges (finer → coarser, same category). */
+  granularityEdges: Record<string, GranularityEdge[]>;
+  /** category → rename chains. */
+  renameEdges: Record<string, RenameEdge[]>;
+  deferQueue: DeferredPair[];
 }
 
 export interface MergeOp {
@@ -109,6 +185,9 @@ export class EntityRegistry {
   public canonicalPolicy: CanonicalPolicy;
 
   #categories: Record<string, Record<string, CanonicalRecord>> = {};
+  #granularityEdges: Record<string, GranularityEdge[]> = {};
+  #renameEdges: Record<string, RenameEdge[]> = {};
+  #deferQueue: DeferredPair[] = [];
   #aliasIndex = new Map<string, Map<string, string>>(); // category → lowercased alias → canonical
   #loaded = false;
   #dirty = false;
@@ -138,8 +217,12 @@ export class EntityRegistry {
     if (existsSync(this.filePath)) {
       const content = await fs.readFile(this.filePath);
       const parsed = JSON.parse(content.toString());
-      const { categories, policy, wasV1 } = EntityRegistry.parse(parsed);
+      const { categories, policy, wasV1, granularityEdges, renameEdges, deferQueue } =
+        EntityRegistry.parse(parsed);
       this.#categories = categories;
+      this.#granularityEdges = granularityEdges;
+      this.#renameEdges = renameEdges;
+      this.#deferQueue = deferQueue;
       this.#loadedFromV1 = wasV1;
       // An explicit constructor policy wins; otherwise adopt whatever the file recorded.
       if (policy && this.canonicalPolicy === DEFAULT_POLICY) this.canonicalPolicy = policy;
@@ -149,15 +232,37 @@ export class EntityRegistry {
     this.#loaded = true;
   }
 
-  /** Normalises either on-disk shape into v2 records. Exported for the migrator and for tests. */
+  /** Normalises any on-disk shape (v1/v2/v3) into v3 state. Exported for the migrator and for tests. */
   static parse(parsed: unknown): {
     categories: Record<string, Record<string, CanonicalRecord>>;
     policy?: CanonicalPolicy;
     wasV1: boolean;
+    granularityEdges: Record<string, GranularityEdge[]>;
+    renameEdges: Record<string, RenameEdge[]>;
+    deferQueue: DeferredPair[];
   } {
+    if (parsed !== null && typeof parsed === 'object' && (parsed as RegistryDataV3).version === 3) {
+      const v3 = parsed as RegistryDataV3;
+      return {
+        categories: v3.categories ?? {},
+        policy: v3.canonicalPolicy,
+        wasV1: false,
+        granularityEdges: v3.granularityEdges ?? {},
+        renameEdges: v3.renameEdges ?? {},
+        deferQueue: v3.deferQueue ?? [],
+      };
+    }
+
     if (parsed !== null && typeof parsed === 'object' && (parsed as RegistryDataV2).version === 2) {
       const v2 = parsed as RegistryDataV2;
-      return { categories: v2.categories ?? {}, policy: v2.canonicalPolicy, wasV1: false };
+      return {
+        categories: v2.categories ?? {},
+        policy: v2.canonicalPolicy,
+        wasV1: false,
+        granularityEdges: {},
+        renameEdges: {},
+        deferQueue: [],
+      };
     }
 
     // v1: category → canonical → { aliases: string[], firstSeen }
@@ -179,12 +284,19 @@ export class EntityRegistry {
         };
       }
     }
-    return { categories, wasV1: true };
+    return { categories, wasV1: true, granularityEdges: {}, renameEdges: {}, deferQueue: [] };
   }
 
-  /** The v2 document as written to disk. */
-  toJSON(): RegistryDataV2 {
-    return { version: 2, canonicalPolicy: this.canonicalPolicy, categories: this.#categories };
+  /** The v3 document as written to disk. */
+  toJSON(): RegistryDataV3 {
+    return {
+      version: 3,
+      canonicalPolicy: this.canonicalPolicy,
+      categories: this.#categories,
+      granularityEdges: this.#granularityEdges,
+      renameEdges: this.#renameEdges,
+      deferQueue: this.#deferQueue,
+    };
   }
 
   /**
@@ -232,6 +344,23 @@ export class EntityRegistry {
   /** Alias surfaces for one canonical — for callers that want plain strings. */
   aliasSurfaces(category: string, canonical: string): string[] {
     return (this.#categories[category]?.[canonical]?.aliases ?? []).map((alias) => alias.surface);
+  }
+
+  /**
+   * The stored surface a lookup of `name` actually hits, in its stored casing — what artifacts
+   * stamp as `matchedVia`. Falls back to the canonical name itself (which the fast path also
+   * matches, since mint stores it as its own alias).
+   */
+  matchedSurface(category: string, name: string): string | undefined {
+    const canonical = this.resolve(category, name);
+    if (!canonical) return undefined;
+    const folded = name.trim().toLowerCase();
+    if (canonical.toLowerCase() === folded) return canonical;
+    return (
+      this.#categories[category]?.[canonical]?.aliases.find(
+        (alias) => alias.surface.trim().toLowerCase() === folded
+      )?.surface ?? canonical
+    );
   }
 
   /**
@@ -338,6 +467,155 @@ export class EntityRegistry {
     this.#dirty = true;
   }
 
+  // --- identity-graph layers (v3) -----------------------------------------------------------------
+
+  /** Records the judge's `mentionRung`. First write wins — a rung is identity metadata, not a vote. */
+  setRung(category: string, canonical: string, rung: Rung): void {
+    const record = this.#categories[category]?.[canonical];
+    if (!record || record.rung) return;
+    record.rung = rung;
+    this.#dirty = true;
+  }
+
+  rungOf(category: string, canonical: string): Rung | undefined {
+    return this.#categories[category]?.[canonical]?.rung;
+  }
+
+  /**
+   * Adds a finer→coarser granularity edge. Rejects (returns false, warns) when an endpoint is
+   * unknown, the edge is a self-loop, or it would close a cycle — acyclicity is checked on every
+   * write, per the deck's ladder-structure rules. Idempotent on (from, to, kind).
+   */
+  addGranularityEdge(
+    category: string,
+    edge: {
+      from: string;
+      to: string;
+      kind: GranularityEdgeKind;
+      docId: number;
+      decision: EdgeDecision;
+      evidence?: string | null;
+    }
+  ): boolean {
+    const records = this.#categories[category];
+    if (!records?.[edge.from] || !records?.[edge.to]) {
+      console.warn(
+        `EntityRegistry: granularity edge needs existing endpoints — ${category}/"${edge.from}" -> "${edge.to}"`
+      );
+      return false;
+    }
+    if (edge.from === edge.to) {
+      console.warn(`EntityRegistry: refusing granularity self-loop on ${category}/"${edge.from}"`);
+      return false;
+    }
+
+    const edges = (this.#granularityEdges[category] ??= []);
+    if (edges.some((e) => e.from === edge.from && e.to === edge.to && e.kind === edge.kind)) {
+      return true; // idempotent
+    }
+    if (this.#reaches(category, edge.to, edge.from)) {
+      console.warn(
+        `EntityRegistry: granularity edge ${category}/"${edge.from}" -> "${edge.to}" would close a cycle — rejected`
+      );
+      return false;
+    }
+
+    edges.push({
+      from: edge.from,
+      to: edge.to,
+      kind: edge.kind,
+      docId: edge.docId,
+      decision: edge.decision,
+      evidence: edge.evidence ?? null,
+      addedBy: this.#runId ?? null,
+    });
+    this.#dirty = true;
+    return true;
+  }
+
+  granularityEdges(category: string): GranularityEdge[] {
+    return this.#granularityEdges[category] ?? [];
+  }
+
+  /** Edge deletion — the local repair per-edge provenance exists for. */
+  removeGranularityEdge(category: string, from: string, to: string): boolean {
+    const edges = this.#granularityEdges[category];
+    if (!edges) return false;
+    const next = edges.filter((e) => !(e.from === from && e.to === to));
+    if (next.length === edges.length) return false;
+    this.#granularityEdges[category] = next;
+    this.#dirty = true;
+    return true;
+  }
+
+  /** Outgoing (finer→coarser) edges of one canonical, optionally restricted to one kind. */
+  parentsOf(category: string, canonical: string, kind?: GranularityEdgeKind): GranularityEdge[] {
+    return this.granularityEdges(category).filter(
+      (e) => e.from === canonical && (kind === undefined || e.kind === kind)
+    );
+  }
+
+  addRenameEdge(
+    category: string,
+    edge: {
+      from: string;
+      to: string;
+      docId: number;
+      decision: EdgeDecision;
+      validFrom?: string | null;
+      evidence?: string | null;
+    }
+  ): boolean {
+    const records = this.#categories[category];
+    if (!records?.[edge.from] || !records?.[edge.to] || edge.from === edge.to) {
+      console.warn(
+        `EntityRegistry: invalid rename edge ${category}/"${edge.from}" -> "${edge.to}"`
+      );
+      return false;
+    }
+    const edges = (this.#renameEdges[category] ??= []);
+    if (edges.some((e) => e.from === edge.from && e.to === edge.to)) return true;
+    edges.push({
+      from: edge.from,
+      to: edge.to,
+      kind: 'renamed-to',
+      validFrom: edge.validFrom ?? null,
+      docId: edge.docId,
+      decision: edge.decision,
+      evidence: edge.evidence ?? null,
+      addedBy: this.#runId ?? null,
+    });
+    this.#dirty = true;
+    return true;
+  }
+
+  renameEdges(category: string): RenameEdge[] {
+    return this.#renameEdges[category] ?? [];
+  }
+
+  /** Queues a judge `defer` for the consolidator. Idempotent on (category, mention, docId). */
+  pushDeferred(entry: DeferredPair): void {
+    const key = (d: DeferredPair) => `${d.category}|${d.mention.trim().toLowerCase()}|${d.docId}`;
+    if (this.#deferQueue.some((d) => key(d) === key(entry))) return;
+    this.#deferQueue.push(entry);
+    this.#dirty = true;
+  }
+
+  deferred(): DeferredPair[] {
+    return [...this.#deferQueue];
+  }
+
+  /** Consolidator calls this after reviewing; entries not passed stay queued. */
+  clearDeferred(consumed: DeferredPair[]): void {
+    const key = (d: DeferredPair) => `${d.category}|${d.mention.trim().toLowerCase()}|${d.docId}`;
+    const gone = new Set(consumed.map(key));
+    const next = this.#deferQueue.filter((d) => !gone.has(key(d)));
+    if (next.length !== this.#deferQueue.length) {
+      this.#deferQueue = next;
+      this.#dirty = true;
+    }
+  }
+
   // --- repair operators -------------------------------------------------------------------------
 
   /**
@@ -413,6 +691,14 @@ export class EntityRegistry {
       summary.survivors.push(survivor);
       this.#dirty = true;
     }
+
+    const survivorOf = new Map<string, string>();
+    summary.groups.forEach((group, index) => {
+      for (const member of group) {
+        if (member !== summary.survivors[index]) survivorOf.set(member, summary.survivors[index]);
+      }
+    });
+    this.#rewriteAfterMerge(category, survivorOf);
 
     this.#rebuildIndex();
     return summary;
@@ -525,6 +811,25 @@ export class EntityRegistry {
     delete this.#categories[fromCategory][canonical];
     if (Object.keys(this.#categories[fromCategory]).length === 0) delete this.#categories[fromCategory];
 
+    // Granularity/rename edges are same-category by construction; a canonical moving out orphans
+    // its edges. They are dropped loudly — a cross-category edge would be a type error as data.
+    const dropped = (this.#granularityEdges[fromCategory] ?? []).filter(
+      (edge) => edge.from === canonical || edge.to === canonical
+    );
+    if (dropped.length > 0) {
+      console.warn(
+        `EntityRegistry: dropping ${dropped.length} granularity edge(s) touching moved ${fromCategory}/"${canonical}"`
+      );
+      this.#granularityEdges[fromCategory] = (this.#granularityEdges[fromCategory] ?? []).filter(
+        (edge) => edge.from !== canonical && edge.to !== canonical
+      );
+    }
+    if (this.#renameEdges[fromCategory]?.some((edge) => edge.from === canonical || edge.to === canonical)) {
+      this.#renameEdges[fromCategory] = this.#renameEdges[fromCategory].filter(
+        (edge) => edge.from !== canonical && edge.to !== canonical
+      );
+    }
+
     this.#dirty = true;
     this.#rebuildIndex();
     return true;
@@ -534,13 +839,93 @@ export class EntityRegistry {
   moveCategory(from: string, into: string): void {
     const fromRecords = this.#categories[from];
     if (!fromRecords || from === into) return;
+
+    // The whole bucket migrates, so its edges stay intra-category — capture them before move()
+    // (which drops edges of individually departing canonicals) and re-add after.
+    const gEdges = this.#granularityEdges[from] ?? [];
+    const rEdges = this.#renameEdges[from] ?? [];
+    delete this.#granularityEdges[from];
+    delete this.#renameEdges[from];
+
     for (const canonical of Object.keys(fromRecords)) this.move(from, canonical, into);
     delete this.#categories[from];
+
+    for (const edge of gEdges) {
+      this.addGranularityEdge(into, edge); // re-validates endpoints and acyclicity in the target
+    }
+    for (const edge of rEdges) {
+      this.addRenameEdge(into, edge);
+    }
+    this.#deferQueue = this.#deferQueue.map((entry) =>
+      entry.category === from ? { ...entry, category: into } : entry
+    );
+
     this.#rebuildIndex();
     this.#dirty = true;
   }
 
   // --- internals --------------------------------------------------------------------------------
+
+  /** True when `target` is reachable from `start` along existing granularity edges (finer→coarser). */
+  #reaches(category: string, start: string, target: string): boolean {
+    const edges = this.#granularityEdges[category] ?? [];
+    const out = new Map<string, string[]>();
+    for (const edge of edges) out.set(edge.from, [...(out.get(edge.from) ?? []), edge.to]);
+    const seen = new Set<string>();
+    const stack = [start];
+    while (stack.length > 0) {
+      const node = stack.pop()!;
+      if (node === target) return true;
+      if (seen.has(node)) continue;
+      seen.add(node);
+      stack.push(...(out.get(node) ?? []));
+    }
+    return false;
+  }
+
+  /**
+   * After a merge fold, edges and defer entries naming a removed canonical are rewritten to its
+   * survivor. Self-loops produced by the rewrite are dropped (the two rungs became one node);
+   * duplicates dedupe on (from, to, kind), keeping the earliest.
+   */
+  #rewriteAfterMerge(category: string, survivorOf: Map<string, string>): void {
+    if (survivorOf.size === 0) return;
+    const project = (name: string) => survivorOf.get(name) ?? name;
+
+    const gEdges = this.#granularityEdges[category];
+    if (gEdges) {
+      const seen = new Set<string>();
+      this.#granularityEdges[category] = gEdges.flatMap((edge) => {
+        const from = project(edge.from);
+        const to = project(edge.to);
+        if (from === to) return [];
+        const key = `${from}|${to}|${edge.kind}`;
+        if (seen.has(key)) return [];
+        seen.add(key);
+        return [{ ...edge, from, to }];
+      });
+    }
+
+    const rEdges = this.#renameEdges[category];
+    if (rEdges) {
+      const seen = new Set<string>();
+      this.#renameEdges[category] = rEdges.flatMap((edge) => {
+        const from = project(edge.from);
+        const to = project(edge.to);
+        if (from === to) return [];
+        const key = `${from}|${to}`;
+        if (seen.has(key)) return [];
+        seen.add(key);
+        return [{ ...edge, from, to }];
+      });
+    }
+
+    this.#deferQueue = this.#deferQueue.map((entry) =>
+      entry.category === category
+        ? { ...entry, mintedAs: project(entry.mintedAs), candidates: entry.candidates.map(project) }
+        : entry
+    );
+  }
 
   /** Applies `canonicalPolicy` to pick the survivor of a group. */
   #chooseCanonical(category: string, group: string[]): string {

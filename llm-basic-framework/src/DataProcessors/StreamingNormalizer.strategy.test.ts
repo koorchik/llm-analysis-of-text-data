@@ -155,14 +155,20 @@ describe('StreamingNormalizer decision port', () => {
     assert.equal(entityRegistry.resolve('HackerGroup', 'Fancy Bear'), 'Fancy Bears');
   });
 
-  it('treats a defer as "no link", exactly like a mint, since the registry has nothing to record', async () => {
+  it('treats a defer as a provisional mint AND queues the pair for the consolidator', async () => {
     const strategy = new StubStrategy((requests) =>
       requests.map(() => ({ kind: 'defer' as const, target: null, confidence: null, reason: 'stub' }))
     );
     const { normalizer, entityRegistry } = await setup('defer', strategy);
     await normalizer.processFile('1.json');
-    // Not linked to the candidate — it became its own canonical.
+    // Not linked to the candidate — it became its own canonical (mint-over-merge doctrine)…
     assert.equal(entityRegistry.resolve('HackerGroup', 'Fancy Bear'), 'Fancy Bear');
+    // …and the undecided pair is queued in registry state (SKEIN v2: decisions.jsonl is never
+    // read at runtime, so the consolidator's input lives here).
+    const queued = entityRegistry.deferred();
+    assert.equal(queued.length, 1);
+    assert.equal(queued[0].mention, 'Fancy Bear');
+    assert.deepEqual(queued[0].candidates, ['Fancy Bears']);
   });
 
   it('rejects a link to something that was never a candidate', async () => {

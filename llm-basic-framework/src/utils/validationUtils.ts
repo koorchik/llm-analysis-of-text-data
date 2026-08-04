@@ -116,6 +116,12 @@ export interface StreamingEntity {
   category: string; // open string — emergent schema
   role: Role;
   normalizedName?: string;
+  /**
+   * The registry surface this mention actually hit (alias or rung name), stamped beside
+   * `normalizedName`. The precondition for a *local* consolidator split: mentions reassign by the
+   * alias they matched, never by the now-ambiguous canonical (SKEIN v2 deck, repair).
+   */
+  matchedVia?: string;
   code?: string;
 }
 
@@ -263,11 +269,27 @@ export function normalizeStreamingExtraction(data: RawData): StreamingExtraction
   return validData as StreamingExtraction;
 }
 
+export const MENTION_RUNGS = ['g0', 'g1', 'g2', 'g3'] as const;
+export type MentionRung = (typeof MENTION_RUNGS)[number];
+
+const LINK_VERDICTS = ['link', 'mint', 'defer'] as const;
+const LINK_EDGE_KINDS = ['coarsens-to', 'part-of'] as const;
+
+/**
+ * One verdict of the SKEIN v2 streaming linking judge (prompts/link-judge.md, copied verbatim
+ * from the wiki prompt library 2026-08-04). Optional structure beyond the verdict: the mention's
+ * rung on its category ladder, and — on `mint` — a `parentCandidate` + `edgeKind` that code turns
+ * into a granularity edge. Empty strings mean "absent" throughout (the LIVR default idiom).
+ */
 export interface LinkVerdict {
   mention: string;
   category: string;
-  verdict: 'link' | 'mint';
+  mentionRung: MentionRung | '';
+  verdict: 'link' | 'mint' | 'defer';
   target: string;
+  parentCandidate: string;
+  edgeKind: (typeof LINK_EDGE_KINDS)[number] | '';
+  reasoning: string;
 }
 
 const linkVerdictsValidator = new LIVR.Validator({
@@ -278,8 +300,12 @@ const linkVerdictsValidator = new LIVR.Validator({
         {
           mention: [{ default: '' }, 'string'],
           category: [{ default: '' }, 'string'],
-          verdict: [{ default: 'mint' }, 'string', { oneOf: ['link', 'mint'] }],
+          mentionRung: [{ default: '' }, 'string'],
+          verdict: [{ default: 'mint' }, 'string', { oneOf: [...LINK_VERDICTS] }],
           target: [{ default: '' }, 'string'],
+          parentCandidate: [{ default: '' }, 'string'],
+          edgeKind: [{ default: '' }, 'string'],
+          reasoning: [{ default: '' }, 'string'],
         },
       ],
     },
@@ -291,8 +317,19 @@ export function normalizeLinkVerdicts(data: RawData): LinkVerdict[] | undefined 
 
   if (Array.isArray(data.verdicts)) {
     for (const verdict of data.verdicts) {
-      if (verdict && typeof verdict === 'object' && !['link', 'mint'].includes(verdict.verdict)) {
+      if (!verdict || typeof verdict !== 'object') continue;
+      if (!LINK_VERDICTS.includes(verdict.verdict)) {
         verdict.verdict = 'mint'; // conservative default, per the prompt's own instruction
+      }
+      // Nulls are the prompt's own "absent" spelling; LIVR strings want ''.
+      for (const field of ['mentionRung', 'target', 'parentCandidate', 'edgeKind', 'reasoning']) {
+        if (verdict[field] === null || verdict[field] === undefined) verdict[field] = '';
+      }
+      if (verdict.mentionRung && !MENTION_RUNGS.includes(verdict.mentionRung)) {
+        verdict.mentionRung = '';
+      }
+      if (verdict.edgeKind && !LINK_EDGE_KINDS.includes(verdict.edgeKind)) {
+        verdict.edgeKind = '';
       }
     }
   }
@@ -309,6 +346,10 @@ export function normalizeLinkVerdicts(data: RawData): LinkVerdict[] | undefined 
       if (verdict.verdict === 'link' && !verdict.target?.trim()) {
         verdict.verdict = 'mint';
       }
+      if (verdict.verdict !== 'link') verdict.target = '';
+      // A parent without a kind defaults to the safe reading: containment, fold off.
+      if (verdict.parentCandidate.trim() && !verdict.edgeKind) verdict.edgeKind = 'part-of';
+      if (!verdict.parentCandidate.trim()) verdict.edgeKind = '';
       return verdict;
     });
 }
@@ -493,4 +534,131 @@ export function normalizePairLabelVerdicts(data: RawData): PairLabelVerdict[] | 
     }
     return { ...verdict, relation: '', direction: '' };
   });
+}
+
+// ============================================================================
+// Granularity-ladder proposal (SKEIN v2, prompts/ladder.md)
+//
+// Parse layer only: structural validation and enum/boolean pre-coercion. The
+// semantic gates (ordering, gate-3 star/part-of, foldTest consistency) are
+// code validators in src/Ladder/LadderDiscovery.ts, per the prompt's wiring
+// contract — never ask the model for edgeKind/foldByDefault; code derives them
+// from `preserving`.
+// ============================================================================
+
+export const LADDER_MOVES = ['drop-qualifier', 'grouped-by', 'part-of', 'kind-of'] as const;
+export type LadderMove = (typeof LADDER_MOVES)[number];
+
+export interface LadderRungProposal {
+  g: number;
+  alias: string;
+  /** Descriptive metadata only — never decides folding or the edge kind. */
+  move: LadderMove | '';
+  example: string;
+  /** The one LLM-owned semantic judgment (fact-rewrite test). Absent on g0. */
+  preserving?: boolean;
+  foldTest: string;
+  /** Model self-report; the ensemble ORs its own disagreement on top. */
+  disputed: boolean;
+}
+
+export interface LadderRejection {
+  candidate: string;
+  gate: string;
+  reason: string;
+}
+
+export interface LadderProposal {
+  category: string;
+  ladder: LadderRungProposal[];
+  rejected: LadderRejection[];
+  notes: string;
+}
+
+const ladderValidator = new LIVR.Validator({
+  category: [{ default: '' }, 'string'],
+  ladder: [
+    { default: [] },
+    {
+      listOfObjects: [
+        {
+          g: [{ default: -1 }, 'integer'],
+          alias: [{ default: '' }, 'string'],
+          move: [{ default: '' }, 'string'],
+          example: [{ default: '' }, 'string'],
+          // No boolean rule in LIVR, and a field with no rules is dropped from the output —
+          // the `default` modifier is what keeps these described. Booleans are pre-coerced
+          // below and pass through; null marks "absent" and maps back to undefined after.
+          preserving: [{ default: null }],
+          foldTest: [{ default: '' }, 'string'],
+          disputed: [{ default: false }],
+        },
+      ],
+    },
+  ],
+  rejected: [
+    { default: [] },
+    {
+      listOfObjects: [
+        {
+          candidate: [{ default: '' }, 'string'],
+          gate: [{ default: '' }, 'string'],
+          reason: [{ default: '' }, 'string'],
+        },
+      ],
+    },
+  ],
+  notes: [{ default: '' }, 'string'],
+});
+
+function coerceBool(value: unknown): boolean | undefined {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const folded = value.trim().toLowerCase();
+    if (folded === 'true') return true;
+    if (folded === 'false') return false;
+  }
+  return undefined;
+}
+
+export function normalizeLadderProposal(data: RawData): LadderProposal | undefined {
+  if (!data || typeof data !== 'object') return;
+
+  if (Array.isArray(data.ladder)) {
+    for (const rung of data.ladder) {
+      if (!rung || typeof rung !== 'object') continue;
+      // Pre-coercion: one malformed field must not sink the whole ladder.
+      if (typeof rung.g === 'string' && /^\d+$/.test(rung.g.trim())) rung.g = Number(rung.g.trim());
+      if (typeof rung.gate === 'string') delete rung.gate; // stray field some models add
+      rung.preserving = coerceBool(rung.preserving);
+      rung.disputed = coerceBool(rung.disputed) ?? false;
+      if (rung.move !== undefined && !LADDER_MOVES.includes(rung.move)) rung.move = '';
+    }
+  }
+  if (Array.isArray(data.rejected)) {
+    for (const rejection of data.rejected) {
+      if (rejection && typeof rejection === 'object' && typeof rejection.gate === 'number') {
+        rejection.gate = String(rejection.gate);
+      }
+    }
+  }
+
+  const validData = ladderValidator.validate(data);
+  if (!validData) {
+    console.log({ ERROR: ladderValidator.getErrors() });
+    return;
+  }
+
+  // Structural floor: rungs need a g in 0..3 and a non-empty example; junk rows drop here so the
+  // semantic validators upstream see only shaped rungs.
+  validData.ladder = validData.ladder.filter(
+    (rung: LadderRungProposal) =>
+      Number.isInteger(rung.g) && rung.g >= 0 && rung.g <= 3 && rung.example?.trim()
+  );
+  for (const rung of validData.ladder) {
+    if (rung.preserving === null) rung.preserving = undefined;
+  }
+  validData.rejected = validData.rejected.filter((r: LadderRejection) => r.candidate?.trim());
+
+  return validData as LadderProposal;
 }

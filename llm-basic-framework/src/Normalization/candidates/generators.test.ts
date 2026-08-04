@@ -2,6 +2,7 @@ import { identifierRegexAnalyzer } from '../analyzers/identifierRegex';
 import { identityAnalyzer } from '../analyzers/identity';
 import type { Candidate, CandidateGenerator, CandidateQuery, RegistrySnapshot, SnapshotEntry } from '../types';
 import { Bm25Generator } from './Bm25Generator';
+import { resolveGenerator } from './index';
 import { ExactMatchGenerator } from './ExactMatchGenerator';
 import { RrfFusionGenerator } from './RrfFusionGenerator';
 import { StringSimilarityGenerator } from './StringSimilarityGenerator';
@@ -310,4 +311,23 @@ test('every generator exposes a config that records what it ran as', async () =>
     assert.ok(Object.keys(generator.config).length > 0, `${generator.id} has an empty config`);
   }
   assert.match(new TfidfNgramGenerator({ n: 4 }).id, /4gram/);
+});
+
+test('union: the SKEIN v2 blocker composes all five channels behind one id', () => {
+  const embeddingsClient = {
+    modelName: 'fake-embed',
+    embed: async (texts: string[]) => texts.map(() => [0, 1]),
+  } as unknown as import('../../EmbeddingsClient/EmbeddingsClient').EmbeddingsClient;
+
+  const generator = resolveGenerator('union', { embeddingsClient });
+  assert.ok(generator.id.startsWith('rrf('), 'RRF-fused');
+  const childIds = (generator.config.children as Array<{ id: string }>).map((child) => child.id);
+  assert.equal(childIds.length, 5);
+  assert.ok(childIds.some((id) => id.includes('translit')), 'cross-script channel present');
+  assert.ok(childIds.some((id) => id.includes('name+gloss')), 'dense channel embeds name+gloss');
+  assert.ok(childIds.some((id) => id.includes('bm25') || id.includes('Bm25') || id.toLowerCase().includes('bm25')));
+});
+
+test('union without an embeddings client is fatal, never a silent downgrade', () => {
+  assert.throws(() => resolveGenerator('union', {}), /EmbeddingsClient/);
 });

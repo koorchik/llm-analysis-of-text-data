@@ -43,11 +43,18 @@ manifest hashes exist.
 
 ## The prompts
 
+Two prompts are **copied verbatim from the wiki prompt library**
+(`dissert/wiki/notes/prompts.md`) rather than extracted from source: `ladder` and `link-judge`
+(since 2026-08-04). The wiki page is their source of truth — edit there first, then re-copy the
+fenced block byte-for-byte and update the manifest; never paraphrase (the wording encodes
+failure modes discovered iteratively).
+
 | id | used by | variables |
 |---|---|---|
 | `extract-streaming` | `StreamingExtractor` — per-document extraction (Ψ_link) | `knownCategories`, `knownRelationTypes` |
 | `type-judge` | `StreamingExtractor` — emergent-schema category/relation decisions | — |
-| `link-judge` | `StreamingNormalizer` — link-or-mint verdict | — |
+| `ladder` | `LadderDiscovery` — per-category granularity-ladder bootstrap (g0–g3, ensemble) | `CATEGORY`, `DEFINITION`, `EXAMPLES` |
+| `link-judge` | `StreamingNormalizer` — link / mint / defer verdict with rung + parent edge | `docTitle`, `docSnippet`, `mentionsBatch` |
 | `pair-rule` | `StreamingNormalizer` — co-occurrence inference rules | `knownRelationTypes` |
 | `consolidate-merge` | `RegistryConsolidator` — reviewed merges (repair step) | `subject` |
 | `country-normalize` | `CountryNameNormalizer` | `countryCodes` |

@@ -1,4 +1,9 @@
 import type { EmbeddingsClient } from '../../EmbeddingsClient/EmbeddingsClient';
+import {
+  confusableSkeletonAnalyzer,
+  identityAnalyzer,
+  transliterateAnalyzer,
+} from '../analyzers';
 import type { CandidateGenerator } from '../types';
 import { Bm25Generator } from './Bm25Generator';
 import { EmbeddingGenerator } from './EmbeddingGenerator';
@@ -19,8 +24,10 @@ export interface GeneratorDeps {
  * Generator registry, so an experiment config or `CANDIDATE_GENERATOR` can name a blocker as a
  * string.
  *
- * `rrf` is absent by design: it takes child generators rather than plain options, so it cannot be
- * constructed from an id alone. M7's experiment loader builds it from the `children` block.
+ * A bare `rrf` id is absent by design: it takes child generators rather than plain options, so a
+ * custom composition comes from M7's experiment loader `children` block. `union` is the ONE named
+ * composition — the SKEIN v2 deck's blocker, pinned here so `CANDIDATE_GENERATOR=union` selects
+ * the method's arm exactly.
  */
 export const GENERATORS: Record<string, (deps: GeneratorDeps) => CandidateGenerator> = {
   exact: () => new ExactMatchGenerator(),
@@ -32,6 +39,34 @@ export const GENERATORS: Record<string, (deps: GeneratorDeps) => CandidateGenera
       throw new Error('Generator "embedding" requires an EmbeddingsClient');
     }
     return new EmbeddingGenerator({ embeddingsClient: deps.embeddingsClient });
+  },
+  /**
+   * The SKEIN v2 union blocker: string similarity ∪ transliteration/Unicode-confusable skeleton
+   * (the Cyrillic↔Latin channel is load-bearing on this corpus, not decorative) ∪ char-3-gram
+   * TF-IDF ∪ multilingual dense over `name+gloss` ∪ BM25 — RRF-fused, scored max-over-aliases.
+   */
+  union: (deps) => {
+    if (!deps.embeddingsClient) {
+      throw new Error(
+        'Generator "union" requires an EmbeddingsClient — the dense name+gloss channel is part of the union arm'
+      );
+    }
+    return new RrfFusionGenerator({
+      channel: 'union',
+      children: [
+        new StringSimilarityGenerator(),
+        new StringSimilarityGenerator({
+          analyzers: [identityAnalyzer, transliterateAnalyzer, confusableSkeletonAnalyzer],
+          channel: 'translit',
+        }),
+        new TfidfNgramGenerator(),
+        new Bm25Generator(),
+        new EmbeddingGenerator({
+          embeddingsClient: deps.embeddingsClient,
+          representation: 'name+gloss',
+        }),
+      ],
+    });
   },
 };
 
