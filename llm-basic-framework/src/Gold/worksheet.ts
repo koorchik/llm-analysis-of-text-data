@@ -140,9 +140,20 @@ export function readRows(tsv: string): WorksheetRow[] {
     if (!at.has(name)) throw new Error(`worksheet is missing the "${name}" column`);
   }
 
+  // Heal spreadsheet CSV-quoting on read: an editor that wraps a quote-bearing cell in outer
+  // quotes and doubles the inner ones ("campaign ""X""") leaves exactly that shape — outer quotes
+  // with every interior quote doubled. Unwrapping here means the damage never survives a
+  // round-trip. A naturally quote-bearing cell is not CSV-shaped and passes through untouched.
+  const unwrapCsvQuoting = (value: string): string => {
+    if (value.length < 2 || !value.startsWith('"') || !value.endsWith('"')) return value;
+    const inner = value.slice(1, -1);
+    if (inner.replace(/""/g, '').includes('"')) return value; // a lone interior quote: not CSV
+    return inner.replace(/""/g, '"');
+  };
+
   const cell = (cells: string[], name: string): string => {
     const index = at.get(name);
-    return index === undefined ? '' : (cells[index] ?? '').trim();
+    return index === undefined ? '' : unwrapCsvQuoting((cells[index] ?? '').trim());
   };
 
   return lines.slice(1).map((line) => {

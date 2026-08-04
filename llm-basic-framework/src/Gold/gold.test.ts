@@ -1264,3 +1264,24 @@ describe('worksheet label round-trip after clearing', () => {
     assert.equal(labelled.label, 'same', 'the prefill happens at proposal time, not at write time');
   });
 });
+
+describe('worksheet spreadsheet-damage healing', () => {
+  it('unwraps CSV-style quoting a spreadsheet applied on save', () => {
+    // LibreOffice wraps any cell containing a double quote in outer quotes and doubles the inner
+    // ones. 620 snippet cells arrived that way after one editing session; the parser heals them
+    // so the damage never survives a round-trip.
+    const tsv =
+      'label\tsuggested\trule\tcategory\tleft\tright\tstratum\tmechanism\tsim\tsnippet\tevidence\n' +
+      'same\tsame\tnone\tSoftware\tA\tB\ta\tedit-similarity\t0.9\t"left: campaign ""SickSync"" from doc"\t\n';
+    const rows = readRows(tsv);
+    assert.equal(rows[0].snippet, 'left: campaign "SickSync" from doc');
+  });
+
+  it('leaves a naturally quote-bearing cell alone when it is not CSV-shaped', () => {
+    const tsv =
+      'label\tsuggested\trule\tcategory\tleft\tright\tstratum\tmechanism\tsim\tsnippet\tevidence\n' +
+      'same\tsame\tnone\tSoftware\tA\tB\ta\tedit-similarity\t0.9\tthe "SickSync" campaign\t\n';
+    const rows = readRows(tsv);
+    assert.equal(rows[0].snippet, 'the "SickSync" campaign');
+  });
+});
