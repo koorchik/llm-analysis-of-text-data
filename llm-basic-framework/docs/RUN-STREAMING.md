@@ -1,25 +1,46 @@
-# Runbook: first streaming (Ψ_link) run, scored against the new gold table
+# Runbook: streaming (Ψ_link) run, scored against the new gold table
 
-Written 2026-08-04 for an agent executing in a fresh session. This distils and *supplements*
-`docs/RUNNING-EXPERIMENTS.md` (the authoritative operational guide — read §3, §6, §10,
-"What does not work yet" if anything here surprises you). Where the two disagree, this file is
-newer on exactly one topic: **the gold table now exists** (`gold/gold.json`, format
-`gold-aliases-v2`) — RUNNING-EXPERIMENTS' "M9: no gold table exists" is stale.
+Written 2026-08-04 for an agent executing in a fresh session; amended the same day after the
+SKEIN v2 sync landed (ladders, rung-aware judge, granularity edges — see below). This distils and
+*supplements* `docs/RUNNING-EXPERIMENTS.md` (the authoritative operational guide — read §3, §6,
+§10, "What does not work yet" if anything here surprises you). Where the two disagree, this file
+is newer on two topics: **the gold table now exists** (`gold/gold.json`, format
+`gold-aliases-v2`) — RUNNING-EXPERIMENTS' "M9: no gold table exists" is stale — and **the SKEIN
+v2 ladder/linking subsystem is implemented** (this file describes it).
 
 ## 0. What you are running, honestly
 
-`FLOW=incremental` runs the *base* streaming arm implemented today: per-document mention lists →
-exact alias fast path → `string-sim` candidate generator → one batched `link-judge` LLM call per
-document → link / mint / defer into `EntityRegistry`, with `decisions.jsonl` as the scorable log.
+`FLOW=incremental` runs the SKEIN v2 streaming arm: per-document mention lists → **granularity
+ladder bootstrap** (per category, once ≥8 distinct surfaces accumulate; N≥3 ensemble of the
+`ladder` prompt, code validators, `disputed` forced on disagreement, cached versioned in
+`schema.json`, retroactive rung binding over existing canonicals) → exact alias fast path →
+candidate generator (`string-sim` by default; `CANDIDATE_GENERATOR=union` selects the deck's
+five-channel RRF union blocker) → one batched `link-judge` call per document (the three-verdict
+rung-aware judge: `link | mint | defer`, `mentionRung`, and `parentCandidate`+`edgeKind` that
+becomes a granularity edge in-stream) → `EntityRegistry` **v3 identity graph** (per-alias
+provenance, rungs, `coarsens-to`/`part-of` + `renamed-to` edge layers, defer queue), with
+`decisions.jsonl` as the scorable log and artifacts stamping `matchedVia` beside
+`normalizedName`. A judge `defer` mints provisionally and queues the pair for the consolidator
+(scoring per `docs/statistical-protocol.md` §5 is unchanged: a withheld decision).
 
-**Not implemented yet** (the SKEIN v2 deck's "to add" list): granularity ladders, rung-aware
-matching, the union blocker with RRF, granularity/rename edges in the registry, `parentCandidateId`
-on mint. Consequences for this run:
+The consolidator (`registryConsolidator` step, manual) now carries the full repair inventory —
+merge / **split** / **move**, granularity/rename edge creation, the defer-queue review, and a
+cross-category sweep that records category corrections; re-stamp reassigns mentions by
+`matchedVia`. The graph builder accepts **λ** (`LAMBDA="Software=g2,default=g0"`): one g0 store,
+coarser views computed at fold time (`coarsens-to` folds freely; `part-of` only under
+`LAMBDA_INTERPRETIVE=1`, and such views mark folded edges `inferred`); the projection contract
+recomputes weights as distinct incidents, never sums.
 
-- The run produces **clusters only, no hierarchy edges** — evaluation is identity metrics
-  (merge P/R by stratum, B³, ARI, pairwise F1) plus mint/NIL accounting. Do not attempt
-  hierarchical (hP/hR) scoring against the gold `edges`; there is nothing on the system side yet.
-- Expect granularity-type gold pairs (`rung`) to show up as correctly-unmerged negatives at best.
+**Still not implemented:** hierarchical (hP/hR) scoring in `evaluate` — the run now *produces*
+granularity edges, but `evaluate`'s identity metrics still ignore both the system's and the
+gold's `edges` by design. Also note a vocabulary seam kept deliberately: the pipeline's
+`coarsens-to` corresponds to the gold table's `isa` edge kind (gold changes only by dated
+amendment; the mapping is one-to-one for future hP/hR work).
+
+- Evaluation today is identity metrics (merge P/R by stratum, B³, ARI, pairwise F1) plus
+  mint/NIL accounting and the deferral-rate column.
+- Granularity-type gold pairs (`rung`) should now show up as hard non-merges PLUS a system edge —
+  visible in `run-view.html` and `registry.json`, not yet in `evaluate`'s numbers.
 
 **The gold table is provisional.** As of 2026-08-04 the worksheet still has ~640 machine-labelled
 rows awaiting human confirmation (queue 3) and 29 recorded transitivity contradictions. Numbers
@@ -32,7 +53,7 @@ the human review finishes and the table is frozen. Say this in any summary you p
 cd llm-basic-framework
 npm install
 npm run typecheck       # tsc --noEmit; must be clean
-npm test                # ~680 tests incl. the behaviour gate; all must pass
+npm test                # ~720 tests incl. the behaviour gate; all must pass
 ```
 
 - `.env` must contain the key for the provider you run (`ANTHROPIC_API_KEY` and/or
@@ -55,10 +76,19 @@ export FLOW=incremental
 export CONDITION=psi-link-default
 export LLM_PROVIDER=anthropic
 export LLM_MODEL=claude-opus-5
-export DECISIONS_LOG=1          # MANDATORY for NIL/mint scoring and replay (merge metrics
-                                #   would still work from registry.json alone)
-# leave DECISION_STRATEGY unset  → built-in link-judge path
-# leave CANDIDATE_GENERATOR unset → string-sim (the gate-pinned arm)
+export DECISIONS_LOG=1          # MANDATORY for NIL/mint scoring, replay AND run playback
+                                #   (merge metrics would still work from registry.json alone)
+# leave DECISION_STRATEGY unset  → built-in SKEIN v2 link-judge path
+# leave CANDIDATE_GENERATOR unset → string-sim (the gate-pinned blocker);
+#   CANDIDATE_GENERATOR=union    → the SKEIN v2 method arm (string-sim ∪ translit/confusable ∪
+#                                  3-gram ∪ BM25 ∪ dense name+gloss, RRF-fused) — REQUIRES a
+#                                  working embeddings config (EMBEDDINGS_PROVIDER/MODEL)
+# ladder knobs (all fold into the runId):
+#   LADDER_ENSEMBLE_N=3          # default; N same-model prompt runs per category
+#   LADDER_ENSEMBLE_MODELS=anthropic:claude-opus-5,openai:gpt-5   # optional multi-model ensemble
+#   LADDER_MIN_EXAMPLES=8        # surfaces a category must accumulate before its ladder fires
+# fold-time (streamingGraphBuilder only, NOT in the runId — refolds are free):
+#   LAMBDA="Software=g2,default=g0"   LAMBDA_INTERPRETIVE=1
 ```
 
 `CONDITION` is a label, not behaviour. If you later run other models, change `CONDITION` too
@@ -134,9 +164,12 @@ Expected log shape: the pipeline interleaves per document — `SKIP (exists)` fr
 then `NORMALIZE`/`LINK-JUDGE` for that same document, 204 times. Exact-hit mentions resolve free;
 the rest go through candidates + one `LINK-JUDGE` call per document. With extraction skipped
 there are NO extract or type-judge calls; the recurring calls are `link-judge` (≤1/doc),
-`pair-rule`, and one country-normalize call per Country mention. Wall-clock roughly 1–2 h
-sequential; read the run card's `cost` block for the real figure — order of $5–15 on
-`claude-opus-5`.
+`pair-rule`, one country-normalize call per Country mention, and — new — `ladder` calls: N
+ensemble runs per category, fired once per category when it crosses `LADDER_MIN_EXAMPLES`
+distinct surfaces and re-fired on ≥2× growth (expect roughly categories × N ≈ 30–60 calls over a
+full 204-doc run, front-loaded; `LADDER <category> vN: …` lines mark them). Wall-clock roughly
+1–2 h sequential; read the run card's `cost` block for the real figure — order of $5–15 on
+`claude-opus-5` plus the ladder ensemble.
 
 Known cosmetic side effect of pre-seeding: the frozen files carry no `schemaProposals`, so every
 category is admitted via the normalizer's fallback with an empty definition (one warning per
@@ -171,17 +204,42 @@ npm run replay -- --in "$RUNDIR/decisions.jsonl" --strategy exact-only --out /tm
 npm run replay -- --in "$RUNDIR/decisions.jsonl" --strategy threshold --threshold 0.8 --out /tmp/t80.jsonl
 ```
 
+## 5b. Watch the run: playback viewer
+
+```bash
+npm run view -- --run "$RUNDIR"     # writes $RUNDIR/run-view.html
+```
+
+One self-contained HTML page (no server, no network): scrub document by document and watch each
+report change the ladders and the registry — ladder pane (rungs with `preserving`/`disputed`
+chips, version history), granularity forest (finer nested under coarser, renames as chains,
+aliases wrapped under the name), per-document event list, and a final "repair" chapter for
+consolidator operations. Requires `DECISIONS_LOG=1` (the journal is the replay source; document
+order derives from `artifacts/`). The page diffs its final replayed frame against
+`registry.json` and shows a warning banner on any mismatch.
+
 ## 6. Deliverables of this run
 
 1. The run directory path + `run-card.json` (config, prompt hashes, effective sampling, cost).
 2. `results.json` from `evaluate` + the console table.
 3. The per-document LLM call histogram (from `decisions.jsonl` — the deck asks for the full
-   histogram, not just link-judge counts).
-4. A short summary that states: base arm only (no ladders), gold provisional (unreviewed queue-3
-   rows), and the observed cost. No headline claims.
+   histogram, not just link-judge counts; `ladder` is now one of the kinds).
+4. `run-view.html` (§5b) — the reviewable form of the registry/ladder state.
+5. A short summary that states: which blocker arm ran (`string-sim` vs `union`), the ladder
+   ensemble config, gold provisional (unreviewed queue-3 rows), and the observed cost. Identity
+   metrics only — granularity edges exist but are not yet scored (no hP/hR). No headline claims.
 
 ## 7. Known traps
 
+- **All runIds changed on 2026-08-04**: the `ladder` prompt is new, `link-judge` and
+  `consolidate-merge` were replaced (SKEIN v2), and prompt hashes fold into every runId — a
+  pre-sync run directory can never be resumed by the new code. Registry files migrate forward
+  (v1/v2 read fine, saved as v3), but a fresh arm is the honest comparison.
+- The `union` blocker arm requires embeddings (`EMBEDDINGS_PROVIDER`/`EMBEDDINGS_MODEL` and its
+  key); it fails fast if missing — never a silent downgrade to string-sim.
+- Ladder ensemble cost scales with `LADDER_ENSEMBLE_N` × categories; the calls are front-loaded
+  (each category fires once it crosses the surface floor). A category that never accumulates
+  `LADDER_MIN_EXAMPLES` surfaces stays in flat g0 mode — that is correct behaviour, not a bug.
 - `TEMPERATURE`/`TOP_P` on Anthropic are silently DROPPED by the client (not sent, no 400) —
   the run card's `sampling.effective` records what really left the process. Leave them unset so
   the record is unambiguous.

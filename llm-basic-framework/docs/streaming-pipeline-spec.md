@@ -2,9 +2,28 @@
 
 Implementation specification for the streaming successor of the batch pipeline
 (`DataExtractor` → `DataEntitiesCollector` → `DataNormalizer` → `DataGraphBuilder`).
-Design source of truth: `dissert/wiki/notes/streaming-autodiscovery-normalization.md` (v2).
+Design source of truth: `dissert/wiki/notes/streaming-autodiscovery-normalization.md` (v2),
+governed by the deck `dissert/wiki/presentations/skein-v2-method.md`.
 
-**No code in this document is implemented yet — this is the contract to build against.**
+**Status: implemented** (`FLOW=incremental`; operational guide: `docs/RUNNING-EXPERIMENTS.md`,
+runbook: `docs/RUN-STREAMING.md`). The original "no code implemented yet" header is history.
+
+> **Amendment 2026-08-04 (SKEIN v2 granularity sync — follows the deck, per its authority
+> rule).** The link-judge became the three-verdict rung-aware judge (`link | mint | defer`,
+> `mentionRung`, `parentCandidate`+`edgeKind`; prompt copied verbatim from
+> `dissert/wiki/notes/prompts.md`). The registry became a **v3 identity graph** (per-alias
+> provenance, per-entity `rung`, strictly layered `coarsens-to`/`part-of` granularity edges and
+> `renamed-to` rename edges, a consolidator defer queue). A **granularity-ladder bootstrap**
+> (`src/Ladder/LadderDiscovery.ts`, `prompts/ladder.md`, N≥3 ensemble, code validators, cached
+> versioned in `schema.json.categories[].ladder`, retroactive rung binding) fires per category
+> once ≥`LADDER_MIN_EXAMPLES` surfaces exist. Edge labels are DERIVED from the model's
+> `preserving` verdict — `coarsens-to` ⇔ true, `part-of` ⇔ false; `edgeKind`/`foldByDefault` are
+> never requested from a model; **zero external dictionaries** (CPE/PSL/ISO-3166/BGP) are bound
+> in code. The consolidator carries merge/**split**/**move**, the defer-queue review and a
+> cross-category sweep; artifacts stamp `matchedVia` for local re-stamps. The graph builder takes
+> λ (`LAMBDA`, `LAMBDA_INTERPRETIVE`) with the five-row projection contract (distinct-incident
+> weights recomputed, never summed). Sections below record the original contract; where they
+> disagree with this amendment, the amendment wins.
 
 ## 1. Goals and principle
 
@@ -100,8 +119,15 @@ consolidation and graph builds can all be re-run from disk.
   Because both categories and roles are finite-ish (roles fixed at 3, categories saturate), this
   table **saturates fast** — a few dozen entries in practice.
 - `history` — append-only; the new-types-per-document curve ν(t) for RQ1 reads directly off it.
+  New op since the 2026-08-04 amendment: `discover-ladder`.
 - Seeding: `schema.json` may start empty (pure autodiscovery) **or** pre-seeded with the legacy 10
   categories (the seeded arm of the RQ4 ablation). Both are just initial file contents.
+- **Amendment 2026-08-04:** each category entry may carry a **`ladder`** field — the cached,
+  versioned granularity ladder discovered by `LadderDiscovery`
+  (`{version, exampleCount, runs, models, rungs[], rejected[], notes, disagreements[],
+  discoveredAtDoc}`; each non-g0 rung: `{g, alias, move?, example, preserving, foldTest,
+  disputed, edgeKind}` where `edgeKind` is code-derived from `preserving`). Fires once
+  ≥`LADDER_MIN_EXAMPLES` distinct surfaces exist; re-fires at ≥2× surface growth.
 
 ### 3.2 `registry.json` (state file 2 — grows ~linearly)
 
@@ -121,6 +147,31 @@ consolidation and graph builds can all be re-run from disk.
 
 Keyed `category → canonicalName → record`. At load time build an in-memory
 `Map<category, Map<lowercased alias, canonicalName>>` for the exact-hit fast path.
+
+**Amendment 2026-08-04 — the registry is a v3 identity graph.** The v1 shape above (and the v2
+alias-provenance shape that followed) still load; saves write v3:
+
+```json
+{ "version": 3, "canonicalPolicy": "first-seen",
+  "categories": { "HackerGroup": { "Sandworm": {
+      "aliases": [ { "surface": "UAC-0002", "docId": 23, "decision": "link",
+                     "evidence": "also tracked as UAC-0002", "addedBy": "<runId>" } ],
+      "rung": "g1", "gloss": null, "categoryCounts": { "HackerGroup": 3 },
+      "firstSeen": { "doc": 16, "date": "2020-01-17" } } } },
+  "granularityEdges": { "HackerGroup": [
+      { "from": "UAC-0002", "to": "Sandworm", "kind": "part-of", "docId": 23,
+        "decision": "judge", "evidence": "…", "addedBy": "<runId>" } ] },
+  "renameEdges": { "HackerGroup": [
+      { "from": "Sandworm", "to": "APT44", "kind": "renamed-to", "validFrom": null,
+        "docId": -1, "decision": "consolidator" } ] },
+  "deferQueue": [ { "category": "HackerGroup", "mention": "UAC-0002",
+      "mintedAs": "UAC-0002", "candidates": ["Sandworm"], "docId": 23 } ] }
+```
+
+Layer rules: granularity edges (`coarsens-to` = preserving blur, `part-of` = widening) are
+finer→coarser, same-category, acyclicity-checked on write, per-edge provenance; rename edges are
+never aliases and never fold; the defer queue is the consolidator's input (nothing reads
+`decisions.jsonl` at runtime); assertional relations never enter this file.
 
 ### 3.3 `extractions/NN.json` (stage-1 output)
 
@@ -203,6 +254,16 @@ instrument — nothing reads it at runtime.
 RQ2 (linking precision/recall vs. a gold alias table) is computed by replaying `link`/`mint`
 events against the gold table. RQ5 call counts come from one `llm-call` event per request
 (`{ "op": "llm-call", "doc": N, "kind": "extract|type-judge|link-judge|consolidate", "tokens": … }`).
+
+**Amendment 2026-08-04 — new events.** `llm-call.kind` gains `ladder` (plus the already-present
+`pair-rule`, `country-normalize`). Decision events may carry `decision: "defer"` with
+`target: null` and a non-scoring `mintedAs` field (protocol §5 semantics preserved: a deferral is
+a withheld decision, provisionally minted). New ops: `granularity-edge`
+(`{category, from, to, kind, by?}` — from the judge, ladder binding, or the consolidator),
+`rename-edge`, `discover-ladder` (full cached ladder payload — the run playback viewer replays
+state from these), `split-canonical`, `category-correction`. `decisions.jsonl` remains
+evaluation/debug-only at runtime; the offline `npm run view` playback page and `npm run replay`
+read it after the fact.
 
 ### 3.6 `graph/nodes.csv`, `graph/edges.csv`
 
@@ -324,8 +385,19 @@ Per document (`extractions/NN.json` → `artifacts/NN.json`):
    mention: the mention, its category, the document title + a text snippet, and its candidates
    with alias lists. Verdict per mention: `link:<canonicalName>` or `mint`. Mentions with zero
    candidates skip the call and mint directly.
+   **Amendment 2026-08-04 — the three-verdict rung-aware judge.** The prompt is
+   `prompts/link-judge.md`, copied VERBATIM from `dissert/wiki/notes/prompts.md`
+   (§ *Document entities streaming linking judge*) with placeholders
+   `{{docTitle}}/{{docSnippet}}/{{mentionsBatch}}`; candidates are shown with their current
+   rung. Verdicts: `link | mint | defer`, plus `mentionRung ∈ g0..g3` and — on mint — an
+   optional `parentCandidate` + `edgeKind` (`coarsens-to | part-of`). Post-checks in code: a
+   `link` target must case-insensitively match a listed candidate else it demotes to `mint`; a
+   `parentCandidate` must match a listed candidate else the edge is dropped and the mint stands;
+   a valid parent yields a granularity edge with judge provenance; `defer` = provisional mint +
+   defer-queue entry. Sketch below is the pre-amendment two-verdict prompt, kept for history.
 4. **Registry update** — links append the mention to the canonical's `aliases`; mints create a
-   new canonical record (`firstSeen` = doc). Registry saved once per document.
+   new canonical record (`firstSeen` = doc, `rung` = the judged `mentionRung`). Registry saved
+   once per document.
 5. **Pair-rule discovery** — compute the document's co-occurrence signatures
    (`(category, role) × (category, role)` for every entity pair). For signatures **not yet in**
    `schema.json.pairRules`: one batched LLM call (see prompt sketch below) → verdicts cached in
@@ -333,7 +405,14 @@ Per document (`extractions/NN.json` → `artifacts/NN.json`):
    so this call disappears after the early corpus.
 6. **Stamp & write** — `normalizedName` on every entity, `normalizedHead`/`normalizedTail` on
    every relation (resolved through the same map); `code` via the existing
-   `CountryNameNormalizer` for `Country` entities. Write `artifacts/NN.json`.
+   `CountryNameNormalizer` for `Country` entities; since 2026-08-04 also **`matchedVia`** (the
+   registry surface the mention actually hit, in stored casing) — the precondition for a local
+   consolidator split re-stamp. Write `artifacts/NN.json`.
+0. *(Amendment 2026-08-04, runs before step 1)* **Ladder bootstrap** — for every category this
+   document touches, `LadderDiscovery.maybeDiscover` fires the `ladder` prompt ensemble when the
+   category first crosses `LADDER_MIN_EXAMPLES` distinct surfaces (re-fires at ≥2× growth),
+   validates, caches into `schema.json`, and retroactively binds rungs/edges over existing
+   canonicals whose names match rung examples.
 
 **Link-judge prompt sketch:**
 
@@ -374,21 +453,29 @@ Output raw JSON: { "rules": [ { "signature": 1, "relation": "attacks",
 
 ### 4.3 `RegistryConsolidator` (optional repair, manual trigger — never scheduled)
 
-Fixes duplicates that greedy per-document linking missed. Two passes, both cheap:
+Fixes wrong-but-safe streaming decisions. **Amendment 2026-08-04: the full repair inventory —
+merge / split / move** (merge-only greedy is the known-weak configuration;
+gruenheid2014incremental):
 
-1. **Registry pass** — per category, cluster suspicious canonical pairs by string similarity over
-   full alias sets; for categories with suspects, one LLM call reviewing **only the canonical
-   names + aliases** (orders of magnitude smaller than the batch pipeline's all-names call) →
-   merge map `{from → into}`. Apply: union alias lists, drop merged records, log
-   `merge-canonical` events (if logging).
-2. **Schema pass** — same idea over `schema.json` relation types and categories whose alias sets
-   or definitions have drifted together; merges append to `history`.
-3. **Re-stamp** — deterministically rewrite `normalizedName`/`normalizedHead`/`normalizedTail`
-   in affected artifacts by re-applying the alias→canonical map. **No LLM, no re-extraction.**
-   Then rebuild the graph.
+1. **Registry pass** — per category, cluster suspicious canonical pairs using union-blocker-shaped
+   signals over full alias sets (string similarity ∪ transliteration/confusable skeleton ∪
+   char-3-gram Jaccard, max-over-aliases), **plus every pair the judge deferred** (the registry's
+   `deferQueue` bypasses the blocker); one LLM call (`prompts/consolidate-merge.md`) reviewing
+   only canonical names + aliases returns the four-verdict repair set: `merges` (same thing, same
+   grain), `edges` (rung pair → granularity edge), `renames` (`renamed-to` chain), `splits`
+   (mixed alias list → detach). Reviewed defer entries clear from the queue whatever the verdict.
+2. **Cross-category sweep** — canonicals in different categories sharing an exact case-folded
+   surface are reviewed together (entries labelled `Category/Name`); a confirmed duplicate moves
+   + merges and logs a `category-correction` (reported, and fed back upstream).
+3. **Schema pass** — same idea over `schema.json` relation types and categories whose alias sets
+   or definitions have drifted together; merges append to `history` (merge verdict only).
+4. **Re-stamp** — deterministically rewrite `normalizedName`/`normalizedHead`/`normalizedTail`
+   in affected artifacts, resolving **by `matchedVia`** (the alias each mention actually hit),
+   never by the now-ambiguous canonical — which is what keeps a split local. **No LLM, no
+   re-extraction.** Then rebuild the graph.
 
-The consolidator's objective is evidence-bounded merging only — it must never add relations or
-optimize for graph connectivity.
+The consolidator's objective is evidence-bounded repair only — it must never add assertional
+relations or optimize for graph connectivity.
 
 ### 4.4 `DataGraphBuilder` v2
 
@@ -401,6 +488,16 @@ Extend the existing class with an input mode:
      `kind: inferred` (skip when `relation: null` or the signature is unruled).
   Aggregation exactly as today (weight = distinct incident count, earliest date), keyed with
   `kind`. The builder stays **LLM-free**: it only reads the cached rule table.
+
+**Amendment 2026-08-04 — λ (merge granularity at fold time).** `StreamingGraphBuilder` accepts a
+per-category rung choice (`LAMBDA="Software=g2,default=g0"`): node labels project upward along
+the registry's granularity edges toward the λ rung, rounding down to the nearest populated rung;
+`coarsens-to` folds freely, `part-of` only when `LAMBDA_INTERPRETIVE=1` — and every edge touched
+by a widening fold is downgraded to `kind: inferred` (the view is an interpretation). Projection
+contract: weight = distinct-incident count RECOMPUTED via incident-id set union (never summed up
+the ladder — distinct-count is non-additive), earliest date = min, diamonds resolve
+deterministically (oldest edge wins). The fold's parameters land in `graph/lambda.json` beside
+the CSVs; λ is never part of the runId — refolds are free and views are never stored.
 - `edgesFrom: 'extracted'`: extracted relations only — the sparse, fully evidence-grounded graph.
 - `edgesFrom: 'cooccurrence'` (legacy): the current hardcoded `#inferRelationship` path, kept as
   the 2025-baseline comparison mode.

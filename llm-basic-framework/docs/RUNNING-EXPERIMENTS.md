@@ -112,8 +112,13 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `OUTPUT_DIR` | `../storage/cert.gov.ua/processed` | |
 | `DECISIONS_LOG` | off | **Set to `1`.** Without it there is nothing to score or replay |
 | `DECISION_STRATEGY` | unset | Selects the decision stage (§4). Unset = the built-in `link-judge` path |
-| `CANDIDATE_GENERATOR` | unset | Selects the blocker (§4a). Unset = `string-sim`, the arm the M4 gate pins |
+| `CANDIDATE_GENERATOR` | unset | Selects the blocker (§4a). Unset = `string-sim`, the arm the M4 gate pins. `union` = the SKEIN v2 five-channel RRF union blocker (needs embeddings config) |
 | `CANDIDATE_K`, `CANDIDATE_MIN_SIM` | `5`, `0.5` | The golden fixture's values; changing either forks the runId |
+| `LADDER_ENSEMBLE_N` | `3` | SKEIN v2 ladder bootstrap: same-model ensemble size (spec floor 3). Folds into the runId |
+| `LADDER_ENSEMBLE_MODELS` | unset | Comma list of `provider:model` — switches the ladder ensemble to multi-model. Folds into the runId |
+| `LADDER_MIN_EXAMPLES` | `8` | Distinct surfaces a category must accumulate before its ladder fires (the "pending bucket"). Folds into the runId |
+| `LAMBDA` | unset (= `default=g0`) | Fold-time merge granularity for `streamingGraphBuilder`, e.g. `Software=g2,default=g0`. NOT in the runId — refolds are free; recorded in `graph/lambda.json` |
+| `LAMBDA_INTERPRETIVE` | off | `1` lets λ fold `part-of` (widening) edges; folded edges are marked `inferred` and the view labels itself interpretive |
 | `EMBEDDINGS` | off | `FLOW=batch` only. `1` makes `DataNormalizer` write real vectors — and moves its output into the run directory (§4a) |
 | `SEED` | none | Recorded in the run card |
 | `TEMPERATURE`, `TOP_P`, `MAX_TOKENS` | unset | Unset means *send nothing* — see below |
@@ -495,17 +500,28 @@ not a result.
 Honest status, so you do not plan around something that is not there.
 
 **Works now:** both pipelines end to end; run cards and cost metering; the decision log; all five
-decision strategies, live via `DECISION_STRATEGY` and offline via `replay`; the gate; registry v2;
-analyzers and candidate generators — now **selectable at runtime** via `CANDIDATE_GENERATOR`
-(string-sim, exact, TF-IDF, BM25, embedding; RRF fusion awaits M7's config loader); embeddings with
-batching, cost metering and a cross-run vector cache; merge P/R, NIL and the CESI suite through
-`bin/evaluate.ts`.
+decision strategies, live via `DECISION_STRATEGY` and offline via `replay`; the gate; **registry
+v3 — the identity graph** (per-alias provenance, rungs, granularity + rename edge layers, defer
+queue); the **SKEIN v2 granularity subsystem** (2026-08-04): ladder bootstrap with N≥3 ensemble +
+validators (`LADDER_*` env), the three-verdict rung-aware link-judge
+(`link | mint | defer` + `parentCandidate` edges, `matchedVia` stamps), the consolidator's full
+merge/split/move + cross-category sweep + defer review, λ-fold on the graph builder
+(`LAMBDA`/`LAMBDA_INTERPRETIVE`), and the **run playback viewer** (`npm run view -- --run <dir>`
+→ one self-contained `run-view.html` replaying the registry/ladders document by document);
+analyzers and candidate generators — selectable at runtime via `CANDIDATE_GENERATOR`
+(string-sim, exact, TF-IDF, BM25, embedding, and `union` — the SKEIN v2 RRF composition);
+embeddings with batching, cost metering and a cross-run vector cache; merge P/R, NIL and the CESI
+suite through `bin/evaluate.ts`.
 
 **Not built yet:**
 
+- **Hierarchical (hP/hR) scoring.** The pipeline now produces granularity edges, but
+  `bin/evaluate.ts` still scores identity only and ignores both system and gold `edges`. The
+  pipeline's `coarsens-to` maps to the gold table's `isa` kind when that work lands.
 - **Gloss writing.** `EntityRegistry` stores a `gloss` and `EmbeddingGenerator` can encode
-  `name+gloss`, but nothing ever writes one, so that arm is currently identical to `name` (it warns).
-  The judge would have to emit a one-line description at mint time.
+  `name+gloss` (the `union` blocker asks for it), but nothing ever writes one, so that channel
+  currently degrades to `name` (it warns). The judge would have to emit a one-line description at
+  mint time.
 - **VertexAI embeddings are unverified** — implemented, never called. See §4a.
 - **The SecureBERT sidecar has not been started here** — no Docker daemon. The backend is unit
   tested against the wire contract; the compose file is not.
