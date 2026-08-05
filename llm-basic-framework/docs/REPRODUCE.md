@@ -131,6 +131,40 @@ place to run this arm.
 
 The blocker fails fast if embeddings are misconfigured — it never silently downgrades.
 
+### Choosing the embedding model
+
+```bash
+npm run embed-bench -- bge-m3 embeddinggemma qwen3-embedding [--k 20]
+```
+
+Scores any Ollama embedding model on the only job the dense channel has: recall over the **24
+cross-script multi-member gold clusters**, against every gold surface in those categories as the
+distractor pool. Measured 2026-08-05 on an 8 GB box:
+
+| model | recall@5 | of achievable | Country | control |
+|---|---|---|---|---|
+| `bge-m3` | 39.5% | **72.2%** | 22/22 | clean |
+| `nomic-embed-text` | 18.9% | 34.5% | 6/22 | **collapsed** |
+
+`nomic-embed-text` is disqualified by the sanity control, not the recall: it scores
+`Microsoft Word` against `Росія` at **0.959**, i.e. it collapses short proper nouns into one
+region. Any model failing that control is unusable here whatever its headline benchmark says.
+`mxbai-embed-large` is English-centric and likely fails the same way.
+
+Two rules that follow from the measurements:
+
+- **Read recall@k, never the raw cosine.** Countries legitimately cluster with countries: on bare
+  names the worst true pair (0.672) scores *below* the best false one (0.670). Setting a dense
+  `CANDIDATE_MIN_SIM` would silently destroy recall. The blocker ranks and RRF-fuses; it does not
+  threshold.
+- **Keep k ≥ 5.** With bare names `Україна`→`Ukraine` ranked 3rd. Prefixing the category
+  (`"Country: Україна"`, which is what name+gloss does) lifted it to rank 1 — so the gloss form is
+  worth keeping, and `--no-gloss` exists only to demonstrate the difference.
+
+recall@k has a structural ceiling when a cluster holds more than k other members (Sector clusters
+are large), so the tool reports the ceiling and the achieved/achievable ratio beside the raw
+number — compare models on that, not on the raw percentage.
+
 Other open threads, all evidenced in `SUMMARY-2026-08-04.md`:
 
 - **Granularity edges are forward-only.** A coarser entity arriving after its finer variants leaves

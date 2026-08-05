@@ -13,7 +13,8 @@
     "view": "ts-node bin/view.ts",
     "capture-golden": "ts-node bin/capture-golden.ts",
     "migrate-registry": "ts-node bin/migrate-registry.ts",
-    "run-stats": "node bin/run-stats.js"
+    "run-stats": "node bin/run-stats.js",
+    "embed-bench": "node bin/embed-bench.js"
   },
   "author": "",
   "license": "ISC",
