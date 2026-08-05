@@ -10,10 +10,12 @@ import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import {
+  LinkVerdict,
   MentionRung,
   StreamingEntity,
   StreamingExtraction,
   extractAndParseJson,
+  glossRestatesMention,
   normalizeLinkVerdicts,
   normalizePairRuleVerdicts,
 } from '../utils/validationUtils';
@@ -56,6 +58,12 @@ interface Params {
    * `bin/app.ts` wires it for the incremental flow.
    */
   ladderDiscovery?: LadderDiscovery;
+  /**
+   * Phase 2 of the synchronous per-document pipeline (T9's StreamingRepairer). Optional so
+   * repairer-free arms and existing tests remain runnable; when present, `processFile` calls it
+   * once this document's registry writes have landed — the repair pass sees a state it can trust.
+   */
+  repairer?: { processDoc(file: string, docId: number): Promise<void> };
 }
 
 /** What the judge (built-in or strategy port) decided for one mention. */
@@ -67,6 +75,8 @@ interface JudgeOutcome {
   /** Validated candidate canonical the mint sits under, when the judge related them. */
   parentCandidate?: string;
   edgeKind?: GranularityEdgeKind;
+  /** 1-line name-independent description (prompts/link-judge.md rule 4), mint/defer only. */
+  gloss?: string;
   reasoning?: string;
 }
 
@@ -117,11 +127,13 @@ export class StreamingNormalizer {
   #prompts: PromptProvider;
   #decisionStrategy?: DecisionStrategy;
   #ladderDiscovery?: LadderDiscovery;
+  #repairer?: Params['repairer'];
 
   constructor(params: Params) {
     this.#prompts = params.prompts ?? prompts;
     this.#decisionStrategy = params.decisionStrategy;
     this.#ladderDiscovery = params.ladderDiscovery;
+    this.#repairer = params.repairer;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
@@ -151,6 +163,17 @@ export class StreamingNormalizer {
     const outputFile = `${this.outputDir}/${file}`;
     if (existsSync(outputFile)) {
       console.log(`SKIP (exists) ${outputFile}`);
+      if (this.#repairer) {
+        // Crash recovery: a previous run can die between this document's artifact write and its
+        // repairer call below — the artifact exists, but phase 2 never ran for it. Catch that up
+        // here instead of silently skipping it forever.
+        await this.#entityRegistry.load();
+        const artifact = JSON.parse((await fs.readFile(outputFile)).toString()) as StreamingExtraction;
+        const docId = resolveDocId(artifact.metadata, file);
+        if (this.#entityRegistry.repairState().repairedThrough < docId) {
+          await this.#repairer.processDoc(file, docId);
+        }
+      }
       return true;
     }
 
@@ -175,7 +198,7 @@ export class StreamingNormalizer {
     const extraction = JSON.parse(
       (await fs.readFile(inputFile)).toString()
     ) as StreamingExtraction;
-    const docId = Number(extraction.metadata?.id) || parseInt(file, 10) || 0;
+    const docId = resolveDocId(extraction.metadata, file);
     const docDate = String(extraction.metadata?.date || 'unknown');
 
     // ---- Phase A: read-only + LLM verdicts (no state mutation on failure) ----
@@ -300,13 +323,16 @@ export class StreamingNormalizer {
       } else if (!plan.canonical) {
         // mint (zero candidates, judge said mint or defer, or judge failed).
         // A defer is a PROVISIONAL mint: same registry write, plus a defer-queue entry the
-        // consolidator reviews — and it scores as a withheld decision (protocol §5), so the
-        // decision event stays `defer` with a null target.
+        // StreamingRepairer (this document's phase 2; the duplicate lives ≤1 document) reviews —
+        // and it scores as a withheld decision (protocol §5), so the decision event stays `defer`
+        // with a null target.
         const deferred = plan.outcome?.kind === 'defer';
-        plan.canonical = this.#entityRegistry.mint(plan.category, plan.entity.name, {
-          doc: docId,
-          date: docDate,
-        });
+        plan.canonical = this.#entityRegistry.mint(
+          plan.category,
+          plan.entity.name,
+          { doc: docId, date: docDate },
+          { gloss: plan.outcome?.gloss ?? null }
+        );
         if (plan.outcome?.mentionRung) {
           this.#entityRegistry.setRung(plan.category, plan.canonical, plan.outcome.mentionRung);
         }
@@ -318,7 +344,7 @@ export class StreamingNormalizer {
 
         // A mint may carry a validated parent candidate — the "hard non-merge plus a connecting
         // edge" outcome. The edge kind came from the judge's preserving reading; provenance makes
-        // it consolidator-confirmable.
+        // it StreamingRepairer (this document's phase 2; the duplicate lives ≤1 document)-confirmable.
         if (!deferred && plan.outcome?.parentCandidate && plan.outcome.edgeKind) {
           const added = this.#entityRegistry.addGranularityEdge(plan.category, {
             from: plan.canonical,
@@ -360,6 +386,8 @@ export class StreamingNormalizer {
             target: null,
             // Not part of the scoring contract — the provisional canonical, for state replay.
             mintedAs: plan.canonical,
+            // Non-scoring: the gloss written onto the provisional mint, for replay/debugging.
+            gloss: plan.outcome?.gloss ?? null,
           });
         } else {
           await this.#decisionLog.logDecision({
@@ -369,6 +397,8 @@ export class StreamingNormalizer {
             candidates: describeCandidates(plan.candidates),
             decision: 'mint',
             target: plan.canonical,
+            // Non-scoring: the gloss written onto the mint, for replay/debugging.
+            gloss: plan.outcome?.gloss ?? null,
           });
         }
       }
@@ -400,8 +430,9 @@ export class StreamingNormalizer {
     for (const plan of plans) {
       plan.entity.category = plan.category;
       plan.entity.normalizedName = plan.canonical;
-      // The registry surface this mention hit, in stored casing — what a consolidator split
-      // reassigns by. Registry writes above guarantee the lookup now resolves.
+      // The registry surface this mention hit, in stored casing — what a StreamingRepairer (this
+      // document's phase 2; the duplicate lives ≤1 document) split reassigns by. Registry writes
+      // above guarantee the lookup now resolves.
       plan.entity.matchedVia = this.#entityRegistry.matchedSurface(plan.category, plan.entity.name);
       if (plan.category.toLowerCase() === 'country') {
         const code = await this.#countryNameNormalizer.normalizeCountry(plan.entity.name, docId);
@@ -430,6 +461,9 @@ export class StreamingNormalizer {
     });
     console.timeEnd(`NORMALIZE ${file}`);
     console.log(`OUT FILE=${outputFile}`);
+    // Phase 2, synchronous: the artifact and registry writes above are already durable, so the
+    // repairer sees a state it can trust. Last statement — nothing here depends on it running.
+    await this.#repairer?.processDoc(file, docId);
     return true;
   }
 
@@ -488,7 +522,8 @@ export class StreamingNormalizer {
       decisions = await strategy.decide(requests);
     } catch (error) {
       // Same failure posture as #linkJudge: mint-all is conservative and repairable by the
-      // consolidator. Never abort the document.
+      // StreamingRepairer (this document's phase 2; the duplicate lives ≤1 document). Never abort
+      // the document.
       console.error(`DECISION (${strategy.id}) failed for doc ${docId}, minting all:`, error);
       return new Map();
     }
@@ -542,21 +577,10 @@ export class StreamingNormalizer {
     const title = String(extraction.metadata?.title || 'untitled');
     const snippet = await this.#loadSnippet(file);
 
-    const lines = batch.map((plan, index) => {
-      const candidates =
-        plan.candidates
-          .map((candidate) => {
-            const rung = candidate.rung ? ` [${candidate.rung}]` : ' [rung unknown]';
-            return `${candidate.name}${rung} (aliases: ${candidate.aliases.join(', ')})`;
-          })
-          .join('; ') || '(none)';
-      return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
-    });
-
     const instructions = this.#prompts.render('link-judge', {
       docTitle: title,
       docSnippet: snippet,
-      mentionsBatch: lines.join('\n'),
+      mentionsBatch: renderMentionLines(batch),
     });
 
     const started = Date.now();
@@ -618,6 +642,7 @@ export class StreamingNormalizer {
           outcomeMap.set(key, {
             kind: 'defer',
             mentionRung,
+            gloss: verdict.gloss || undefined,
             reasoning: verdict.reasoning || undefined,
           });
           continue;
@@ -635,12 +660,19 @@ export class StreamingNormalizer {
           mentionRung,
           parentCandidate: parent?.name,
           edgeKind: parent ? (verdict.edgeKind || 'part-of') : undefined,
+          gloss: verdict.gloss || undefined,
           reasoning: verdict.reasoning || undefined,
         });
       }
+
+      // Code-validate gloss on every mint/defer (prompts/link-judge.md rule 4): one re-ask, only
+      // for mentions that failed, before falling back to no gloss at all.
+      await this.#validateGlosses(outcomeMap, batch, title, snippet, docId);
+
       return outcomeMap;
     } catch (error) {
-      // Mint-all is conservative and repairable by the consolidator — never abort the doc
+      // Mint-all is conservative and repairable by the StreamingRepairer (this document's phase
+      // 2; the duplicate lives ≤1 document) — never abort the doc
       console.error(`LINK-JUDGE failed for doc ${docId}, minting all:`, error);
       return new Map();
     } finally {
@@ -648,6 +680,87 @@ export class StreamingNormalizer {
       await this.#decisionLog.logLlmCall({
         doc: docId,
         kind: 'link-judge',
+        seconds: (Date.now() - started) / 1000,
+        model: response?.model,
+        promptTokens: response?.usage.inputTokens,
+        completionTokens: response?.usage.outputTokens,
+      });
+    }
+  }
+
+  /**
+   * Code-validates gloss on every mint/defer outcome (prompts/link-judge.md rule 4): empty, or
+   * `glossRestatesMention`, means the model gave nothing a duplicate-finder could use that the
+   * name doesn't already give it. ONE re-ask per document — containing ONLY the mentions that
+   * failed, over the same prompt template — so a model that keeps failing cannot loop the doc.
+   * Still-bad after the retry is logged (`gloss-flagged`) and the mint proceeds with no gloss;
+   * the retry only ever touches `gloss` on the outcomes already built by the caller. Mutates
+   * `outcomeMap` in place.
+   */
+  async #validateGlosses(
+    outcomeMap: Map<string, JudgeOutcome>,
+    batch: MentionPlan[],
+    title: string,
+    snippet: string,
+    docId: number
+  ): Promise<void> {
+    const failing = batch.filter((plan) => {
+      const outcome = outcomeMap.get(mentionKey(plan.category, plan.entity.name));
+      if (!outcome || (outcome.kind !== 'mint' && outcome.kind !== 'defer')) return false;
+      const gloss = outcome.gloss ?? '';
+      return !gloss.trim() || glossRestatesMention(gloss, plan.entity.name);
+    });
+    if (failing.length === 0) return;
+
+    const flagStillBad = async (plan: MentionPlan) => {
+      const outcome = outcomeMap.get(mentionKey(plan.category, plan.entity.name))!;
+      outcome.gloss = undefined;
+      await this.#decisionLog.log({
+        op: 'gloss-flagged',
+        doc: docId,
+        mention: plan.entity.name,
+        category: plan.category,
+        kind: outcome.kind,
+      });
+    };
+
+    const instructions = this.#prompts.render('link-judge', {
+      docTitle: title,
+      docSnippet: snippet,
+      mentionsBatch: renderMentionLines(failing),
+    });
+
+    const started = Date.now();
+    console.time(`LINK-JUDGE-RETRY doc ${docId}`);
+    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    let response: LlmResponse | undefined;
+    try {
+      response = await this.#llmClient.send(
+        instructions,
+        'Resolve the mentions listed in your instructions. Output the JSON verdicts object only.',
+        { operator: 'link-judge-retry', docId }
+      );
+      const verdicts = normalizeLinkVerdicts(extractAndParseJson(response.text) || {}) || [];
+
+      for (const plan of failing) {
+        const retryVerdict = findVerdict(verdicts, plan);
+        const gloss = retryVerdict?.gloss?.trim();
+        if (gloss && !glossRestatesMention(gloss, plan.entity.name)) {
+          outcomeMap.get(mentionKey(plan.category, plan.entity.name))!.gloss = gloss;
+        } else {
+          await flagStillBad(plan);
+        }
+      }
+    } catch (error) {
+      // Same conservative posture as #linkJudge itself: never abort the doc. Every mention that
+      // was pending a retried gloss proceeds with none.
+      console.error(`LINK-JUDGE-RETRY failed for doc ${docId}, proceeding without gloss:`, error);
+      for (const plan of failing) await flagStillBad(plan);
+    } finally {
+      console.timeEnd(`LINK-JUDGE-RETRY doc ${docId}`);
+      await this.#decisionLog.logLlmCall({
+        doc: docId,
+        kind: 'link-judge-retry',
         seconds: (Date.now() - started) / 1000,
         model: response?.model,
         promptTokens: response?.usage.inputTokens,
@@ -770,4 +883,48 @@ function unambiguousPlan(batch: MentionPlan[], mention: string): MentionPlan | u
   const folded = mention.trim().toLowerCase();
   const matches = batch.filter((plan) => plan.entity.name.trim().toLowerCase() === folded);
   return matches.length === 1 ? matches[0] : undefined;
+}
+
+/**
+ * The judge's numbered mention+candidate list — prompts/link-judge.md's `{{mentionsBatch}}`
+ * placeholder. Shared by the primary call and the one-shot gloss retry so a retry is provably the
+ * same rendering, just over a smaller batch.
+ */
+function renderMentionLines(plans: MentionPlan[]): string {
+  return plans
+    .map((plan, index) => {
+      const candidates =
+        plan.candidates
+          .map((candidate) => {
+            const rung = candidate.rung ? ` [${candidate.rung}]` : ' [rung unknown]';
+            return `${candidate.name}${rung} (aliases: ${candidate.aliases.join(', ')})`;
+          })
+          .join('; ') || '(none)';
+      return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
+    })
+    .join('\n');
+}
+
+/**
+ * The verdict for one plan out of a (usually small) gloss-retry response — same category-first,
+ * unambiguous-name fallback as the primary judge loop's `batchByMention` lookup, scaled down since
+ * a retry batch rarely has the cross-category collision `mentionKey` exists to prevent.
+ */
+function findVerdict(verdicts: LinkVerdict[], plan: MentionPlan): LinkVerdict | undefined {
+  const key = mentionKey(plan.category, plan.entity.name);
+  const exact = verdicts.find((verdict) => mentionKey(verdict.category || plan.category, verdict.mention) === key);
+  if (exact) return exact;
+  const folded = plan.entity.name.trim().toLowerCase();
+  const matches = verdicts.filter((verdict) => verdict.mention.trim().toLowerCase() === folded);
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
+/**
+ * The document id every downstream write keys on: the extraction/artifact's own `metadata.id`
+ * when present, else the filename's numeric stem. Shared by the normal read path and the
+ * SKIP-exists crash-recovery path (`processFile`), which reads it back off the already-written
+ * artifact instead of the extraction.
+ */
+function resolveDocId(metadata: Record<string, string | number> | undefined, file: string): number {
+  return Number(metadata?.id) || parseInt(file, 10) || 0;
 }

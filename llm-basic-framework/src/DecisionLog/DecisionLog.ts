@@ -82,6 +82,11 @@ export interface DecisionEvent {
   strategy?: string;
   model?: string;
   seed?: number | null;
+  /**
+   * Non-scoring (T5): the judge's gloss on mint/defer, carried through for replay/debugging.
+   * Absent on logs written before T5; null when the judge gave none or gloss validation failed.
+   */
+  gloss?: string | null;
 }
 
 export class DecisionLog {
