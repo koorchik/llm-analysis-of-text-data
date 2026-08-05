@@ -8,6 +8,24 @@ import { Ollama } from 'ollama';
 
 const DEFAULT_NUM_CTX = 32768;
 
+/**
+ * The context window a local model tag advertises, e.g. `gemma4:e2b-8k` → 8192.
+ *
+ * Local arms are tagged by the window they were built for, but `options.num_ctx` OVERRIDES the
+ * Modelfile — so sending the 32k default to an `-8k` tag silently allocates a 32k KV cache. On an
+ * 8 GB card that spills the cache to CPU and makes the tag a lie about what actually ran. Reading
+ * the window back off the tag keeps the model's name, the request, and the run card in agreement.
+ *
+ * Returns `undefined` for tags that advertise nothing (`gemma4:e2b`, `gpt-oss:20b`), which then
+ * fall through to `DEFAULT_NUM_CTX` as before. `b`/`B` parameter-count suffixes are NOT windows.
+ */
+export function numCtxFromModelTag(model: string): number | undefined {
+  const match = model.match(/-(\d+)k$/i);
+  if (!match) return undefined;
+  const window = Number(match[1]) * 1024;
+  return Number.isFinite(window) && window > 0 ? window : undefined;
+}
+
 export class LlmClientBackendOllama implements LlmBackendBase {
   model: string;
   readonly provider = 'ollama';
@@ -21,9 +39,14 @@ export class LlmClientBackendOllama implements LlmBackendBase {
   ollama: Ollama;
   #numCtx: number;
 
+  /** The window actually requested per call — read by the run log so the arm is self-describing. */
+  get numCtx(): number {
+    return this.#numCtx;
+  }
+
   constructor(args: { model: string; apiKey?: string; numCtx?: number }) {
     this.model = args.model;
-    this.#numCtx = args.numCtx ?? DEFAULT_NUM_CTX;
+    this.#numCtx = args.numCtx ?? numCtxFromModelTag(args.model) ?? DEFAULT_NUM_CTX;
 
     this.ollama =
       args.apiKey && args.model.match(/gpt-oss/)

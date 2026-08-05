@@ -26,11 +26,28 @@ export interface DocRef {
 
 export interface RunViewData {
   runId: string;
+  /** Arm identity, read from the run card — what the model switcher labels this run with. */
+  arm: ArmId;
   docOrder: DocRef[];
   events: Array<Record<string, unknown>>;
   /** Per-category canonical names of the final on-disk registry, for the self-check. */
   registryFinal: Record<string, string[]>;
+  /** category → canonical → rung, from the final registry (see loadRunData). */
+  registryRungs: Record<string, Record<string, string>>;
   selfCheck: SelfCheck;
+}
+
+/**
+ * Which arm a run is, in the terms the experiment varies along: the condition label, the model
+ * that answered the per-document judge calls, and the (possibly different) ladder ensemble. A
+ * mixed-window local arm runs `gemma4:e2b-8k` for the judge and `…-16k` for the ladder, so the
+ * two are recorded separately rather than collapsed into one "model" string.
+ */
+export interface ArmId {
+  condition: string;
+  provider: string;
+  model: string;
+  ladderModels: string | null;
 }
 
 export interface SelfCheck {
@@ -81,27 +98,45 @@ export async function loadRunData(runDir: string): Promise<RunViewData> {
   }
 
   const registryFinal: Record<string, string[]> = {};
+  const registryRungs: Record<string, Record<string, string>> = {};
   const registryPath = path.join(runDir, 'registry.json');
   if (existsSync(registryPath)) {
     const registry = new EntityRegistry({ filePath: registryPath });
     await registry.load();
     for (const category of registry.categories()) {
-      registryFinal[category] = Object.keys(registry.records(category)).sort();
+      const records = registry.records(category);
+      registryFinal[category] = Object.keys(records).sort();
+      // Rungs mostly reach the registry through retroactive ladder binding, which emits no
+      // journal event — so the replay alone knows a rung only for the ~114 entities whose
+      // granularity-edge event happened to carry `mentionRung`, out of ~1700 that have one.
+      // Carrying the registry's rungs lets every entity show its level; the page marks these as
+      // final-state, because unlike journal events they are not attributable to a document.
+      for (const [canonical, record] of Object.entries(records)) {
+        const rung = (record as { rung?: unknown }).rung;
+        if (typeof rung === 'string' && rung) (registryRungs[category] ??= {})[canonical] = rung;
+      }
     }
   }
 
   let runId = path.basename(runDir);
+  const arm: ArmId = { condition: runId, provider: 'unknown', model: 'unknown', ladderModels: null };
   const cardPath = path.join(runDir, 'run-card.json');
   if (existsSync(cardPath)) {
     try {
-      runId = String(JSON.parse(await fs.readFile(cardPath, 'utf8')).runId ?? runId);
+      const card = JSON.parse(await fs.readFile(cardPath, 'utf8'));
+      runId = String(card.runId ?? runId);
+      arm.condition = String(card.condition ?? card.config?.condition ?? runId);
+      arm.provider = String(card.config?.llm?.provider ?? 'unknown');
+      arm.model = String(card.config?.llm?.model ?? 'unknown');
+      const ladderModels = card.config?.extra?.ladder?.ensembleModels;
+      arm.ladderModels = ladderModels ? String(ladderModels) : null;
     } catch {
       /* keep directory name */
     }
   }
 
   const selfCheck = computeSelfCheck(replayAll(events), registryFinal);
-  return { runId, docOrder, events, registryFinal, selfCheck };
+  return { runId, arm, docOrder, events, registryFinal, registryRungs, selfCheck };
 }
 
 export function replayAll(events: Array<Record<string, unknown>>): ReplayState {
@@ -148,13 +183,34 @@ const esc = (value: unknown): string =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-export function renderRunViewHtml(data: RunViewData): string {
-  const payload = JSON.stringify({
-    runId: data.runId,
-    docOrder: data.docOrder,
-    events: data.events,
-    selfCheck: data.selfCheck,
-  }).replace(/</g, '\\u003c'); // </script> can never terminate the block
+/**
+ * Renders the playback page for one run, or for several arms in ONE page with a model switcher.
+ *
+ * Multi-arm mode exists to compare arms on the same document: every arm replays the same frozen
+ * extractions, so the switcher carries the scrub position across by document id (not by frame
+ * index, which would drift if an arm produced fewer artifacts). Each arm keeps its own journal,
+ * frame count and self-check banner — nothing is merged, so a claim can always be traced to the
+ * run that produced it.
+ */
+export function renderRunViewHtml(input: RunViewData | RunViewData[]): string {
+  const runs = Array.isArray(input) ? input : [input];
+  if (runs.length === 0) throw new Error('renderRunViewHtml needs at least one run');
+
+  const payload = JSON.stringify(
+    runs.map((data) => ({
+      runId: data.runId,
+      arm: data.arm,
+      registryRungs: data.registryRungs,
+      docOrder: data.docOrder,
+      events: data.events,
+      selfCheck: data.selfCheck,
+    }))
+  ).replace(/</g, '\\u003c'); // </script> can never terminate the block
+
+  const title =
+    runs.length === 1
+      ? `SKEIN run playback — ${esc(runs[0].runId)}`
+      : `SKEIN run playback — ${runs.length} arms (${esc(runs.map((r) => r.arm.model).join(' vs '))})`;
 
   return `<!doctype html>
 <html lang="en">
@@ -162,7 +218,7 @@ export function renderRunViewHtml(data: RunViewData): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
-<title>SKEIN run playback — ${esc(data.runId)}</title>
+<title>${title}</title>
 <style>
   :root {
     --bg: #ffffff; --fg: #1f2328; --muted: #656d76; --line: #d0d7de; --panel: #f6f8fa;
@@ -188,6 +244,14 @@ export function renderRunViewHtml(data: RunViewData): string {
   .controls button { background: var(--panel); color: var(--fg); border: 1px solid var(--line);
                      border-radius: 6px; padding: 3px 10px; cursor: pointer; font-size: 13px; }
   .controls .pos { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+  .armrow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px;
+            padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+  .armrow label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+                  color: var(--muted); }
+  .armrow select { background: var(--panel); color: var(--fg); border: 1px solid var(--line);
+                   border-radius: 6px; padding: 3px 8px; font-size: 13px; max-width: 100%; }
+  .armrow .armmeta { color: var(--muted); font-size: 12px; }
+  .armrow .armmeta code { color: var(--fg); }
   .banner { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 6px;
             padding: 8px 12px; margin: 10px 16px; font-size: 13px; }
   main { display: grid; grid-template-columns: 220px 1fr 340px; gap: 0; min-height: 0; }
@@ -214,6 +278,8 @@ export function renderRunViewHtml(data: RunViewData): string {
   .ent { border-radius: 4px; padding: 1px 4px; }
   .ent.changed { background: var(--hl); }
   .ent .rungtag { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  /* Dotted = read from the final registry, not from a journal event at this frame. */
+  .ent .rungtag.final { border-bottom: 1px dotted var(--muted); cursor: help; opacity: .75; }
   .ent .deferred { color: var(--chip2); font-size: 11px; margin-left: 4px; }
   .aliases { color: var(--muted); font-size: 12px; padding-left: 12px; overflow-wrap: anywhere; }
   .edgekind { font-size: 11px; margin-left: 6px; }
@@ -237,6 +303,11 @@ export function renderRunViewHtml(data: RunViewData): string {
 <body>
 <header>
   <h1>SKEIN run playback — <code id="runid"></code></h1>
+  <div class="armrow" id="armrow" hidden>
+    <label for="arm">model / arm</label>
+    <select id="arm"></select>
+    <span class="armmeta" id="armmeta"></span>
+  </div>
   <div class="sub" id="docline"></div>
   <div class="controls">
     <button id="step-back" title="one document back">⏮</button>
@@ -265,15 +336,67 @@ export function renderRunViewHtml(data: RunViewData): string {
 <script>
 ${REPLAY_SOURCE}
 
-var DATA = ${payload};
+var DATA = null; // the active arm — bound by bindArm() below
+var RUNS = ${payload};
+var runIndex = 0;
 
 // Frame f = state after processing docOrder[f-1]; frame 0 = empty; the last frame appends the
-// consolidator's repair chapter (doc -1 events logged after the stream).
-var repairEvents = DATA.events.filter(function (e) { return docOf(e) < 0; });
-var frameCount = DATA.docOrder.length + (repairEvents.length > 0 ? 1 : 0);
-var frame = frameCount;
+// consolidator's repair chapter (doc -1 events logged after the stream). Every arm has its own
+// journal and therefore its own frame axis, so these are rebound on each arm switch.
+var repairEvents = [];
+var frameCount = 0;
+var frame = 0;
 var activeCategory = null;
 var playTimer = null;
+
+/**
+ * Switch arms, carrying the reading position across by DOCUMENT ID rather than frame index —
+ * arms can differ in how many artifacts they produced, so index 57 need not be the same report.
+ * An arm that never saw the current document clamps instead of jumping somewhere arbitrary.
+ */
+function bindArm(index, keepDocId) {
+  runIndex = index;
+  DATA = RUNS[index];
+  repairEvents = DATA.events.filter(function (e) { return docOf(e) < 0; });
+  var previous = frame;
+  frameCount = DATA.docOrder.length + (repairEvents.length > 0 ? 1 : 0);
+  if (keepDocId === undefined || keepDocId === null || keepDocId === -1) {
+    frame = frameCount;
+    return;
+  }
+  for (var i = 0; i < DATA.docOrder.length; i++) {
+    if (DATA.docOrder[i].id === keepDocId) { frame = i + 1; return; }
+  }
+  frame = Math.min(previous, frameCount);
+}
+
+/** "a,a,a" → "a ×3" — the ladder ensemble spec repeats one model per member. */
+function collapseModelSpec(spec) {
+  var counts = {}; var order = [];
+  spec.split(',').forEach(function (entry) {
+    var name = entry.trim();
+    if (!name) return;
+    if (counts[name] === undefined) { counts[name] = 0; order.push(name); }
+    counts[name] += 1;
+  });
+  return order.map(function (n) { return counts[n] > 1 ? n + ' \\u00d7' + counts[n] : n; }).join(', ');
+}
+
+function renderArmBar() {
+  if (RUNS.length < 2) return;
+  var row = document.getElementById('armrow');
+  row.hidden = false;
+  document.getElementById('arm').innerHTML = RUNS.map(function (r, i) {
+    return '<option value="' + i + '"' + (i === runIndex ? ' selected' : '') + '>' +
+      esc(r.arm.condition) + ' \\u2014 ' + esc(r.arm.provider) + '/' + esc(r.arm.model) + '</option>';
+  }).join('');
+  var meta = '<code>' + esc(DATA.runId) + '</code> \\u00b7 ' + DATA.docOrder.length + ' doc(s)';
+  if (DATA.arm.ladderModels) {
+    meta += ' \\u00b7 ladder: <code>' + esc(collapseModelSpec(DATA.arm.ladderModels)) + '</code>';
+  }
+  if (!DATA.selfCheck.ok) meta += ' \\u00b7 \\u26a0 journal incomplete';
+  document.getElementById('armmeta').innerHTML = meta;
+}
 
 function eventsUpTo(f) {
   var docsIncluded = {};
@@ -307,6 +430,7 @@ function render() {
   var state = stateAt(frame);
   var docId = currentDocId(frame);
   document.getElementById('runid').textContent = DATA.runId;
+  renderArmBar();
   document.getElementById('scrubber').max = String(frameCount);
   document.getElementById('scrubber').value = String(frame);
 
@@ -432,7 +556,17 @@ function renderForest(state, docId) {
     seen[name] = true;
     var cls = 'ent' + (touched[name] ? ' changed' : '');
     var html = '<li><span class="' + cls + '">' + esc(name);
-    if (entity.rung) html += '<span class="rungtag">[' + esc(entity.rung) + ']</span>';
+    // Journal rung when the stream carried one; otherwise the registry's final rung, marked
+    // "final" because it is not attributable to this document — most rungs are bound
+    // retroactively by the ladder and never appear as an event.
+    var journalRung = entity.rung;
+    var finalRung = (DATA.registryRungs[activeCategory] || {})[name];
+    if (journalRung) {
+      html += '<span class="rungtag">[' + esc(journalRung) + ']</span>';
+    } else if (finalRung) {
+      html += '<span class="rungtag final" title="final rung from registry.json — bound ' +
+        'retroactively by the ladder, not journalled per document">[' + esc(finalRung) + ']</span>';
+    }
     if (entity.deferred) html += '<span class="deferred">deferred</span>';
     html += '</span>';
     if (edge) html += '<span class="edgekind ' + esc(edge.kind) + '">' + esc(edge.kind) +
@@ -519,6 +653,14 @@ function renderDocEvents(docId) {
   el.innerHTML = html || '<div class="empty">no state changes from this document</div>';
 }
 
+document.getElementById('arm').addEventListener('change', function (e) {
+  if (playTimer) {
+    clearInterval(playTimer); playTimer = null;
+    document.getElementById('play').textContent = '\\u25b6';
+  }
+  bindArm(Number(e.target.value), currentDocId(frame));
+  render();
+});
 document.getElementById('scrubber').addEventListener('input', function (e) {
   frame = Number(e.target.value); render();
 });
@@ -541,6 +683,7 @@ document.getElementById('play').addEventListener('click', function () {
   }, Number(document.getElementById('speed').value));
 });
 
+bindArm(0);
 render();
 </script>
 </body>

@@ -166,22 +166,29 @@ interface RegistryV2Record {
 }
 
 export interface RegistryLikeV2 {
-  version: 2;
+  /** v2 and every later version; v3 (SKEIN v2) adds rungs, edge layers and a defer queue. */
+  version: number;
   categories: { [category: string]: { [canonical: string]: RegistryV2Record } };
 }
 
 /**
- * Accepts v1 and v2 registries. The canonical name is included as a member because `mint` stores
- * it in its own alias list; including it twice is harmless (members are de-duplicated).
+ * Accepts v1 and every versioned registry. The canonical name is included as a member because
+ * `mint` stores it in its own alias list; including it twice is harmless (members are
+ * de-duplicated).
+ *
+ * The version is deliberately NOT compared against a fixed number. A predicate pinned to
+ * `version === 2` kept parsing when v3 landed but read the whole file as the category map, so
+ * `granularityEdges`/`deferQueue` became phantom clusters and every real cluster went unscored —
+ * a silent wrong answer, not a crash. Presence of a `categories` map is the honest test: it is
+ * exactly what distinguishes a wrapped registry from the bare v1 category→canonical map.
  */
 export function fromRegistry(
   data: RegistryLikeV1 | RegistryLikeV2,
   options: KeyOptions = {}
 ): Partition {
+  const wrapped = (data as RegistryLikeV2).categories;
   const categories: Record<string, Record<string, { aliases: unknown[] }>> =
-    (data as RegistryLikeV2).version === 2
-      ? ((data as RegistryLikeV2).categories as never)
-      : (data as never);
+    wrapped && typeof wrapped === 'object' ? (wrapped as never) : (data as never);
 
   const groups: Array<{ id: string; members: ElementKey[] }> = [];
   for (const [category, records] of Object.entries(categories ?? {})) {

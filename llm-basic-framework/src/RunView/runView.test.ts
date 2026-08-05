@@ -127,6 +127,129 @@ test('loadRunData + renderRunViewHtml produce a self-contained page from a real 
   assert.deepEqual(Object.keys(embedded.categories.C.entities).sort(), ['A', 'A2']);
 });
 
+/** Minimal run directory: one document, one mint, and a run card naming the arm. */
+async function fakeRun(options: {
+  condition: string;
+  provider: string;
+  model: string;
+  ladderModels?: string;
+  canonical: string;
+  docIds: number[];
+}): Promise<string> {
+  const dir = await scratch();
+  const registry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  await registry.load();
+  registry.mint('HackerGroup', options.canonical, { doc: options.docIds[0], date: '01.01.2024' });
+  await registry.save();
+
+  for (const docId of options.docIds) {
+    await fs.writeFile(
+      path.join(dir, 'artifacts', `${docId}.json`),
+      JSON.stringify({
+        entities: [], relations: [], schemaProposals: { categories: [], relationTypes: [] },
+        metadata: { id: docId, date: '2024-01-01', title: `report ${docId}` },
+      })
+    );
+  }
+  await fs.writeFile(
+    path.join(dir, 'decisions.jsonl'),
+    JSON.stringify({
+      op: 'decision', decision: 'mint', category: 'HackerGroup',
+      mention: options.canonical, target: options.canonical, docId: options.docIds[0], candidates: [],
+    }) + '\n'
+  );
+  await fs.writeFile(
+    path.join(dir, 'run-card.json'),
+    JSON.stringify({
+      runId: `${options.condition}-abc123`,
+      condition: options.condition,
+      config: {
+        llm: { provider: options.provider, model: options.model },
+        extra: { ladder: { ensembleModels: options.ladderModels ?? null } },
+      },
+    })
+  );
+  return dir;
+}
+
+test('loadRunData reads the arm identity off the run card', async () => {
+  const dir = await fakeRun({
+    condition: 'psi-link-gemma', provider: 'ollama', model: 'gemma4:e2b-8k',
+    ladderModels: 'ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k',
+    canonical: 'Sandworm', docIds: [1],
+  });
+  const data = await loadRunData(dir);
+  assert.equal(data.arm.condition, 'psi-link-gemma');
+  assert.equal(data.arm.provider, 'ollama');
+  assert.equal(data.arm.model, 'gemma4:e2b-8k');
+  // The mixed-window arm's ladder model is kept distinct from the judge model.
+  assert.match(data.arm.ladderModels!, /gemma4:e2b-16k/);
+});
+
+test('several arms render into one page behind a switcher, each keeping its own journal', async () => {
+  // Different document counts on purpose: the local arm is missing doc 1, so frame index and
+  // document id diverge and a switcher that carried the raw index would land on the wrong report.
+  const cloud = await loadRunData(await fakeRun({
+    condition: 'psi-link-default', provider: 'anthropic', model: 'claude-opus-5',
+    canonical: 'Sandworm', docIds: [1, 2, 3],
+  }));
+  const local = await loadRunData(await fakeRun({
+    condition: 'psi-link-gemma', provider: 'ollama', model: 'gemma4:e2b-8k',
+    canonical: 'SandwormLocal', docIds: [2, 3],
+  }));
+
+  const html = renderRunViewHtml([cloud, local]);
+  assert.ok(html.includes('claude-opus-5') && html.includes('gemma4:e2b-8k'), 'both arms present');
+  assert.ok(html.includes('id="arm"'), 'the switcher exists');
+  assert.ok(!/src\s*=\s*"http/.test(html) && !/href\s*=\s*"http/.test(html), 'still self-contained');
+
+  // The payload is an array of arms — neither journal is merged into the other.
+  const runs = JSON.parse(html.match(/\nvar RUNS = (\[[\s\S]*?\]);\n/)![1].replace(/\\u003c/g, '<'));
+  assert.equal(runs.length, 2);
+  assert.equal(runs[0].arm.model, 'claude-opus-5');
+  assert.equal(runs[1].arm.model, 'gemma4:e2b-8k');
+  assert.notDeepEqual(runs[0].events, runs[1].events);
+
+  // bindArm carries position across by document id, so the same report is read under each arm.
+  const script = html.match(/<script>\n([\s\S]*?)\nvar DATA =/)![1];
+  const run = (body: string) =>
+    new Function(
+      `${script};
+       var RUNS = ${JSON.stringify(runs)};
+       var DATA = null, runIndex = 0, repairEvents = [], frameCount = 0, frame = 0;
+       ${html.match(/function bindArm[\s\S]*?\n}\n/)![0]}
+       ${body}`
+    )();
+
+  // Cloud doc 3 is frame 3; in the local arm doc 3 is only the SECOND document, so frame 2.
+  assert.equal(
+    run('bindArm(0); frame = 3; bindArm(1, 3); return frame;'),
+    2,
+    'the switch followed the document id, not the frame index'
+  );
+  // Doc 1 does not exist in the local arm — clamp rather than jump somewhere arbitrary.
+  assert.equal(
+    run('bindArm(0); frame = 1; bindArm(1, 1); return frame;'),
+    1,
+    'a document the other arm never saw clamps into range'
+  );
+  assert.equal(
+    run('bindArm(1); return frameCount;'),
+    2,
+    'each arm keeps its own frame axis'
+  );
+});
+
+test('a single run still renders exactly as before, with no switcher shown', async () => {
+  const data = await loadRunData(await fakeRun({
+    condition: 'solo', provider: 'anthropic', model: 'claude-opus-5', canonical: 'Sandworm', docIds: [1],
+  }));
+  const html = renderRunViewHtml(data);
+  assert.ok(html.includes('id="armrow" hidden'), 'switcher row starts hidden for one arm');
+  const runs = JSON.parse(html.match(/\nvar RUNS = (\[[\s\S]*?\]);\n/)![1].replace(/\\u003c/g, '<'));
+  assert.equal(runs.length, 1, 'one-run input still produces a one-element payload');
+});
+
 test('loadRunData refuses a directory without a decisions log', async () => {
   const dir = await scratch();
   await assert.rejects(() => loadRunData(dir), /DECISIONS_LOG=1/);

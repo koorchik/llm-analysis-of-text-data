@@ -20,11 +20,19 @@ export function createLlmBackend(params: { provider: string; model: string }): L
         apiKey: process.env.OPENAI_API_KEY!,
       });
 
-    case 'ollama':
-      return new LlmClientBackendOllama({
+    // num_ctx is left to the model tag (`…-8k` → 8192) unless OLLAMA_NUM_CTX overrides it, so a
+    // mixed-window arm (cheap 8k judge + 16k ladder ensemble) requests the right window per model
+    // instead of one hardcoded default for every local call.
+    case 'ollama': {
+      const override = process.env.OLLAMA_NUM_CTX;
+      const backend = new LlmClientBackendOllama({
         model: params.model,
         apiKey: process.env.OLLAMA_API_KEY,
+        ...(override ? { numCtx: Number(override) } : {}),
       });
+      console.log(`OLLAMA ${params.model}: num_ctx=${backend.numCtx}`);
+      return backend;
+    }
 
     case 'vertexai':
       return new LlmClientBackendVertexAi({

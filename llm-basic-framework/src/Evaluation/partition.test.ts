@@ -87,6 +87,31 @@ test('fromRegistry reads the v2 alias-object shape too', () => {
   assert.deepEqual(shape(partition), [['hackergroup|apt28', 'hackergroup|fancy bear']]);
 });
 
+test('fromRegistry reads any versioned registry, not only the exact version it was written for', () => {
+  // SKEIN v2 shipped registry v3 (rungs, edge layers, deferQueue). A predicate pinned to
+  // `version === 2` silently fell through to the v1 branch and read the WHOLE file as the
+  // category map — turning `granularityEdges`/`deferQueue` into phantom clusters and leaving
+  // the real ones unscored. Anything with a `categories` map must be read through it.
+  const partition = fromRegistry({
+    version: 3,
+    canonicalPolicy: 'first-seen',
+    categories: {
+      HackerGroup: {
+        APT28: { aliases: [{ surface: 'APT28' }, { surface: 'Fancy Bear' }] },
+      },
+    },
+    granularityEdges: [{ category: 'HackerGroup', from: 'APT28', to: 'Russia', kind: 'part-of' }],
+    renameEdges: [],
+    deferQueue: [{ mention: 'UAC-0002', category: 'HackerGroup' }],
+  } as never);
+
+  assert.deepEqual(
+    shape(partition),
+    [['hackergroup|apt28', 'hackergroup|fancy bear']],
+    'only the real category survives — edge layers are not clusters'
+  );
+});
+
 // --- Source 2: gold ---------------------------------------------------------------------------
 
 test('fromGoldClusters preserves gold cluster ids', () => {
