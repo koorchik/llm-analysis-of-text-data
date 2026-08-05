@@ -8,6 +8,7 @@ import { DataNormalizer } from '../src/DataProcessors/DataNormalizer';
 import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
 import { StreamingGraphBuilder, EdgesFrom, parseLambda } from '../src/DataProcessors/StreamingGraphBuilder';
 import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
+import { StreamingRepairer } from '../src/DataProcessors/StreamingRepairer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
 import { createEmbeddingsClient as buildEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
@@ -31,6 +32,8 @@ import {
 import { resolveGenerator } from '../src/Normalization/candidates';
 import type { CandidateGenerator, DecisionStrategy } from '../src/Normalization/types';
 import { prompts } from '../src/Normalization/PromptProvider';
+import { GlossIndex } from '../src/Repair/GlossIndex';
+import { parseThresholds } from '../src/Repair/SuspectGenerator';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
 import dotenv from 'dotenv';
@@ -103,6 +106,24 @@ const CONFIG = {
   lambda: process.env.LAMBDA || undefined,
   lambdaInterpretive: process.env.LAMBDA_INTERPRETIVE === '1',
 
+  // T9 repair pass: synchronous per-document registry repair, riding inside streamingNormalizer's
+  // processFile. Default ON — the incremental flow's normal behaviour. REPAIR=0 is the RQ3 NAIVE
+  // arm: no StreamingRepairer (and no GlossIndex) is constructed at all, so this has to be its own
+  // knob rather than a threshold that happens to silence everything.
+  repair: process.env.REPAIR === undefined ? true : process.env.REPAIR === '1',
+  // "Category=0.97,default=0.9" format (parseThresholds); unset keeps T6's conservative built-ins.
+  repairGlossThresholds: process.env.REPAIR_GLOSS_THRESHOLDS || undefined,
+  repairBlockerThresholds: process.env.REPAIR_BLOCKER_THRESHOLDS || undefined,
+  repairCoherenceThreshold:
+    process.env.REPAIR_COHERENCE_THRESHOLD === undefined
+      ? undefined
+      : Number(process.env.REPAIR_COHERENCE_THRESHOLD),
+  // 8000 by default (StreamingRepairer's own default) — fits the 8k local window the deferred
+  // consolidator's 22.6k prompt overflowed.
+  repairTokenCap:
+    process.env.REPAIR_TOKEN_CAP === undefined ? undefined : Number(process.env.REPAIR_TOKEN_CAP),
+  repairTopK: process.env.REPAIR_TOP_K === undefined ? undefined : Number(process.env.REPAIR_TOP_K),
+
   // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
   // share an output directory, so they cannot silently resume each other.
   condition: process.env.CONDITION || (FLOW === 'incremental' ? 'psi-link-default' : 'psi-norm-default'),
@@ -170,6 +191,15 @@ async function main() {
         ensembleModels: CONFIG.ladderEnsembleModels ?? null,
         minExamples: CONFIG.ladderMinExamples,
       },
+      // T9 repair pass: on/off and every threshold/knob that changes what it does. REPAIR=0 (the
+      // RQ3 NAIVE arm) must not share a runId with a repaired arm, and two repaired arms differing
+      // only by threshold must not share one either — same argument as `decisionStrategy` above.
+      repair: CONFIG.repair,
+      repairGlossThresholds: CONFIG.repairGlossThresholds ?? null,
+      repairBlockerThresholds: CONFIG.repairBlockerThresholds ?? null,
+      repairCoherenceThreshold: CONFIG.repairCoherenceThreshold ?? null,
+      repairTokenCap: CONFIG.repairTokenCap ?? null,
+      repairTopK: CONFIG.repairTopK ?? null,
     },
   });
 
@@ -211,7 +241,18 @@ async function main() {
     streamingExtractor: () => processors.streamingExtractor.run(),
     streamingNormalizer: () => processors.streamingNormalizer.run(),
     streamingGraphBuilder: () => processors.streamingGraphBuilder.run(),
-    registryConsolidator: () => processors.registryConsolidator.run(),
+    // T9: standalone catch-up for a registry whose repair pass never ran (an existing corpus, or a
+    // run that died mid-stream) — repair otherwise rides inside streamingNormalizer's processFile.
+    // registryConsolidator was here; T12 gives it a separate harness entry point instead of a step.
+    streamingRepairer: async () => {
+      if (!processors.streamingRepairer) {
+        throw new Error(
+          'STEPS=streamingRepairer requires REPAIR=1 (the default) — REPAIR=0 constructs no ' +
+            'repairer, so there is nothing to catch up'
+        );
+      }
+      await processors.streamingRepairer.run();
+    },
     dataAnalyzer: () => processors.streamingDataAnalyzer.run(),
   };
 
@@ -462,6 +503,43 @@ function createProcessors(
     minExamples: CONFIG.ladderMinExamples,
   });
 
+  // T9: synchronous per-document repair pass. GlossIndex is built from the run's own
+  // `embeddingsClient` — the same instance and cache dir (`${OUTPUT_DIR}/embeddings-cache`)
+  // `EmbeddingGenerator` uses — so the disk (model, text) cache is shared rather than paid for
+  // twice. REPAIR=0 (the RQ3 NAIVE arm) constructs neither GlossIndex nor StreamingRepairer: with
+  // no repair step to feed it, GlossIndex has no caller and would only add a spurious embeddings
+  // dependency to an arm that is supposed to have none.
+  //
+  // Posture (controller adjudication): `glossIndex.sync` failing inside `processDoc` is deliberately
+  // FATAL to the document, uncaught here — silently skipping repair on a sync failure would corrupt
+  // an experimental arm by letting it run partially repaired without saying so; a loud crash is the
+  // correct failure mode for a research harness.
+  const glossIndex = CONFIG.repair ? new GlossIndex({ embeddingsClient }) : undefined;
+
+  const streamingRepairer = glossIndex
+    ? new StreamingRepairer({
+        artifactsDir: `${incrementalDir}/artifacts`,
+        llmClient,
+        schemaRegistry,
+        entityRegistry,
+        decisionLog,
+        glossIndex,
+        // The SAME instance the normalizer prepares below — sharing keeps its phase-1 indexes warm
+        // instead of paying for a second cold build (StreamingRepairer's Params doc).
+        blocker: candidateGenerator,
+        thresholds: {
+          glossAnn: parseThresholds(CONFIG.repairGlossThresholds, 'glossAnn'),
+          blocker: parseThresholds(CONFIG.repairBlockerThresholds, 'blocker'),
+          coherence: CONFIG.repairCoherenceThreshold ?? 0.5,
+        },
+        ...(CONFIG.repairTokenCap !== undefined ? { tokenCap: CONFIG.repairTokenCap } : {}),
+        ...(CONFIG.repairTopK !== undefined ? { suspectTopK: CONFIG.repairTopK } : {}),
+        // Invalidates the phase-1 blocker index after every applied repair op — without this the
+        // blocker `candidateGenerator` shares with the normalizer keeps answering from a stale index.
+        onRegistryChange: (event) => candidateGenerator.onRegistryChange(event),
+      })
+    : undefined;
+
   const streamingNormalizer = new StreamingNormalizer({
     inputDir: streamingExtractor.outputDir,
     outputDir: `${incrementalDir}/artifacts`,
@@ -479,6 +557,9 @@ function createProcessors(
     candidateGenerator,
     ...(CONFIG.candidateK !== undefined ? { candidateK: CONFIG.candidateK } : {}),
     ...(CONFIG.candidateMinSim !== undefined ? { candidateMinSim: CONFIG.candidateMinSim } : {}),
+    // T5 hook: phase 2 rides inside processFile once this document's registry writes have landed.
+    // Omitted entirely under REPAIR=0, so a repairer-free arm behaves exactly as before T9.
+    ...(streamingRepairer ? { repairer: streamingRepairer } : {}),
   });
 
   const streamingGraphBuilder = new StreamingGraphBuilder({
@@ -515,6 +596,7 @@ function createProcessors(
     streamingNormalizer,
     streamingGraphBuilder,
     registryConsolidator,
+    streamingRepairer,
     streamingDataAnalyzer,
   };
 }
