@@ -129,6 +129,8 @@ export class RegistryConsolidator {
     await this.#schemaRegistry.save();
 
     console.time('CONSOLIDATE re-stamp');
+    // Prints "Re-stamped 0/0 artifacts" even when artifactsDir is missing (cosmetic change from the
+    // pre-extraction private method, which printed nothing on that early-return path).
     const { changed, total } = await restampArtifacts({
       artifactsDir: this.#artifactsDir,
       entityRegistry: this.#entityRegistry,

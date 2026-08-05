@@ -198,6 +198,50 @@ test('files restriction: only the named files are read or written', async () => 
   assert.equal(artifact2.entities[0].normalizedName, undefined, 'file outside the restriction was not re-stamped');
 });
 
+test('files restriction: a stale/missing entry is skipped with a warning, not thrown, and siblings still process', async () => {
+  const dir = await scratchDir();
+  const { schemaRegistry, entityRegistry } = await registries(dir);
+
+  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
+  await entityRegistry.save();
+
+  await writeArtifact(
+    dir,
+    '1.json',
+    baseArtifact([
+      { name: 'Voodoo Bear', category: 'HackerGroup', role: 'Attacker', matchedVia: 'Voodoo Bear' },
+    ])
+  );
+  // '999.json' is never written — simulates a stale entry in a T9-computed "affected" set.
+
+  const warnings: string[] = [];
+  const originalWarn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    warnings.push(args.map(String).join(' '));
+  };
+
+  let result: { changed: number; total: number };
+  try {
+    result = await restampArtifacts({
+      artifactsDir: path.join(dir, 'artifacts'),
+      entityRegistry,
+      schemaRegistry,
+      files: ['1.json', '999.json'],
+    });
+  } finally {
+    console.warn = originalWarn;
+  }
+
+  assert.equal(result.total, 1, 'the missing file is not counted in total');
+  assert.equal(result.changed, 1, 'the sibling file still processed and changed');
+  assert.equal(warnings.length, 1, 'exactly one warning was emitted');
+  assert.match(warnings[0], /999\.json/, 'the warning names the missing file');
+
+  const artifact1 = await readArtifact(dir, '1.json');
+  assert.equal(artifact1.entities[0].normalizedName, 'Sandworm', 'sibling was re-stamped despite the stale entry');
+});
+
 test('matchedVia-first: a split sends two mentions of the same canonical to different canonicals', async () => {
   const dir = await scratchDir();
   const { schemaRegistry, entityRegistry } = await registries(dir);

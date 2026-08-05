@@ -14,6 +14,11 @@ export interface RestampArtifactsParams {
    * common case, where only the handful of documents touched by one document's repair ops need
    * re-checking. Omitted = every artifact in the directory, `RegistryConsolidator`'s full-corpus
    * pass.
+   *
+   * A listed name that does not exist on disk is SKIPPED with a `console.warn` naming it, and is
+   * not counted in the returned `total` — never thrown. `files` here is expected to come from a
+   * caller-computed "affected" set (T9), and a stale or wrong entry in that set must not crash a
+   * document mid-repair (never abort a document, wiki rule / repo error posture).
    */
   files?: string[];
 }
@@ -34,10 +39,23 @@ export async function restampArtifacts(
 
   const files = sortByNumericId(params.files ?? (await fs.readdir(artifactsDir)));
   let changed = 0;
+  let total = 0;
 
   for (const file of files) {
     const filePath = `${artifactsDir}/${file}`;
-    const original = (await fs.readFile(filePath)).toString();
+    let original: string;
+    try {
+      original = (await fs.readFile(filePath)).toString();
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        // A `files`-restricted caller (T9) computes its own "affected" set; a stale/wrong entry
+        // must not crash the document mid-repair — skip it, don't count it, warn so it is visible.
+        console.warn(`restampArtifacts: skipping missing file "${file}" in ${artifactsDir}`);
+        continue;
+      }
+      throw error;
+    }
+    total++;
     const artifact = JSON.parse(original) as StreamingArtifact;
 
     for (const entity of artifact.entities) {
@@ -69,5 +87,5 @@ export async function restampArtifacts(
     }
   }
 
-  return { changed, total: files.length };
+  return { changed, total };
 }
