@@ -112,8 +112,103 @@ test('normalizeRepairReviews: unknown op is dropped with console.error, without 
   }
 });
 
-test('normalizeRepairReviews: every declared op survives round-trip', () => {
+test('REPAIR_OPS lists the 7 ops in the order the prompt documents them', () => {
   assert.deepEqual([...REPAIR_OPS], ['merge', 'distinct', 'rung', 'renamed', 'split', 'move', 'keep']);
+});
+
+test('normalizeRepairReviews: "rung" round-trips finer/coarser/edgeKind', () => {
+  const reviews = normalizeRepairReviews({
+    reviews: [
+      {
+        component: 1,
+        ops: [
+          {
+            op: 'rung',
+            finer: 'Unit 74455',
+            coarser: 'GRU',
+            edgeKind: 'part-of',
+            confidence: 'high',
+            evidence: 'sub-unit of the parent agency',
+          },
+        ],
+      },
+    ],
+  });
+  const op = reviews?.[0].ops[0];
+  assert.equal(op?.op, 'rung');
+  assert.equal(op?.finer, 'Unit 74455');
+  assert.equal(op?.coarser, 'GRU');
+  assert.equal(op?.edgeKind, 'part-of');
+  assert.equal(op?.confidence, 'high');
+});
+
+test('normalizeRepairReviews: "rung" also round-trips the "coarsens-to" edgeKind', () => {
+  const reviews = normalizeRepairReviews({
+    reviews: [
+      {
+        component: 1,
+        ops: [
+          {
+            op: 'rung',
+            finer: 'Office 2010 SP2',
+            coarser: 'Microsoft Office',
+            edgeKind: 'coarsens-to',
+            confidence: 'medium',
+            evidence: 'version of the product',
+          },
+        ],
+      },
+    ],
+  });
+  assert.equal(reviews?.[0].ops[0].edgeKind, 'coarsens-to');
+});
+
+test('normalizeRepairReviews: "split" round-trips alias/outOf', () => {
+  const reviews = normalizeRepairReviews({
+    reviews: [
+      {
+        component: 1,
+        ops: [
+          {
+            op: 'split',
+            alias: 'Sandworm',
+            outOf: 'GRU',
+            confidence: 'medium',
+            evidence: 'alias contradicts the entity gloss',
+          },
+        ],
+      },
+    ],
+  });
+  const op = reviews?.[0].ops[0];
+  assert.equal(op?.op, 'split');
+  assert.equal(op?.alias, 'Sandworm');
+  assert.equal(op?.outOf, 'GRU');
+});
+
+test('normalizeRepairReviews: "move" round-trips alias/from/to', () => {
+  const reviews = normalizeRepairReviews({
+    reviews: [
+      {
+        component: 1,
+        ops: [
+          {
+            op: 'move',
+            alias: 'Sandworm',
+            from: 'GRU',
+            to: 'APT28',
+            confidence: 'medium',
+            evidence: 'alias belongs to the other listed entity',
+          },
+        ],
+      },
+    ],
+  });
+  const op = reviews?.[0].ops[0];
+  assert.equal(op?.op, 'move');
+  assert.equal(op?.alias, 'Sandworm');
+  assert.equal(op?.from, 'GRU');
+  assert.equal(op?.to, 'APT28');
 });
 
 test('normalizeRepairReviews: missing confidence demotes to "low"', () => {
@@ -165,6 +260,25 @@ test('normalizeRepairReviews: non-array pair coerces to []', () => {
     ],
   });
   assert.deepEqual(reviews?.[0].ops[0].pair, []);
+});
+
+test('normalizeRepairReviews: non-string entries inside a pair array are filtered out', () => {
+  const reviews = normalizeRepairReviews({
+    reviews: [
+      {
+        component: 1,
+        ops: [
+          {
+            op: 'distinct',
+            pair: ['APT28', 42, null, 'APT29', { name: 'nested' }],
+            confidence: 'medium',
+            evidence: 'no shared identifier',
+          },
+        ],
+      },
+    ],
+  });
+  assert.deepEqual(reviews?.[0].ops[0].pair, ['APT28', 'APT29']);
 });
 
 test('normalizeRepairReviews: a well-formed pair array survives', () => {
@@ -253,4 +367,12 @@ test('normalizeRepairReviews: an explicit empty reviews list round-trips to []',
 
 test('normalizeRepairReviews: non-object input returns undefined', () => {
   assert.equal(normalizeRepairReviews(null as never), undefined);
+});
+
+test('normalizeRepairReviews: a fully-absent reviews key returns undefined, not []', () => {
+  // The established normalizeLinkVerdicts quirk: LIVR's `default` modifier fills in an
+  // empty/missing *item*, but a fully absent top-level key fails FORMAT_ERROR before `default`
+  // ever applies. Pinned explicitly so a future refactor of the pre-coercion pass can't silently
+  // change this contract — the sibling test below shows the {reviews: []} case that DOES round-trip.
+  assert.equal(normalizeRepairReviews({}), undefined);
 });
