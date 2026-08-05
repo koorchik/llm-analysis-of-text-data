@@ -310,9 +310,15 @@ Three things to know before reading the numbers:
 - **`sim === 1` never happens.** Floating-point cosine of a vector with itself is `0.9999999999999998`.
   `minSim: 1` retrieves nothing, and the `sim === 1` early exit that is valid for string metrics is
   not valid here.
-- **`name+gloss` is currently identical to `name`.** Nothing writes glosses — `EntityRegistry.mint`
-  accepts one and `setGloss()` has no callers — so every record's gloss is null. The representation
-  ships and warns loudly when selected. Do not report it as evidence that glosses do not help.
+- **`name+gloss` writes real glosses since 2026-08-05.** The link-judge emits a one-line `gloss` on
+  every mint/defer (code-validated, one re-ask on an empty or mention-restating gloss, logged as
+  `gloss-flagged` and left null if the retry also fails), passed through `EntityRegistry.mint`'s
+  `extras.gloss` — not via `setGloss()`, which still has no caller. **Any registry from before
+  2026-08-05 — including both committed baseline arms (`docs/REPRODUCE.md`)** — has every
+  canonical's gloss null, so on those specific run directories `name+gloss` still degrades to
+  plain `name` exactly as this used to describe for every run: `EmbeddingGenerator` still detects
+  an all-null gloss set and warns loudly when selected. Do not report a pre-2026-08-05 arm's
+  `name+gloss` results as evidence that glosses do not help — they were never populated for it.
 
 ### The vector cache
 
@@ -581,17 +587,17 @@ run via `npm run batch-reference` against a COPY of a run directory, never live 
 document by document, plus the batch-reference chapter when a harness pass ran); analyzers and
 candidate generators — selectable at runtime via `CANDIDATE_GENERATOR` (string-sim, exact, TF-IDF,
 BM25, embedding, and `union` — the SKEIN v2 RRF composition); embeddings with batching, cost
-metering and a cross-run vector cache; merge P/R, NIL and the CESI suite through `bin/evaluate.ts`.
+metering and a cross-run vector cache; merge P/R, NIL and the CESI suite through `bin/evaluate.ts`;
+**gloss writing** (2026-08-05) — the link-judge emits a one-line `gloss` at mint/defer time,
+code-validated with one re-ask (`gloss-flagged` on failure), written via `EntityRegistry.mint`'s
+`extras.gloss`, so `name+gloss` (the `union` blocker's dense channel) now embeds real text instead
+of degrading to `name` — see the caveat about older registries in §4a.
 
 **Not built yet:**
 
 - **Hierarchical (hP/hR) scoring.** The pipeline now produces granularity edges, but
   `bin/evaluate.ts` still scores identity only and ignores both system and gold `edges`. The
   pipeline's `coarsens-to` maps to the gold table's `isa` kind when that work lands.
-- **Gloss writing.** `EntityRegistry` stores a `gloss` and `EmbeddingGenerator` can encode
-  `name+gloss` (the `union` blocker asks for it), but nothing ever writes one, so that channel
-  currently degrades to `name` (it warns). The judge would have to emit a one-line description at
-  mint time.
 - **VertexAI embeddings are unverified** — implemented, never called. See §4a.
 - **The SecureBERT sidecar has not been started here** — no Docker daemon. The backend is unit
   tested against the wire contract; the compose file is not.

@@ -42,13 +42,16 @@ interface CategoryIndex {
  * theatre — the same argument `StringSimilarityGenerator` already makes for its own linear scan.
  * This is a documented rejection for the paper, not an oversight.
  *
- * **`name+gloss` is implemented but currently degrades to `name` on this corpus.** `gloss` is
- * written by nothing: `EntityRegistry.mint` accepts it, `setGloss()` has no callers, and
- * `StreamingNormalizer` passes no extras, so every record's gloss is null. The representation is
- * shipped rather than dropped because the port is what E4 varies along, but selecting it logs a
- * warning instead of silently producing results identical to `name` — a silently-identical arm
- * would show up in the results table as evidence that glosses do not help, which would be a false
- * finding about the method rather than a true one about the data.
+ * **`name+gloss` writes real glosses since 2026-08-05.** The link-judge emits a one-line `gloss`
+ * on every mint/defer (code-validated, one re-ask on a bad gloss, `gloss-flagged` on retry
+ * failure), and `StreamingNormalizer` passes it through `EntityRegistry.mint`'s `extras.gloss` —
+ * not via `setGloss()`, which still has no caller. **Any registry from before 2026-08-05**
+ * (including both committed baseline arms) still has every canonical's gloss null, so this
+ * representation still degrades to plain `name` on those specific run directories, and this class
+ * still detects an all-null gloss set and warns rather than silently producing results identical
+ * to `name` — a silently-identical arm would show up in the results table as evidence that
+ * glosses do not help, which would be a false finding about the method rather than a true one
+ * about the data on a pre-2026-08-05 corpus.
  */
 export class EmbeddingGenerator implements CandidateGenerator {
   readonly id: string;
@@ -204,8 +207,10 @@ export class EmbeddingGenerator implements CandidateGenerator {
     this.#warnedAboutGloss = true;
     console.warn(
       `${this.id}: every canonical has a null gloss, so this arm is currently IDENTICAL to ` +
-        "`name`. Nothing writes glosses yet (EntityRegistry.setGloss has no callers). Do not " +
-        'report this as evidence that glosses do not help.'
+        '`name`. The link-judge has written real glosses at mint/defer time since 2026-08-05, ' +
+        'so an all-null set here means this registry predates that (e.g. a pre-2026-08-05 run ' +
+        'directory) rather than that gloss writing is unimplemented. Do not report this as ' +
+        'evidence that glosses do not help.'
     );
   }
 }
