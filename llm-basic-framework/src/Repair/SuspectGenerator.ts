@@ -138,7 +138,7 @@ function refEquals(a: EntityRef, b: EntityRef): boolean {
 
 // --- SuspectGenerator --------------------------------------------------------------------------
 
-interface Params {
+export interface SuspectGeneratorParams {
   registry: EntityRegistry;
   glossIndex: GlossIndex;
   /** Already `prepare()`d by the caller — this class only ever calls `candidates()` on it. */
@@ -156,7 +156,7 @@ export class SuspectGenerator {
   #thresholds: SuspectThresholds;
   #topK: number;
 
-  constructor(params: Params) {
+  constructor(params: SuspectGeneratorParams) {
     this.#registry = params.registry;
     this.#glossIndex = params.glossIndex;
     this.#blocker = params.blocker;

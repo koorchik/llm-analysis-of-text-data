@@ -204,6 +204,92 @@ test('a per-category blocker threshold silences one category while "default" sti
   assert.equal(softwareCall?.minSim, 0.95, 'the per-category threshold must be passed through as minSim');
 });
 
+test('gloss-ann threshold is keyed by the NEIGHBOUR\'s own category, not the probing event\'s category', async () => {
+  const registry = await tmpRegistry();
+  registry.mint('HackerGroup', 'NewGroup', { doc: 1, date: '2024-01-02' });
+  registry.mint('Software', 'SomeTool', { doc: 0, date: '2024-01-01' });
+  registry.mint('Country', 'Elbonia', { doc: 0, date: '2024-01-01' });
+
+  const eventRef: EntityRef = { category: 'HackerGroup', canonical: 'NewGroup' };
+  const softwareRef: EntityRef = { category: 'Software', canonical: 'SomeTool' };
+  const countryRef: EntityRef = { category: 'Country', canonical: 'Elbonia' };
+
+  const blocker = fakeBlocker({});
+  const glossIndex = fakeGlossIndex({
+    nearest: () => [
+      { ref: softwareRef, sim: 0.7 },
+      { ref: countryRef, sim: 0.7 },
+    ],
+  });
+  const gen = new SuspectGenerator({
+    registry,
+    glossIndex,
+    blocker,
+    thresholds: {
+      glossAnn: new Map([
+        ['default', 0.5],
+        ['Software', 0.9], // stricter than the observed 0.7 -> must silence the Software neighbour
+        // 'HackerGroup' (the EVENT's own category) is deliberately absent from the map: if the
+        // implementation mistakenly keyed the threshold off the probing event's category instead of
+        // each neighbour's OWN category, both neighbours would fall back to 'default' (0.5) and both
+        // would pass — this test only distinguishes the two readings because it doesn't.
+      ]),
+      blocker: new Map([['default', 0.9]]),
+      coherence: 0.5,
+    },
+  });
+
+  const events: RegistryEvent[] = [{ type: 'mint', ref: eventRef, surface: 'NewGroup' }];
+  const suspects = await gen.suspectsFor(events, 1);
+
+  assert.equal(suspects.length, 1, 'only the neighbour whose OWN category clears its own threshold should surface');
+  assert.deepEqual(suspects[0].b, countryRef);
+  assert.equal(suspects[0].signal, 'gloss-ann');
+});
+
+test('a threshold map missing "default" fails safe: the category is silenced (unreachable minSim) and a warning is logged', async () => {
+  const registry = await tmpRegistry();
+  registry.mint('HackerGroup', 'ExistingGroup', { doc: 0, date: '2024-01-01' });
+  registry.mint('HackerGroup', 'NewGroup', { doc: 1, date: '2024-01-02' });
+
+  const blocker = fakeBlocker({ HackerGroup: [{ canonical: 'ExistingGroup', sim: 1.0 }] });
+  const glossIndex = fakeGlossIndex({});
+  const gen = new SuspectGenerator({
+    registry,
+    glossIndex,
+    blocker,
+    thresholds: {
+      glossAnn: new Map([['default', 0.9]]),
+      blocker: new Map(), // hand-built, skipping 'default' — not what parseThresholds would produce
+      coherence: 0.5,
+    },
+  });
+
+  const warnings: string[] = [];
+  const originalWarn = console.warn;
+  console.warn = (message?: unknown) => {
+    warnings.push(String(message));
+  };
+  let suspects;
+  try {
+    const events: RegistryEvent[] = [{ type: 'mint', ref: { category: 'HackerGroup', canonical: 'NewGroup' }, surface: 'NewGroup' }];
+    suspects = await gen.suspectsFor(events, 1);
+  } finally {
+    console.warn = originalWarn;
+  }
+
+  assert.equal(suspects.length, 0, 'a category with no reachable threshold must fail safe to silence, not to an open floor');
+  assert.ok(
+    warnings.some((w) => /default/i.test(w) && w.includes('HackerGroup')),
+    `expected a warning naming the category and "default", got ${JSON.stringify(warnings)}`
+  );
+  assert.equal(
+    blocker.calls.find((c) => c.category === 'HackerGroup')?.minSim,
+    Number.POSITIVE_INFINITY,
+    'the missing-default fallback must pass an unreachable minSim through, not a low/undefined one'
+  );
+});
+
 test('a drifted alias-add produces a single-entity coherence suspect; a mint never triggers coherence at all', async () => {
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
