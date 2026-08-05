@@ -39,7 +39,13 @@ Document Excerpt:
    - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
 
 3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
-   - If evidence in the snippet is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; mints are easily consolidated later.
+   - If evidence in the snippet is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is caught by an automated repair review within one document of appearing — minting is the recoverable error.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - For every "mint" or "defer", write gloss: one factual sentence fragment describing what the entity IS, from the document evidence (role, type, salient attributes; e.g. "Russian state-sponsored group targeting energy sector").
+   - The gloss must NOT restate or paraphrase the name itself — it is used to find duplicates whose names share nothing (e.g. "Fancy Bear" vs "APT28"), so it must carry name-independent evidence.
+   - Do not speculate beyond the document. If the document says nothing beyond the name, describe the immediate context of use (e.g. "domain used in phishing infrastructure, June 2026").
+   - For "link" verdicts, gloss is null.
 
 ---
 
@@ -56,6 +62,7 @@ Output ONLY a single valid raw JSON object (no markdown code fences, no extra co
       "target": "<Candidate Canonical Name when linking, else null>",
       "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
       "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<1-line name-independent description for mint/defer, else null>",
       "reasoning": "<1 concise sentence explaining the decision and granularity level>"
     }
   ]
