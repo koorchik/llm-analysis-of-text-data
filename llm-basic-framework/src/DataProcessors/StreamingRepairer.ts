@@ -145,7 +145,17 @@ const PAIR_OPS = new Set(['merge', 'distinct', 'rung', 'renamed']);
  * 4. ONE `repair-judge` call over the due components. Usually there are none, and no call is made.
  * 5. Validate in code (wiki rule 7): schema (T2), listed-entity names, per-component completeness.
  * 6. Apply — code only, the full SKEIN v2 inventory: merge / distinct / rung / renamed / split / move / keep.
- * 7. Deterministic re-stamp of the affected artifacts (T8) — the only permitted artifact mutation.
+ * 7. Deterministic re-stamp (T8) — the only permitted artifact mutation. **Whole corpus**, and the
+ *    `files` restriction T8 offers is deliberately unused: an artifact is affected by an op whenever
+ *    it stamped one of the touched surfaces, and there is no cheap way to know which artifacts those
+ *    are. The tempting derivation — the `docId`s on the touched canonical's alias records — is
+ *    WRONG, because `EntityRegistry.link` is idempotent: a document mentioning an already-known
+ *    surface adds no alias record at all, so only the document that FIRST introduced a surface would
+ *    be re-stamped and every repeat mention would keep pointing at a deleted canonical (measured at
+ *    711/4,071 stamped mentions, 17.5%, on the baseline corpus). Per-alias mention-doc tracking
+ *    would fix that properly and is a registry-level change; until then this pays O(corpus) reads on
+ *    the documents that actually apply an op — the same order `#gatherEvidence` already pays — and
+ *    matches what the consolidator's full-corpus pass guaranteed.
  * 8. Bookkeeping and ONE `entityRegistry.save()`.
  * 9. Assert I1/I2 in memory (wiki rule 10: nothing reads `decisions.jsonl` at runtime).
  *
@@ -241,7 +251,11 @@ export class StreamingRepairer {
     await this.#schemaRegistry.load();
     await this.#entityRegistry.load();
 
-    console.time(`REPAIR ${file}`);
+    // Elapsed-time instrumentation via a timestamp rather than `console.time`: console timers are
+    // keyed on a process-global label, and this method is legitimately re-entered for the same
+    // document (crash recovery, `run()` catch-up after a partial pass), where a still-open label
+    // would collide and warn instead of timing.
+    const started = Date.now();
     try {
       // ---- Phase A: read-only + LLM ------------------------------------------------------------
 
@@ -258,6 +272,13 @@ export class StreamingRepairer {
           signal: pair.signal,
           score: pair.score,
         });
+      }
+
+      // Coherence suspects lose their drift score inside `SuspectComponent` (T7 keeps only the ref);
+      // this keeps the originals reachable for anything that has to re-queue one.
+      const coherenceByRef = new Map<string, SuspectPair>();
+      for (const pair of gathered) {
+        if (refKey(pair.a) === refKey(pair.b)) coherenceByRef.set(refKey(pair.a), pair);
       }
 
       const components = buildComponents(gathered);
@@ -277,7 +298,7 @@ export class StreamingRepairer {
 
       let accepted: AcceptedOp[] = [];
       if (due.length > 0) {
-        const outcome = await this.#adjudicate(due, evidence, docId);
+        const outcome = await this.#adjudicate(due, evidence, docId, coherenceByRef);
         accepted = outcome.accepted;
         if (outcome.unresolved.length > 0) {
           spilled.push(...outcome.unresolved);
@@ -304,11 +325,12 @@ export class StreamingRepairer {
       }
 
       if (applied.touched.size > 0) {
+        // WHOLE corpus, no `files` restriction: `link` is idempotent, so a repeat mention leaves no
+        // alias record to derive an "affected documents" set from. Class comment, step 7.
         await restampArtifacts({
           artifactsDir: this.#artifactsDir,
           entityRegistry: this.#entityRegistry,
           schemaRegistry: this.#schemaRegistry,
-          files: this.#affectedFiles(applied.touched, docId),
         });
       }
 
@@ -328,7 +350,7 @@ export class StreamingRepairer {
       // so there is nothing of ours to persist in it.
       await this.#entityRegistry.save();
     } finally {
-      console.timeEnd(`REPAIR ${file}`);
+      console.log(`REPAIR ${file}: ${elapsed(started)}`);
     }
   }
 
@@ -416,7 +438,8 @@ export class StreamingRepairer {
   async #adjudicate(
     due: SuspectComponent[],
     evidence: Map<string, string[]>,
-    docId: number
+    docId: number,
+    coherenceByRef: Map<string, SuspectPair>
   ): Promise<{ accepted: AcceptedOp[]; unresolved: SuspectPair[]; reason: string }> {
     const text = due.map((component, index) => this.#renderComponent(component, index + 1, due.length, evidence)).join('\n\n');
 
@@ -432,15 +455,21 @@ export class StreamingRepairer {
       // Never abort the document (`StreamingNormalizer#linkJudge`'s posture): everything due is
       // queued for the next document rather than lost.
       console.error(`REPAIR-JUDGE failed for doc ${docId}, spilling every due suspect:`, error);
-      return { accepted: [], unresolved: due.flatMap((component) => this.#allSuspectsOf(component, docId)), reason: 'judge-failed' };
+      return {
+        accepted: [],
+        unresolved: due.flatMap((component) => this.#allSuspectsOf(component, docId, coherenceByRef)),
+        reason: 'judge-failed',
+      };
     }
 
-    let { accepted, incomplete } = await this.#validate(response, due, docId);
+    const accepted = await this.#validate(response, due, docId);
+    let incomplete = this.#incompleteComponents(due, accepted);
 
     if (incomplete.length > 0) {
       // ONE re-ask, containing only the components that were left incomplete — the same shape the
       // gloss retry takes (`StreamingNormalizer#validateGlosses`), so a model that keeps failing
-      // cannot loop the document.
+      // cannot loop the document. Components are renumbered 1..K for the re-ask and mapped back
+      // through `incomplete[]` below.
       const retryText = incomplete
         .map((componentIndex, position) => this.#renderComponent(due[componentIndex], position + 1, incomplete.length, evidence))
         .join('\n\n');
@@ -452,15 +481,21 @@ export class StreamingRepairer {
       }
 
       if (retryResponse !== undefined) {
-        const retry = await this.#validate(retryResponse, incomplete.map((index) => due[index]), docId);
-        // The re-ask re-states the whole component, so its verdicts REPLACE the first attempt's for
-        // those components rather than merging with a set that was already judged incomplete.
-        const retried = new Set(incomplete);
-        accepted = accepted.filter((op) => !retried.has(op.component));
-        accepted.push(
-          ...retry.accepted.map((op) => ({ ...op, component: incomplete[op.component] }))
-        );
-        incomplete = retry.incomplete.map((index) => incomplete[index]);
+        const retried = await this.#validate(retryResponse, incomplete.map((index) => due[index]), docId);
+        // The re-ask FILLS GAPS; it does not replace. A first-attempt op that passed every validator
+        // is a legitimate verdict, and discarding it because a *sibling* op in the same component was
+        // rejected would throw away settled work and re-queue a pair that already has an answer.
+        // Per suspect the first accepted verdict therefore wins, which also keeps "exactly one op per
+        // pair" true across the two calls rather than only within each one.
+        const covered = this.#coveredKeys(accepted);
+        for (const op of retried) {
+          const key = opCoverageKey(op);
+          if (covered.has(key)) continue;
+          covered.add(key);
+          accepted.push({ ...op, component: incomplete[op.component] });
+        }
+        // Recomputed over the COMBINED set: neither call's ops alone describe the component now.
+        incomplete = this.#incompleteComponents(due, accepted);
       }
     }
 
@@ -469,15 +504,16 @@ export class StreamingRepairer {
     // Whatever the re-ask did settle still applies; only what it left open is queued.
     const covered = this.#coveredKeys(accepted);
     const unresolved = incomplete
-      .flatMap((index) => this.#allSuspectsOf(due[index], docId))
+      .flatMap((index) => this.#allSuspectsOf(due[index], docId, coherenceByRef))
       .filter((pair) => !covered.has(suspectPairKey(pair.a, pair.b)));
     return { accepted, unresolved, reason: 'incomplete' };
   }
 
   async #send(components: string, docId: number, kind: 'repair-judge' | 'repair-judge-retry'): Promise<string> {
     const instructions = this.#prompts.render('repair-judge', { components });
+    // One timestamp, two consumers (the console line and the decision log) — and no process-global
+    // console-timer label to collide on when a document is re-processed. See `processDoc`.
     const started = Date.now();
-    console.time(`${kind.toUpperCase()} doc ${docId}`);
     // Hoisted so the finally block can log tokens for a call that may have thrown.
     let response: LlmResponse | undefined;
     try {
@@ -488,7 +524,7 @@ export class StreamingRepairer {
       );
       return response.text;
     } finally {
-      console.timeEnd(`${kind.toUpperCase()} doc ${docId}`);
+      console.log(`${kind.toUpperCase()} doc ${docId}: ${elapsed(started)}`);
       await this.#decisionLog.logLlmCall({
         doc: docId,
         kind,
@@ -577,7 +613,13 @@ export class StreamingRepairer {
    * it matched when that differs, and up to two relations the mention takes part in. This is a
    * deliberate simplification over quoting raw report text — the artifacts are already in the run
    * directory and are the *stamped* record, so evidence and re-stamp always agree about what a
-   * mention resolved to. Only ever paid on a document that actually has due components.
+   * mention resolved to.
+   *
+   * Cost, stated honestly: this fires on any document that produced a suspect at all — not only on
+   * ones that end up calling the judge, since capping happens after — and while it stops as soon as
+   * every entity is full, an entity whose mentions are all old drags the walk to the end of the
+   * directory. The realistic bound is therefore O(corpus) reads per firing document, the same order
+   * the re-stamp pays on documents that apply an op.
    */
   async #gatherEvidence(components: SuspectComponent[]): Promise<Map<string, string[]>> {
     const wanted = new Map<string, EntityRef>();
@@ -621,17 +663,15 @@ export class StreamingRepairer {
    * (b) **listed names** — every entity an op names must case-insensitively match an entity listed in
    *     that component. A judge that invents a name is the repair-time equivalent of the link judge's
    *     unlisted-target problem, and the same strictness applies: reject the op, log it, adjudicate
-   *     nothing;
-   * (c) **completeness** — every suspect pair gets exactly one of merge/distinct/rung/renamed, and
-   *     every coherence entity gets split/move ops or one keep. A second op for a pair already ruled
-   *     on is rejected rather than applied, since "exactly one" is what makes the verdict set a
-   *     function of the suspects.
+   *     nothing. A pair op whose two names resolve to the same entity, and a second op for a pair
+   *     already ruled on, are rejected here too — "exactly one op per pair" is what makes the verdict
+   *     set a function of the suspects.
+   *
+   * Completeness (layer (c)) is `#incompleteComponents`, deliberately separate: it has to be
+   * recomputed over the first attempt's and the re-ask's ops COMBINED, which a per-response
+   * validator cannot do.
    */
-  async #validate(
-    responseText: string,
-    due: SuspectComponent[],
-    docId: number
-  ): Promise<{ accepted: AcceptedOp[]; incomplete: number[] }> {
+  async #validate(responseText: string, due: SuspectComponent[], docId: number): Promise<AcceptedOp[]> {
     const reviews = normalizeRepairReviews(extractAndParseJson(responseText) || {}) || [];
     const accepted: AcceptedOp[] = [];
     const claimedPairs = new Set<string>();
@@ -678,6 +718,15 @@ export class StreamingRepairer {
         }
 
         if (PAIR_OPS.has(verdict.op)) {
+          if (refKey(a) === refKey(b!)) {
+            // Both names resolved to the SAME entity (`["Sandworm", "sandworm"]` — the listed-name
+            // match is case-insensitive). A pair op on one entity is meaningless, and a `distinct`
+            // would write a memo whose `a === b` is indistinguishable from a coherence `keep`:
+            // `findAdjudicated` would then return it for that entity's own drift suspects and
+            // suppress every future coherence check on it.
+            await reject(verdict, 'self-pair', a.canonical);
+            continue;
+          }
           const key = suspectPairKey(a, b!);
           if (claimedPairs.has(key)) {
             await reject(verdict, 'duplicate-op', `${a.canonical} ~ ${b!.canonical}`);
@@ -690,31 +739,29 @@ export class StreamingRepairer {
       }
     }
 
+    return accepted;
+  }
+
+  /**
+   * Layer (c), completeness: the `due` indices where some suspect still has no verdict — every pair
+   * needs one of merge/distinct/rung/renamed, and every coherence entity needs split/move ops or a
+   * keep. Called once per attempt over ALL accepted ops so far, so a component the first call
+   * half-answered and the re-ask finished counts as complete.
+   */
+  #incompleteComponents(due: SuspectComponent[], accepted: AcceptedOp[]): number[] {
     const incomplete: number[] = [];
     due.forEach((component, index) => {
-      const ops = accepted.filter((op) => op.component === index);
-      const covered = this.#coveredKeys(ops);
+      const covered = this.#coveredKeys(accepted.filter((op) => op.component === index));
       const pairsDone = component.pairs.every((pair) => covered.has(suspectPairKey(pair.a, pair.b)));
-      const coherenceDone = component.coherence.every((ref) =>
-        ops.some(
-          (op) =>
-            ['split', 'move', 'keep'].includes(op.verdict.op) && refKey(op.a) === refKey(ref)
-        )
-      );
+      const coherenceDone = component.coherence.every((ref) => covered.has(suspectPairKey(ref, ref)));
       if (!pairsDone || !coherenceDone) incomplete.push(index);
     });
-
-    return { accepted, incomplete };
+    return incomplete;
   }
 
   /** Pair keys an accepted op set rules on — pair ops by their two entities, coherence ops by theirs. */
   #coveredKeys(ops: AcceptedOp[]): Set<string> {
-    const covered = new Set<string>();
-    for (const op of ops) {
-      if (PAIR_OPS.has(op.verdict.op) && op.b) covered.add(suspectPairKey(op.a, op.b));
-      if (['split', 'move', 'keep'].includes(op.verdict.op)) covered.add(suspectPairKey(op.a, op.a));
-    }
-    return covered;
+    return new Set(ops.map(opCoverageKey));
   }
 
   // --- step 6: apply -----------------------------------------------------------------------------
@@ -968,7 +1015,15 @@ export class StreamingRepairer {
     return { applied, rejected, touched };
   }
 
-  /** Same-category `applyMerges`, or a cross-category `move` first. Returns the ACTUAL survivor. */
+  /**
+   * Same-category `applyMerges`, or a cross-category `move` first. Returns the ACTUAL survivor.
+   *
+   * Ordering hazard, accepted knowingly: the cross-category path mutates in two steps, so a `move`
+   * that succeeds followed by an `applyMerges` that folds nothing leaves the record relocated but
+   * unmerged. That state is self-consistent and re-adjudicable (the pair re-fires once the record's
+   * signature changes), and the alternative — a transactional two-registry primitive — is a T3-level
+   * change, not a T9 one.
+   */
   #merge(a: EntityRef, b: EntityRef, verdict: RepairOpVerdict): string | undefined {
     if (a.category !== b.category) {
       // Upstream extraction misassigns categories (prompt rule 5); the correction is a `move` of the
@@ -1016,48 +1071,43 @@ export class StreamingRepairer {
   // --- steps 7-9: re-stamp, bookkeeping, invariants -----------------------------------------------
 
   /**
-   * The artifacts whose entities/relations can now resolve differently, derived from registry
-   * provenance rather than by re-reading the corpus: every alias of a touched canonical carries the
-   * `docId` that introduced it, and an artifact can only be affected by an op if it stamped one of
-   * those surfaces. Cheap, and it never grows with corpus size. A listed file that does not exist is
-   * skipped with a warning by `restampArtifacts` (T8's documented contract for exactly this caller).
-   */
-  #affectedFiles(touched: Set<string>, docId: number): string[] {
-    const docs = new Set<number>([docId]);
-    for (const key of touched) {
-      const ref = parseRefKey(key);
-      const record = this.#entityRegistry.records(ref.category)[ref.canonical];
-      if (!record) continue;
-      for (const alias of record.aliases) {
-        if (alias.docId >= 0) docs.add(alias.docId);
-      }
-    }
-    return sortByNumericId([...docs].map((id) => `${id}.json`));
-  }
-
-  /**
-   * I1's accounting: a gathered suspect is settled when an op ruled on it, when the registry holds
-   * an adjudicated memo for it, when it is in the queue that was just pushed, or when either member
-   * stopped being a live canonical (absorbed — the suspect cannot exist any more).
+   * I1's accounting: a gathered suspect is settled when an op **this document applied** ruled on it,
+   * when it is in the queue that was just pushed, or when either member stopped being a live
+   * canonical (absorbed — the suspect cannot exist any more).
+   *
+   * Deliberately does NOT consult `repairState().adjudicated` wholesale. A memo from an earlier
+   * document proves nothing about what *this* document did: a retained suspect (a low-confidence
+   * merge's `''` signature) re-fires on every document by design, and counting its stale memo as
+   * settlement would blind I1 for precisely the pairs it exists to watch. Every op that writes a
+   * memo (`distinct`/`rung`/`keep`) already records its key in `applied` at the same moment, so the
+   * this-document memos are covered without the stale ones coming along.
    */
   #accountedKeys(gathered: SuspectPair[], applied: Set<string>, spilled: SuspectPair[]): Set<string> {
     const accounted = new Set<string>(applied);
     for (const pair of spilled) accounted.add(suspectPairKey(pair.a, pair.b));
-    for (const entry of this.#entityRegistry.repairState().adjudicated) {
-      accounted.add(suspectPairKey(entry.a, entry.b));
-    }
     for (const pair of gathered) {
       if (!this.#isLive(pair.a) || !this.#isLive(pair.b)) accounted.add(suspectPairKey(pair.a, pair.b));
     }
     return accounted;
   }
 
-  /** Every suspect a component carries, as pairs — the shape the spillover queue stores. */
-  #allSuspectsOf(component: SuspectComponent, docId: number): SuspectPair[] {
+  /**
+   * Every suspect a component carries, as pairs — the shape the spillover queue stores. Coherence
+   * entries are re-hydrated from the document's own gathered suspects rather than rebuilt with a
+   * zero score: T7's `SuspectComponent.coherence` keeps only the ref, and a fabricated `score: 0`
+   * would make a re-queued coherence suspect the first thing evicted by the next document's cap,
+   * silently starving exactly the drift checks that already fired once.
+   */
+  #allSuspectsOf(
+    component: SuspectComponent,
+    docId: number,
+    coherenceByRef: Map<string, SuspectPair>
+  ): SuspectPair[] {
     return [
       ...component.pairs,
       ...component.coherence.map(
-        (ref): SuspectPair => ({ a: ref, b: ref, signal: 'coherence', score: 0, docId })
+        (ref): SuspectPair =>
+          coherenceByRef.get(refKey(ref)) ?? { a: ref, b: ref, signal: 'coherence', score: 0, docId }
       ),
     ];
   }
@@ -1084,9 +1134,18 @@ function refKey(ref: EntityRef): string {
   return JSON.stringify([ref.category, ref.canonical]);
 }
 
-function parseRefKey(key: string): EntityRef {
-  const [category, canonical] = JSON.parse(key) as [string, string];
-  return { category, canonical };
+/**
+ * The suspect an op settles: its unordered pair for merge/distinct/rung/renamed, its single entity
+ * for split/move/keep. Every coherence op on one entity shares a key on purpose — "does anything not
+ * belong here?" is answered once per entity, however many aliases the answer detaches.
+ */
+function opCoverageKey(op: AcceptedOp): string {
+  return PAIR_OPS.has(op.verdict.op) && op.b ? suspectPairKey(op.a, op.b) : suspectPairKey(op.a, op.a);
+}
+
+/** `console.time`-shaped elapsed text, without `console.time`'s process-global label state. */
+function elapsed(startedAt: number): string {
+  return `${((Date.now() - startedAt) / 1000).toFixed(3)}s`;
 }
 
 /** A..Z, then `E27`, `E28`… — the corpus's largest observed component is far below 26 entities. */

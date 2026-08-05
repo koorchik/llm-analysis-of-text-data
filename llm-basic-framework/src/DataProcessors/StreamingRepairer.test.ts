@@ -70,6 +70,28 @@ function fakeBlocker(
   };
 }
 
+/**
+ * Mention-aware fake blocker: `mention -> candidates`, each tagged with the category it lives in.
+ * `fakeBlocker` above answers per category regardless of the probing mention, which chains every
+ * event in a document into one component — fine for single-component tests, useless when the point
+ * is that two components stay independent.
+ */
+function fakeBlockerByMention(
+  table: Record<string, Array<{ canonical: string; category: string; sim: number }>>
+): CandidateGenerator {
+  return {
+    id: 'fake-blocker-by-mention',
+    config: {},
+    async prepare() {},
+    onRegistryChange() {},
+    async candidates(query: CandidateQuery): Promise<Candidate[]> {
+      return (table[query.mention] ?? [])
+        .filter((c) => c.category === query.category && c.sim >= query.minSim)
+        .map((c) => ({ canonical: c.canonical, sim: c.sim, surfaces: [c.canonical], channel: 'fake-blocker' }));
+    },
+  };
+}
+
 function fakeGlossIndex(opts: {
   nearest?: (ref: EntityRef, k: number) => Array<{ ref: EntityRef; sim: number }>;
   aliasCoherence?: (ref: EntityRef, alias: string) => number;
@@ -95,6 +117,7 @@ const thresholds = (over: Partial<SuspectThresholds> = {}): SuspectThresholds =>
 interface SetupOptions {
   replies?: string[];
   blocker?: Record<string, Array<{ canonical: string; sim: number }>>;
+  blockerGenerator?: CandidateGenerator;
   glossIndex?: GlossIndex;
   thresholds?: SuspectThresholds;
   tokenCap?: number;
@@ -118,7 +141,7 @@ async function setup(options: SetupOptions = {}) {
     entityRegistry,
     decisionLog,
     glossIndex: options.glossIndex ?? fakeGlossIndex(),
-    blocker: fakeBlocker(options.blocker ?? {}),
+    blocker: options.blockerGenerator ?? fakeBlocker(options.blocker ?? {}),
     thresholds: options.thresholds ?? thresholds(),
     tokenCap: options.tokenCap,
     onRegistryChange: (event) => changes.push(event),
@@ -288,6 +311,40 @@ test('merge applies and re-stamps normalizedName/normalizedHead in the affected 
   assert.ok(changes.some((event) => event.type === 'merge' && event.canonical === 'Sandworm'), 'blocker index invalidated');
 });
 
+test('a merge re-stamps REPEAT mentions too, not just the doc that first introduced the surface', async () => {
+  // Regression (review round 1). `EntityRegistry.link` is idempotent, so d3's repeat mention of an
+  // already-known surface leaves NO alias record — a re-stamp restricted to the docIds found on the
+  // survivor's aliases would skip d3 entirely and leave it pointing at a deleted canonical.
+  const { dir, entityRegistry, repairer } = await twoHackerGroups({
+    replies: [review([{ op: 'merge', from: 'Voodoo Bear', into: 'Sandworm', confidence: 'high', evidence: 'also tracked as' }])],
+  });
+
+  const mention = (normalizedName: string) => ({
+    name: 'Voodoo Bear',
+    category: 'HackerGroup',
+    role: 'Attacker',
+    matchedVia: 'Voodoo Bear',
+    normalizedName,
+  });
+  await writeArtifact(dir, '2.json', artifact([mention('Voodoo Bear')], [], 2));
+  // d3 mentions the same surface again: the normalizer stamped it, but linked nothing new.
+  await writeArtifact(dir, '3.json', artifact([mention('Voodoo Bear')], [], 3));
+  assert.deepEqual(
+    entityRegistry.records('HackerGroup')['Voodoo Bear'].aliases.map((alias) => alias.docId),
+    [2],
+    'precondition: d3 left no alias record to derive an affected-file set from'
+  );
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.equal((await readArtifact(dir, '2.json')).entities[0].normalizedName, 'Sandworm');
+  assert.equal(
+    (await readArtifact(dir, '3.json')).entities[0].normalizedName,
+    'Sandworm',
+    'the repeat mention followed the merge instead of pointing at a deleted canonical'
+  );
+});
+
 test('cross-category merge moves the record first and emits category-correction', async () => {
   const context = await setup({
     replies: [review([{ op: 'merge', from: 'Sandworm Team', into: 'Sandworm', confidence: 'high', evidence: 'same group' }])],
@@ -381,6 +438,101 @@ test('an incomplete component gets exactly one retry, then spills; callsForDoc c
 
   const kinds = (await readLog(dir)).filter((event) => event.op === 'llm-call').map((event) => event.kind);
   assert.deepEqual(kinds, ['repair-judge', 'repair-judge-retry']);
+});
+
+test('the retry settles component 2 without disturbing component 1\'s first-attempt verdicts', async () => {
+  // Two INDEPENDENT components in one document, so the retry's component numbering (1..K over the
+  // incomplete subset) has to be mapped back onto the `due` indices — the remap this pins.
+  const context = await setup({
+    replies: [
+      // Component 1 answered, component 2 (Software) left empty → incomplete.
+      review([{ op: 'distinct', pair: ['Voodoo Bear', 'Sandworm'], confidence: 'high', evidence: 'unrelated groups' }], 1),
+      // The re-ask contains ONLY the Software component, renumbered to 1.
+      review([{ op: 'merge', from: 'NotPetya', into: 'Petya', confidence: 'high', evidence: 'same wiper' }], 1),
+    ],
+    blockerGenerator: fakeBlockerByMention({
+      'Voodoo Bear': [{ canonical: 'Sandworm', category: 'HackerGroup', sim: 0.95 }],
+      NotPetya: [{ canonical: 'Petya', category: 'Software', sim: 0.95 }],
+    }),
+  });
+  const { entityRegistry, repairer, llm } = context;
+  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  entityRegistry.mint('Software', 'Petya', { doc: 1, date: '01.01.2024' });
+  entityRegistry.mint('HackerGroup', 'Voodoo Bear', { doc: 2, date: '02.01.2024' });
+  entityRegistry.mint('Software', 'NotPetya', { doc: 2, date: '02.01.2024' });
+  await entityRegistry.save();
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.equal(llm.calls(), 2, 'primary + one retry');
+  // The retry's op landed on component 2, not on component 1.
+  assert.equal(entityRegistry.resolve('Software', 'NotPetya'), 'Petya', 'the re-asked component settled');
+  assert.ok(entityRegistry.records('HackerGroup')['Voodoo Bear'], 'component 1 was NOT re-judged into a merge');
+  const adjudicated = entityRegistry.repairState().adjudicated;
+  assert.equal(adjudicated.length, 1, 'component 1\'s first-attempt distinct survived the retry');
+  assert.deepEqual(
+    [adjudicated[0].a.canonical, adjudicated[0].b.canonical].sort(),
+    ['Sandworm', 'Voodoo Bear']
+  );
+  assert.deepEqual(entityRegistry.repairState().spillover, [], 'everything was settled between the two calls');
+});
+
+test('within one component, a rejected op costs only its own pair — the sibling verdict stands', async () => {
+  const context = await setup({
+    replies: [
+      review([
+        { op: 'distinct', pair: ['Voodoo Bear', 'Sandworm'], confidence: 'high', evidence: 'unrelated' },
+        // Names an entity no component lists: rejected, leaving the Voodoo Bear ~ Telebots pair open.
+        { op: 'merge', from: 'Fancy Bear', into: 'Telebots', confidence: 'high', evidence: 'invented' },
+      ]),
+      review([{ op: 'merge', from: 'Fancy Bear', into: 'Telebots', confidence: 'high', evidence: 'invented again' }]),
+    ],
+    blocker: {
+      HackerGroup: [
+        { canonical: 'Sandworm', sim: 0.95 },
+        { canonical: 'Telebots', sim: 0.9 },
+        { canonical: 'Voodoo Bear', sim: 0.95 },
+      ],
+    },
+  });
+  const { dir, entityRegistry, repairer } = context;
+  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  entityRegistry.mint('HackerGroup', 'Telebots', { doc: 1, date: '01.01.2024' });
+  entityRegistry.mint('HackerGroup', 'Voodoo Bear', { doc: 2, date: '02.01.2024' });
+  await entityRegistry.save();
+
+  await repairer.processDoc('2.json', 2);
+
+  const adjudicated = entityRegistry.repairState().adjudicated;
+  assert.equal(adjudicated.length, 1, 'the answered pair keeps its verdict');
+  assert.deepEqual(
+    [adjudicated[0].a.canonical, adjudicated[0].b.canonical].sort(),
+    ['Sandworm', 'Voodoo Bear']
+  );
+  const spillover = entityRegistry.repairState().spillover;
+  assert.equal(spillover.length, 1, 'only the unanswered pair is queued');
+  assert.deepEqual(
+    [spillover[0].a.canonical, spillover[0].b.canonical].sort(),
+    ['Telebots', 'Voodoo Bear']
+  );
+  assert.ok(
+    (await readLog(dir)).some((event) => event.op === 'repair-op-rejected' && event.reason === 'unlisted-entity')
+  );
+});
+
+test('a pair op whose two names resolve to the SAME entity is rejected, never memoised', async () => {
+  // Both names match one listed entity (the listed-name check is case-insensitive). Applied, this
+  // would write an `a === b` memo that `findAdjudicated` then returns for that entity's own
+  // coherence suspects, silently suppressing every future drift check on it.
+  const { dir, entityRegistry, repairer } = await twoHackerGroups({
+    replies: [review([{ op: 'distinct', pair: ['Sandworm', 'sandworm'], confidence: 'high', evidence: 'confused itself' }])],
+  });
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.deepEqual(entityRegistry.repairState().adjudicated, [], 'no self-referential memo was written');
+  assert.equal(entityRegistry.repairState().spillover.length, 1, 'the real pair is still owed a verdict');
+  assert.ok((await readLog(dir)).some((event) => event.op === 'repair-op-rejected' && event.reason === 'self-pair'));
 });
 
 // --- rung / renamed ----------------------------------------------------------------------------
@@ -606,7 +758,9 @@ test('a repair-judge failure never aborts the document: every due pair spills', 
     schemaRegistry: context.schemaRegistry,
     entityRegistry,
     decisionLog: context.decisionLog,
-    glossIndex: fakeGlossIndex(),
+    // A drifted alias on Sandworm too, so the spilled set carries a coherence suspect as well as a
+    // pair — the two must be re-queued with equal fidelity.
+    glossIndex: fakeGlossIndex({ aliasCoherence: () => 0.11 }),
     blocker: fakeBlocker({
       HackerGroup: [
         { canonical: 'Sandworm', sim: 0.95 },
@@ -615,11 +769,20 @@ test('a repair-judge failure never aborts the document: every due pair spills', 
     }),
     thresholds: thresholds(),
   });
+  entityRegistry.link('HackerGroup', 'Sandworm', 'Telebots', { docId: 2 });
 
   await failing.processDoc('2.json', 2);
 
-  assert.equal(entityRegistry.repairState().spillover.length, 1, 'queued, not lost');
+  const spillover = entityRegistry.repairState().spillover;
+  assert.equal(spillover.length, 2, 'queued, not lost — the pair AND the coherence suspect');
   assert.equal(entityRegistry.repairState().repairedThrough, 2, 'the document still completes');
+
+  const coherence = spillover.find((pair) => pair.signal === 'coherence')!;
+  assert.equal(
+    coherence.score,
+    0.11,
+    'the coherence suspect keeps its drift score; a fabricated 0 would make it the next cap\'s first eviction'
+  );
 });
 
 // --- run(): standalone catch-up ------------------------------------------------------------------
