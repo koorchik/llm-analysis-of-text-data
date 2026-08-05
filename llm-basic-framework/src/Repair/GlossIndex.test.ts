@@ -279,3 +279,39 @@ test('aliasCoherence() applies the entity gloss to the alias text, same as the c
 
   assert.deepEqual(backend.batches.flat(), ['Bar: a thing']);
 });
+
+test('aliasCoherence() leave-one-out: a drifted alias linked THIS document, before sync(), must still score low — not inflated by comparing against a centroid it was just folded into', async () => {
+  // APT28 starts with just its own name. `angle(θ)=2.0` is chosen so the two possible answers
+  // diverge sharply: the TRUE (leave-one-out) score is cos(2.0) < 0 -> clamps to 0, but the WRONG
+  // answer — comparing against a centroid that already includes 'Drifted' — is cos(θ/2) = cos(1.0)
+  // ≈ 0.54 (see the class comment's "Leave-one-out mechanics" for why: the bisector-direction
+  // centroid of two equal-weight vectors at 0 and θ always scores cos(θ/2) against the θ vector).
+  // 0.54 is well within range of a real `SuspectThresholds.coherence` cutoff, so the un-fixed
+  // version of this class would let a 114°-drifted alias through as "coherent".
+  const angles = { APT28: 0, Drifted: 2.0 };
+  const backend = new StubEncoder(angles);
+  const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
+  const registry = await seeded([{ category: 'HackerGroup', canonical: 'APT28' }]);
+  await index.sync(registry);
+
+  // Mirrors the real T9 call order: the normalizer's link() already committed before the repairer's
+  // glossIndex.sync(registry) (StreamingRepairer.processDoc step 1) runs for this same document.
+  registry.link('HackerGroup', 'APT28', 'Drifted', { docId: 2 });
+  await index.sync(registry); // signature changed (new alias) -> re-embeds and folds 'Drifted' in
+
+  const coherence = await index.aliasCoherence({ category: 'HackerGroup', canonical: 'APT28' }, 'Drifted');
+  assert.ok(
+    coherence < 0.1,
+    `leave-one-out must exclude 'Drifted' from its own comparison centroid (expected ~0), got ${coherence}`
+  );
+});
+
+test('aliasCoherence() leave-one-out edge case: probing an entity\'s own (only) surface still compares against the name+gloss anchor, not an empty pool', async () => {
+  const backend = new StubEncoder();
+  const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
+  const registry = await seeded([{ category: 'HackerGroup', canonical: 'Solo' }]); // no aliases beyond itself
+  await index.sync(registry);
+
+  const coherence = await index.aliasCoherence({ category: 'HackerGroup', canonical: 'Solo' }, 'Solo');
+  assert.ok(coherence > 0.999, `expected the name+gloss anchor to make a self-probe score ~1, got ${coherence}`);
+});

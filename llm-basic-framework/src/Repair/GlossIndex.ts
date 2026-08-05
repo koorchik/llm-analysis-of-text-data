@@ -10,6 +10,14 @@ interface Entry {
   gloss: string | null;
   /** L2-normalized mean of the entity's surface vectors — see the class comment for the formula. */
   centroid: number[];
+  /**
+   * The canonical's own name+gloss vector, kept separately from `vectors` so `aliasCoherence`'s
+   * leave-one-out pool always has an anchor even when the probed alias IS the canonical's own
+   * surface (see the class comment's "leave-one-out" paragraph).
+   */
+  nameGlossVector: number[];
+  /** Every unique surface text -> its L2-normalized vector (includes the canonical's own text). */
+  vectors: Map<string, number[]>;
   /** Content fingerprint (gloss + sorted surface set) as of the sync() that produced this entry. */
   signature: string;
 }
@@ -52,21 +60,42 @@ interface Entry {
  * on `(model, text)`, so only genuinely new surface texts cost an API call — everything the merge
  * carried over from the absorbed canonical was very likely embedded already.
  *
- * **Two different kinds of "stale" — only one of which this class defends against.** (1) *Merge/
- * rename staleness across documents*: fixed by the content-signature refresh above. (2) *Within one
- * `processDoc` call, `aliasCoherence` sees an alias that was linked earlier in the SAME document*:
+ * **Two different kinds of "stale", both handled, by two different mechanisms.** (1) *Merge/rename
+ * staleness across documents* — a survivor enriched by `applyMerges`/`renameInto` in an earlier
+ * document's repair step: fixed by the content-signature refresh above. (2) *Within one `processDoc`
+ * call, `aliasCoherence` sees an alias that was linked earlier in the SAME document*:
  * `StreamingRepairer.processDoc` calls `glossIndex.sync(registry)` as its first step, but by then the
  * normalizer has already `link()`ed this document's new aliases into the very same registry instance
  * (the repairer hook runs as the last statement of `StreamingNormalizer#processFile`, after that
- * document's mints/links are committed) — so a content-aware `sync()` has already folded a
+ * document's mints/links are committed) — so a content-aware `sync()` may already have folded a
  * just-linked alias into its entity's centroid by the time `SuspectGenerator` calls
- * `aliasCoherence(ref, thatAlias)` for it. This is **not** a bug this class tries to prevent: there is
- * no signal available to `sync()` that would let it tell "linked this document, not yet vetted" apart
- * from "linked several documents ago and long since trusted" — both are just current registry
- * content. The check therefore answers "does this alias fit the entity's *currently recorded*
- * identity" (which, once linked, includes itself) rather than "did this alias look right before
- * anyone recorded it" — a real characteristic of the call order, not a contamination defect, and its
- * effect shrinks as an entity accumulates more pre-existing aliases.
+ * `aliasCoherence(ref, thatAlias)` for it. Left alone, that would be a real bug: cosine
+ * self-inclusion systematically inflates a probe's score against a centroid it is already part of,
+ * so a wrongly-linked alias would tend to look "coherent" precisely in the common case the check
+ * exists to catch. `aliasCoherence` therefore compares against a **leave-one-out** centroid — see
+ * below — computed fresh on every call by excluding the probed alias's own vector, which makes the
+ * result independent of whatever `sync()` happened to fold in beforehand. No call-order contract
+ * with `StreamingRepairer`/`SuspectGenerator` is needed for correctness, only for freshness (an
+ * un-synced brand-new canonical still has to be indexed at least once before either method works at
+ * all). Note this corrects an earlier version of this comment, which reasoned that the *original*
+ * (pre-signature-refresh) frozen-forever design "never actually delivered isolation" for this case —
+ * that was an overstatement: freezing forever *did* protect the common case (a pre-existing,
+ * already-indexed canonical gaining a same-document alias, which the frozen design would never
+ * re-embed at all), and only failed the rarer merge/rename-enrichment case. Fixing that rarer case
+ * with content-aware refresh reopened the common one, which is why leave-one-out exists — a fix that
+ * covers both, unconditionally, rather than trading one staleness case for the other.
+ *
+ * **Leave-one-out mechanics.** Each entry keeps its component vectors, not only the pooled
+ * `centroid`: `nameGlossVector` (the canonical's own name+gloss text, embedded and kept
+ * unconditionally) plus `vectors` (every unique surface text -> vector, which — since
+ * `CanonicalRecord.aliases` always lists the canonical as its own first alias — includes a second,
+ * separately-keyed copy of the canonical's own text). `aliasCoherence(ref, alias)` embeds `alias`,
+ * then pools `nameGlossVector` with every entry of `vectors` **except** the one whose text matches
+ * the probed alias's own embed text, and compares the probe against that pool's centroid. If the
+ * probed alias resolves to a surface with no other component (an entity with no aliases beyond its
+ * own name, probed with that same name) the exclusion removes the sole `vectors` entry but
+ * `nameGlossVector` remains, so the pool is never empty — comparing a lone canonical's own name
+ * against its own name+gloss vector is the documented, deliberate edge case, not a crash.
  */
 export class GlossIndex {
   #client: EmbeddingsClient;
@@ -123,14 +152,18 @@ export class GlossIndex {
 
     const allTexts = [...new Set(pending.flatMap((entity) => entity.texts))];
     const embedded = await this.#client.embed(allTexts, { operator: 'gloss-index' });
-    const byText = new Map(allTexts.map((text, position) => [text, embedded[position]]));
+    // Normalized once here rather than per-consumer — every reader of `byText` (the pooled centroid
+    // AND each entry's `vectors` map, which `aliasCoherence`'s leave-one-out pools straight from)
+    // wants the same L2-normalized vector, so there is no reason to redo it per read site.
+    const byText = new Map(allTexts.map((text, position) => [text, l2Normalize(embedded[position])]));
 
     for (const { category, canonical, gloss, signature, texts } of pending) {
-      const vectors = texts.map((text) => l2Normalize(byText.get(text)!));
-      const centroid = l2Normalize(meanPool(vectors));
+      const vectors = new Map(texts.map((text) => [text, byText.get(text)!]));
+      const centroid = l2Normalize(meanPool([...vectors.values()]));
+      const nameGlossVector = byText.get(this.#textFor(canonical, gloss))!;
 
       if (!this.#index.has(category)) this.#index.set(category, new Map());
-      this.#index.get(category)!.set(canonical, { gloss, centroid, signature });
+      this.#index.get(category)!.set(canonical, { gloss, centroid, nameGlossVector, vectors, signature });
     }
   }
 
@@ -150,12 +183,26 @@ export class GlossIndex {
     return scored.slice(0, k);
   }
 
-  /** cosine(embed(alias), entity centroid) — the alias text uses the entity's own gloss, so a coherent alias embeds identically to how it would if `link()`ed and later picked up by `EmbeddingGenerator`. */
+  /**
+   * cosine(embed(alias), leave-one-out entity centroid) — the alias text uses the entity's own
+   * gloss, so a coherent alias embeds identically to how it would if `link()`ed and later picked up
+   * by `EmbeddingGenerator`. "Leave-one-out": the comparison centroid excludes the probed alias's
+   * own vector (matched by embed-text identity against `target.vectors`), so the result never
+   * depends on whether `sync()` already folded this exact alias in — see the class comment's
+   * "leave-one-out mechanics" paragraph for why that independence matters.
+   */
   async aliasCoherence(ref: EntityRef, alias: string): Promise<number> {
     const target = this.#entry(ref);
     const text = this.#textFor(alias, target.gloss);
-    const vector = l2Normalize(await this.#client.embed(text, { operator: 'gloss-index' }));
-    return cosineNormalized(vector, target.centroid);
+    const probe = l2Normalize(await this.#client.embed(text, { operator: 'gloss-index' }));
+
+    const pool: number[][] = [target.nameGlossVector];
+    for (const [surfaceText, vector] of target.vectors) {
+      if (surfaceText !== text) pool.push(vector);
+    }
+
+    const leaveOneOutCentroid = l2Normalize(meanPool(pool));
+    return cosineNormalized(probe, leaveOneOutCentroid);
   }
 
   #entry(ref: EntityRef): Entry {
