@@ -289,6 +289,8 @@ export interface LinkVerdict {
   target: string;
   parentCandidate: string;
   edgeKind: (typeof LINK_EDGE_KINDS)[number] | '';
+  /** 1-line name-independent description, required on mint/defer, '' on link (prompts/link-judge.md rule 4). */
+  gloss: string;
   reasoning: string;
 }
 
@@ -305,6 +307,7 @@ const linkVerdictsValidator = new LIVR.Validator({
           target: [{ default: '' }, 'string'],
           parentCandidate: [{ default: '' }, 'string'],
           edgeKind: [{ default: '' }, 'string'],
+          gloss: [{ default: '' }, 'string'],
           reasoning: [{ default: '' }, 'string'],
         },
       ],
@@ -322,7 +325,7 @@ export function normalizeLinkVerdicts(data: RawData): LinkVerdict[] | undefined 
         verdict.verdict = 'mint'; // conservative default, per the prompt's own instruction
       }
       // Nulls are the prompt's own "absent" spelling; LIVR strings want ''.
-      for (const field of ['mentionRung', 'target', 'parentCandidate', 'edgeKind', 'reasoning']) {
+      for (const field of ['mentionRung', 'target', 'parentCandidate', 'edgeKind', 'gloss', 'reasoning']) {
         if (verdict[field] === null || verdict[field] === undefined) verdict[field] = '';
       }
       if (verdict.mentionRung && !MENTION_RUNGS.includes(verdict.mentionRung)) {
@@ -350,8 +353,175 @@ export function normalizeLinkVerdicts(data: RawData): LinkVerdict[] | undefined 
       // A parent without a kind defaults to the safe reading: containment, fold off.
       if (verdict.parentCandidate.trim() && !verdict.edgeKind) verdict.edgeKind = 'part-of';
       if (!verdict.parentCandidate.trim()) verdict.edgeKind = '';
+      // gloss is a duplicate-finding signal for mint/defer only; a "link" resolved the mention, so
+      // any gloss the model decorated it with must not leak into duplicate search downstream.
+      if (verdict.verdict === 'link') verdict.gloss = '';
       return verdict;
     });
+}
+
+function tokenizeForGloss(text: string): string[] {
+  return text
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
+}
+
+/**
+ * True when `gloss` merely restates the mention's own name rather than carrying the
+ * name-independent evidence prompts/link-judge.md rule 4 requires ("must NOT restate or
+ * paraphrase the name itself"). Case- and punctuation-insensitive; a gloss whose tokens are a
+ * (non-empty) subset of the mention's tokens counts as a restatement — it adds nothing a
+ * duplicate-finder could use that the name itself doesn't already give it.
+ */
+export function glossRestatesMention(gloss: string, mention: string): boolean {
+  const glossTokens = tokenizeForGloss(gloss);
+  if (glossTokens.length === 0) return false;
+  const mentionTokens = new Set(tokenizeForGloss(mention));
+  return glossTokens.every((token) => mentionTokens.has(token));
+}
+
+// ============================================================================
+// Entity-repair judge (SKEIN v2, prompts/repair-judge.md)
+//
+// Ψ_repair reviews suspect components and emits one of 7 ops per pair/entity. Fields are
+// op-specific in the prompt (merge{from,into} · distinct{pair} · rung{finer,coarser,edgeKind} ·
+// renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}), but the parsed
+// shape is flat — every RepairOpVerdict carries all fields, unused ones defaulting to ''/[] — so
+// downstream code can switch on `op` without per-op parsing. `renamed`'s `to` maps onto the same
+// `into` field `merge` uses; `move`'s `to` keeps its own name (a component/category target, not
+// a survivor canonical).
+// ============================================================================
+
+export const REPAIR_OPS = ['merge', 'distinct', 'rung', 'renamed', 'split', 'move', 'keep'] as const;
+
+export type RepairConfidence = 'high' | 'medium' | 'low';
+const REPAIR_CONFIDENCES: RepairConfidence[] = ['high', 'medium', 'low'];
+const REPAIR_EDGE_KINDS = ['coarsens-to', 'part-of'];
+
+export interface RepairOpVerdict {
+  op: (typeof REPAIR_OPS)[number];
+  from: string;
+  into: string; // merge; renamed maps to→into
+  pair: string[]; // distinct
+  finer: string;
+  coarser: string;
+  edgeKind: 'coarsens-to' | 'part-of' | ''; // rung
+  alias: string;
+  outOf: string; // split
+  to: string; // move
+  entity: string; // keep
+  confidence: RepairConfidence; // default 'low' — a missing confidence must DEMOTE
+  evidence: string;
+}
+
+export interface RepairReview {
+  component: number;
+  ops: RepairOpVerdict[];
+}
+
+const repairOpFields = {
+  op: [{ default: '' }, 'string'],
+  from: [{ default: '' }, 'string'],
+  into: [{ default: '' }, 'string'],
+  pair: [{ default: [] }, { listOf: 'string' }],
+  finer: [{ default: '' }, 'string'],
+  coarser: [{ default: '' }, 'string'],
+  edgeKind: [{ default: '' }, 'string'],
+  alias: [{ default: '' }, 'string'],
+  outOf: [{ default: '' }, 'string'],
+  to: [{ default: '' }, 'string'],
+  entity: [{ default: '' }, 'string'],
+  confidence: [{ default: '' }, 'string'],
+  evidence: [{ default: '' }, 'string'],
+};
+
+const repairReviewsValidator = new LIVR.Validator({
+  reviews: [
+    { default: [] },
+    {
+      listOfObjects: [
+        {
+          component: [{ default: 0 }, 'positive_integer'],
+          ops: [{ default: [] }, { listOfObjects: [repairOpFields] }],
+        },
+      ],
+    },
+  ],
+});
+
+/**
+ * Validate a repair-judge response (see prompts/repair-judge.md). Follows the house LIVR idiom
+ * (validationUtils.ts:109-112): a pre-coercion pass maps nulls to '' and resolves enums BEFORE
+ * LIVR sees them, because one bad enum inside a listOfObjects item would otherwise sink the
+ * entire list, not just that item.
+ *
+ * The one op-level departure from that idiom: an unrecognized `op` cannot be demoted to a safe
+ * default the way `verdict`/`confidence` can (there is no neutral repair op), so it is dropped
+ * from its review's `ops` array — logged via console.error — while the rest of the review, and
+ * every other review, survives untouched.
+ */
+export function normalizeRepairReviews(data: RawData): RepairReview[] | undefined {
+  if (!data || typeof data !== 'object') return;
+
+  if (Array.isArray(data.reviews)) {
+    // A missing/invalid `component` can't be demoted to a safe default (unlike op/confidence),
+    // so the whole review is dropped here — before LIVR, since one bad positive_integer would
+    // otherwise sink every review in the payload (the documented listOfObjects pitfall).
+    data.reviews = data.reviews.filter((review: RawData) => {
+      if (!review || typeof review !== 'object') return false;
+      if (typeof review.component === 'string' && /^\d+$/.test(review.component.trim())) {
+        review.component = Number(review.component.trim());
+      }
+      return Number.isInteger(review.component) && review.component > 0;
+    });
+
+    for (const review of data.reviews) {
+      if (!Array.isArray(review.ops)) {
+        review.ops = [];
+        continue;
+      }
+
+      review.ops = review.ops.filter((op: RawData) => {
+        if (!op || typeof op !== 'object' || !REPAIR_OPS.includes(op.op)) {
+          console.error({ ERROR: 'repair-judge: dropping op with unrecognized "op"', op });
+          return false;
+        }
+        return true;
+      });
+
+      for (const op of review.ops) {
+        // Nulls are the prompt's own "absent" spelling; LIVR strings want ''.
+        for (const field of ['from', 'into', 'finer', 'coarser', 'edgeKind', 'alias', 'outOf', 'to', 'entity', 'evidence']) {
+          if (op[field] === null || op[field] === undefined) op[field] = '';
+        }
+        // renamed{from,to}: the parsed shape folds `to` onto the same `into` field `merge` uses.
+        if (op.op === 'renamed') {
+          op.into = op.to;
+          op.to = '';
+        }
+        if (!Array.isArray(op.pair)) {
+          op.pair = [];
+        } else {
+          op.pair = op.pair.filter((entry: unknown) => typeof entry === 'string');
+        }
+        if (op.edgeKind && !REPAIR_EDGE_KINDS.includes(op.edgeKind)) {
+          op.edgeKind = '';
+        }
+        if (!REPAIR_CONFIDENCES.includes(op.confidence)) {
+          op.confidence = 'low'; // mint-over-merge asymmetry: missing/bad confidence must DEMOTE
+        }
+      }
+    }
+  }
+
+  const validData = repairReviewsValidator.validate(data);
+  if (!validData) {
+    console.log({ ERROR: repairReviewsValidator.getErrors() });
+    return;
+  }
+
+  return validData.reviews.filter((review: RepairReview) => review.component > 0);
 }
 
 export interface PairRuleVerdict {
