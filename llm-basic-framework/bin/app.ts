@@ -1,5 +1,4 @@
 import { CountryNameNormalizer } from '../src/CountryNameNormalizer/CountryNameNormalizer';
-import { RegistryConsolidator } from '../src/Consolidator/RegistryConsolidator';
 import { DataAnalyzer } from '../src/DataProcessors/DataAnalyzer';
 import { DataEntitiesCollector } from '../src/DataProcessors/DataEntitiesCollector';
 import { DataExtractor } from '../src/DataProcessors/DataExtractor';
@@ -572,14 +571,6 @@ function createProcessors(
     interpretive: CONFIG.lambdaInterpretive,
   });
 
-  const registryConsolidator = new RegistryConsolidator({
-    artifactsDir: streamingNormalizer.outputDir,
-    llmClient,
-    schemaRegistry,
-    entityRegistry,
-    decisionLog,
-  });
-
   // Artifacts are a strict superset of normalized/NN.json — DataAnalyzer reused unchanged
   const streamingDataAnalyzer = new DataAnalyzer({
     inputDir: streamingNormalizer.outputDir,
@@ -595,7 +586,6 @@ function createProcessors(
     streamingExtractor,
     streamingNormalizer,
     streamingGraphBuilder,
-    registryConsolidator,
     streamingRepairer,
     streamingDataAnalyzer,
   };

@@ -517,9 +517,19 @@ single ~22.6k-token prompt, over an 8k local window. Running every document keep
    - **gloss-ANN probe** — nearest neighbours in `GlossIndex` (brute-force cosine over
      `embed(name+gloss)`, byte-identical text format to the phase-1 embedding channel so the disk
      embedding cache is shared) ≥ `REPAIR_GLOSS_THRESHOLDS` become `gloss-ann` suspects.
+     **Documented deviation:** the design note calls for a gloss-embedding ANN index; this brute-force
+     cosine scan substitutes for it, same rejection as `EmbeddingGenerator`'s (`GlossIndex.ts:29-33`,
+     `EmbeddingGenerator.ts:41-43`) — at ~2,674 canonicals an ANN index is scale theatre, not an
+     oversight, and the retrieval call is swappable behind the same interface if the corpus ever grows
+     into ANN's actual regime.
    - **coherence probe** (alias-adds only) — leave-one-out centroid drift on the linked-into
      canonical's alias set; below `REPAIR_COHERENCE_THRESHOLD` becomes a single-entity `coherence`
-     suspect (`b === a`).
+     suspect (`b === a`). **Documented deviation:** the design note leaves "centroid" undefined; the
+     implemented centroid (`GlossIndex.ts:40-45,88-98`) is the L2-normalized mean of the entity's
+     alias-surface vectors plus its own name+gloss vector, pooled uniformly (not weighted toward the
+     name+gloss vector) — and the comparison pool is leave-one-out per probe, excluding the probed
+     alias's own vector so a same-document link already folded into the index cannot inflate its own
+     coherence score.
    - Both threshold env vars parse as `"Category=0.97,default=0.85"` (a `default` entry is
      required) and default HIGH when unset (glossAnn 0.92, blocker 0.88) — unlike the phase-1
      blocker's recall-oriented floor, nothing sits between a suspect and an adjudication call here,
@@ -567,7 +577,7 @@ single ~22.6k-token prompt, over an 8k local window. Running every document keep
    | `renamed` | **user ruling 1**: absorbs via `renameInto`, whose survivor is ALWAYS the new name (`to`) — `canonicalPolicy` has no vote — AND preserves the historical `renamed-to` edge; both a `rename-edge` and a `repair-merge` are logged, so the identity fold and the historical record are both replayable | cross-category rejected (spills) |
    | `split` | `EntityRegistry.split` detaches the named alias into a new canonical | |
    | `move` | `moveAlias` — the single-alias move primitive (T3), across categories | no whole-canonical move primitive existed before this |
-   | `keep` | writes an `adjudicated` memo (`verdict: 'keep'`) for a coherence check that found nothing wrong | enters `adjudicated` same as `distinct`/`rung` |
+   | `keep` | writes an `adjudicated` memo (`verdict: 'keep'`) for a coherence check that found nothing wrong | **documented deviation**: enters `adjudicated` same as `distinct`/`rung` — the design note has no `keep` verdict feeding the adjudicated set; without it a clean coherence check would re-fire on every future document instead of being settled |
 
    Every applied mutation fires `onRegistryChange` so the phase-1 blocker index does not go stale.
    An op whose endpoint was absorbed by an earlier op in the same batch is skipped
@@ -583,9 +593,17 @@ single ~22.6k-token prompt, over an 8k local window. Running every document keep
    **idempotent-link trap**, documented at `StreamingRepairer.ts` step 7's class comment; per-alias
    mention-doc tracking would fix it properly and is named there as the future, registry-level fix.
    **No LLM, no re-extraction.**
-7. **Invariants.** **I1 — debt-free boundary**: after document *d*, every suspect gathered has an
-   applied op, an adjudicated memo, or a spillover-queue slot — checked in memory before the save,
-   never from `decisions.jsonl` (wiki rule 10). **I2 — call cap** (user ruling 2): at most one
+7. **Invariants.** **I1 — debt-free boundary**: after document *d*, every suspect gathered is
+   settled by one of three things (`assertSuspectsAccounted`, `StreamingRepairer.ts:1074-1092`): an
+   op applied **this document**, a spillover-queue slot, or either member no longer being a live
+   canonical (absorbed by an earlier op in the same batch). The persisted `adjudicated` set is
+   deliberately **not** consulted — checked in memory before the save, never from `decisions.jsonl`
+   (wiki rule 10) — because a memo from an earlier document proves nothing about what *this* document
+   did: a low-confidence merge's `''`-signature retained suspect is meant to re-fire on every future
+   occasion, and counting its stale memo as settlement would blind I1 to exactly the pairs it exists
+   to watch. (Ops that *do* write a memo this document — `distinct`/`rung`/`keep` — already record
+   their key at the moment they write it, so this-document memos are covered without the stale ones
+   coming along.) **I2 — call cap** (user ruling 2): at most one
    first-attempt `repair-judge` call per document; the retry is budgeted and counted separately.
    Both assertions run BEFORE the single `entityRegistry.save()` that commits everything phase 2
    did, so a violated invariant is never what gets persisted.

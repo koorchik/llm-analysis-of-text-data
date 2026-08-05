@@ -665,7 +665,7 @@ function renderDocEvents(docId) {
       var telemetry = e.op === 'suspect' ? esc((e.pair || []).join(' ~ ')) + ' <span class="why">' + esc(e.signal) + ' ' + esc(e.score) + '</span>'
         : e.op === 'repair-spillover' ? esc(e.size) + ' suspect(s) <span class="why">' + esc(e.reason) + '</span>'
         : e.op === 'gloss-flagged' ? esc(e.mention) + ' <span class="why">' + esc(e.kind) + '</span>'
-        : esc(e.verdict) + ' <span class="why">' + esc(e.reason) + (e.detail ? ': ' + esc(e.detail) : '') + '</span>';
+        : esc(e.verdict || '') + ' <span class="why">' + esc(e.reason) + (e.detail ? ': ' + esc(e.detail) : '') + '</span>';
       return '<div class="event"><span class="op">' + esc(e.op) + '</span> ' + telemetry + '</div>';
     }
     return '<div class="event"><span class="op">' + esc(e.op) + '</span></div>';

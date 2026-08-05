@@ -18,10 +18,13 @@ export type LlmCallKind =
   | 'extract'
   | 'type-judge'
   | 'link-judge'
+  | 'link-judge-retry'
   | 'pair-rule'
   | 'consolidate'
   | 'country-normalize'
   | 'batch-normalize'
+  | 'repair-judge'
+  | 'repair-judge-retry'
   | (string & {});
 
 export interface LlmCallEvent {

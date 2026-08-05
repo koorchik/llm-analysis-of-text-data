@@ -70,6 +70,50 @@ test('merge rewrites edges to the survivor; split detaches aliases; category cor
   assert.equal(state.categories.C.entities.B, undefined);
 });
 
+test('cross-category merge (StreamingRepairer): category-correction relocates under its OWN name, repair-merge finishes the fold even when canonicalPolicy keeps the MOVED name as survivor (T14 review fix)', () => {
+  // Registry's real sequence: EntityRegistry.move(a -> catB) keeps the name `a`, THEN applyMerges
+  // picks the survivor by canonicalPolicy — which may be `a` itself, not the requested `into`. The
+  // old fold pre-empted the merge under the requested name inside category-correction, so when
+  // canonicalPolicy kept `a`, the following repair-merge fold found `bucket.entities[a]` undefined
+  // and minted a fresh, empty duplicate instead of folding — two entities where the registry has one.
+  const state = createEmptyState();
+  const seed = [
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'Sandworm', target: 'Sandworm', docId: 1 },
+    { op: 'decision', decision: 'mint', category: 'Organization', mention: 'Sandworm Team', target: 'Sandworm Team', docId: 2 },
+    { op: 'decision', decision: 'link', category: 'HackerGroup', mention: 'Iron Viking', target: 'Sandworm', docId: 3 },
+    { op: 'decision', decision: 'link', category: 'Organization', mention: 'Vorona', target: 'Sandworm Team', docId: 3 },
+  ];
+  for (const event of seed) applyEvent(state, event as never);
+
+  // The judge's requested target was HackerGroup/Sandworm, but canonicalPolicy keeps the MOVED
+  // entity's own name ('Sandworm Team') as survivor — repair-merge's from/into are therefore
+  // identical (StreamingRepairer.ts:851/854: `from` is always the pre-merge non-survivor's name).
+  applyEvent(state, {
+    op: 'category-correction',
+    doc: 4,
+    from: { category: 'Organization', canonical: 'Sandworm Team' },
+    into: { category: 'HackerGroup', canonical: 'Sandworm' },
+    by: 'StreamingRepairer',
+  } as never);
+  applyEvent(state, {
+    op: 'repair-merge', doc: 4, category: 'HackerGroup', from: 'Sandworm Team', into: 'Sandworm Team',
+    confidence: 'high', evidence: null, by: 'StreamingRepairer',
+  } as never);
+
+  assert.deepEqual(state.categories.Organization.entities, {}, 'the record left its wrong category');
+  assert.deepEqual(
+    Object.keys(state.categories.HackerGroup.entities),
+    ['Sandworm Team'],
+    'one surviving entity, under the MOVED name — not two, and not the requested "into" name'
+  );
+  const survivor = state.categories.HackerGroup.entities['Sandworm Team'];
+  assert.deepEqual(
+    survivor.aliases.sort(),
+    ['Iron Viking', 'Sandworm', 'Sandworm Team', 'Vorona'].sort(),
+    'union of both sides\' aliases'
+  );
+});
+
 test('repair-merge folds like merge-canonical: mint -> suspect -> repair-merge yields one entity (T11)', () => {
   const state = createEmptyState();
   const events = [

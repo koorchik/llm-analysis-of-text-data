@@ -158,6 +158,8 @@ const EXTRACTIONS: Record<string, unknown> = {
 };
 
 const VOODOO_BEAR_GLOSS = 'Russian state-sponsored group targeting energy sector';
+// Plausible stand-in, not transcribed from the wiki walkthrough (unlike the module comment's other
+// fixtures above) — the wiki source does not give APT28 a gloss.
 const APT28_GLOSS = 'Russian military intelligence group conducting phishing campaigns';
 
 const linkVerdict = (over: Record<string, unknown>) => ({

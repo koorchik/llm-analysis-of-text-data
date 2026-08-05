@@ -35,7 +35,7 @@ npm start
 # 3. Data analysis and visualization
 
 # Tests: node:test via ts-node, no build step
-npm test        # 556 tests, ~15s — includes the behaviour gate (test/gate.test.ts)
+npm test        # 872 tests, ~15s — includes the behaviour gate (test/gate.test.ts)
 ```
 
 ### Typecheck

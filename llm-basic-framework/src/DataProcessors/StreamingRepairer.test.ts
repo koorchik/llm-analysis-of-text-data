@@ -623,6 +623,49 @@ test('split reassigns exactly the detached alias\'s mentions (matchedVia localit
   assert.equal(split.newCanonical, 'Voodoo Bear');
 });
 
+test('a rejected coherence op spills the ORIGINAL suspect (real drift score/signal), not a synthetic score:0 pair (review fix)', async () => {
+  // The judge names an alias the entity does not actually have, so `EntityRegistry.split` refuses
+  // (`moving.length === 0`) and the op spills. `SuspectComponent.coherence` keeps only the entity
+  // ref (T7) — this suspect never lived in `due[component].pairs` — so before the fix `spill()`'s
+  // `due[op.component]?.pairs.find(...)` always missed and fell back to a fabricated `{ score: 0 }`,
+  // which the next document's token cap would evict first (starving exactly the drift signal
+  // `coherenceByRef` exists to preserve for `#allSuspectsOf`'s judge-failure path already does).
+  const context = await setup({
+    replies: [review([{ op: 'split', alias: 'Nonexistent Alias', outOf: 'Sandworm', confidence: 'high', evidence: 'looks off' }])],
+    blocker: {},
+    glossIndex: fakeGlossIndex({ aliasCoherence: () => 0.1 }),
+  });
+  const { dir, entityRegistry, repairer } = context;
+  context.schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 1 });
+  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 2 });
+  await entityRegistry.save();
+  await context.schemaRegistry.save();
+
+  await writeArtifact(
+    dir,
+    '2.json',
+    artifact(
+      [{ name: 'Voodoo Bear', category: 'HackerGroup', role: 'Attacker', matchedVia: 'Voodoo Bear', normalizedName: 'Sandworm' }],
+      [],
+      2
+    )
+  );
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.ok(
+    (await readLog(dir)).some((event) => event.op === 'repair-op-rejected' && event.reason === 'split-refused'),
+    'precondition: the split op was actually rejected'
+  );
+  const spillover = entityRegistry.repairState().spillover;
+  assert.equal(spillover.length, 1);
+  assert.equal(spillover[0].signal, 'coherence');
+  assert.equal(spillover[0].score, 0.1, 'kept the real drift score — a fabricated 0 would starve it at the next cap');
+  assert.deepEqual(spillover[0].a, { category: 'HackerGroup', canonical: 'Sandworm' });
+  assert.deepEqual(spillover[0].b, { category: 'HackerGroup', canonical: 'Sandworm' });
+});
+
 test('move reattaches one alias to another listed entity and re-stamps its mentions', async () => {
   const context = await setup({
     replies: [

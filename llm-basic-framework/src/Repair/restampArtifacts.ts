@@ -10,15 +10,18 @@ export interface RestampArtifactsParams {
   entityRegistry: EntityRegistry;
   schemaRegistry: SchemaRegistry;
   /**
-   * Restrict re-stamping to exactly these basenames within `artifactsDir` — the repairer's (T9)
-   * common case, where only the handful of documents touched by one document's repair ops need
-   * re-checking. Omitted = every artifact in the directory, `RegistryConsolidator`'s full-corpus
-   * pass.
+   * Restrict re-stamping to exactly these basenames within `artifactsDir`. Omitted = every artifact
+   * in the directory — what BOTH production callers use: `RegistryConsolidator`'s full-corpus pass,
+   * and `StreamingRepairer`'s per-document repair (which also needs the whole corpus, not just the
+   * touched document — `link` is idempotent, so a repeat mention leaves no alias record to derive an
+   * "affected documents" set from; class comment, step 7). No production caller passes `files`
+   * anymore — it is exercised only by this module's own tests, and kept available for a future
+   * targeted pass that CAN compute a safe affected-file set.
    *
    * A listed name that does not exist on disk is SKIPPED with a `console.warn` naming it, and is
-   * not counted in the returned `total` — never thrown. `files` here is expected to come from a
-   * caller-computed "affected" set (T9), and a stale or wrong entry in that set must not crash a
-   * document mid-repair (never abort a document, wiki rule / repo error posture).
+   * not counted in the returned `total` — never thrown. A caller-computed "affected" set is expected
+   * to sometimes be stale, and a stale or wrong entry in it must not crash a document mid-repair
+   * (never abort a document, wiki rule / repo error posture).
    */
   files?: string[];
 }
@@ -48,8 +51,9 @@ export async function restampArtifacts(
       original = (await fs.readFile(filePath)).toString();
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        // A `files`-restricted caller (T9) computes its own "affected" set; a stale/wrong entry
-        // must not crash the document mid-repair — skip it, don't count it, warn so it is visible.
+        // A `files`-restricted caller computes its own "affected" set (no production caller does
+        // today — see the `files` doc comment); a stale/wrong entry in it must not crash a document
+        // mid-repair — skip it, don't count it, warn so it is visible.
         console.warn(`restampArtifacts: skipping missing file "${file}" in ${artifactsDir}`);
         continue;
       }

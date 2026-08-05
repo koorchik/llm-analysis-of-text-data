@@ -43,6 +43,18 @@ export interface ReplayState {
    * separate from `counts` so the pre-existing link/mint/defer shape never has to change.
    */
   repairCounts: { suspects: number; distinct: number; spillover: number; glossFlagged: number };
+  /**
+   * T14 review fix: bridges a StreamingRepairer `category-correction` event to the `repair-merge`
+   * event that immediately follows it. `EntityRegistry#move` relocates the record under ITS OWN
+   * name (see `#merge`, StreamingRepairer.ts:1027-1036), so the category-correction fold alone
+   * cannot finish the operation — the merge is folded by the following `repair-merge` event. That
+   * event's survivor is chosen by `canonicalPolicy` and may turn out to be the JUST-MOVED entity's
+   * own name, in which case `repair-merge`'s `from` and `into` fields are identical
+   * (StreamingRepairer.ts:851/854 — `from` is always the pre-merge non-survivor's name) and carry no
+   * information about the actual merge partner. This pointer recovers it. Cleared as soon as the
+   * next `repair-merge` event consumes it (matched or not) so it never survives past its one use.
+   */
+  pendingCrossCategoryMerge: { category: string; movedName: string; requestedInto: string } | null;
 }
 
 export const createEmptyState = function (): ReplayState {
@@ -51,6 +63,7 @@ export const createEmptyState = function (): ReplayState {
     ladders: {},
     counts: { links: 0, mints: 0, defers: 0 },
     repairCounts: { suspects: 0, distinct: 0, spillover: 0, glossFlagged: 0 },
+    pendingCrossCategoryMerge: null,
   };
 };
 
@@ -173,17 +186,31 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
   // (category/from/into), just a different origin.
   if ((event.op === 'merge-canonical' || event.op === 'repair-merge') && event.category) {
     const bucket = category(event.category);
-    const source = bucket.entities[event.from];
+    const pending = state.pendingCrossCategoryMerge;
+    const degenerate =
+      event.op === 'repair-merge' &&
+      event.from === event.into &&
+      pending !== null &&
+      pending.category === event.category &&
+      pending.movedName === event.from;
+    state.pendingCrossCategoryMerge = null;
+
+    // Ordinarily `from` is the absorbed name and `into` is the survivor. In the degenerate case
+    // (canonicalPolicy kept the JUST-MOVED entity's own name as survivor) `from` and `into` are
+    // identical and this event alone can't say who the other merge partner was — recovered from the
+    // category-correction event that preceded it (see `pendingCrossCategoryMerge` doc comment).
+    const absorbedName = degenerate ? pending!.requestedInto : event.from;
+    const source = bucket.entities[absorbedName];
     const target = ensureEntity(event.category, event.into, doc);
-    if (source) {
+    if (source && source !== target) {
       for (const alias of source.aliases) {
         if (target.aliases.indexOf(alias) === -1) target.aliases.push(alias);
       }
       if (!target.rung && source.rung) target.rung = source.rung;
-      delete bucket.entities[event.from];
+      delete bucket.entities[absorbedName];
     }
     const project = function (name: string): string {
-      return name === event.from ? event.into : name;
+      return name === absorbedName ? event.into : name;
     };
     bucket.edges = bucket.edges
       .map(function (edge) {
@@ -222,13 +249,43 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     const entity = fromBucket.entities[event.from.canonical];
     if (!entity) return;
     delete fromBucket.entities[event.from.canonical];
+    fromBucket.edges = fromBucket.edges.filter(function (edge) {
+      return edge.from !== event.from.canonical && edge.to !== event.from.canonical;
+    });
+
+    if (event.by === 'StreamingRepairer') {
+      // Mirrors `EntityRegistry#move` (StreamingRepairer.ts:1027-1036): relocate the record into the
+      // target category UNDER ITS OWN NAME, carrying its aliases. The merge under the REQUESTED name
+      // (if any) is a separate step (`applyMerges`) that the `repair-merge` event immediately
+      // following this one folds — pre-empting that merge here, under the requested name, is exactly
+      // the bug this fix corrects (review finding): it left `bucket.entities[a]` undefined for the
+      // repair-merge fold to mint a fresh, empty duplicate when canonicalPolicy kept `a`'s own name.
+      const targetBucket = category(event.into.category);
+      const existing = targetBucket.entities[event.from.canonical];
+      if (existing && existing !== entity) {
+        for (const alias of entity.aliases) {
+          if (existing.aliases.indexOf(alias) === -1) existing.aliases.push(alias);
+        }
+        if (!existing.rung && entity.rung) existing.rung = entity.rung;
+      } else {
+        targetBucket.entities[event.from.canonical] = entity;
+      }
+      state.pendingCrossCategoryMerge =
+        event.from.canonical === event.into.canonical
+          ? null
+          : { category: event.into.category, movedName: event.from.canonical, requestedInto: event.into.canonical };
+      return;
+    }
+
+    // Older / non-StreamingRepairer events (e.g. RegistryConsolidator's cross-category sweep,
+    // RegistryConsolidator.ts:336-357): no follow-up merge event is ever logged for this pass — the
+    // one event stands for both the move AND the merge — so fold both here, best-effort, under the
+    // requested name (the only name this single event gives us).
+    state.pendingCrossCategoryMerge = null;
     const target = ensureEntity(event.into.category, event.into.canonical, doc);
     for (const alias of entity.aliases) {
       if (target.aliases.indexOf(alias) === -1) target.aliases.push(alias);
     }
-    fromBucket.edges = fromBucket.edges.filter(function (edge) {
-      return edge.from !== event.from.canonical && edge.to !== event.from.canonical;
-    });
     return;
   }
 };

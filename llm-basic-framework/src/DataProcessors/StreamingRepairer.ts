@@ -313,7 +313,7 @@ export class StreamingRepairer {
 
       // ---- Phase B: mutate + save --------------------------------------------------------------
 
-      const applied = await this.#apply(accepted, due, docId);
+      const applied = await this.#apply(accepted, due, docId, coherenceByRef);
       spilled.push(...applied.rejected);
       if (applied.rejected.length > 0) {
         await this.#decisionLog.log({
@@ -778,7 +778,8 @@ export class StreamingRepairer {
   async #apply(
     accepted: AcceptedOp[],
     due: SuspectComponent[],
-    docId: number
+    docId: number,
+    coherenceByRef: Map<string, SuspectPair>
   ): Promise<{ applied: Set<string>; rejected: SuspectPair[]; touched: Set<string> }> {
     const applied = new Set<string>();
     const rejected: SuspectPair[] = [];
@@ -797,8 +798,15 @@ export class StreamingRepairer {
       const key = suspectPairKey(op.a, b);
       // Re-queue the ORIGINAL suspect where one exists, so its signal and score survive into the
       // next document's component capping (and into RQ5's per-signal yield counts) rather than being
-      // flattened to a scoreless synthetic pair that capping would evict first.
-      const original = due[op.component]?.pairs.find((pair) => suspectPairKey(pair.a, pair.b) === key);
+      // flattened to a scoreless synthetic pair that capping would evict first. Coherence suspects
+      // never live in `due[component].pairs` — `SuspectComponent.coherence` keeps only the entity ref
+      // (T7) — so a rejected coherence op has to go through `coherenceByRef`, the same lookup
+      // `#allSuspectsOf` uses to re-hydrate them; searching `.pairs` for one always misses and used to
+      // fall through to the scoreless synthetic pair, starving it at the next document's token cap.
+      const original =
+        b === op.a
+          ? coherenceByRef.get(refKey(op.a))
+          : due[op.component]?.pairs.find((pair) => suspectPairKey(pair.a, pair.b) === key);
       rejected.push(original ?? { a: op.a, b, signal: b === op.a ? 'coherence' : 'union-blocker', score: 0, docId });
     };
 
