@@ -10,6 +10,8 @@ interface Entry {
   gloss: string | null;
   /** L2-normalized mean of the entity's surface vectors — see the class comment for the formula. */
   centroid: number[];
+  /** Content fingerprint (gloss + sorted surface set) as of the sync() that produced this entry. */
+  signature: string;
 }
 
 /**
@@ -37,16 +39,34 @@ interface Entry {
  * .mint`), so "alias-surface vectors" and "the name+gloss vector" are already the same set in
  * practice — a separate weighted term would double-count the canonical's own surface for no signal.
  *
- * **`sync(registry)` diffs entity keys (`category`/`canonical`), not alias keys.** Only a canonical
- * absent from the index gets embedded and added; a canonical already indexed keeps its centroid
- * frozen even if a new alias is linked to it later, until... it never refreshes on its own — by
- * design, not oversight. `SuspectGenerator` (T6) calls `aliasCoherence` for a just-added alias
- * *before* that alias could influence the centroid, which is exactly the point: comparing a new
- * surface against a centroid it has already been folded into would bias the check toward "coherent"
- * for every alias, which defeats the purpose of the check. A canonical that disappears from the
- * registry (merged away, split out from under its old name, ...) is dropped from the index on the
- * next `sync()` — "index is a pure function of persisted registry state" (task brief), so a crash
- * between docs loses nothing: the next `sync()` rebuilds exactly the live set.
+ * **`sync(registry)` is content-aware, not just presence-aware.** Each indexed entry carries a
+ * signature (`gloss` + the sorted deduplicated surface set) computed from the registry record; a
+ * canonical is re-embedded whenever its live signature differs from the one it was last indexed
+ * under, not only when it is missing outright. A canonical absent from the registry (merged away,
+ * split out from under its old name, ...) is dropped on the next `sync()`. This makes the index a
+ * true pure function of persisted registry state (task brief) end to end: a crash between docs loses
+ * nothing, because the next `sync()` rebuilds exactly the live set with exactly its live content —
+ * including a survivor that `applyMerges`/`renameInto` enriched with absorbed aliases and/or a
+ * backfilled `gloss` (`if (!target.gloss && source.gloss) target.gloss = source.gloss`) in a
+ * *previous* document's repair step. Re-embedding is cheap: `EmbeddingsClient`'s disk cache is keyed
+ * on `(model, text)`, so only genuinely new surface texts cost an API call — everything the merge
+ * carried over from the absorbed canonical was very likely embedded already.
+ *
+ * **Two different kinds of "stale" — only one of which this class defends against.** (1) *Merge/
+ * rename staleness across documents*: fixed by the content-signature refresh above. (2) *Within one
+ * `processDoc` call, `aliasCoherence` sees an alias that was linked earlier in the SAME document*:
+ * `StreamingRepairer.processDoc` calls `glossIndex.sync(registry)` as its first step, but by then the
+ * normalizer has already `link()`ed this document's new aliases into the very same registry instance
+ * (the repairer hook runs as the last statement of `StreamingNormalizer#processFile`, after that
+ * document's mints/links are committed) — so a content-aware `sync()` has already folded a
+ * just-linked alias into its entity's centroid by the time `SuspectGenerator` calls
+ * `aliasCoherence(ref, thatAlias)` for it. This is **not** a bug this class tries to prevent: there is
+ * no signal available to `sync()` that would let it tell "linked this document, not yet vetted" apart
+ * from "linked several documents ago and long since trusted" — both are just current registry
+ * content. The check therefore answers "does this alias fit the entity's *currently recorded*
+ * identity" (which, once linked, includes itself) rather than "did this alias look right before
+ * anyone recorded it" — a real characteristic of the call order, not a contamination defect, and its
+ * effect shrinks as an entity accumulates more pre-existing aliases.
  */
 export class GlossIndex {
   #client: EmbeddingsClient;
@@ -58,10 +78,12 @@ export class GlossIndex {
   }
 
   /**
-   * Idempotent diff against the registry's live categories/canonicals: adds entries for canonicals
-   * not yet indexed (embedding all their unique surfaces in ONE batched call, so a doc that mints
-   * several entities pays for one round trip, not several) and drops entries for canonicals no
-   * longer live. A no-op call — nothing minted or removed since the last `sync()` — embeds nothing.
+   * Content-aware diff against the registry's live categories/canonicals: (re-)embeds any canonical
+   * whose current signature (gloss + surface set) differs from what it was last indexed under —
+   * covers both "not indexed yet" and "indexed but enriched since" (merge/rename absorption) — in ONE
+   * batched call across every such canonical, and drops entries for canonicals no longer live. A
+   * no-op call — nothing minted, linked, merged, split or renamed since the last `sync()` — embeds
+   * nothing.
    */
   async sync(registry: EntityRegistry): Promise<void> {
     const liveCategories = new Set(registry.categories());
@@ -69,7 +91,13 @@ export class GlossIndex {
       if (!liveCategories.has(category)) this.#index.delete(category);
     }
 
-    const pending: Array<{ category: string; canonical: string; gloss: string | null; texts: string[] }> = [];
+    const pending: Array<{
+      category: string;
+      canonical: string;
+      gloss: string | null;
+      signature: string;
+      texts: string[];
+    }> = [];
 
     for (const category of registry.categories()) {
       const records = registry.records(category);
@@ -83,10 +111,11 @@ export class GlossIndex {
       }
 
       for (const [canonical, record] of Object.entries(records)) {
-        if (bucket?.has(canonical)) continue; // already indexed — frozen until removed, see class comment
-
         const gloss = record.gloss ?? null;
-        pending.push({ category, canonical, gloss, texts: this.#surfaceTexts(canonical, record, gloss) });
+        const signature = this.#signatureFor(canonical, record);
+        if (bucket?.get(canonical)?.signature === signature) continue; // unchanged since last sync
+
+        pending.push({ category, canonical, gloss, signature, texts: this.#surfaceTexts(canonical, record, gloss) });
       }
     }
 
@@ -96,12 +125,12 @@ export class GlossIndex {
     const embedded = await this.#client.embed(allTexts, { operator: 'gloss-index' });
     const byText = new Map(allTexts.map((text, position) => [text, embedded[position]]));
 
-    for (const { category, canonical, gloss, texts } of pending) {
+    for (const { category, canonical, gloss, signature, texts } of pending) {
       const vectors = texts.map((text) => l2Normalize(byText.get(text)!));
       const centroid = l2Normalize(meanPool(vectors));
 
       if (!this.#index.has(category)) this.#index.set(category, new Map());
-      this.#index.get(category)!.set(canonical, { gloss, centroid });
+      this.#index.get(category)!.set(canonical, { gloss, centroid, signature });
     }
   }
 
@@ -144,6 +173,16 @@ export class GlossIndex {
   #surfaceTexts(canonical: string, record: CanonicalRecord, gloss: string | null): string[] {
     const surfaces = new Set([canonical, ...record.aliases.map((alias) => alias.surface)]);
     return [...new Set([...surfaces].map((surface) => this.#textFor(surface, gloss)))];
+  }
+
+  /**
+   * Content fingerprint for staleness detection — gloss plus the sorted deduplicated surface set, so
+   * an alias-order shuffle with no actual content change (never observed today, but not ruled out by
+   * `CanonicalRecord`'s shape either) can never look like a spurious re-embed.
+   */
+  #signatureFor(canonical: string, record: CanonicalRecord): string {
+    const surfaces = [...new Set([canonical, ...record.aliases.map((alias) => alias.surface)])].sort();
+    return JSON.stringify({ gloss: record.gloss ?? null, surfaces });
   }
 
   /** Byte-identical to `EmbeddingGenerator#textFor`'s `name+gloss` branch — see the class comment. */

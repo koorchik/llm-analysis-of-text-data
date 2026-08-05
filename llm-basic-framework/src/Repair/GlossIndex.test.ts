@@ -116,6 +116,86 @@ test('sync() drops entities that were removed from the registry (e.g. merged awa
   );
 });
 
+test('sync() refreshes a SURVIVING canonical\'s centroid after a merge — the frozen pre-merge centroid must not stick around', async () => {
+  // No gloss on either side here, so the surface texts stay bare ('Alpha'/'Beta') across the merge —
+  // isolating the centroid-shift effect from the text-format change gloss backfill would also cause
+  // (covered separately below).
+  const angles = { Alpha: 0, Beta: 1.0, Probe: 1.0 };
+  const backend = new StubEncoder(angles);
+  const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
+  const registry = await seeded([
+    { category: 'HackerGroup', canonical: 'Alpha', doc: 1 },
+    { category: 'HackerGroup', canonical: 'Beta', doc: 2 },
+  ]);
+  await index.sync(registry);
+
+  // Before the merge, Alpha's centroid is purely its own (angle 0) vector, so a probe aimed at
+  // Beta's direction (angle 1.0) scores cos(1.0).
+  const beforeMerge = await index.aliasCoherence({ category: 'HackerGroup', canonical: 'Alpha' }, 'Probe');
+
+  // `canonicalPolicy` defaults to 'first-seen', so Alpha (doc 1) survives over Beta (doc 2); Beta's
+  // own name becomes an alias of Alpha (EntityRegistry.applyMerges folds `source.aliases` in).
+  const summary = registry.applyMerges('HackerGroup', [{ from: 'Beta', into: 'Alpha' }]);
+  assert.deepEqual(summary.survivors, ['Alpha'], 'sanity: first-seen policy keeps Alpha as the survivor');
+  assert.deepEqual(
+    [...registry.aliasSurfaces('HackerGroup', 'Alpha')].sort(),
+    ['Alpha', 'Beta'],
+    'sanity: Beta is now an alias of the survivor'
+  );
+
+  await index.sync(registry); // must detect the changed signature and re-embed the survivor
+
+  // After the merge, Alpha's centroid bisects angle 0 (its own name) and angle 1.0 (absorbed Beta),
+  // so a probe at exactly angle 1.0 must score HIGHER against it than it did before the merge.
+  const afterMerge = await index.aliasCoherence({ category: 'HackerGroup', canonical: 'Alpha' }, 'Probe');
+  assert.ok(
+    afterMerge > beforeMerge,
+    `merge must pull the survivor's centroid toward the absorbed alias's direction: before=${beforeMerge} after=${afterMerge}`
+  );
+});
+
+test('sync() picks up a gloss backfilled onto a survivor by applyMerges, not the pre-merge null', async () => {
+  const backend = new StubEncoder();
+  const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
+  const registry = await seeded([
+    { category: 'HackerGroup', canonical: 'Alpha', doc: 1 }, // no gloss
+    { category: 'HackerGroup', canonical: 'Beta', doc: 2, gloss: 'a distinct threat actor' },
+  ]);
+  await index.sync(registry);
+
+  // EntityRegistry.applyMerges: `if (!target.gloss && source.gloss) target.gloss = source.gloss`.
+  registry.applyMerges('HackerGroup', [{ from: 'Beta', into: 'Alpha' }]);
+  assert.equal(
+    registry.records('HackerGroup').Alpha.gloss,
+    'a distinct threat actor',
+    "sanity: the merge backfilled Beta's gloss onto Alpha"
+  );
+
+  await index.sync(registry); // must detect the changed signature (gloss null -> non-null) and re-embed
+  backend.batches = [];
+
+  await index.aliasCoherence({ category: 'HackerGroup', canonical: 'Alpha' }, 'Probe');
+  assert.deepEqual(
+    backend.batches.flat(),
+    ['Probe: a distinct threat actor'],
+    'aliasCoherence must use the refreshed (backfilled) gloss, not the frozen pre-merge null'
+  );
+});
+
+test('sync() re-embeds nothing for a canonical whose signature is unchanged, even across repeated calls', async () => {
+  const backend = new StubEncoder();
+  const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
+  const registry = await seeded([{ category: 'HackerGroup', canonical: 'APT28', aliases: ['Fancy Bear'] }]);
+
+  await index.sync(registry);
+  const callsAfterFirst = backend.batches.length;
+
+  await index.sync(registry);
+  await index.sync(registry);
+
+  assert.equal(backend.batches.length, callsAfterFirst, 'unchanged content must never trigger a re-embed');
+});
+
 test('text format is byte-identical to EmbeddingGenerator name+gloss: bare name when gloss is null, "name: gloss" otherwise', async () => {
   const backend = new StubEncoder();
   const index = new GlossIndex({ embeddingsClient: clientFor(backend) });
