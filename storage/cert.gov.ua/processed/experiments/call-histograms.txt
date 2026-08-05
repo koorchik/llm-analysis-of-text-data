@@ -1,0 +1,70 @@
+==============================================================================
+RUN   psi-link-default-4ee484f372fc
+ARM   psi-link-default — anthropic/claude-opus-5
+      ladder: 3× session model
+      blocker: string-sim(identity,max-lev-dice) | judge: builtin-link-judge
+DOCS  202
+
+LLM calls by kind:
+  link-judge             187   35.6%   tokens in/out   489792/  218244   0.93/doc
+  ladder                 114   21.7%   tokens in/out   583072/  406863   0.56/doc
+  part-of                 96   18.3%   tokens in/out        0/       0   0.48/doc
+  pair-rule               59   11.2%   tokens in/out    56239/   36269   0.29/doc
+  coarsens-to             47    9.0%   tokens in/out        0/       0   0.23/doc
+  country-normalize       22    4.2%   tokens in/out    18507/     471   0.11/doc
+  TOTAL                  525
+
+Calls per document (histogram):
+   0 call(s):    5 doc(s)  #####
+   1 call(s):   78 doc(s)  ############################################################
+   2 call(s):   52 doc(s)  ####################################################
+   3 call(s):   20 doc(s)  ####################
+   4 call(s):   12 doc(s)  ############
+   5 call(s):   13 doc(s)  #############
+   6 call(s):    8 doc(s)  ########
+   7 call(s):    3 doc(s)  ###
+   8 call(s):    5 doc(s)  #####
+   9 call(s):    3 doc(s)  ###
+  10 call(s):    1 doc(s)  #
+  12 call(s):    2 doc(s)  ##
+  min 0 · median 2 · max 12 · mean 2.60
+
+Decisions: link 92 (2.7%) · mint 3269 (97.1%) · defer 5 (0.1%)   [deferral rate is a §5 withheld decision]
+Granularity edges: {"coarsens-to":47,"part-of":96}
+LLM wall-clock in calls: 143.0 min
+Cost block: {"runId":"psi-link-default-4ee484f372fc","totals":{"calls":105,"inputTokens":358254,"outputTokens":202382,"costUsd":6.850820000000002,"unpricedCalls":0,"wallClockMs":2405349},"byOperator":{"ladder":{"calls":24,"inputTokens":127773,"outputTokens":77662,"costUsd":2.580415,"unpricedCalls":0,"wallClockMs":1084007},"link-judge":{"calls":61,"inputTokens":206662,"outputTokens":116589,"costUsd":3.948034999999999,"unpricedCalls":0,"wallClockMs":1184083},"country-normalize":{"calls":8,"inputTokens":6740,"outputTokens":173,"costUsd":0.038024999999999996,"unpricedCalls":0,"wallClockMs":19604},"pair-rule":{"calls":12,"inputTokens":17079,"outputTokens":7958,"costUsd":0.28434500000000007,"unpricedCalls":0,"wallClockMs":117655}},"unpricedModels":[]}
+==============================================================================
+RUN   psi-link-gemma-e2b-f53eb864f8b0
+ARM   psi-link-gemma-e2b — ollama/gemma4:e2b-8k
+      ladder: ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k
+      blocker: string-sim(identity,max-lev-dice) | judge: builtin-link-judge
+DOCS  202
+
+LLM calls by kind:
+  link-judge             186   40.0%   tokens in/out   356188/  332805   0.92/doc
+  ladder                 111   23.9%   tokens in/out   420540/  135650   0.55/doc
+  pair-rule               59   12.7%   tokens in/out    20326/   47820   0.29/doc
+  part-of                 55   11.8%   tokens in/out        0/       0   0.27/doc
+  coarsens-to             32    6.9%   tokens in/out        0/       0   0.16/doc
+  country-normalize       22    4.7%   tokens in/out    12448/    8601   0.11/doc
+  TOTAL                  465
+
+Calls per document (histogram):
+   0 call(s):    5 doc(s)  #####
+   1 call(s):  102 doc(s)  ############################################################
+   2 call(s):   39 doc(s)  #######################################
+   3 call(s):   11 doc(s)  ###########
+   4 call(s):   12 doc(s)  ############
+   5 call(s):   16 doc(s)  ################
+   6 call(s):    8 doc(s)  ########
+   7 call(s):    3 doc(s)  ###
+   8 call(s):    3 doc(s)  ###
+   9 call(s):    1 doc(s)  #
+  10 call(s):    1 doc(s)  #
+  12 call(s):    1 doc(s)  #
+  min 0 · median 1 · max 12 · mean 2.30
+
+Decisions: link 292 (8.7%) · mint 2804 (83.5%) · defer 264 (7.9%)   [deferral rate is a §5 withheld decision]
+Granularity edges: {"coarsens-to":32,"part-of":55}
+LLM wall-clock in calls: 124.6 min
+Cost block: {"runId":"psi-link-gemma-e2b-f53eb864f8b0","totals":{"calls":378,"inputTokens":809502,"outputTokens":524876,"costUsd":0,"unpricedCalls":0,"wallClockMs":7476343},"byOperator":{"pair-rule":{"calls":59,"inputTokens":20326,"outputTokens":47820,"costUsd":0,"unpricedCalls":0,"wallClockMs":487387},"ladder":{"calls":111,"inputTokens":420540,"outputTokens":135650,"costUsd":0,"unpricedCalls":0,"wallClockMs":3119887},"link-judge":{"calls":186,"inputTokens":356188,"outputTokens":332805,"costUsd":0,"unpricedCalls":0,"wallClockMs":3778379},"country-normalize":{"calls":22,"inputTokens":12448,"outputTokens":8601,"costUsd":0,"unpricedCalls":0,"wallClockMs":90690}},"unpricedModels":[]}

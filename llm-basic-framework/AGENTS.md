@@ -7,9 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a TypeScript-based LLM framework for analyzing Ukrainian cybersecurity incident reports from CERT-UA. The application processes unstructured text reports to extract structured entities (attack targets, hacker groups, countries), normalize data, generate embeddings, and create visualizations.
 
 It also hosts the experiment harness for a research paper comparing entity-normalization approaches
-(streaming Ψ_link vs batch Ψ_norm) on a frozen 204-report corpus. Three docs cover that work:
+(streaming Ψ_link vs batch Ψ_norm) on a frozen 204-report corpus. These docs cover that work:
 
 - **`docs/RUNNING-EXPERIMENTS.md`** — how to run, replay and score everything. Start here.
+- **`docs/REPRODUCE.md`** — setting a fresh clone up to continue the work: what is already
+  committed (two baseline arms), local-model recreation, and why runIds change on every commit.
+- `docs/RUN-STREAMING.md` — runbook for one streaming run, arm by arm.
 - **`docs/GOLD-TABLE.md`** — how to build the gold table (`npm run gold`). Gates every result.
 - `docs/normalization-experiments-refactor.md` — the migration plan and milestone status.
 - `docs/statistical-protocol.md` — the pre-registered analysis. Read §5 before emitting a `defer`.

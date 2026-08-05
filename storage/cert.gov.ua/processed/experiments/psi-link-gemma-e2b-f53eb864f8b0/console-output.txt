@@ -1,0 +1,952 @@
+
+> llm-basic-framework@1.0.0 start
+> ts-node bin/app.ts
+
+{
+  llmProvider: 'ollama',
+  llmModel: 'gemma4:e2b-8k',
+  embeddingsProvider: 'openai',
+  embeddingsModel: 'text-embedding-3-large',
+  inputDir: '/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/fetched',
+  outputDir: '/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed',
+  flow: 'incremental',
+  steps: [ 'streamingPipeline' ],
+  decisionsLog: true,
+  decisionStrategy: undefined,
+  candidateGenerator: undefined,
+  candidateK: undefined,
+  candidateMinSim: undefined,
+  ladderEnsembleN: 3,
+  ladderEnsembleModels: 'ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k',
+  ladderMinExamples: 8,
+  embeddings: false,
+  edgesFrom: 'layered',
+  lambda: undefined,
+  lambdaInterpretive: false,
+  condition: 'psi-link-gemma-e2b',
+  seed: null,
+  temperature: undefined,
+  topP: undefined,
+  maxTokens: undefined
+}
+OLLAMA gemma4:e2b-8k: num_ctx=8192
+RUN psi-link-gemma-e2b-f53eb864f8b0 → /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0
+RUN: working tree is dirty — runId includes a diff hash, but commit before a real run
+OLLAMA gemma4:e2b-16k: num_ctx=16384
+OLLAMA gemma4:e2b-16k: num_ctx=16384
+OLLAMA gemma4:e2b-16k: num_ctx=16384
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/16.json
+StreamingNormalizer: unknown category "Organization" in 16.json — admitting
+StreamingNormalizer: unknown category "Software" in 16.json — admitting
+PAIR-RULES doc 16: 13.036s
+NORMALIZE 16.json: 13.042s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/16.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17.json
+StreamingNormalizer: unknown category "Sector" in 17.json — admitting
+LADDER Software v1: 4 rung(s) from 2/3 valid run(s)
+PAIR-RULES doc 17: 16.272s
+NORMALIZE 17.json: 1:36.607 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18.json
+StreamingNormalizer: unknown category "Government Body" in 18.json — admitting
+StreamingNormalizer: unknown category "Domain" in 18.json — admitting
+PAIR-RULES doc 18: 5.976s
+NORMALIZE 18.json: 5.982s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/20.json
+NORMALIZE 20.json: 8.818ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/20.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/22.json
+StreamingNormalizer: unknown category "Device" in 22.json — admitting
+LINK-JUDGE doc 22: 14.706s
+PAIR-RULES doc 22: 7.760s
+NORMALIZE 22.json: 22.474s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/22.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/23.json
+LADDER Software v2: 4 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 23: 26.120s
+NORMALIZE 23.json: 1:53.366 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/23.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/24.json
+LINK-JUDGE doc 24: 11.568s
+NORMALIZE 24.json: 11.575s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/24.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/25.json
+LADDER Organization v1: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 25: 14.428s
+PAIR-RULES doc 25: 6.811s
+NORMALIZE 25.json: 1:42.197 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/25.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/26.json
+PAIR-RULES doc 26: 10.902s
+NORMALIZE 26.json: 10.905s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/26.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/27.json
+StreamingNormalizer: unknown category "Individual" in 27.json — admitting
+PAIR-RULES doc 27: 9.049s
+NORMALIZE 27.json: 9.055s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/27.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2492.json
+LINK-JUDGE doc 2492: 29.152s
+PAIR-RULES doc 2492: 5.479s
+NORMALIZE 2492.json: 34.643s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2492.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2496.json
+LADDER Software v3: 4 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2496: 19.171s
+NORMALIZE 2496.json: 1:43.579 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2496.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2498.json
+NORMALIZE 2498.json: 0.139ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2498.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2624.json
+LADDER Organization v2: 3 rung(s) from 1/3 valid run(s)
+NORMALIZE 2624.json: 1:21.631 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2624.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2625.json
+StreamingNormalizer: unknown category "Country" in 2625.json — admitting
+LINK-JUDGE doc 2625: 31.505s
+PAIR-RULES doc 2625: 7.875s
+NORMALIZE 2625.json: 41.325s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2625.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2628.json
+LINK-JUDGE doc 2628: 9.403s
+PAIR-RULES doc 2628: 3.780s
+NORMALIZE 2628.json: 13.198s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2628.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2656.json
+LADDER Government Body v1: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2656: 11.460s
+NORMALIZE 2656.json: 1:29.048 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2656.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2658.json
+NORMALIZE 2658.json: 8.939ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2658.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2659.json
+NORMALIZE 2659.json: 2.161ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2659.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2660.json
+LINK-JUDGE doc 2660: 24.039s
+NORMALIZE 2660.json: 24.046s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2660.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2661.json
+LADDER Domain v1: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2661: 29.372s
+PAIR-RULES doc 2661: 3.498s
+NORMALIZE 2661.json: 1:50.289 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2661.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2681.json
+PAIR-RULES doc 2681: 5.757s
+NORMALIZE 2681.json: 19.032s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2681.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2683.json
+PAIR-RULES doc 2683: 6.784s
+NORMALIZE 2683.json: 6.795s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2683.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2685.json
+PAIR-RULES doc 2685: 3.475s
+NORMALIZE 2685.json: 3.478s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2685.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2687.json
+StreamingNormalizer: unknown category "HackerGroup" in 2687.json — admitting
+LINK-JUDGE doc 2687: 11.540s
+PAIR-RULES doc 2687: 8.720s
+NORMALIZE 2687.json: 20.268s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2687.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2691.json
+LINK-JUDGE doc 2691: 10.403s
+NORMALIZE 2691.json: 10.410s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2691.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2693.json
+LADDER Organization v3: 4 rung(s) from 2/3 valid run(s)
+PAIR-RULES doc 2693: 11.757s
+NORMALIZE 2693.json: 1:33.403 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2693.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2695.json
+LINK-JUDGE doc 2695: 20.137s
+NORMALIZE 2695.json: 20.148s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2695.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2697.json
+LADDER Software v4: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2697: 9.350s
+PAIR-RULES doc 2697: 5.987s
+NORMALIZE 2697.json: 1:39.658 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2697.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2699.json
+LINK-JUDGE doc 2699: 7.424s
+PAIR-RULES doc 2699: 8.730s
+NORMALIZE 2699.json: 16.163s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2699.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2701.json
+NORMALIZE 2701.json: 8.635ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2701.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2703.json
+{ ERROR: { ladder: 'FORMAT_ERROR', rejected: 'FORMAT_ERROR' } }
+LADDER Domain v2: 4 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2703: 28.912s
+NORMALIZE 2703.json: 1:57.893 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2703.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2707.json
+LADDER Country v1: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2707: 20.615s
+NORMALIZE 2707.json: 1:39.865 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2707.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2718.json
+LADDER Domain v3: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2718: 18.979s
+NORMALIZE 2718.json: 1:52.141 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2718.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2720.json
+LADDER Government Body v2: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2720: 17.385s
+PAIR-RULES doc 2720: 11.749s
+NORMALIZE 2720.json: 2:05.020 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2720.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2722.json
+LADDER Device v1: 4 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 2722: 22.852s
+PAIR-RULES doc 2722: 9.621s
+NORMALIZE 2722.json: 2:09.636 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2722.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2723.json
+LINK-JUDGE doc 2723: 17.157s
+NORMALIZE 2723.json: 17.170s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2723.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2724.json
+LINK-JUDGE doc 2724: 35.380s
+NORMALIZE 2724.json: 35.408s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2724.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2725.json
+LADDER Sector v1: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2725: 23.206s
+NORMALIZE 2725.json: 1:46.448 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2725.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2726.json
+LINK-JUDGE doc 2726: 10.480s
+NORMALIZE 2726.json: 10.489s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2726.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2727.json
+LINK-JUDGE doc 2727: 16.416s
+NORMALIZE 2727.json: 16.427s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2727.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2728.json
+LINK-JUDGE doc 2728: 13.673s
+NORMALIZE 2728.json: 13.684s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2728.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2803.json
+LINK-JUDGE doc 2803: 13.537s
+NORMALIZE 2803.json: 13.547s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2803.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2804.json
+LINK-JUDGE doc 2804: 11.078s
+NORMALIZE 2804.json: 11.086s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2804.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2805.json
+LINK-JUDGE doc 2805: 12.024s
+NORMALIZE 2805.json: 12.037s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2805.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2806.json
+LINK-JUDGE doc 2806: 10.688s
+NORMALIZE 2806.json: 10.700s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2806.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2807.json
+LADDER Domain v4: 4 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2807: 21.470s
+NORMALIZE 2807.json: 1:52.860 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2807.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2808.json
+StreamingNormalizer: unknown category "Infrastructure" in 2808.json — admitting
+LINK-JUDGE doc 2808: 6.909s
+PAIR-RULES doc 2808: 10.411s
+NORMALIZE 2808.json: 17.330s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2808.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3028.json
+LINK-JUDGE doc 3028: 26.375s
+NORMALIZE 3028.json: 26.427s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3028.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4475.json
+LADDER Software v5: 4 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 4475: 15.884s
+PAIR-RULES doc 4475: 10.575s
+NORMALIZE 4475.json: 1:59.056 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4475.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/9483.json
+LADDER Sector v2: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 9483: 17.780s
+PAIR-RULES doc 9483: 7.847s
+NORMALIZE 9483.json: 1:54.855 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/9483.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/9668.json
+LADDER Individual v1: 1 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 9668: 10.351s
+PAIR-RULES doc 9668: 4.975s
+NORMALIZE 9668.json: 1:26.820 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/9668.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/10011.json
+LINK-JUDGE doc 10011: 19.214s
+NORMALIZE 10011.json: 26.119s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/10011.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/10702.json
+LINK-JUDGE doc 10702: 21.421s
+PAIR-RULES doc 10702: 12.992s
+NORMALIZE 10702.json: 34.430s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/10702.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/11113.json
+LINK-JUDGE doc 11113: 32.720s
+PAIR-RULES doc 11113: 8.982s
+NORMALIZE 11113.json: 41.748s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/11113.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/12081.json
+LINK-JUDGE doc 12081: 11.552s
+PAIR-RULES doc 12081: 5.018s
+NORMALIZE 12081.json: 16.579s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/12081.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/13156.json
+LINK-JUDGE doc 13156: 10.472s
+NORMALIZE 13156.json: 10.487s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/13156.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/14624.json
+LINK-JUDGE doc 14624: 14.728s
+NORMALIZE 14624.json: 14.750s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/14624.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/14958.json
+LINK-JUDGE doc 14958: 9.492s
+NORMALIZE 14958.json: 9.497s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/14958.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/16295.json
+LINK-JUDGE doc 16295: 8.346s
+NORMALIZE 16295.json: 8.355s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/16295.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/16905.json
+LINK-JUDGE doc 16905: 9.171s
+NORMALIZE 16905.json: 9.175s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/16905.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17474.json
+NORMALIZE 17474.json: 9.328ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17474.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17580.json
+LINK-JUDGE doc 17580: 6.682s
+NORMALIZE 17580.json: 6.687s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17580.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17696.json
+LINK-JUDGE doc 17696: 11.148s
+PAIR-RULES doc 17696: 6.155s
+NORMALIZE 17696.json: 17.310s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17696.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17899.json
+LINK-JUDGE doc 17899: 12.816s
+PAIR-RULES doc 17899: 8.868s
+NORMALIZE 17899.json: 21.696s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17899.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/17961.json
+LINK-JUDGE doc 17961: 10.002s
+NORMALIZE 17961.json: 10.013s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/17961.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18101.json
+LADDER Government Body v3: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 18101: 28.988s
+NORMALIZE 18101.json: 1:57.092 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18101.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18108.json
+LINK-JUDGE doc 18108: 14.388s
+PAIR-RULES doc 18108: 12.412s
+NORMALIZE 18108.json: 29.074s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18108.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18163.json
+LINK-JUDGE doc 18163: 12.589s
+NORMALIZE 18163.json: 12.598s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18163.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18273.json
+LINK-JUDGE doc 18273: 22.990s
+PAIR-RULES doc 18273: 4.182s
+NORMALIZE 18273.json: 27.194s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18273.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18365.json
+LINK-JUDGE doc 18365: 13.594s
+NORMALIZE 18365.json: 13.614s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18365.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/18419.json
+LINK-JUDGE doc 18419: 10.916s
+NORMALIZE 18419.json: 10.930s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/18419.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37121.json
+PAIR-RULES doc 37121: 5.122s
+NORMALIZE 37121.json: 5.127s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37121.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37139.json
+LINK-JUDGE doc 37139: 19.516s
+PAIR-RULES doc 37139: 14.185s
+NORMALIZE 37139.json: 33.717s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37139.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37211.json
+EntityRegistry: granularity edge Organization/"Intel" -> "Microsoft" would close a cycle — rejected
+LADDER Organization v4: 4 rung(s) from 2/3 valid run(s)
+LADDER Sector v3: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 37211: 15.230s
+NORMALIZE 37211.json: 3:03.500 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37211.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37246.json
+LINK-JUDGE doc 37246: 17.690s
+PAIR-RULES doc 37246: 5.821s
+NORMALIZE 37246.json: 23.549s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37246.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37287.json
+LINK-JUDGE doc 37287: 11.645s
+NORMALIZE 37287.json: 11.657s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37287.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37626.json
+LADDER HackerGroup v1: 1 rung(s) from 2/3 valid run(s)
+LADDER Domain v5: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 37626: 23.061s
+PAIR-RULES doc 37626: 6.487s
+NORMALIZE 37626.json: 3:21.927 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37626.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37688.json
+LINK-JUDGE doc 37688: 13.277s
+NORMALIZE 37688.json: 13.294s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37688.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37704.json
+LINK-JUDGE doc 37704: 19.155s
+NORMALIZE 37704.json: 19.185s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37704.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37788.json
+LINK-JUDGE doc 37788: 15.014s
+PAIR-RULES doc 37788: 7.304s
+NORMALIZE 37788.json: 22.333s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37788.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37815.json
+LINK-JUDGE doc 37815: 14.799s
+PAIR-RULES doc 37815: 5.984s
+NORMALIZE 37815.json: 31.096s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37815.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/37829.json
+LINK-JUDGE doc 37829: 10.933s
+NORMALIZE 37829.json: 10.947s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/37829.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/38088.json
+LINK-JUDGE doc 38088: 13.720s
+NORMALIZE 38088.json: 13.740s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/38088.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/38097.json
+LADDER HackerGroup v2: 4 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 38097: 17.000s
+NORMALIZE 38097.json: 1:47.800 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/38097.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/38155.json
+LINK-JUDGE doc 38155: 12.004s
+NORMALIZE 38155.json: 12.031s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/38155.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/38374.json
+LINK-JUDGE doc 38374: 5.713s
+NORMALIZE 38374.json: 5.730s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/38374.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/38606.json
+LINK-JUDGE doc 38606: 10.340s
+NORMALIZE 38606.json: 10.357s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/38606.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39086.json
+LINK-JUDGE doc 39086: 13.068s
+NORMALIZE 39086.json: 13.091s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39086.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39138.json
+LINK-JUDGE doc 39138: 13.285s
+NORMALIZE 39138.json: 13.305s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39138.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39253.json
+LINK-JUDGE doc 39253: 11.028s
+NORMALIZE 39253.json: 11.049s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39253.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39386.json
+LINK-JUDGE doc 39386: 38.272s
+NORMALIZE 39386.json: 38.309s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39386.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39518.json
+LINK-JUDGE doc 39518: 13.250s
+PAIR-RULES doc 39518: 8.811s
+NORMALIZE 39518.json: 22.078s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39518.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39606.json
+LINK-JUDGE doc 39606: 21.790s
+NORMALIZE 39606.json: 21.808s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39606.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39609.json
+LINK-JUDGE doc 39609: 21.988s
+NORMALIZE 39609.json: 22.014s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39609.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39708.json
+LINK-JUDGE doc 39708: 53.340s
+NORMALIZE 39708.json: 53.372s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39708.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39727.json
+LINK-JUDGE doc 39727: 46.321s
+NORMALIZE 39727.json: 46.364s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39727.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39882.json
+LINK-JUDGE doc 39882: 6.192s
+NORMALIZE 39882.json: 6.211s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39882.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39923.json
+LADDER Domain v6: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 39923: 45.327s
+NORMALIZE 39923.json: 2:12.834 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39923.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39934.json
+LINK-JUDGE doc 39934: 12.668s
+NORMALIZE 39934.json: 12.690s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39934.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/39962.json
+LINK-JUDGE doc 39962: 17.074s
+NORMALIZE 39962.json: 17.102s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/39962.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/40102.json
+LINK-JUDGE doc 40102: 16.380s
+NORMALIZE 40102.json: 16.403s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/40102.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/40125.json
+LINK-JUDGE doc 40125: 18.573s
+PAIR-RULES doc 40125: 8.966s
+NORMALIZE 40125.json: 27.569s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/40125.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/40240.json
+LINK-JUDGE doc 40240: 20.247s
+NORMALIZE 40240.json: 20.275s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/40240.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/40263.json
+{ ERROR: { verdicts: 'FORMAT_ERROR' } }
+LINK-JUDGE doc 40263: 43.866s
+NORMALIZE 40263.json: 43.911s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/40263.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/40559.json
+LINK-JUDGE doc 40559: 17.131s
+NORMALIZE 40559.json: 17.156s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/40559.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/160530.json
+LINK-JUDGE doc 160530: 16.551s
+NORMALIZE 160530.json: 16.577s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/160530.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/339662.json
+LINK-JUDGE doc 339662: 18.720s
+NORMALIZE 339662.json: 18.744s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/339662.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/341128.json
+LINK-JUDGE doc 341128: 9.676s
+NORMALIZE 341128.json: 9.693s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/341128.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/375404.json
+LINK-JUDGE doc 375404: 12.628s
+NORMALIZE 375404.json: 14.848s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/375404.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/405538.json
+LINK-JUDGE doc 405538: 21.076s
+NORMALIZE 405538.json: 21.099s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/405538.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/619229.json
+LINK-JUDGE doc 619229: 15.940s
+NORMALIZE 619229.json: 15.975s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/619229.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/703548.json
+LINK-JUDGE doc 703548: 14.956s
+NORMALIZE 703548.json: 14.983s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/703548.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/761668.json
+LINK-JUDGE doc 761668: 22.547s
+PAIR-RULES doc 761668: 9.434s
+NORMALIZE 761668.json: 32.013s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/761668.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/861292.json
+LINK-JUDGE doc 861292: 18.026s
+PAIR-RULES doc 861292: 8.830s
+NORMALIZE 861292.json: 26.889s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/861292.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/955924.json
+LINK-JUDGE doc 955924: 16.054s
+NORMALIZE 955924.json: 16.080s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/955924.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/971405.json
+LINK-JUDGE doc 971405: 28.611s
+NORMALIZE 971405.json: 28.634s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/971405.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/987552.json
+LINK-JUDGE doc 987552: 14.900s
+NORMALIZE 987552.json: 14.920s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/987552.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/1229152.json
+LINK-JUDGE doc 1229152: 33.750s
+NORMALIZE 1229152.json: 33.853s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/1229152.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/1545776.json
+LINK-JUDGE doc 1545776: 58.544s
+PAIR-RULES doc 1545776: 4.380s
+NORMALIZE 1545776.json: 1:03.008 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/1545776.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/1563322.json
+LINK-JUDGE doc 1563322: 19.637s
+NORMALIZE 1563322.json: 19.672s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/1563322.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/1751036.json
+LINK-JUDGE doc 1751036: 31.041s
+NORMALIZE 1751036.json: 31.087s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/1751036.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2394117.json
+LINK-JUDGE doc 2394117: 31.632s
+NORMALIZE 2394117.json: 31.681s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2394117.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2681855.json
+LADDER HackerGroup v3: 2 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 2681855: 29.354s
+NORMALIZE 2681855.json: 1:53.564 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2681855.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2698320.json
+LINK-JUDGE doc 2698320: 13.881s
+NORMALIZE 2698320.json: 13.897s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2698320.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/2724253.json
+LINK-JUDGE doc 2724253: 46.442s
+NORMALIZE 2724253.json: 46.485s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/2724253.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3192088.json
+LINK-JUDGE doc 3192088: 22.735s
+PAIR-RULES doc 3192088: 10.373s
+NORMALIZE 3192088.json: 33.142s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3192088.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3349703.json
+LINK-JUDGE doc 3349703: 18.940s
+PAIR-RULES doc 3349703: 7.227s
+NORMALIZE 3349703.json: 26.197s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3349703.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3718487.json
+LINK-JUDGE doc 3718487: 13.491s
+PAIR-RULES doc 3718487: 11.080s
+NORMALIZE 3718487.json: 24.607s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3718487.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3761023.json
+LINK-JUDGE doc 3761023: 18.547s
+NORMALIZE 3761023.json: 21.165s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3761023.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3804703.json
+LINK-JUDGE doc 3804703: 18.220s
+NORMALIZE 3804703.json: 18.244s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3804703.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3863542.json
+LINK-JUDGE doc 3863542: 14.217s
+NORMALIZE 3863542.json: 14.240s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3863542.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3931296.json
+LINK-JUDGE doc 3931296: 9.744s
+NORMALIZE 3931296.json: 9.772s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3931296.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/3947787.json
+LINK-JUDGE doc 3947787: 14.676s
+NORMALIZE 3947787.json: 14.692s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/3947787.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4279195.json
+LINK-JUDGE doc 4279195: 20.291s
+NORMALIZE 4279195.json: 20.316s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4279195.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4492467.json
+LINK-JUDGE doc 4492467: 14.363s
+NORMALIZE 4492467.json: 14.392s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4492467.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4501891.json
+LINK-JUDGE doc 4501891: 9.011s
+NORMALIZE 4501891.json: 9.037s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4501891.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4555802.json
+LINK-JUDGE doc 4555802: 28.025s
+NORMALIZE 4555802.json: 28.079s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4555802.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4697016.json
+LADDER Domain v7: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 4697016: 30.012s
+PAIR-RULES doc 4697016: 9.476s
+NORMALIZE 4697016.json: 2:05.390 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4697016.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4755642.json
+EntityRegistry: granularity edge Software/"MS Office" -> "Microsoft Office" would close a cycle — rejected
+LADDER Software v6: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 4755642: 42.993s
+NORMALIZE 4755642.json: 2:04.660 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4755642.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4789582.json
+LINK-JUDGE doc 4789582: 43.301s
+PAIR-RULES doc 4789582: 7.469s
+NORMALIZE 4789582.json: 50.926s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4789582.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4818341.json
+LINK-JUDGE doc 4818341: 11.046s
+NORMALIZE 4818341.json: 11.099s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4818341.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4905718.json
+LADDER Country v2: 3 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 4905718: 19.680s
+NORMALIZE 4905718.json: 1:39.724 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4905718.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4905829.json
+LINK-JUDGE doc 4905829: 39.005s
+NORMALIZE 4905829.json: 39.114s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4905829.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/4928679.json
+{ ERROR: { verdicts: 'FORMAT_ERROR' } }
+LINK-JUDGE doc 4928679: 2.125s
+NORMALIZE 4928679.json: 6.851s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/4928679.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5077168.json
+LINK-JUDGE doc 5077168: 18.726s
+NORMALIZE 5077168.json: 20.793s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5077168.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5098518.json
+LINK-JUDGE doc 5098518: 9.008s
+NORMALIZE 5098518.json: 9.026s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5098518.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5105791.json
+LADDER Individual v2: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 5105791: 32.735s
+PAIR-RULES doc 5105791: 15.624s
+NORMALIZE 5105791.json: 2:17.949 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5105791.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5158006.json
+LINK-JUDGE doc 5158006: 48.154s
+NORMALIZE 5158006.json: 48.289s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5158006.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5160737.json
+LINK-JUDGE doc 5160737: 17.239s
+PAIR-RULES doc 5160737: 20.901s
+NORMALIZE 5160737.json: 38.196s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5160737.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5213167.json
+LADDER Government Body v4: 3 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 5213167: 24.294s
+NORMALIZE 5213167.json: 1:51.607 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5213167.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5269451.json
+LINK-JUDGE doc 5269451: 45.412s
+PAIR-RULES doc 5269451: 9.688s
+NORMALIZE 5269451.json: 55.174s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5269451.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5391805.json
+LINK-JUDGE doc 5391805: 14.236s
+NORMALIZE 5391805.json: 14.285s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5391805.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5436463.json
+LINK-JUDGE doc 5436463: 24.783s
+NORMALIZE 5436463.json: 24.814s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5436463.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5455833.json
+LINK-JUDGE doc 5455833: 21.875s
+NORMALIZE 5455833.json: 24.312s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5455833.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5628441.json
+EntityRegistry: granularity edge Organization/"Intel" -> "Microsoft" would close a cycle — rejected
+LADDER Organization v5: 4 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 5628441: 28.317s
+NORMALIZE 5628441.json: 1:43.742 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5628441.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5661411.json
+LINK-JUDGE doc 5661411: 13.123s
+NORMALIZE 5661411.json: 13.157s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5661411.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/5702579.json
+LADDER Infrastructure v1: 4 rung(s) from 1/3 valid run(s)
+LINK-JUDGE doc 5702579: 22.409s
+PAIR-RULES doc 5702579: 4.612s
+NORMALIZE 5702579.json: 1:56.942 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/5702579.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6032734.json
+LINK-JUDGE doc 6032734: 25.928s
+PAIR-RULES doc 6032734: 5.587s
+NORMALIZE 6032734.json: 31.565s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6032734.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6123309.json
+LADDER Sector v4: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 6123309: 20.686s
+PAIR-RULES doc 6123309: 11.074s
+NORMALIZE 6123309.json: 1:56.397 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6123309.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276351.json
+LINK-JUDGE doc 6276351: 14.891s
+NORMALIZE 6276351.json: 14.917s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276351.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276567.json
+LINK-JUDGE doc 6276567: 12.771s
+NORMALIZE 6276567.json: 12.799s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276567.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276584.json
+LINK-JUDGE doc 6276584: 51.522s
+NORMALIZE 6276584.json: 51.628s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276584.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276652.json
+LINK-JUDGE doc 6276652: 21.845s
+NORMALIZE 6276652.json: 21.877s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276652.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276799.json
+{ ERROR: { verdicts: 'FORMAT_ERROR' } }
+LINK-JUDGE doc 6276799: 2.585s
+PAIR-RULES doc 6276799: 5.335s
+NORMALIZE 6276799.json: 8.431s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276799.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276824.json
+LADDER HackerGroup v4: 2 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 6276824: 16.071s
+NORMALIZE 6276824.json: 1:36.890 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276824.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276894.json
+LADDER Domain v8: 4 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 6276894: 27.126s
+NORMALIZE 6276894.json: 1:48.409 (m:ss.mmm)
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276894.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6276988.json
+LINK-JUDGE doc 6276988: 19.541s
+NORMALIZE 6276988.json: 19.573s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6276988.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277063.json
+LINK-JUDGE doc 6277063: 8.509s
+NORMALIZE 6277063.json: 8.540s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277063.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277285.json
+LINK-JUDGE doc 6277285: 19.631s
+NORMALIZE 6277285.json: 19.697s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277285.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277422.json
+LINK-JUDGE doc 6277422: 8.983s
+NORMALIZE 6277422.json: 9.038s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277422.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277822.json
+LINK-JUDGE doc 6277822: 21.671s
+NORMALIZE 6277822.json: 21.691s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277822.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277849.json
+LINK-JUDGE doc 6277849: 16.840s
+NORMALIZE 6277849.json: 16.895s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277849.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6277896.json
+LINK-JUDGE doc 6277896: 7.722s
+PAIR-RULES doc 6277896: 6.330s
+NORMALIZE 6277896.json: 14.075s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6277896.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6278274.json
+LINK-JUDGE doc 6278274: 15.093s
+PAIR-RULES doc 6278274: 4.634s
+NORMALIZE 6278274.json: 19.789s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6278274.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6278521.json
+LINK-JUDGE doc 6278521: 22.855s
+PAIR-RULES doc 6278521: 6.549s
+NORMALIZE 6278521.json: 29.476s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6278521.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6278620.json
+LINK-JUDGE doc 6278620: 12.129s
+PAIR-RULES doc 6278620: 6.439s
+NORMALIZE 6278620.json: 18.605s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6278620.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6278706.json
+LINK-JUDGE doc 6278706: 16.663s
+NORMALIZE 6278706.json: 16.689s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6278706.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6278735.json
+LINK-JUDGE doc 6278735: 49.798s
+NORMALIZE 6278735.json: 49.973s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6278735.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6279366.json
+LINK-JUDGE doc 6279366: 31.416s
+NORMALIZE 6279366.json: 31.470s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6279366.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6279419.json
+LINK-JUDGE doc 6279419: 24.057s
+NORMALIZE 6279419.json: 26.398s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6279419.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6279491.json
+{ ERROR: { verdicts: 'FORMAT_ERROR' } }
+LINK-JUDGE doc 6279491: 2.247s
+NORMALIZE 6279491.json: 3.246s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6279491.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6279561.json
+LINK-JUDGE doc 6279561: 11.920s
+NORMALIZE 6279561.json: 11.932s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6279561.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6279600.json
+LINK-JUDGE: parentCandidate "SPECTR" for "Usb" is not a listed candidate — edge dropped, mint stands
+LINK-JUDGE doc 6279600: 24.640s
+NORMALIZE 6279600.json: 24.683s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6279600.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280099.json
+LINK-JUDGE doc 6280099: 30.373s
+NORMALIZE 6280099.json: 30.436s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280099.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280129.json
+LINK-JUDGE doc 6280129: 21.094s
+PAIR-RULES doc 6280129: 4.251s
+NORMALIZE 6280129.json: 40.535s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280129.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280159.json
+LINK-JUDGE doc 6280159: 18.074s
+NORMALIZE 6280159.json: 18.115s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280159.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280183.json
+LINK-JUDGE doc 6280183: 41.292s
+NORMALIZE 6280183.json: 41.350s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280183.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280345.json
+LINK-JUDGE doc 6280345: 30.363s
+NORMALIZE 6280345.json: 30.468s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280345.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280422.json
+LINK-JUDGE doc 6280422: 26.407s
+NORMALIZE 6280422.json: 26.480s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280422.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6280563.json
+LINK-JUDGE doc 6280563: 21.102s
+NORMALIZE 6280563.json: 21.168s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6280563.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281009.json
+LINK-JUDGE doc 6281009: 31.712s
+NORMALIZE 6281009.json: 31.796s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281009.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281018.json
+LINK-JUDGE doc 6281018: 7.394s
+NORMALIZE 6281018.json: 7.417s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281018.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281076.json
+LINK-JUDGE doc 6281076: 55.095s
+NORMALIZE 6281076.json: 55.463s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281076.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281095.json
+LINK-JUDGE doc 6281095: 24.736s
+NORMALIZE 6281095.json: 24.797s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281095.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281123.json
+LINK-JUDGE doc 6281123: 30.990s
+NORMALIZE 6281123.json: 31.067s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281123.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281202.json
+LINK-JUDGE doc 6281202: 26.807s
+NORMALIZE 6281202.json: 26.878s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281202.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281632.json
+{ ERROR: { verdicts: 'FORMAT_ERROR' } }
+LINK-JUDGE doc 6281632: 2.315s
+NORMALIZE 6281632.json: 2.856s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281632.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281681.json
+LINK-JUDGE doc 6281681: 18.647s
+NORMALIZE 6281681.json: 18.705s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281681.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6281701.json
+LINK-JUDGE doc 6281701: 33.227s
+NORMALIZE 6281701.json: 33.324s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6281701.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6282069.json
+NORMALIZE 6282069.json: 0.66ms
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6282069.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6282517.json
+LINK-JUDGE doc 6282517: 48.138s
+NORMALIZE 6282517.json: 48.228s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6282517.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6282536.json
+LINK-JUDGE doc 6282536: 22.326s
+NORMALIZE 6282536.json: 22.381s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6282536.json
+SKIP (exists) /home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/extractions/6282737.json
+LINK-JUDGE doc 6282737: 15.532s
+NORMALIZE 6282737.json: 15.564s
+OUT FILE=/home/user/work/kpi/llm-analysis-of-text-data/storage/cert.gov.ua/processed/experiments/psi-link-gemma-e2b-f53eb864f8b0/artifacts/6282737.json
+COST psi-link-gemma-e2b-f53eb864f8b0: 378 calls, 809502+524876 tokens, $0.0000

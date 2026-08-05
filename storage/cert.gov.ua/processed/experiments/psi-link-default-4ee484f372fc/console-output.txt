@@ -1,0 +1,2059 @@
+
+> llm-basic-framework@1.0.0 start
+> ts-node bin/app.ts
+
+{
+  llmProvider: 'anthropic',
+  llmModel: 'claude-opus-5',
+  embeddingsProvider: 'openai',
+  embeddingsModel: 'text-embedding-3-large',
+  inputDir: '../storage/cert.gov.ua/fetched',
+  outputDir: '../storage/cert.gov.ua/processed',
+  flow: 'incremental',
+  steps: [ 'streamingPipeline' ],
+  decisionsLog: true,
+  decisionStrategy: undefined,
+  candidateGenerator: undefined,
+  candidateK: undefined,
+  candidateMinSim: undefined,
+  ladderEnsembleN: 3,
+  ladderEnsembleModels: undefined,
+  ladderMinExamples: 8,
+  embeddings: false,
+  edgesFrom: 'layered',
+  lambda: undefined,
+  lambdaInterpretive: false,
+  condition: 'psi-link-default',
+  seed: null,
+  temperature: undefined,
+  topP: undefined,
+  maxTokens: undefined
+}
+RUN psi-link-default-4ee484f372fc → ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16.json
+StreamingNormalizer: unknown category "Organization" in 16.json — admitting
+StreamingNormalizer: unknown category "Software" in 16.json — admitting
+PAIR-RULES doc 16: 7.119s
+NORMALIZE 16.json: 7.136s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17.json
+StreamingNormalizer: unknown category "Sector" in 17.json — admitting
+LADDER Software v1: 3 rung(s) from 3/3 valid run(s)
+PAIR-RULES doc 17: 12.242s
+NORMALIZE 17.json: 2:28.446 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18.json
+StreamingNormalizer: unknown category "Government Body" in 18.json — admitting
+StreamingNormalizer: unknown category "Domain" in 18.json — admitting
+PAIR-RULES doc 18: 6.397s
+NORMALIZE 18.json: 6.407s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/20.json
+NORMALIZE 20.json: 7.984ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/20.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/22.json
+StreamingNormalizer: unknown category "Device" in 22.json — admitting
+LINK-JUDGE doc 22: 7.968s
+PAIR-RULES doc 22: 6.489s
+NORMALIZE 22.json: 14.472s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/22.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/23.json
+LADDER Software v2: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 23: 8.806s
+NORMALIZE 23.json: 4:04.309 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/23.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/24.json
+LINK-JUDGE doc 24: 4.151s
+NORMALIZE 24.json: 4.160s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/24.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/25.json
+LADDER Organization v1: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 25: 4.057s
+PAIR-RULES doc 25: 13.786s
+NORMALIZE 25.json: 2:05.574 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/25.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/26.json
+PAIR-RULES doc 26: 14.702s
+NORMALIZE 26.json: 14.710s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/26.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/27.json
+StreamingNormalizer: unknown category "Individual" in 27.json — admitting
+PAIR-RULES doc 27: 8.420s
+NORMALIZE 27.json: 8.430s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/27.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2492.json
+LINK-JUDGE doc 2492: 14.883s
+PAIR-RULES doc 2492: 4.519s
+NORMALIZE 2492.json: 19.426s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2492.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2496.json
+LADDER Software v3: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2496: 10.346s
+NORMALIZE 2496.json: 4:12.253 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2496.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2498.json
+NORMALIZE 2498.json: 0.473ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2498.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2624.json
+LADDER Organization v2: 2 rung(s) from 3/3 valid run(s)
+NORMALIZE 2624.json: 2:00.614 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2625.json
+StreamingNormalizer: unknown category "Country" in 2625.json — admitting
+LINK-JUDGE doc 2625: 12.068s
+PAIR-RULES doc 2625: 10.034s
+NORMALIZE 2625.json: 23.544s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2625.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2628.json
+LINK-JUDGE doc 2628: 5.804s
+PAIR-RULES doc 2628: 3.141s
+NORMALIZE 2628.json: 8.954s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2628.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2656.json
+LADDER Government Body v1: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2656: 5.294s
+NORMALIZE 2656.json: 2:18.889 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2656.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2658.json
+NORMALIZE 2658.json: 8.81ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2658.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2659.json
+NORMALIZE 2659.json: 3.003ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2659.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2660.json
+LINK-JUDGE doc 2660: 13.625s
+NORMALIZE 2660.json: 13.637s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2660.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2661.json
+LADDER Domain v1: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2661: 12.173s
+PAIR-RULES doc 2661: 3.548s
+NORMALIZE 2661.json: 2:12.915 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2661.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2681.json
+PAIR-RULES doc 2681: 5.317s
+NORMALIZE 2681.json: 15.257s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2681.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2683.json
+PAIR-RULES doc 2683: 7.058s
+NORMALIZE 2683.json: 7.066s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2683.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2685.json
+PAIR-RULES doc 2685: 4.380s
+NORMALIZE 2685.json: 4.385s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2685.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2687.json
+StreamingNormalizer: unknown category "HackerGroup" in 2687.json — admitting
+LINK-JUDGE doc 2687: 4.674s
+PAIR-RULES doc 2687: 13.665s
+NORMALIZE 2687.json: 18.350s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2687.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2691.json
+LINK-JUDGE doc 2691: 6.455s
+NORMALIZE 2691.json: 6.459s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2691.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2693.json
+LADDER Organization v3: 3 rung(s) from 3/3 valid run(s)
+PAIR-RULES doc 2693: 5.015s
+NORMALIZE 2693.json: 1:53.462 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2693.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2695.json
+LINK-JUDGE doc 2695: 6.329s
+NORMALIZE 2695.json: 6.337s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2695.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2697.json
+LADDER Software v4: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2697: 6.193s
+PAIR-RULES doc 2697: 3.513s
+NORMALIZE 2697.json: 3:38.304 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2697.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2699.json
+LINK-JUDGE doc 2699: 5.843s
+PAIR-RULES doc 2699: 13.522s
+NORMALIZE 2699.json: 19.371s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2699.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2701.json
+NORMALIZE 2701.json: 8.89ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2701.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2703.json
+LADDER Domain v2: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2703: 15.048s
+NORMALIZE 2703.json: 2:54.284 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2707.json
+LADDER Country v1: 1 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2707: 7.816s
+NORMALIZE 2707.json: 1:44.069 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2707.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2718.json
+LADDER Domain v3: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2718: 6.736s
+NORMALIZE 2718.json: 2:57.985 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2718.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2720.json
+LADDER Government Body v2: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2720: 8.124s
+PAIR-RULES doc 2720: 25.242s
+NORMALIZE 2720.json: 2:50.144 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2720.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2722.json
+LADDER Device v1: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2722: 7.631s
+PAIR-RULES doc 2722: 8.673s
+NORMALIZE 2722.json: 2:43.273 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2722.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2723.json
+LINK-JUDGE doc 2723: 7.605s
+NORMALIZE 2723.json: 7.620s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2723.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2724.json
+LINK-JUDGE doc 2724: 16.008s
+NORMALIZE 2724.json: 16.032s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2724.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2725.json
+LADDER Sector v1: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2725: 5.205s
+NORMALIZE 2725.json: 5:13.296 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2725.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2726.json
+LINK-JUDGE doc 2726: 6.800s
+NORMALIZE 2726.json: 6.812s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2726.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2727.json
+LINK-JUDGE doc 2727: 8.199s
+NORMALIZE 2727.json: 8.208s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2728.json
+LINK-JUDGE doc 2728: 6.749s
+NORMALIZE 2728.json: 6.760s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2728.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2803.json
+LINK-JUDGE doc 2803: 7.364s
+NORMALIZE 2803.json: 7.376s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2803.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2804.json
+LINK-JUDGE doc 2804: 8.941s
+NORMALIZE 2804.json: 8.953s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2804.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2805.json
+LINK-JUDGE doc 2805: 5.657s
+NORMALIZE 2805.json: 5.667s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2805.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2806.json
+LINK-JUDGE doc 2806: 5.975s
+NORMALIZE 2806.json: 5.988s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2806.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2807.json
+LADDER Domain v4: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2807: 8.320s
+NORMALIZE 2807.json: 2:28.511 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2807.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2808.json
+StreamingNormalizer: unknown category "Infrastructure" in 2808.json — admitting
+LINK-JUDGE doc 2808: 4.834s
+PAIR-RULES doc 2808: 10.811s
+NORMALIZE 2808.json: 15.655s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2808.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3028.json
+LINK-JUDGE doc 3028: 15.618s
+NORMALIZE 3028.json: 15.670s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3028.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4475.json
+LADDER Software v5: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 4475: 7.294s
+PAIR-RULES doc 4475: 17.682s
+NORMALIZE 4475.json: 3:51.947 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4475.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/9483.json
+LADDER Sector v2: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 9483: 6.480s
+PAIR-RULES doc 9483: 7.540s
+NORMALIZE 9483.json: 4:20.743 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/9483.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/9668.json
+LADDER Individual v1: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 9668: 6.041s
+PAIR-RULES doc 9668: 4.607s
+NORMALIZE 9668.json: 1:50.547 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/9668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/10011.json
+LINK-JUDGE doc 10011: 10.819s
+NORMALIZE 10011.json: 28.928s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/10011.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/10702.json
+LINK-JUDGE doc 10702: 12.252s
+PAIR-RULES doc 10702: 15.311s
+NORMALIZE 10702.json: 27.580s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/10702.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/11113.json
+LINK-JUDGE doc 11113: 17.079s
+PAIR-RULES doc 11113: 16.369s
+NORMALIZE 11113.json: 33.498s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/11113.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/12081.json
+LINK-JUDGE doc 12081: 9.215s
+PAIR-RULES doc 12081: 4.105s
+NORMALIZE 12081.json: 13.331s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/12081.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/13156.json
+LINK-JUDGE doc 13156: 8.684s
+NORMALIZE 13156.json: 8.694s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/13156.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/14624.json
+LINK-JUDGE doc 14624: 11.002s
+NORMALIZE 14624.json: 11.022s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/14624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/14958.json
+LINK-JUDGE doc 14958: 10.168s
+NORMALIZE 14958.json: 10.174s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/14958.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16295.json
+LINK-JUDGE doc 16295: 4.593s
+NORMALIZE 16295.json: 4.603s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16295.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16905.json
+LINK-JUDGE doc 16905: 5.528s
+NORMALIZE 16905.json: 5.532s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16905.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17474.json
+NORMALIZE 17474.json: 9.538ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17474.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17580.json
+LINK-JUDGE doc 17580: 5.141s
+NORMALIZE 17580.json: 5.149s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17580.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17696.json
+LINK-JUDGE doc 17696: 8.047s
+PAIR-RULES doc 17696: 7.167s
+NORMALIZE 17696.json: 15.219s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17696.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17899.json
+LINK-JUDGE doc 17899: 10.924s
+PAIR-RULES doc 17899: 10.952s
+NORMALIZE 17899.json: 21.887s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17899.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17961.json
+LINK-JUDGE doc 17961: 5.018s
+NORMALIZE 17961.json: 5.027s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17961.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18101.json
+LADDER Government Body v3: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 18101: 12.522s
+NORMALIZE 18101.json: 2:36.260 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18101.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18108.json
+LINK-JUDGE doc 18108: 6.702s
+PAIR-RULES doc 18108: 9.482s
+NORMALIZE 18108.json: 18.728s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18108.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18163.json
+LINK-JUDGE doc 18163: 9.853s
+NORMALIZE 18163.json: 9.868s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18163.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18273.json
+LINK-JUDGE doc 18273: 10.025s
+PAIR-RULES doc 18273: 4.244s
+NORMALIZE 18273.json: 14.294s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18273.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18365.json
+LINK-JUDGE doc 18365: 8.012s
+NORMALIZE 18365.json: 8.025s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18365.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18419.json
+LINK-JUDGE doc 18419: 6.441s
+NORMALIZE 18419.json: 6.451s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18419.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37121.json
+PAIR-RULES doc 37121: 3.886s
+NORMALIZE 37121.json: 3.892s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37121.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37139.json
+LINK-JUDGE doc 37139: 19.336s
+PAIR-RULES doc 37139: 22.067s
+NORMALIZE 37139.json: 41.422s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37139.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37211.json
+LADDER Organization v4: 2 rung(s) from 3/3 valid run(s)
+LADDER Sector v3: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 37211: 5.114s
+NORMALIZE 37211.json: 5:46.472 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37211.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37246.json
+LINK-JUDGE doc 37246: 9.508s
+PAIR-RULES doc 37246: 2.712s
+NORMALIZE 37246.json: 12.240s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37246.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37287.json
+LINK-JUDGE doc 37287: 5.446s
+NORMALIZE 37287.json: 5.458s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37287.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37626.json
+LADDER HackerGroup v1: 1 rung(s) from 3/3 valid run(s)
+LADDER Domain v5: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 37626: 13.915s
+PAIR-RULES doc 37626: 3.871s
+NORMALIZE 37626.json: 4:28.802 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37626.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37688.json
+LINK-JUDGE doc 37688: 7.149s
+NORMALIZE 37688.json: 7.157s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37688.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37704.json
+LINK-JUDGE doc 37704: 11.158s
+NORMALIZE 37704.json: 11.190s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37704.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37788.json
+LINK-JUDGE doc 37788: 6.545s
+PAIR-RULES doc 37788: 7.065s
+NORMALIZE 37788.json: 13.621s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37788.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37815.json
+LINK-JUDGE doc 37815: 8.791s
+PAIR-RULES doc 37815: 5.735s
+NORMALIZE 37815.json: 17.616s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37815.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37829.json
+LINK-JUDGE doc 37829: 7.198s
+NORMALIZE 37829.json: 7.211s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37829.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38088.json
+LINK-JUDGE doc 38088: 7.347s
+NORMALIZE 38088.json: 7.363s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38097.json
+LADDER HackerGroup v2: 1 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 38097: 6.687s
+NORMALIZE 38097.json: 1:41.036 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38097.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38155.json
+LINK-JUDGE doc 38155: 5.701s
+NORMALIZE 38155.json: 5.721s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38155.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38374.json
+LINK-JUDGE doc 38374: 4.606s
+NORMALIZE 38374.json: 4.619s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38374.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38606.json
+LINK-JUDGE doc 38606: 9.717s
+NORMALIZE 38606.json: 9.732s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39086.json
+LINK-JUDGE doc 39086: 10.258s
+NORMALIZE 39086.json: 10.283s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39086.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39138.json
+LINK-JUDGE doc 39138: 7.518s
+NORMALIZE 39138.json: 7.531s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39138.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39253.json
+LINK-JUDGE doc 39253: 6.544s
+NORMALIZE 39253.json: 6.554s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39386.json
+LINK-JUDGE doc 39386: 44.880s
+NORMALIZE 39386.json: 44.905s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39386.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39518.json
+LINK-JUDGE doc 39518: 11.902s
+PAIR-RULES doc 39518: 5.152s
+NORMALIZE 39518.json: 17.084s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39518.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39606.json
+LINK-JUDGE doc 39606: 10.383s
+NORMALIZE 39606.json: 10.410s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39609.json
+LINK-JUDGE doc 39609: 10.940s
+NORMALIZE 39609.json: 10.955s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39609.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39708.json
+LINK-JUDGE doc 39708: 16.942s
+NORMALIZE 39708.json: 16.960s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39708.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39727.json
+LINK-JUDGE doc 39727: 20.303s
+NORMALIZE 39727.json: 20.327s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39882.json
+LINK-JUDGE doc 39882: 10.013s
+NORMALIZE 39882.json: 10.027s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39882.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39923.json
+LADDER Domain v6: 2 rung(s) from 2/3 valid run(s)
+LINK-JUDGE doc 39923: 23.575s
+NORMALIZE 39923.json: 2:51.415 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39923.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39934.json
+LINK-JUDGE doc 39934: 6.561s
+NORMALIZE 39934.json: 6.585s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39934.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39962.json
+LINK-JUDGE doc 39962: 14.772s
+NORMALIZE 39962.json: 14.797s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39962.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40102.json
+LINK-JUDGE doc 40102: 11.881s
+NORMALIZE 40102.json: 11.903s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40102.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40125.json
+LINK-JUDGE doc 40125: 9.271s
+PAIR-RULES doc 40125: 11.490s
+NORMALIZE 40125.json: 20.794s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40125.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40240.json
+LINK-JUDGE doc 40240: 14.927s
+NORMALIZE 40240.json: 14.943s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40240.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40263.json
+LINK-JUDGE doc 40263: 28.591s
+NORMALIZE 40263.json: 28.641s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40263.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40559.json
+LINK-JUDGE doc 40559: 6.171s
+NORMALIZE 40559.json: 6.191s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40559.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/160530.json
+LINK-JUDGE doc 160530: 8.464s
+NORMALIZE 160530.json: 8.486s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/160530.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/339662.json
+LINK-JUDGE doc 339662: 8.170s
+NORMALIZE 339662.json: 8.196s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/339662.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/341128.json
+LINK-JUDGE doc 341128: 7.891s
+NORMALIZE 341128.json: 7.914s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/341128.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/375404.json
+LINK-JUDGE doc 375404: 6.264s
+NORMALIZE 375404.json: 8.772s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/375404.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/405538.json
+LINK-JUDGE doc 405538: 10.598s
+NORMALIZE 405538.json: 10.632s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/405538.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/619229.json
+LINK-JUDGE doc 619229: 8.521s
+NORMALIZE 619229.json: 8.549s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/619229.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/703548.json
+LINK-JUDGE doc 703548: 8.857s
+NORMALIZE 703548.json: 8.875s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/703548.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/761668.json
+LINK-JUDGE doc 761668: 10.532s
+PAIR-RULES doc 761668: 7.978s
+NORMALIZE 761668.json: 18.532s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/761668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/861292.json
+LINK-JUDGE doc 861292: 8.260s
+PAIR-RULES doc 861292: 7.638s
+NORMALIZE 861292.json: 15.934s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/861292.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/955924.json
+LINK-JUDGE doc 955924: 11.452s
+NORMALIZE 955924.json: 11.482s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/955924.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/971405.json
+LINK-JUDGE doc 971405: 13.529s
+NORMALIZE 971405.json: 13.551s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/971405.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/987552.json
+LINK-JUDGE doc 987552: 6.798s
+NORMALIZE 987552.json: 6.816s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/987552.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1229152.json
+LINK-JUDGE doc 1229152: 27.258s
+NORMALIZE 1229152.json: 27.336s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1229152.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1545776.json
+LINK-JUDGE doc 1545776: 33.595s
+PAIR-RULES doc 1545776: 3.886s
+NORMALIZE 1545776.json: 37.525s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1545776.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1563322.json
+LINK-JUDGE doc 1563322: 9.822s
+NORMALIZE 1563322.json: 9.847s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1563322.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1751036.json
+LINK-JUDGE doc 1751036: 13.254s
+NORMALIZE 1751036.json: 13.299s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1751036.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2394117.json
+LINK-JUDGE doc 2394117: 24.026s
+NORMALIZE 2394117.json: 24.064s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2394117.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2681855.json
+LADDER HackerGroup v3: 1 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 2681855: 11.459s
+NORMALIZE 2681855.json: 1:44.451 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2681855.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2698320.json
+LINK-JUDGE doc 2698320: 7.147s
+NORMALIZE 2698320.json: 7.164s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2698320.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2724253.json
+LINK-JUDGE doc 2724253: 23.563s
+NORMALIZE 2724253.json: 23.606s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2724253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3192088.json
+LINK-JUDGE doc 3192088: 10.474s
+PAIR-RULES doc 3192088: 6.636s
+NORMALIZE 3192088.json: 17.157s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3192088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3349703.json
+LINK-JUDGE doc 3349703: 13.567s
+PAIR-RULES doc 3349703: 8.824s
+NORMALIZE 3349703.json: 22.426s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3349703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3718487.json
+LINK-JUDGE doc 3718487: 11.203s
+PAIR-RULES doc 3718487: 20.068s
+NORMALIZE 3718487.json: 31.338s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3718487.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3761023.json
+LINK-JUDGE doc 3761023: 9.248s
+NORMALIZE 3761023.json: 11.226s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3761023.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3804703.json
+LINK-JUDGE doc 3804703: 10.145s
+NORMALIZE 3804703.json: 10.162s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3804703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3863542.json
+LINK-JUDGE doc 3863542: 6.665s
+NORMALIZE 3863542.json: 6.685s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3863542.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3931296.json
+LINK-JUDGE doc 3931296: 5.887s
+NORMALIZE 3931296.json: 5.910s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3931296.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3947787.json
+LINK-JUDGE doc 3947787: 10.641s
+NORMALIZE 3947787.json: 10.658s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3947787.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4279195.json
+LINK-JUDGE doc 4279195: 10.914s
+NORMALIZE 4279195.json: 10.953s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4279195.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4492467.json
+LINK-JUDGE doc 4492467: 12.291s
+NORMALIZE 4492467.json: 12.314s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4492467.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4501891.json
+LINK-JUDGE doc 4501891: 6.352s
+NORMALIZE 4501891.json: 6.367s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4501891.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4555802.json
+LINK-JUDGE doc 4555802: 17.943s
+NORMALIZE 4555802.json: 17.993s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4555802.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4697016.json
+LADDER Domain v7: 4 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 4697016: 11.519s
+PAIR-RULES doc 4697016: 8.550s
+NORMALIZE 4697016.json: 3:04.672 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4697016.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4755642.json
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEud5xXtKvdyDe3Ykhe"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0cf4c5c77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:14 GMT',
+    'request-id': 'req_011CdiEud5xXtKvdyDe3Ykhe',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-f555c6dc5845fd1f6eba1f838c98ba99-4f5f7fa7deda23b7-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEud5xXtKvdyDe3Ykhe',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEud5xXtKvdyDe3Ykhe'
+  }
+}
+LADDER call failed for "Software" (run-3): BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEud5xXtKvdyDe3Ykhe"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0cf4c5c77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:14 GMT',
+    'request-id': 'req_011CdiEud5xXtKvdyDe3Ykhe',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-f555c6dc5845fd1f6eba1f838c98ba99-4f5f7fa7deda23b7-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEud5xXtKvdyDe3Ykhe',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEud5xXtKvdyDe3Ykhe'
+  }
+}
+LADDER Software v6: 3 rung(s) from 2/3 valid run(s)
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuf336gBSUF98hnLVP"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d25fcf77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:14 GMT',
+    'request-id': 'req_011CdiEuf336gBSUF98hnLVP',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-ba08a597f706a69a23b6ad69d51dc0b4-e4ffe8f17c9d5890-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuf336gBSUF98hnLVP',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuf336gBSUF98hnLVP'
+  }
+}
+LINK-JUDGE failed for doc 4755642, minting all: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuf336gBSUF98hnLVP"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d25fcf77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:14 GMT',
+    'request-id': 'req_011CdiEuf336gBSUF98hnLVP',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-ba08a597f706a69a23b6ad69d51dc0b4-e4ffe8f17c9d5890-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuf336gBSUF98hnLVP',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuf336gBSUF98hnLVP'
+  }
+}
+LINK-JUDGE doc 4755642: 322.628ms
+NORMALIZE 4755642.json: 1:38.972 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4755642.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4789582.json
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEugxsEsxoi7sX4UESN"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d51af477a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:15 GMT',
+    'request-id': 'req_011CdiEugxsEsxoi7sX4UESN',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-5952c2369c5f53af32a0bc82e49b287f-0fccab3e19223a09-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEugxsEsxoi7sX4UESN',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEugxsEsxoi7sX4UESN'
+  }
+}
+LINK-JUDGE failed for doc 4789582, minting all: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEugxsEsxoi7sX4UESN"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d51af477a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:15 GMT',
+    'request-id': 'req_011CdiEugxsEsxoi7sX4UESN',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-5952c2369c5f53af32a0bc82e49b287f-0fccab3e19223a09-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEugxsEsxoi7sX4UESN',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEugxsEsxoi7sX4UESN'
+  }
+}
+LINK-JUDGE doc 4789582: 241.302ms
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuhwQXLBDSUr4995ad"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#pairRuleJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:679:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:276:34)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d69d2377a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:15 GMT',
+    'request-id': 'req_011CdiEuhwQXLBDSUr4995ad',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-c15c8c1f39c80bd29da68e56c535976b-4baeba0193dfbfe3-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuhwQXLBDSUr4995ad',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuhwQXLBDSUr4995ad'
+  }
+}
+PAIR-RULES failed for doc 4789582, leaving signatures unruled: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuhwQXLBDSUr4995ad"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#pairRuleJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:679:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:276:34)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d69d2377a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:15 GMT',
+    'request-id': 'req_011CdiEuhwQXLBDSUr4995ad',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-c15c8c1f39c80bd29da68e56c535976b-4baeba0193dfbfe3-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuhwQXLBDSUr4995ad',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuhwQXLBDSUr4995ad'
+  }
+}
+PAIR-RULES doc 4789582: 255.101ms
+NORMALIZE 4789582.json: 609.387ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4789582.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4818341.json
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEujQxSxg2aBVCHGNV7"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d89ffb77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEujQxSxg2aBVCHGNV7',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-e0acd31bc9ca8af1a78afc82ddf64c18-6c7f1381d173bd46-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEujQxSxg2aBVCHGNV7',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEujQxSxg2aBVCHGNV7'
+  }
+}
+LINK-JUDGE failed for doc 4818341, minting all: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEujQxSxg2aBVCHGNV7"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0d89ffb77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEujQxSxg2aBVCHGNV7',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-e0acd31bc9ca8af1a78afc82ddf64c18-6c7f1381d173bd46-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEujQxSxg2aBVCHGNV7',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEujQxSxg2aBVCHGNV7'
+  }
+}
+LINK-JUDGE doc 4818341: 412.803ms
+NORMALIZE 4818341.json: 472.672ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4818341.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4905718.json
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEum3SYGZsp4nGTsoED"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0db3ab177a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEum3SYGZsp4nGTsoED',
+    server: 'cloudflare',
+    'server-timing': 'x-originResponse;dur=166',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-64fdd251abbde3a55bafc82c95ca134b-973f515baa4a1b34-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEum3SYGZsp4nGTsoED',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEum3SYGZsp4nGTsoED'
+  }
+}
+LADDER call failed for "Country" (run-1): BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEum3SYGZsp4nGTsoED"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0db3ab177a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEum3SYGZsp4nGTsoED',
+    server: 'cloudflare',
+    'server-timing': 'x-originResponse;dur=166',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-64fdd251abbde3a55bafc82c95ca134b-973f515baa4a1b34-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEum3SYGZsp4nGTsoED',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEum3SYGZsp4nGTsoED'
+  }
+}
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEunQYGV2Fh8us9s6cx"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0dd2cc177a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEunQYGV2Fh8us9s6cx',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-2961a4d3ca48acbc30842f67b811d9ab-fce6fe6fa7942a51-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEunQYGV2Fh8us9s6cx',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEunQYGV2Fh8us9s6cx'
+  }
+}
+LADDER call failed for "Country" (run-2): BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEunQYGV2Fh8us9s6cx"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0dd2cc177a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEunQYGV2Fh8us9s6cx',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-2961a4d3ca48acbc30842f67b811d9ab-fce6fe6fa7942a51-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEunQYGV2Fh8us9s6cx',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEunQYGV2Fh8us9s6cx'
+  }
+}
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuoQZqUecHJF1hykf6"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0de9e3d77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEuoQZqUecHJF1hykf6',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-62a6d7de67f8a1c9b52521da65fcf502-be640f7ce51410b0-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuoQZqUecHJF1hykf6',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuoQZqUecHJF1hykf6'
+  }
+}
+LADDER call failed for "Country" (run-3): BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEuoQZqUecHJF1hykf6"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async LadderDiscovery.#fireOnce (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:279:18)
+    at async LadderDiscovery.#discover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:158:24)
+    at async LadderDiscovery.maybeDiscover (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Ladder/LadderDiscovery.ts:110:15)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:203:9) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0de9e3d77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:16 GMT',
+    'request-id': 'req_011CdiEuoQZqUecHJF1hykf6',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-62a6d7de67f8a1c9b52521da65fcf502-be640f7ce51410b0-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEuoQZqUecHJF1hykf6',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEuoQZqUecHJF1hykf6'
+  }
+}
+LadderDiscovery: no valid ladder for "Country" after 3 run(s) — leaving uncached
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEupoQn1fw5muuvAgjr"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0e0a85877a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:17 GMT',
+    'request-id': 'req_011CdiEupoQn1fw5muuvAgjr',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-839966b5943748a3f7e6f78a6cdde071-d150aad7582ff673-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEupoQn1fw5muuvAgjr',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEupoQn1fw5muuvAgjr'
+  }
+}
+LINK-JUDGE failed for doc 4905718, minting all: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEupoQn1fw5muuvAgjr"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async StreamingNormalizer.#linkJudge (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:567:18)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:249:11)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0e0a85877a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:17 GMT',
+    'request-id': 'req_011CdiEupoQn1fw5muuvAgjr',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-839966b5943748a3f7e6f78a6cdde071-d150aad7582ff673-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEupoQn1fw5muuvAgjr',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEupoQn1fw5muuvAgjr'
+  }
+}
+LINK-JUDGE doc 4905718: 286.834ms
+BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEurB1NYeK7y42YwEJJ"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async CountryNameNormalizer.normalizeCountry (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/CountryNameNormalizer/CountryNameNormalizer.ts:43:22)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:407:22)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0e27a2a77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:17 GMT',
+    'request-id': 'req_011CdiEurB1NYeK7y42YwEJJ',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-485d117cc5e5fe51d981409e4f234e5f-f31294f4d8de4894-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEurB1NYeK7y42YwEJJ',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEurB1NYeK7y42YwEJJ'
+  }
+}
+COST psi-link-default-4ee484f372fc: 268 calls, 789356+459465 tokens, $15.4334
+Error: BadRequestError: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CdiEurB1NYeK7y42YwEJJ"}
+    at APIError.generate (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/error.ts:63:14)
+    at Anthropic.makeStatusError (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:434:21)
+    at Anthropic.makeRequest (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/@anthropic-ai/sdk/src/core.ts:498:24)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async LlmClientBackendAnthropic.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendAnthropic.ts:46:21)
+    at async LlmClient.send (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:50:24)
+    at async CountryNameNormalizer.normalizeCountry (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/CountryNameNormalizer/CountryNameNormalizer.ts:43:22)
+    at async StreamingNormalizer.processFile (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:407:22)
+    at async runStreamingPipeline (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/bin/app.ts:534:7)
+    at async FlowManager.runStep (/home/user/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/FlowManager/FlowManager.ts:31:5) {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': 'befc037c-d2fd-4042-bd7e-e147c8b2e4d3',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a25fe0e27a2a77a4-KBP',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Tue, 04 Aug 2026 19:13:17 GMT',
+    'request-id': 'req_011CdiEurB1NYeK7y42YwEJJ',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-485d117cc5e5fe51d981409e4f234e5f-f31294f4d8de4894-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CdiEurB1NYeK7y42YwEJJ',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CdiEurB1NYeK7y42YwEJJ'
+  }
+}
+
+> llm-basic-framework@1.0.0 start
+> ts-node bin/app.ts
+
+{
+  llmProvider: 'anthropic',
+  llmModel: 'claude-opus-5',
+  embeddingsProvider: 'openai',
+  embeddingsModel: 'text-embedding-3-large',
+  inputDir: '../storage/cert.gov.ua/fetched',
+  outputDir: '../storage/cert.gov.ua/processed',
+  flow: 'incremental',
+  steps: [ 'streamingPipeline' ],
+  decisionsLog: true,
+  decisionStrategy: undefined,
+  candidateGenerator: undefined,
+  candidateK: undefined,
+  candidateMinSim: undefined,
+  ladderEnsembleN: 3,
+  ladderEnsembleModels: undefined,
+  ladderMinExamples: 8,
+  embeddings: false,
+  edgesFrom: 'layered',
+  lambda: undefined,
+  lambdaInterpretive: false,
+  condition: 'psi-link-default',
+  seed: null,
+  temperature: undefined,
+  topP: undefined,
+  maxTokens: undefined
+}
+RUN psi-link-default-4ee484f372fc → ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/20.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/20.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/22.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/22.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/23.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/23.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/24.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/24.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/25.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/25.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/26.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/26.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/27.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/27.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2492.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2492.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2496.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2496.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2498.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2498.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2625.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2625.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2628.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2628.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2656.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2656.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2658.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2658.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2659.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2659.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2660.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2660.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2661.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2661.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2681.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2681.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2683.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2683.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2685.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2685.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2687.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2687.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2691.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2691.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2693.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2693.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2695.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2695.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2697.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2697.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2699.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2699.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2701.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2701.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2707.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2707.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2718.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2718.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2720.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2720.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2722.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2722.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2723.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2723.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2724.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2724.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2725.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2725.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2726.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2726.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2728.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2728.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2803.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2803.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2804.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2804.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2805.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2805.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2806.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2806.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2807.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2807.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2808.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2808.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3028.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3028.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4475.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4475.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/9483.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/9483.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/9668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/9668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/10011.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/10011.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/10702.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/10702.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/11113.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/11113.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/12081.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/12081.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/13156.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/13156.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/14624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/14624.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/14958.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/14958.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16295.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16295.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/16905.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/16905.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17474.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17474.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17580.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17580.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17696.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17696.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17899.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17899.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/17961.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/17961.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18101.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18101.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18108.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18108.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18163.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18163.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18273.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18273.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18365.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18365.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/18419.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/18419.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37121.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37121.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37139.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37139.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37211.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37211.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37246.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37246.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37287.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37287.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37626.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37626.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37688.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37688.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37704.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37704.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37788.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37788.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37815.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37815.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/37829.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/37829.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38097.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38097.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38155.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38155.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38374.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38374.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/38606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/38606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39086.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39086.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39138.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39138.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39386.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39386.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39518.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39518.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39606.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39609.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39609.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39708.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39708.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39727.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39882.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39882.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39923.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39923.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39934.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39934.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/39962.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/39962.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40102.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40102.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40125.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40125.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40240.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40240.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40263.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40263.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/40559.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/40559.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/160530.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/160530.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/339662.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/339662.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/341128.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/341128.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/375404.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/375404.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/405538.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/405538.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/619229.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/619229.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/703548.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/703548.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/761668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/761668.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/861292.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/861292.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/955924.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/955924.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/971405.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/971405.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/987552.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/987552.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1229152.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1229152.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1545776.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1545776.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1563322.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1563322.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/1751036.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/1751036.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2394117.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2394117.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2681855.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2681855.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2698320.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2698320.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/2724253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/2724253.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3192088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3192088.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3349703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3349703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3718487.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3718487.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3761023.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3761023.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3804703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3804703.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3863542.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3863542.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3931296.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3931296.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/3947787.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/3947787.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4279195.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4279195.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4492467.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4492467.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4501891.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4501891.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4555802.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4555802.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4697016.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4697016.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4755642.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4755642.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4789582.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4789582.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4818341.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4818341.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4905718.json
+LADDER Country v2: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 4905718: 8.122s
+NORMALIZE 4905718.json: 1:58.746 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4905718.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4905829.json
+LINK-JUDGE doc 4905829: 23.577s
+NORMALIZE 4905829.json: 23.702s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4905829.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/4928679.json
+LINK-JUDGE doc 4928679: 1:38.317 (m:ss.mmm)
+NORMALIZE 4928679.json: 1:43.781 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/4928679.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5077168.json
+LINK-JUDGE doc 5077168: 7.344s
+NORMALIZE 5077168.json: 9.011s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5077168.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5098518.json
+LINK-JUDGE doc 5098518: 4.381s
+NORMALIZE 5098518.json: 4.408s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5098518.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5105791.json
+LADDER Individual v2: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 5105791: 13.351s
+PAIR-RULES doc 5105791: 14.567s
+NORMALIZE 5105791.json: 2:09.646 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5105791.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5158006.json
+LINK-JUDGE doc 5158006: 25.908s
+NORMALIZE 5158006.json: 26.011s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5158006.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5160737.json
+LINK-JUDGE doc 5160737: 18.045s
+PAIR-RULES doc 5160737: 29.286s
+NORMALIZE 5160737.json: 47.415s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5160737.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5213167.json
+LADDER Government Body v4: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 5213167: 18.672s
+NORMALIZE 5213167.json: 3:26.536 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5213167.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5269451.json
+LINK-JUDGE doc 5269451: 19.048s
+PAIR-RULES doc 5269451: 8.883s
+NORMALIZE 5269451.json: 28.052s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5269451.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5391805.json
+LINK-JUDGE doc 5391805: 7.445s
+NORMALIZE 5391805.json: 7.493s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5391805.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5436463.json
+LINK-JUDGE doc 5436463: 25.346s
+NORMALIZE 5436463.json: 25.380s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5436463.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5455833.json
+LINK-JUDGE doc 5455833: 15.954s
+NORMALIZE 5455833.json: 19.250s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5455833.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5628441.json
+LADDER Organization v5: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 5628441: 11.848s
+NORMALIZE 5628441.json: 2:20.700 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5628441.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5661411.json
+LINK-JUDGE doc 5661411: 5.613s
+NORMALIZE 5661411.json: 5.634s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5661411.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/5702579.json
+LADDER Infrastructure v1: 2 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 5702579: 13.292s
+PAIR-RULES doc 5702579: 2.353s
+NORMALIZE 5702579.json: 2:15.471 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/5702579.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6032734.json
+LINK-JUDGE doc 6032734: 16.245s
+PAIR-RULES doc 6032734: 3.992s
+NORMALIZE 6032734.json: 20.283s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6032734.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6123309.json
+LADDER Sector v4: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 6123309: 16.765s
+PAIR-RULES doc 6123309: 13.926s
+NORMALIZE 6123309.json: 3:57.469 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6123309.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276351.json
+LINK-JUDGE doc 6276351: 7.959s
+NORMALIZE 6276351.json: 7.987s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276351.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276567.json
+LINK-JUDGE doc 6276567: 5.705s
+NORMALIZE 6276567.json: 5.725s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276567.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276584.json
+LINK-JUDGE doc 6276584: 23.604s
+NORMALIZE 6276584.json: 23.668s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276584.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276652.json
+LINK-JUDGE doc 6276652: 10.235s
+NORMALIZE 6276652.json: 10.271s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276652.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276799.json
+LINK-JUDGE doc 6276799: 2:23.360 (m:ss.mmm)
+PAIR-RULES doc 6276799: 12.107s
+NORMALIZE 6276799.json: 2:36.343 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276799.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276824.json
+LADDER HackerGroup v4: 1 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 6276824: 9.609s
+NORMALIZE 6276824.json: 1:35.221 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276824.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276894.json
+LADDER Domain v8: 3 rung(s) from 3/3 valid run(s)
+LINK-JUDGE doc 6276894: 9.970s
+NORMALIZE 6276894.json: 2:35.857 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276894.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6276988.json
+LINK-JUDGE doc 6276988: 7.975s
+NORMALIZE 6276988.json: 8.015s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6276988.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277063.json
+LINK-JUDGE doc 6277063: 5.122s
+NORMALIZE 6277063.json: 5.150s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277063.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277285.json
+LINK-JUDGE doc 6277285: 9.531s
+NORMALIZE 6277285.json: 9.601s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277285.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277422.json
+LINK-JUDGE doc 6277422: 4.921s
+NORMALIZE 6277422.json: 4.984s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277422.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277822.json
+LINK-JUDGE doc 6277822: 21.892s
+NORMALIZE 6277822.json: 21.913s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277822.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277849.json
+LINK-JUDGE doc 6277849: 10.793s
+NORMALIZE 6277849.json: 10.856s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277849.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6277896.json
+LINK-JUDGE doc 6277896: 8.148s
+PAIR-RULES doc 6277896: 8.520s
+NORMALIZE 6277896.json: 16.691s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6277896.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6278274.json
+LINK-JUDGE doc 6278274: 8.258s
+PAIR-RULES doc 6278274: 6.638s
+NORMALIZE 6278274.json: 14.950s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6278274.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6278521.json
+LINK-JUDGE doc 6278521: 13.036s
+PAIR-RULES doc 6278521: 5.937s
+NORMALIZE 6278521.json: 19.041s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6278521.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6278620.json
+LINK-JUDGE doc 6278620: 7.044s
+PAIR-RULES doc 6278620: 5.632s
+NORMALIZE 6278620.json: 12.706s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6278620.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6278706.json
+LINK-JUDGE doc 6278706: 10.190s
+NORMALIZE 6278706.json: 10.231s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6278706.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6278735.json
+LINK-JUDGE doc 6278735: 25.913s
+NORMALIZE 6278735.json: 26.021s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6278735.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6279366.json
+LINK-JUDGE doc 6279366: 11.717s
+NORMALIZE 6279366.json: 11.771s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6279366.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6279419.json
+LINK-JUDGE doc 6279419: 12.533s
+NORMALIZE 6279419.json: 13.919s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6279419.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6279491.json
+LINK-JUDGE doc 6279491: 1:11.100 (m:ss.mmm)
+NORMALIZE 6279491.json: 1:11.733 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6279491.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6279561.json
+LINK-JUDGE doc 6279561: 9.666s
+NORMALIZE 6279561.json: 9.680s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6279561.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6279600.json
+LINK-JUDGE doc 6279600: 20.847s
+NORMALIZE 6279600.json: 20.897s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6279600.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280099.json
+LINK-JUDGE doc 6280099: 13.637s
+NORMALIZE 6280099.json: 13.706s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280099.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280129.json
+LINK-JUDGE doc 6280129: 10.333s
+PAIR-RULES doc 6280129: 5.816s
+NORMALIZE 6280129.json: 21.599s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280129.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280159.json
+LINK-JUDGE doc 6280159: 14.743s
+NORMALIZE 6280159.json: 14.778s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280159.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280183.json
+LINK-JUDGE doc 6280183: 15.908s
+NORMALIZE 6280183.json: 15.957s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280183.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280345.json
+LINK-JUDGE doc 6280345: 18.164s
+NORMALIZE 6280345.json: 18.236s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280345.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280422.json
+LINK-JUDGE doc 6280422: 13.034s
+NORMALIZE 6280422.json: 13.101s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280422.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6280563.json
+LINK-JUDGE doc 6280563: 11.733s
+NORMALIZE 6280563.json: 11.780s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6280563.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281009.json
+LINK-JUDGE doc 6281009: 18.333s
+NORMALIZE 6281009.json: 18.428s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281009.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281018.json
+LINK-JUDGE doc 6281018: 5.921s
+NORMALIZE 6281018.json: 5.943s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281018.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281076.json
+LINK-JUDGE doc 6281076: 32.708s
+NORMALIZE 6281076.json: 33.125s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281076.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281095.json
+LINK-JUDGE doc 6281095: 13.220s
+NORMALIZE 6281095.json: 13.308s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281095.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281123.json
+LINK-JUDGE doc 6281123: 29.629s
+NORMALIZE 6281123.json: 29.711s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281123.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281202.json
+LINK-JUDGE doc 6281202: 15.342s
+NORMALIZE 6281202.json: 15.400s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281202.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281632.json
+LINK-JUDGE doc 6281632: 1:17.851 (m:ss.mmm)
+NORMALIZE 6281632.json: 1:18.164 (m:ss.mmm)
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281632.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281681.json
+LINK-JUDGE doc 6281681: 7.399s
+NORMALIZE 6281681.json: 7.435s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281681.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6281701.json
+LINK-JUDGE doc 6281701: 15.995s
+NORMALIZE 6281701.json: 16.083s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6281701.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6282069.json
+NORMALIZE 6282069.json: 0.733ms
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6282069.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6282517.json
+LINK-JUDGE doc 6282517: 24.997s
+NORMALIZE 6282517.json: 25.091s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6282517.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6282536.json
+LINK-JUDGE doc 6282536: 18.607s
+NORMALIZE 6282536.json: 18.640s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6282536.json
+SKIP (exists) ../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/extractions/6282737.json
+LINK-JUDGE doc 6282737: 8.193s
+NORMALIZE 6282737.json: 8.223s
+OUT FILE=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/artifacts/6282737.json
+COST psi-link-default-4ee484f372fc: 105 calls, 358254+202382 tokens, $6.8508
