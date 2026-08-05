@@ -86,9 +86,21 @@ function trigramJaccard(a: string, b: string): number {
   return shared / (gramsA.size + gramsB.size - shared);
 }
 
-// Optional repair step (spec §4.3) — manual trigger only, never scheduled.
-// Objective: evidence-bounded merging only; never adds relations, never
-// optimizes for graph connectivity.
+/**
+ * RQ3 batch-reference evaluation harness — regime (ii) of E6. Never wired into the pipeline (spec
+ * §4.3 superseded 2026-08-05; see dissert wiki streaming-repair-design). Runs only via
+ * `bin/batch-reference.ts` against a COPY of a run directory.
+ *
+ * Consumes the defer queue on entry — the NAIVE arm (REPAIR=0) mints straight through and only
+ * pushes to `deferQueue`, so this class is the only consumer of it (T12). Its `restampArtifacts`
+ * call passes no `files` filter, so it re-stamps every artifact in `artifactsDir`; that parameter
+ * belongs to T9's per-document repairer, which restricts the re-stamp to one document's affected
+ * set — nothing here needs that narrower path. Every op it logs carries `doc: -1`; the playback
+ * viewer (T11) labels that run the "batch-reference chapter".
+ *
+ * Objective: evidence-bounded merging only; never adds relations, never
+ * optimizes for graph connectivity.
+ */
 export class RegistryConsolidator {
   #artifactsDir: string;
   #llmClient: LlmClient;
