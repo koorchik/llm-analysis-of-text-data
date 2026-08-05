@@ -71,8 +71,8 @@ incremental/<model>/
     └── edges.csv
 ```
 
-`extractions/` exists so the expensive LLM extraction is never re-paid: normalization,
-consolidation and graph builds can all be re-run from disk.
+`extractions/` exists so the expensive LLM extraction is never re-paid: normalization, repair
+(§4.3) and graph builds can all be re-run from disk.
 
 ## 3. Data shapes
 
@@ -170,8 +170,33 @@ alias-provenance shape that followed) still load; saves write v3:
 
 Layer rules: granularity edges (`coarsens-to` = preserving blur, `part-of` = widening) are
 finer→coarser, same-category, acyclicity-checked on write, per-edge provenance; rename edges are
-never aliases and never fold; the defer queue is the consolidator's input (nothing reads
-`decisions.jsonl` at runtime); assertional relations never enter this file.
+never aliases and never fold; the defer queue is the **StreamingRepairer**'s input (§4.3) — the RQ3
+batch-reference harness also drains it, but only when run against a copied NAIVE-arm (`REPAIR=0`)
+directory, where no repairer ever ran (nothing reads `decisions.jsonl` at runtime); assertional
+relations never enter this file.
+
+**Amendment 2026-08-05 — registry v4 adds the repair layer.** `save()` writes v4; v1–v3 still load.
+On top of v3's identity graph, v4 adds:
+
+```json
+{ "version": 4, "...": "…v3 fields unchanged…",
+  "repair": {
+    "adjudicated": [ { "a": { "category": "HackerGroup", "canonical": "Sandworm" },
+        "b": { "category": "HackerGroup", "canonical": "APT44" },
+        "signature": "…sha256, or '' to always re-fire…", "verdict": "distinct", "docId": 40 } ],
+    "spillover": [ { "a": { "category": "HackerGroup", "canonical": "Sandworm" },
+        "b": { "category": "HackerGroup", "canonical": "Voodoo Bear" },
+        "signal": "gloss-ann", "score": 0.93, "docId": 41 } ],
+    "repairedThrough": 41 } }
+```
+
+`repair` is the `StreamingRepairer`'s own working memory (§4.3), not derived from the identity
+graph: `adjudicated` is the sha256-keyed do-not-re-fire memo per suspect pair (a `''` signature is
+the sentinel that retains a suspect for permanent re-fire — a low-confidence merge demoted to
+`distinct`); `spillover` is suspects that missed this document's token cap, judge call or apply
+step and are carried into the next document's gather step; `repairedThrough` is the high-water mark
+of fully-repaired document ids (`-1` = none yet), the boundary the standalone `streamingRepairer`
+catch-up step resumes from.
 
 ### 3.3 `extractions/NN.json` (stage-1 output)
 
@@ -224,7 +249,8 @@ The extraction shape plus normalization stamps. A strict superset of today's
 ```
 
 Artifacts are immutable **except** for deterministic re-stamping of `normalizedName` /
-`normalizedHead` / `normalizedTail` by the consolidator (§4.3). Nothing else ever rewrites them.
+`normalizedHead` / `normalizedTail` — collectively `normalized*` — by the **StreamingRepairer**
+(§4.3), still the only writer. Nothing else ever rewrites them.
 
 **Backward compatibility.** `entities[]` keeps the exact field names of `UnifiedData.Entity`
 (`name`, `category`, `role`, `normalizedName`, `code`), so `DataAnalyzer` and other
@@ -264,6 +290,22 @@ a withheld decision, provisionally minted). New ops: `granularity-edge`
 state from these), `split-canonical`, `category-correction`. `decisions.jsonl` remains
 evaluation/debug-only at runtime; the offline `npm run view` playback page and `npm run replay`
 read it after the fact.
+
+**Amendment 2026-08-05 — repair events (`StreamingRepairer`, §4.3).** New ops: `suspect`
+(`{doc, op, pair, categories, signal, score}` — one per suspect gathered, whatever its eventual
+disposition); `repair-merge` (`{category, from, into, by}` — `into` is the ACTUAL survivor, never
+the requested one); `repair-distinct` (`{pair, categories, confidence, demotedFrom}`);
+`repair-spillover` (`{size, reason}`, reason ∈ `token-cap | judge-failed | incomplete |
+op-rejected`); `repair-split` (`{category, canonical, detached, newCanonical}`); `repair-move`
+(`{alias, from, to, categories}`); `repair-keep`; `repair-op-rejected` / `repair-op-skipped`
+(validator/apply-time rejections, log-only); `gloss-flagged` (`{mention, category, kind}` — a
+mint/defer gloss still bad after phase 1's one retry, mint proceeds with no gloss).
+`granularity-edge`, `rename-edge` and `category-correction` (2026-08-04 amendment above) gain
+`by: 'StreamingRepairer'` when phase 2 emits them, distinguishing repair-time provenance from the
+judge/ladder-binding/harness sources already documented. New `llm-call.kind`: `repair-judge` (the
+≤1 first-attempt Ψ_repair call), `repair-judge-retry` (its ≤1 completeness re-ask),
+`link-judge-retry` (phase 1's own ≤1 gloss re-ask, `StreamingNormalizer`). As always: log-only,
+nothing reads `decisions.jsonl` at runtime.
 
 ### 3.6 `graph/nodes.csv`, `graph/edges.csv`
 
@@ -406,8 +448,10 @@ Per document (`extractions/NN.json` → `artifacts/NN.json`):
 6. **Stamp & write** — `normalizedName` on every entity, `normalizedHead`/`normalizedTail` on
    every relation (resolved through the same map); `code` via the existing
    `CountryNameNormalizer` for `Country` entities; since 2026-08-04 also **`matchedVia`** (the
-   registry surface the mention actually hit, in stored casing) — the precondition for a local
-   consolidator split re-stamp. Write `artifacts/NN.json`.
+   registry surface the mention actually hit, in stored casing) — the precondition for a repair
+   re-stamp (StreamingRepairer, §4.3, and the RQ3 batch-reference harness) that resolves by the
+   alias each mention actually hit rather than by a now-ambiguous canonical. Write
+   `artifacts/NN.json`.
 0. *(Amendment 2026-08-04, runs before step 1)* **Ladder bootstrap** — for every category this
    document touches, `LadderDiscovery.maybeDiscover` fires the `ladder` prompt ensemble when the
    category first crosses `LADDER_MIN_EXAMPLES` distinct surfaces (re-fires at ≥2× growth),
@@ -451,31 +495,126 @@ Output raw JSON: { "rules": [ { "signature": 1, "relation": "attacks",
   { "signature": 2, "relation": null } ] }
 ````
 
-### 4.3 `RegistryConsolidator` (optional repair, manual trigger — never scheduled)
+### 4.3 StreamingRepairer (synchronous per-document repair — phase 2 of every document)
 
-Fixes wrong-but-safe streaming decisions. **Amendment 2026-08-04: the full repair inventory —
-merge / split / move** (merge-only greedy is the known-weak configuration;
-gruenheid2014incremental):
+> **Superseded 2026-08-05.** The deferred RegistryConsolidator of the previous revision is deleted
+> as a system component (kept only as the RQ3 batch-reference harness, bin/batch-reference.ts).
+> Design: dissert/wiki/notes/streaming-repair-design.md.
 
-1. **Registry pass** — per category, cluster suspicious canonical pairs using union-blocker-shaped
-   signals over full alias sets (string similarity ∪ transliteration/confusable skeleton ∪
-   char-3-gram Jaccard, max-over-aliases), **plus every pair the judge deferred** (the registry's
-   `deferQueue` bypasses the blocker); one LLM call (`prompts/consolidate-merge.md`) reviewing
-   only canonical names + aliases returns the four-verdict repair set: `merges` (same thing, same
-   grain), `edges` (rung pair → granularity edge), `renames` (`renamed-to` chain), `splits`
-   (mixed alias list → detach). Reviewed defer entries clear from the queue whatever the verdict.
-2. **Cross-category sweep** — canonicals in different categories sharing an exact case-folded
-   surface are reviewed together (entries labelled `Category/Name`); a confirmed duplicate moves
-   + merges and logs a `category-correction` (reported, and fed back upstream).
-3. **Schema pass** — same idea over `schema.json` relation types and categories whose alias sets
-   or definitions have drifted together; merges append to `history` (merge verdict only).
-4. **Re-stamp** — deterministically rewrite `normalizedName`/`normalizedHead`/`normalizedTail`
-   in affected artifacts, resolving **by `matchedVia`** (the alias each mention actually hit),
-   never by the now-ambiguous canonical — which is what keeps a split local. **No LLM, no
-   re-extraction.** Then rebuild the graph.
+Runs at the end of every document's `StreamingNormalizer.processFile`, via a `repairer` hook
+(`REPAIR=0` omits it entirely — the RQ3 NAIVE arm). Where §4.2 is phase 1 (extract mentions,
+resolve identity), this is phase 2: repair whatever phase 1 got wrong, scoped to the document just
+processed plus whatever earlier documents deferred or could not fit. The deleted consolidator's
+per-category batching bet failed on the measured corpus — one category's suspect set arrived as a
+single ~22.6k-token prompt, over an 8k local window. Running every document keeps each call small
+*by construction* instead of by tuning.
 
-The consolidator's objective is evidence-bounded repair only — it must never add assertional
-relations or optimize for graph connectivity.
+1. **Suspect generation** (`SuspectGenerator`, `eventsForDoc`) — for every mint and alias-add this
+   document produced, across ALL categories:
+   - **union-blocker probe** — `blocker.candidates()` (the phase-1 blocker instance, shared so its
+     index does not go stale) against the event's surface; a hit ≥ `REPAIR_BLOCKER_THRESHOLDS`
+     becomes a `union-blocker` suspect. Top `REPAIR_TOP_K` (default 5) candidates kept per event.
+   - **gloss-ANN probe** — nearest neighbours in `GlossIndex` (brute-force cosine over
+     `embed(name+gloss)`, byte-identical text format to the phase-1 embedding channel so the disk
+     embedding cache is shared) ≥ `REPAIR_GLOSS_THRESHOLDS` become `gloss-ann` suspects.
+   - **coherence probe** (alias-adds only) — leave-one-out centroid drift on the linked-into
+     canonical's alias set; below `REPAIR_COHERENCE_THRESHOLD` becomes a single-entity `coherence`
+     suspect (`b === a`).
+   - Both threshold env vars parse as `"Category=0.97,default=0.85"` (a `default` entry is
+     required) and default HIGH when unset (glossAnn 0.92, blocker 0.88) — unlike the phase-1
+     blocker's recall-oriented floor, nothing sits between a suspect and an adjudication call here,
+     so the threshold does the precision work.
+   - **Defer-derived pairs** — every live candidate the link-judge listed for a deferred mention
+     (§4.2 step 3) becomes a suspect against the provisional mint; the defer-queue entry is
+     consumed (removed) regardless of verdict, so a pair left unruled here does not re-queue
+     forever.
+   - **Adjudicated-set dedup** — a suspect whose current `(a, b)` signature already matches an
+     `adjudicated` memo is suppressed; a `distinct` verdict reached at low confidence writes the
+     memo with signature `''`, a sentinel that never equals a real sha256 digest — that suspect is
+     *retained* and re-fires on every future occasion (the mint-over-merge asymmetry running at
+     repair time, same as the batch-consolidator's rule but now per-document).
+2. **Components + token cap + spillover** (`Repair/components.ts`) — suspects union-find into
+   connected components (a shared entity merges two components into one); each component becomes
+   one prompt block. Components are packed under `REPAIR_TOKEN_CAP` (default 8000, the 8k local
+   window the old consolidator prompt overflowed); when full, the lowest-scoring edge is evicted
+   and the component is re-scoped from scratch (an eviction can split one component into two),
+   repeating until everything fits or is queued. A component left with no pair edges and no
+   coherence check after eviction (a bare singleton) is dropped, not queued. Whatever does not fit
+   joins the **spillover queue** (registry v4 `repair.spillover`, §3.2) — carried into the next
+   document's gather step, first-in.
+3. **Ψ_repair call** — ONE first-attempt `repair-judge` call over every due component (prompt
+   `prompts/repair-judge.md`, copied VERBATIM from `dissert/wiki/notes/prompts.md`; placeholder
+   `{{components}}`). **User ruling 2**: at most one first-attempt call per document, plus at most
+   one validator-driven completeness re-ask (`repair-judge-retry`) containing only the components a
+   completeness check ("every listed pair needs an op, every coherence entity needs an op") found
+   incomplete after the first response. The re-ask **fills gaps, it does not replace** — the first
+   accepted verdict for any given pair wins, so a sibling op's rejection in the re-ask cannot undo a
+   settled one. Whatever is still incomplete after the retry spills. A judge call that throws sends
+   every due suspect straight to spillover — the document is never aborted.
+4. **Validation** (code, wiki rule 7): (a) schema — unrecognized ops dropped, missing/bad
+   `confidence` demoted to `'low'`; (b) every entity name an op references must
+   case-insensitively match a listed component member, else the op is rejected
+   (`repair-op-rejected`, log-only) and adjudicates nothing — a self-pairing or duplicate-pair op is
+   rejected the same way, keeping "exactly one op per pair" a function of the suspects; (c)
+   completeness, recomputed over the first attempt and the retry combined.
+5. **Apply** (code only, the full SKEIN v2 inventory):
+
+   | op | effect | notes |
+   |---|---|---|
+   | `merge` | `applyMerges` (survivor chosen by `canonicalPolicy` under transitive closure — the ACTUAL survivor is logged, never the requested `into`) | cross-category `merge` = `move` then merge, plus a `category-correction` log entry; low confidence (`confidence: 'low'`) demotes to `distinct` with the `''` retained-suspect signature instead of merging (mint-over-merge asymmetry) |
+   | `distinct` | writes an `adjudicated` memo keyed on the pair's current signature | suppresses re-firing until either member's content changes |
+   | `rung` | `addGranularityEdge` (`coarsens-to`/`part-of`), same-category only | **documented deviation** (design R4): also pushes an `adjudicated` memo (`verdict: 'rung'`) so the pair does not re-fire forever asking a judge who can only say `rung` again — a granularity edge is not identity, but it is treated as settled |
+   | `renamed` | **user ruling 1**: absorbs via `renameInto`, whose survivor is ALWAYS the new name (`to`) — `canonicalPolicy` has no vote — AND preserves the historical `renamed-to` edge; both a `rename-edge` and a `repair-merge` are logged, so the identity fold and the historical record are both replayable | cross-category rejected (spills) |
+   | `split` | `EntityRegistry.split` detaches the named alias into a new canonical | |
+   | `move` | `moveAlias` — the single-alias move primitive (T3), across categories | no whole-canonical move primitive existed before this |
+   | `keep` | writes an `adjudicated` memo (`verdict: 'keep'`) for a coherence check that found nothing wrong | enters `adjudicated` same as `distinct`/`rung` |
+
+   Every applied mutation fires `onRegistryChange` so the phase-1 blocker index does not go stale.
+   An op whose endpoint was absorbed by an earlier op in the same batch is skipped
+   (`repair-op-skipped`), not spilled — the suspect it named no longer exists. An op the registry
+   itself refuses (a primitive returns nothing) spills the ORIGINAL suspect, not a synthesized one,
+   so its signal/score survive into the next document's capping.
+6. **Re-stamp** (`restampArtifacts`, `Repair/restampArtifacts.ts`) — deterministic, resolves **by
+   `matchedVia`** (never by the now-ambiguous canonical), **WHOLE CORPUS** whenever any op touched
+   a live canonical this document, not scoped to the touched document's own mentions:
+   `EntityRegistry.link` is idempotent, so a repeat mention of an already-known surface writes no
+   alias record, and deriving "affected documents" from alias `docId`s would silently miss every
+   repeat mention — measured 711/4,071 stamped mentions (17.5%) on the baseline corpus. This is the
+   **idempotent-link trap**, documented at `StreamingRepairer.ts` step 7's class comment; per-alias
+   mention-doc tracking would fix it properly and is named there as the future, registry-level fix.
+   **No LLM, no re-extraction.**
+7. **Invariants.** **I1 — debt-free boundary**: after document *d*, every suspect gathered has an
+   applied op, an adjudicated memo, or a spillover-queue slot — checked in memory before the save,
+   never from `decisions.jsonl` (wiki rule 10). **I2 — call cap** (user ruling 2): at most one
+   first-attempt `repair-judge` call per document; the retry is budgeted and counted separately.
+   Both assertions run BEFORE the single `entityRegistry.save()` that commits everything phase 2
+   did, so a violated invariant is never what gets persisted.
+
+**Crash story.** Phase 1 has already committed this document's artifact and registry writes before
+phase 2 starts, so phase 2 only ever repairs durable state. All of its mutations land in one
+`save()`, and `setRepairedThrough(docId)` is part of that same write, so `repairedThrough` can never
+claim a document whose repairs were not persisted. A crash between re-stamp and save re-runs phase 2
+for that one document on resume (`repairedThrough < docId`): suspects re-derive identically, the
+`adjudicated` memo suppresses everything already ruled on, and the re-stamp is idempotent (it
+rewrites an artifact only when the rendered JSON actually differs).
+
+**`GlossIndex.sync` failure is deliberately FATAL to the document** (not caught, unlike the judge
+call) — a repair pass that silently skipped its own embedding sync would corrupt an arm with no
+error signal, which is worse than failing loudly.
+
+**Standalone catch-up.** The `streamingRepairer` step (§5) re-runs phase 2, ascending document
+order, for any document with `docId > repairedThrough` — for a registry whose repair pass never
+ran (an existing corpus, or a run that died mid-stream). It requires `REPAIR=1` (the default);
+`REPAIR=0` constructs no repairer at all, so there is nothing to catch up.
+
+**The RQ3 batch-reference harness** (`src/Consolidator/RegistryConsolidator.ts`, run via
+`RUN_DIR=<copy> npm run batch-reference -- --copied`, `bin/batch-reference.ts`) is what remains of
+the deleted consolidator: the old registry pass + cross-category sweep + schema pass + full-corpus
+re-stamp, over a COPY of a run directory only — never wired into the live pipeline, and refuses to
+run without `--copied` since there is no reliable way to tell a copy from an original by path
+alone. It exists for E6 regime (ii) / RQ3 order-robustness comparisons, not for repair. Its
+objective, same as before: evidence-bounded repair only, never assertional relations, never
+optimizing for graph connectivity.
 
 ### 4.4 `DataGraphBuilder` v2
 
@@ -509,14 +648,26 @@ through to the existing `default` branches of the risk-score switch.
 
 - New `bin/app.ts` step **`streamingPipeline`**: list input docs, sort ascending by numeric file
   id (chronological for CERT-UA; if a preprocessor supplies `metadata.date`, sort by date), then
-  per document: `StreamingExtractor.processFile()` → `StreamingNormalizer.processFile()`. Both
-  classes also keep a directory-level `run()` so each stage can be re-run standalone (e.g.
-  re-normalize everything from `extractions/` after wiping `registry.json`).
-- `RegistryConsolidator` and `DataGraphBuilder` are separate steps, run on demand.
+  per document: `StreamingExtractor.processFile()` → `StreamingNormalizer.processFile()`, which
+  itself runs phase 1 (extraction-stamp resolution, §4.2) then, inside the same call via a
+  `repairer` hook, phase 2 (`StreamingRepairer.processDoc()`, §4.3) — **extract → normalize
+  (phase 1) → repair (phase 2), synchronously, per document.** `REPAIR=0` omits the hook entirely
+  (the RQ3 NAIVE arm). All three classes also keep a directory-level `run()` so each stage can be
+  re-run standalone (e.g. re-normalize everything from `extractions/` after wiping
+  `registry.json`; `streamingRepairer` as its own step is the standalone catch-up for a registry
+  whose repair pass never ran).
+- **Amendment 2026-08-05.** `registryConsolidator` is no longer a pipeline step — the deferred,
+  manually-triggered consolidator of the previous revision is deleted as a system component. What
+  remains under `src/Consolidator/RegistryConsolidator.ts` is the RQ3 order-robustness
+  batch-reference harness only, run via `npm run batch-reference` (`bin/batch-reference.ts`)
+  against a COPY of a run directory, never the live pipeline's own output (§4.3). `DataGraphBuilder`
+  / `streamingGraphBuilder` remain separate steps, run on demand.
 - **Resumability** = skip documents whose output file already exists (the existing idiom). Crash
   recovery: state files are written atomically (write temp + rename) once per document; on
-  restart the worst case is re-doing the one in-flight document.
-- Config via env as today: `STEPS=streamingPipeline`, plus `DECISIONS_LOG=1` to enable §3.5.
+  restart the worst case is re-doing the one in-flight document — for repair specifically, at most
+  one repeated repair call for that single in-flight document (§4.3's crash story).
+- Config via env as today: `STEPS=streamingPipeline`, plus `DECISIONS_LOG=1` to enable §3.5,
+  `REPAIR=0` to disable phase 2 entirely.
 
 ## 6. Evaluation hooks (for the article)
 
@@ -524,13 +675,17 @@ through to the existing `default` branches of the risk-score switch.
 |----|---------------------|
 | RQ1 schema convergence ν(t) | `schema.json.history` — admits per document, cumulative curve; bonus figure: extracted-vs-inferred edge agreement (how often the text refines or contradicts the signature rule) from `edges.csv` `Kind` split |
 | RQ2 linking P/R | `decisions.jsonl` link/mint events vs. a gold alias table |
-| RQ3 order robustness | run the pipeline over shuffled doc orders (fresh state dirs); compare `schema.json` + `registry.json` partitions (ARI), with/without consolidation |
+| RQ3 order robustness | run the pipeline over shuffled doc orders (fresh state dirs); compare `schema.json` + `registry.json` partitions (ARI), with/without repair (`REPAIR=1` vs the NAIVE `REPAIR=0` arm), plus the batch-reference harness as regime (ii) of E6 |
 | RQ4 domain transfer | new `storage/<source2>/`; seeded vs. empty initial `schema.json` |
 | RQ5 cost | `llm-call` events in `decisions.jsonl` (or the existing timing metadata) per document |
 
 ## 7. Out of scope for v1
 
 - Embeddings/ANN candidate retrieval (string similarity only; interface designed for the swap).
-- Scheduled/automatic consolidation (manual trigger only).
 - Any mutation of `raw-unified`/legacy outputs — the batch pipeline remains intact and runnable
   for baseline comparisons.
+
+**Amendment 2026-08-05.** "Scheduled/automatic consolidation (manual trigger only)" is deleted
+from this list — superseded by the synchronous per-document `StreamingRepairer` (§4.3), which runs
+as phase 2 of every document with no manual trigger. What this section originally scoped out is
+now the streaming pipeline's default behavior.

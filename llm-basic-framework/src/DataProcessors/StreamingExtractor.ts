@@ -332,7 +332,8 @@ export class StreamingExtractor {
       const verdicts = normalizeTypeJudgeVerdicts(extractAndParseJson(response.text) || {});
       return verdicts || [];
     } catch (error) {
-      // Never lose the document over a judge call — admit-all is repairable by the consolidator
+      // Never lose the document over a judge call — admit-all is repairable later (schema drift
+      // is out of StreamingRepairer's scope; the RQ3 batch-reference harness's schema pass covers it)
       console.error(`TYPE-JUDGE failed for doc ${docId}, admitting all proposals:`, error);
       return [];
     } finally {

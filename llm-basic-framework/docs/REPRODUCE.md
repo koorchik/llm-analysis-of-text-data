@@ -108,6 +108,12 @@ The git sha is folded in, so **any commit changes every future runId**. Conseque
   at 204/204, so this only matters if you wanted to extend them — you would re-run instead.
 - Keep the tree committed while running. An untracked file anywhere in the repo counts as dirty
   and changes the runId mid-experiment; a crash-resume would then restart from zero.
+- **Prompt hashes fold in too, and the whole set — every prompt on disk — is hashed regardless of
+  which one an arm actually uses.** The `repair-judge` prompt is new as of 2026-08-05
+  (`StreamingRepairer`, `docs/streaming-pipeline-spec.md` §4.3), so every runId computed from this
+  point forward differs from anything computed before it, even a `REPAIR=0` run that never sends
+  that prompt. This is the same rotation `prompts/README.md` and `RUNNING-EXPERIMENTS.md` §8
+  describe for any prompt edit — deliberate friction, not a bug.
 
 ## 6. Where to take it next
 
@@ -187,7 +193,12 @@ Other open threads, all evidenced in `SUMMARY-2026-08-04.md`:
   calls, but one of them puts all 1,259 Domain suspects in a single ~22.6k-token prompt, which
   overflows an 8k local window silently. Chunking by connected component of the suspect graph
   bounds it (155 components, median size 2, largest ~7.9k tokens) without losing anything the
-  blocker had not already excluded.
+  blocker had not already excluded. **Resolved 2026-08-05**: this measurement is exactly what
+  motivated `StreamingRepairer` (`docs/streaming-pipeline-spec.md` §4.3) — component chunking +
+  a per-document token cap (`REPAIR_TOKEN_CAP`, default 8000), running every document instead of
+  once per category. The deferred `registryConsolidator` is deleted as a pipeline component (its
+  code remains only as the RQ3 batch-reference harness); a rerun of either baseline arm today
+  would carry repair by default (`REPAIR=1`).
 - **Country identity is solvable deterministically.** `CountryNameNormalizer` already resolves all
   four Russia variants to `RU`; the code is computed, stamped on artifacts, and then ignored by the
   registry. Keying Country identity on it reproduces 5 of 6 gold clusters exactly — the sixth

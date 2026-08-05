@@ -274,7 +274,8 @@ async function main() {
 
     // The deck's "upstream category noise" threat, made visible: a surface filed under two
     // categories is invisible to every within-category pair below. Reported, not repaired —
-    // repair belongs to the consolidator's cross-category sweep.
+    // repair belongs to StreamingRepairer's cross-category merge (move + merge +
+    // category-correction, spec §4.3), or the RQ3 batch-reference harness's cross-category sweep.
     const crossCategory = crossCategorySurfaces(inventory);
     if (crossCategory.length > 0) {
       console.log(`\ncross-category surfaces: ${crossCategory.length} appear under >1 category, e.g.:`);

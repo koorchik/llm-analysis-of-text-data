@@ -499,5 +499,7 @@ Pairs, clusters and edges all live inside one category. Upstream extractor misca
 (`Sandworm` filed as HackerGroup in one document and Organization in another — the deck's
 "upstream category noise" threat) is therefore invisible to this table by construction:
 `gold pairs` prints the exposure (surfaces appearing under >1 category, currently 9), repair
-belongs to the consolidator's cross-category sweep, and the residual rate is reported from that
-sweep's category-correction log — never patched here.
+belongs to `StreamingRepairer`'s cross-category `merge` (move + merge + `category-correction`,
+`docs/streaming-pipeline-spec.md` §4.3) — or, over a copied run, the RQ3 batch-reference harness's
+cross-category sweep — and the residual rate is reported from that `category-correction` log,
+never patched here.

@@ -37,8 +37,10 @@ export function stringSimilarity(a: string, b: string): number {
  * `(-sim, key)` tie-break M2.5 established, so neither can reintroduce the insertion-order leak that
  * made 37.6% of candidate lists run-dependent.
  *
- * `stringSimilarity` above is retained: `StreamingExtractor` and `RegistryConsolidator` still use it
- * for their pairwise suspect checks, and the metrics tests assert that
+ * `stringSimilarity` above is retained: `StreamingExtractor` and `RegistryConsolidator` (now
+ * harness-only — the RQ3 batch-reference tool, `bin/batch-reference.ts` — not the live repair
+ * path, which is `StreamingRepairer`/`SuspectGenerator`) still use it for their pairwise suspect
+ * checks, and the metrics tests assert that
  * `identity + max(levenshtein, tokenDice)` reproduces it exactly — the algebraic identity the
  * behaviour-preservation gate rests on.
  */

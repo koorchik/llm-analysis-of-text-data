@@ -118,8 +118,9 @@ export interface StreamingEntity {
   normalizedName?: string;
   /**
    * The registry surface this mention actually hit (alias or rung name), stamped beside
-   * `normalizedName`. The precondition for a *local* consolidator split: mentions reassign by the
-   * alias they matched, never by the now-ambiguous canonical (SKEIN v2 deck, repair).
+   * `normalizedName`. The precondition for a repair re-stamp (`StreamingRepairer`, spec §4.3, and
+   * the RQ3 batch-reference harness): mentions reassign by the alias they matched, never by the
+   * now-ambiguous canonical (SKEIN v2 deck, repair).
    */
   matchedVia?: string;
   code?: string;

@@ -241,7 +241,9 @@ export class SchemaRegistry {
     return this.#data.history;
   }
 
-  // Consolidator support: fold `from` (name + aliases) into `into` as aliases
+  // RQ3 batch-reference harness support (RegistryConsolidator's schema pass — the only caller;
+  // StreamingRepairer never mutates the schema registry): fold `from` (name + aliases) into
+  // `into` as aliases
   mergeEntries(kind: SchemaKind, from: string, into: string, doc: number): void {
     const entries = kind === 'category' ? this.#data.categories : this.#data.relationTypes;
     const fromIndex = entries.findIndex((entry) => entry.name === from);

@@ -108,10 +108,17 @@ All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-
 
 `FLOW=incremental` selects the streaming SKEIN v2 pipeline instead, with its own steps
 (`streamingPipeline`, `streamingExtractor`, `streamingNormalizer`, `streamingGraphBuilder`,
-`registryConsolidator`, `dataAnalyzer`). Set `CONDITION` to name the experimental arm and
+`streamingRepairer`, `dataAnalyzer`). Set `CONDITION` to name the experimental arm and
 `DECISIONS_LOG=1` to get a scorable log. `CANDIDATE_GENERATOR` selects the blocker and
 `DECISION_STRATEGY` the judge — the two ports the experiments vary along; both are folded into the
-`runId`, so arms cannot share a directory. Full reference: `docs/RUNNING-EXPERIMENTS.md`.
+`runId`, so arms cannot share a directory. Since 2026-08-05, repair is synchronous: every document
+runs phase 2 (`StreamingRepairer`) inside `streamingNormalizer`'s own `processFile`
+(`REPAIR=1` default; `streamingRepairer` as its own step is only the standalone catch-up pass for
+a registry whose repair pass never ran). The old deferred, manually-triggered
+`registryConsolidator` step is gone — the deleted consolidator's code
+(`src/Consolidator/RegistryConsolidator.ts`) survives only as the RQ3 batch-reference harness
+(`npm run batch-reference`, run against a COPY of a run directory). Full reference:
+`docs/RUNNING-EXPERIMENTS.md`; repair design: `docs/streaming-pipeline-spec.md` §4.3.
 
 ### Switching LLM Models
 Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EMBEDDINGS_PROVIDER`, `EMBEDDINGS_MODEL`. See `README-CONFIGURATION.md` for details.

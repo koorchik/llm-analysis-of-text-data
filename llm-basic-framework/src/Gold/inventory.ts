@@ -99,8 +99,10 @@ function compareStrings(a: string, b: string): number {
  * The SKEIN deck's "upstream category noise" threat made visible: categories are separate
  * annotation universes, so `Sandworm` extracted as HackerGroup in one document and Organization
  * in another can never be connected by any within-category pair — the duplicate is structural,
- * not an annotation miss. This table does not fix that (the consolidator's cross-category sweep
- * owns repair); it reports the exposure so the paper can, too.
+ * not an annotation miss. This table does not fix that (`StreamingRepairer`'s cross-category
+ * `merge` — move + merge + `category-correction`, §4.3 — owns that repair now, per document; the
+ * RQ3 batch-reference harness carries its own cross-category sweep too); it reports the exposure
+ * so the paper can, too.
  */
 export function crossCategorySurfaces(
   inventory: Inventory

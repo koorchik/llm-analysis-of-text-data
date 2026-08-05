@@ -26,6 +26,14 @@ STEPS=dataExtractor     # batch default; incremental default is 'streamingPipeli
 # Incremental flow options
 DECISIONS_LOG=1         # enable decisions.jsonl (link/mint/llm-call events; off by default)
 EDGES_FROM=layered      # graph edge mode: 'layered' | 'extracted' | 'cooccurrence'
+
+# StreamingRepairer (phase 2 of every document; on by default)
+REPAIR=1                          # default; 0 = RQ3 NAIVE arm, no repairer/GlossIndex constructed
+REPAIR_GLOSS_THRESHOLDS=default=0.92    # "Category=0.97,default=0.85" format; unset = built-in
+REPAIR_BLOCKER_THRESHOLDS=default=0.88  # same format; unset = built-in
+REPAIR_COHERENCE_THRESHOLD=0.5    # drift floor for the alias-coherence probe
+REPAIR_TOKEN_CAP=8000             # per-document repair-judge prompt budget
+REPAIR_TOP_K=5                    # suspect candidates kept per signal, per event
 ```
 
 ## API Keys (in .env file)
@@ -75,12 +83,21 @@ FLOW=incremental STEPS=streamingGraphBuilder EDGES_FROM=extracted npm start
 Streaming pipeline with emergent schema (see `docs/streaming-pipeline-spec.md`).
 Outputs to `OUTPUT_DIR/incremental/<model>/`.
 
-- `streamingPipeline` - Per-document extract → normalize (interleaved; the default)
+- `streamingPipeline` - Per-document extract → normalize → repair (interleaved; the default;
+  repair is phase 2 of `streamingNormalizer`'s own `processFile`, not a separate pass)
 - `streamingExtractor` - Extraction stage only (`extractions/`)
-- `streamingNormalizer` - Normalization stage only (`extractions/` → `artifacts/`)
+- `streamingNormalizer` - Normalization stage only (`extractions/` → `artifacts/`); runs phase-2
+  repair per document too, unless `REPAIR=0`
 - `streamingGraphBuilder` - Build `graph/nodes.csv` + `graph/edges.csv` (mode via `EDGES_FROM`)
-- `registryConsolidator` - Optional manual repair: merge duplicate canonicals, re-stamp artifacts
+- `streamingRepairer` - Standalone catch-up repair pass for documents past `repairedThrough` (an
+  existing corpus, or a run that died mid-stream); requires `REPAIR=1` (the default)
 - `dataAnalyzer` - Statistical analysis over `artifacts/`
+
+`registryConsolidator` is no longer a pipeline step. The deferred, manually-triggered consolidator
+of the previous revision is deleted as a system component; what remains
+(`src/Consolidator/RegistryConsolidator.ts`) is the RQ3 order-robustness batch-reference harness,
+run separately via `npm run batch-reference` (`bin/batch-reference.ts`) against a COPY of a run
+directory, never against a live pipeline's own output. See `docs/streaming-pipeline-spec.md` §4.3.
 
 Note: never run two processes against the same `incremental/<model>/` directory
 concurrently — the shared state files (`schema.json`, `registry.json`) assume a

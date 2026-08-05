@@ -163,7 +163,8 @@ export class ListwiseMintCandidateDecision implements DecisionStrategy {
 
       return decisions;
     } catch (error) {
-      // Mint-all is conservative and repairable by the consolidator — never abort the document.
+      // Mint-all is conservative and repairable later (StreamingRepairer phase 2, or the RQ3
+      // batch-reference harness over a copied run) — never abort the document.
       console.error(`LISTWISE-SELECT failed for doc ${first.docId}, minting all:`, error);
       return requests.map(() => mintOf('judge call failed'));
     } finally {

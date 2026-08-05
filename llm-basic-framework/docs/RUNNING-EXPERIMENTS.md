@@ -119,13 +119,22 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `LADDER_MIN_EXAMPLES` | `8` | Distinct surfaces a category must accumulate before its ladder fires (the "pending bucket"). Folds into the runId |
 | `LAMBDA` | unset (= `default=g0`) | Fold-time merge granularity for `streamingGraphBuilder`, e.g. `Software=g2,default=g0`. NOT in the runId — refolds are free; recorded in `graph/lambda.json` |
 | `LAMBDA_INTERPRETIVE` | off | `1` lets λ fold `part-of` (widening) edges; folded edges are marked `inferred` and the view labels itself interpretive |
+| `REPAIR` | `1` (on) | SKEIN v2 synchronous per-document repair (§4.3, `StreamingRepairer`), riding inside `streamingNormalizer`'s `processFile`. `REPAIR=0` is the RQ3 NAIVE arm — no repairer (and no `GlossIndex`) is constructed at all. Folds into the runId |
+| `REPAIR_GLOSS_THRESHOLDS`, `REPAIR_BLOCKER_THRESHOLDS` | unset (= conservative built-ins: 0.92, 0.88) | `"Category=0.97,default=0.85"` format; per-category floor for the gloss-ANN / union-blocker suspect probes. Folds into the runId |
+| `REPAIR_COHERENCE_THRESHOLD` | unset (= `0.5`) | Floor BELOW which an alias-add's coherence drift becomes a suspect. Folds into the runId |
+| `REPAIR_TOKEN_CAP` | `8000` | Per-document repair-judge prompt budget; components over the cap evict their lowest-scoring edge and re-scope. Folds into the runId |
+| `REPAIR_TOP_K` | `5` | Suspect candidates kept per signal, per event. Folds into the runId |
 | `EMBEDDINGS` | off | `FLOW=batch` only. `1` makes `DataNormalizer` write real vectors — and moves its output into the run directory (§4a) |
 | `SEED` | none | Recorded in the run card |
 | `TEMPERATURE`, `TOP_P`, `MAX_TOKENS` | unset | Unset means *send nothing* — see below |
 | `EDGES_FROM` | `layered` | Graph build only |
 
-Steps for `FLOW=incremental`: `streamingPipeline` (all of them), `streamingExtractor`,
-`streamingNormalizer`, `streamingGraphBuilder`, `registryConsolidator`, `dataAnalyzer`.
+Steps for `FLOW=incremental`: `streamingPipeline` (all of them — extract → normalize →, inside the
+same call, repair, per document), `streamingExtractor`, `streamingNormalizer`,
+`streamingGraphBuilder`, `streamingRepairer` (standalone catch-up for a registry whose repair pass
+never ran; requires `REPAIR=1`, the default), `dataAnalyzer`. `registryConsolidator` is no longer a
+step — the deferred consolidator is deleted as a pipeline component; what remains is the RQ3
+batch-reference harness, run separately via `npm run batch-reference` (§ below).
 For `FLOW=batch`: `dataExtractor`, `dataEntitiesCollector`, `dataNormalizer`, `dataAnalyzer`,
 `dataGraphBuilder`.
 
@@ -162,6 +171,61 @@ edit alone changes the runId** — that is what `prompts/` and `PromptProvider` 
 
 If the working tree is dirty the run warns and folds a diff hash into the runId. It will still run;
 commit before a real one.
+
+---
+
+## 3a. Full-corpus replay with repair (manual)
+
+Not the `npm run replay` decision-log tool (§5) — that replays *decision points* offline with no
+model calls at all. This is re-running phase 1+2 of the pipeline itself over an **already-extracted**
+corpus, so extraction is never re-paid, to measure the `StreamingRepairer` (§4.3 of the spec) and the
+`union` blocker together without paying for entity extraction a second time.
+
+**Documented here, not run** (user ruling 3) — the corpus available in this repo is the committed
+baseline run, not a fresh input directory, so a real invocation is left to whoever next has budget
+for it:
+
+```bash
+# 1. Fresh run directory, pre-seeded with an existing arm's extractions (the frozen baseline run
+#    committed at storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/ —
+#    see docs/REPRODUCE.md §1). Only normalize + repair run; extraction is skipped entirely
+#    because every file already exists.
+SRC=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc
+RUNDIR=../storage/cert.gov.ua/processed/experiments/<new-runId>   # printed once the run starts
+mkdir -p "$RUNDIR/extractions"
+cp "$SRC"/extractions/*.json "$RUNDIR/extractions/"
+
+# 2. Run normalization (which drives phase-2 repair via the `repairer` hook, RunConfig-checked
+#    below) over the pre-seeded extractions, union blocker + repair on:
+FLOW=incremental STEPS=streamingNormalizer DECISIONS_LOG=1 CANDIDATE_GENERATOR=union REPAIR=1 \
+  CONDITION=psi-link-union-repair LLM_PROVIDER=anthropic LLM_MODEL=claude-opus-5 \
+  EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=bge-m3 npm start
+```
+
+**Score the run by reading the histogram straight off `decisions.jsonl`** — this is a
+pipeline-plumbing check, not a scored arm for the article:
+
+- **Fire rate** — documents with an `llm-call` event of `kind: 'repair-judge'`, divided by total
+  documents processed. Most documents should have none: the repair call only fires when a suspect
+  component survives to `REPAIR_TOKEN_CAP`.
+- **Tokens/call** — `promptTokens + completionTokens` on each `repair-judge` / `repair-judge-retry`
+  `llm-call` event.
+- **Spillover count** — the count of `repair-spillover` events; expect ≈0 over a full run at the
+  default token cap (8000) unless one category's suspect graph pathologically clusters.
+- **Suspect yield by signal** — group `suspect` events by their `signal` field
+  (`union-blocker` / `gloss-ann` / `coherence` / `defer`) to see which channel is finding work.
+- **Retry rates** — the fraction of `repair-judge` calls for a document followed by a
+  `repair-judge-retry` for that same document.
+- **Defer latency** — ≤1 document, by construction: a deferred pair is consumed (cleared from the
+  queue) the next time `StreamingRepairer` gathers suspects for that document's mint, whatever the
+  verdict — it cannot linger across multiple documents.
+
+**Note (E4/R7).** `CANDIDATE_GENERATOR=union`'s dense channel embeds `name+gloss` for every
+registry surface, and the SKEIN v2 link-judge now writes real glosses (2026-08-05). A fresh
+`union` run over the SAME pre-seeded extractions can therefore retrieve different candidates than
+an earlier `union` run made before glosses existed. That is the embedding channel doing its job
+better, not a reproducibility regression — do not read a candidate-set delta between two `union`
+runs as a bug without checking whether glosses changed underneath it first.
 
 ---
 
@@ -504,14 +568,20 @@ decision strategies, live via `DECISION_STRATEGY` and offline via `replay`; the 
 v3 — the identity graph** (per-alias provenance, rungs, granularity + rename edge layers, defer
 queue); the **SKEIN v2 granularity subsystem** (2026-08-04): ladder bootstrap with N≥3 ensemble +
 validators (`LADDER_*` env), the three-verdict rung-aware link-judge
-(`link | mint | defer` + `parentCandidate` edges, `matchedVia` stamps), the consolidator's full
-merge/split/move + cross-category sweep + defer review, λ-fold on the graph builder
-(`LAMBDA`/`LAMBDA_INTERPRETIVE`), and the **run playback viewer** (`npm run view -- --run <dir>`
-→ one self-contained `run-view.html` replaying the registry/ladders document by document);
-analyzers and candidate generators — selectable at runtime via `CANDIDATE_GENERATOR`
-(string-sim, exact, TF-IDF, BM25, embedding, and `union` — the SKEIN v2 RRF composition);
-embeddings with batching, cost metering and a cross-run vector cache; merge P/R, NIL and the CESI
-suite through `bin/evaluate.ts`.
+(`link | mint | defer` + `parentCandidate` edges, `matchedVia` stamps); **registry v4 and the
+synchronous `StreamingRepairer`** (2026-08-05, `REPAIR=1` default): phase 2 of every document —
+union-blocker + gloss-ANN + coherence suspect generation, ≤1 `repair-judge` call per document, the
+full merge/distinct/rung/renamed/split/move/keep inventory, per-document re-stamp, spillover +
+adjudicated-set bookkeeping (`repair: {adjudicated, spillover, repairedThrough}`); the deferred,
+manually-triggered consolidator is deleted as a pipeline component — what remains
+(`src/Consolidator/RegistryConsolidator.ts`) is the RQ3 order-robustness batch-reference harness,
+run via `npm run batch-reference` against a COPY of a run directory, never live pipeline output;
+λ-fold on the graph builder (`LAMBDA`/`LAMBDA_INTERPRETIVE`); and the **run playback viewer**
+(`npm run view -- --run <dir>` → one self-contained `run-view.html` replaying the registry/ladders
+document by document, plus the batch-reference chapter when a harness pass ran); analyzers and
+candidate generators — selectable at runtime via `CANDIDATE_GENERATOR` (string-sim, exact, TF-IDF,
+BM25, embedding, and `union` — the SKEIN v2 RRF composition); embeddings with batching, cost
+metering and a cross-run vector cache; merge P/R, NIL and the CESI suite through `bin/evaluate.ts`.
 
 **Not built yet:**
 
