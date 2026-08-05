@@ -139,12 +139,25 @@ npm run embed-bench -- bge-m3 embeddinggemma qwen3-embedding [--k 20]
 
 Scores any Ollama embedding model on the only job the dense channel has: recall over the **24
 cross-script multi-member gold clusters**, against every gold surface in those categories as the
-distractor pool. Measured 2026-08-05 on an 8 GB box:
+distractor pool. Measured 2026-08-05 on an 8 GB box (`--k 20`, ceiling 100%):
 
-| model | recall@5 | of achievable | Country | control |
-|---|---|---|---|---|
-| `bge-m3` | 39.5% | **72.2%** | 22/22 | clean |
-| `nomic-embed-text` | 18.9% | 34.5% | 6/22 | **collapsed** |
+| model | size | dim | recall@20 | recall@5 | Country | Sector | control |
+|---|---|---|---|---|---|---|---|
+| `qwen3-embedding:8b` | 4.7 GB | 4096 | **82.8%** | 46.9% | 22/22 | 214/268 | clean |
+| `qwen3-embedding:4b` | 2.5 GB | 2560 | **76.3%** | 45.8% | 22/22 | 190/268 | clean |
+| `bge-m3` | 1.2 GB | 1024 | 69.2% | 39.5% | 22/22 | 166/268 | clean |
+| `qwen3-embedding:0.6b` | 639 MB | 1024 | 67.5% | 38.1% | 22/22 | 162/268 | clean |
+| `nomic-embed-text` | 274 MB | 768 | — | 18.9% | 6/22 | 40/268 | **collapsed** |
+
+**Country is solved by every surviving model (22/22)** — the `Росія`/`Russia` failure that motivated
+this arm does not discriminate between them. **Sector is the whole differentiator**: large
+Ukrainian-language clusters that are semantically fuzzy rather than script-mismatched.
+
+Choosing is a **co-residence** problem, not a quality one. The blocker embeds new surfaces
+interleaved with judge calls, document by document, so the embedding model and the judge model must
+BOTH stay resident or Ollama swaps gigabytes every document. On 16 GB beside a 12B judge at 32k
+(~9–10 GB), `qwen3-embedding:4b` fits comfortably and `:8b` is tight enough to risk CPU spill —
+which would slow both. Check with `ollama ps` that every resident model reads `100% GPU`.
 
 `nomic-embed-text` is disqualified by the sanity control, not the recall: it scores
 `Microsoft Word` against `Росія` at **0.959**, i.e. it collapses short proper nouns into one

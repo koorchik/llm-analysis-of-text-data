@@ -1,0 +1,66 @@
+
+> llm-basic-framework@1.0.0 embed-bench
+> node bin/embed-bench.js bge-m3 qwen3-embedding:0.6b qwen3-embedding:4b qwen3-embedding:8b --k 20
+
+
+=== bge-m3   dim=1024   name+gloss
+    cross-script gold pairs: 354 (from 24 clusters, pool 1274 surfaces)
+    recall@1 15.5%   recall@5 39.5%   recall@20 69.2%   [ceiling@20 100.0% — large clusters cannot fit in top-20]
+    achieved / achievable @20: 69.2%
+      Country            22/22 @20   (ceiling 22/22)
+      Government Body    51/58 @20   (ceiling 58/58)
+      Organization       4/4 @20   (ceiling 4/4)
+      Sector             166/268 @20   (ceiling 268/268)
+      Software           2/2 @20   (ceiling 2/2)
+    sanity control (unrelated strings — must be LOW):
+      banana ~ Russia                    0.394
+      Microsoft Word ~ Росія             0.445
+      quantum chromodynamics ~ Польща    0.253
+
+=== qwen3-embedding:0.6b   dim=1024   name+gloss
+    cross-script gold pairs: 354 (from 24 clusters, pool 1274 surfaces)
+    recall@1 13.8%   recall@5 38.1%   recall@20 67.5%   [ceiling@20 100.0% — large clusters cannot fit in top-20]
+    achieved / achievable @20: 67.5%
+      Country            22/22 @20   (ceiling 22/22)
+      Government Body    49/58 @20   (ceiling 58/58)
+      Organization       4/4 @20   (ceiling 4/4)
+      Sector             162/268 @20   (ceiling 268/268)
+      Software           2/2 @20   (ceiling 2/2)
+    sanity control (unrelated strings — must be LOW):
+      banana ~ Russia                    0.615
+      Microsoft Word ~ Росія             0.473
+      quantum chromodynamics ~ Польща    0.461
+
+=== qwen3-embedding:4b   dim=2560   name+gloss
+    cross-script gold pairs: 354 (from 24 clusters, pool 1274 surfaces)
+    recall@1 16.7%   recall@5 45.8%   recall@20 76.3%   [ceiling@20 100.0% — large clusters cannot fit in top-20]
+    achieved / achievable @20: 76.3%
+      Country            22/22 @20   (ceiling 22/22)
+      Government Body    52/58 @20   (ceiling 58/58)
+      Organization       4/4 @20   (ceiling 4/4)
+      Sector             190/268 @20   (ceiling 268/268)
+      Software           2/2 @20   (ceiling 2/2)
+    sanity control (unrelated strings — must be LOW):
+      banana ~ Russia                    0.562
+      Microsoft Word ~ Росія             0.418
+      quantum chromodynamics ~ Польща    0.441
+
+=== qwen3-embedding:8b   dim=4096   name+gloss
+    cross-script gold pairs: 354 (from 24 clusters, pool 1274 surfaces)
+    recall@1 18.1%   recall@5 46.9%   recall@20 82.8%   [ceiling@20 100.0% — large clusters cannot fit in top-20]
+    achieved / achievable @20: 82.8%
+      Country            22/22 @20   (ceiling 22/22)
+      Government Body    51/58 @20   (ceiling 58/58)
+      Organization       4/4 @20   (ceiling 4/4)
+      Sector             214/268 @20   (ceiling 268/268)
+      Software           2/2 @20   (ceiling 2/2)
+    sanity control (unrelated strings — must be LOW):
+      banana ~ Russia                    0.514
+      Microsoft Word ~ Росія             0.416
+      quantum chromodynamics ~ Польща    0.462
+
+=== ranking (by recall@20) ===
+  qwen3-embedding:8b           recall@20 82.8%   recall@1 18.1%
+  qwen3-embedding:4b           recall@20 76.3%   recall@1 16.7%
+  bge-m3                       recall@20 69.2%   recall@1 15.5%
+  qwen3-embedding:0.6b         recall@20 67.5%   recall@1 13.8%
