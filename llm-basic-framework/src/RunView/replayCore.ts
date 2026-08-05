@@ -35,13 +35,30 @@ export interface ReplayState {
   /** category → ladder versions in discovery order (each the full cached payload). */
   ladders: Record<string, unknown[]>;
   counts: { links: number; mints: number; defers: number };
+  /**
+   * T11: telemetry for the `StreamingRepairer` events that carry no structural fold of their own —
+   * `suspect`/`repair-distinct`/`gloss-flagged` tally one per occurrence (each log row is one pair
+   * or one mention); `spillover` sums the event's `size` field, so it reads as "suspects spilled"
+   * rather than "spill events logged" (one spill event can carry several queued suspects). Kept
+   * separate from `counts` so the pre-existing link/mint/defer shape never has to change.
+   */
+  repairCounts: { suspects: number; distinct: number; spillover: number; glossFlagged: number };
 }
 
 export const createEmptyState = function (): ReplayState {
-  return { categories: {}, ladders: {}, counts: { links: 0, mints: 0, defers: 0 } };
+  return {
+    categories: {},
+    ladders: {},
+    counts: { links: 0, mints: 0, defers: 0 },
+    repairCounts: { suspects: 0, distinct: 0, spillover: 0, glossFlagged: 0 },
+  };
 };
 
-/** The document an event belongs to; consolidator events (doc -1) form the repair chapter. */
+/**
+ * The document an event belongs to; consolidator events (doc -1) form the batch-reference chapter.
+ * T11: per-document repair ops (`repair-merge`/`repair-split`/`repair-move`/…) carry the REAL doc id
+ * that triggered them — the -1 chapter is now specific to the older whole-corpus consolidator pass.
+ */
 export const docOf = function (event: Record<string, unknown>): number {
   const doc = event.docId !== undefined ? event.docId : event.doc;
   return typeof doc === 'number' ? doc : -1;
@@ -115,7 +132,46 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     return;
   }
 
-  if (event.op === 'merge-canonical' && event.category) {
+  // --- T11: StreamingRepairer telemetry — no structural fold, just a running count. -------------
+
+  if (event.op === 'suspect') {
+    state.repairCounts.suspects += 1;
+    return;
+  }
+
+  if (event.op === 'repair-distinct') {
+    state.repairCounts.distinct += 1;
+    return;
+  }
+
+  if (event.op === 'repair-spillover') {
+    state.repairCounts.spillover += typeof event.size === 'number' ? event.size : 1;
+    return;
+  }
+
+  if (event.op === 'gloss-flagged') {
+    state.repairCounts.glossFlagged += 1;
+    return;
+  }
+
+  // --- T11: repair-move — a single alias relocates between canonicals, possibly cross-category. --
+
+  if (event.op === 'repair-move' && Array.isArray(event.categories) && event.categories.length === 2) {
+    const fromBucket = category(event.categories[0]);
+    const source = fromBucket.entities[event.from];
+    if (source) {
+      source.aliases = source.aliases.filter(function (alias) {
+        return alias !== event.alias;
+      });
+    }
+    const target = ensureEntity(event.categories[1], event.to, doc);
+    if (target.aliases.indexOf(event.alias) === -1) target.aliases.push(event.alias);
+    return;
+  }
+
+  // `repair-merge` (real doc id) folds exactly like `merge-canonical` (doc -1) — same field names
+  // (category/from/into), just a different origin.
+  if ((event.op === 'merge-canonical' || event.op === 'repair-merge') && event.category) {
     const bucket = category(event.category);
     const source = bucket.entities[event.from];
     const target = ensureEntity(event.category, event.into, doc);
@@ -146,7 +202,9 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     return;
   }
 
-  if (event.op === 'split-canonical' && event.category) {
+  // `repair-split` folds exactly like `split-canonical` — same structural fields
+  // (category/canonical/detached/newCanonical).
+  if ((event.op === 'split-canonical' || event.op === 'repair-split') && event.category) {
     const bucket = category(event.category);
     const source = bucket.entities[event.canonical];
     if (!source || !event.newCanonical) return;

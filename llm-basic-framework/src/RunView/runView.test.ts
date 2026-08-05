@@ -70,6 +70,85 @@ test('merge rewrites edges to the survivor; split detaches aliases; category cor
   assert.equal(state.categories.C.entities.B, undefined);
 });
 
+test('repair-merge folds like merge-canonical: mint -> suspect -> repair-merge yields one entity (T11)', () => {
+  const state = createEmptyState();
+  const events = [
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'Sandworm', target: 'Sandworm', docId: 1 },
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'Voodoo Bear', target: 'Voodoo Bear', docId: 3 },
+    {
+      op: 'suspect', doc: 4, pair: ['Sandworm', 'Voodoo Bear'], categories: ['HackerGroup', 'HackerGroup'],
+      signal: 'gloss-ann', score: 0.91,
+    },
+    {
+      op: 'repair-merge', doc: 4, category: 'HackerGroup', from: 'Voodoo Bear', into: 'Sandworm',
+      confidence: 'high', evidence: null, by: 'StreamingRepairer',
+    },
+  ];
+  for (const event of events) applyEvent(state, event as never);
+
+  const bucket = state.categories.HackerGroup;
+  assert.deepEqual(Object.keys(bucket.entities), ['Sandworm'], 'one surviving entity, Voodoo Bear folded in');
+  assert.ok(bucket.entities.Sandworm.aliases.includes('Voodoo Bear'), 'Voodoo Bear kept as an alias');
+  assert.equal(bucket.entities['Voodoo Bear'], undefined, 'no separate Voodoo Bear node');
+  assert.equal(state.repairCounts.suspects, 1, 'the suspect event accumulated');
+});
+
+test('repair-split folds like split-canonical (structural fields: canonical/detached/newCanonical)', () => {
+  const state = createEmptyState();
+  const seed = [
+    { op: 'decision', decision: 'mint', category: 'C', mention: 'A', target: 'A', docId: 1 },
+    { op: 'decision', decision: 'link', category: 'C', mention: 'a-alias', target: 'A', docId: 2 },
+  ];
+  for (const event of seed) applyEvent(state, event as never);
+
+  applyEvent(state, {
+    op: 'repair-split', doc: 5, category: 'C', canonical: 'A', detached: ['a-alias'],
+    newCanonical: 'a-alias', evidence: null, by: 'StreamingRepairer',
+  } as never);
+
+  assert.ok(state.categories.C.entities['a-alias'], 'detached alias became its own entity');
+  assert.ok(!state.categories.C.entities.A.aliases.includes('a-alias'), 'source entity lost the detached alias');
+});
+
+test('repair-move removes the alias from `from` and appends it to `to`, across categories', () => {
+  const state = createEmptyState();
+  const seed = [
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'Sandworm', target: 'Sandworm', docId: 1 },
+    { op: 'decision', decision: 'link', category: 'HackerGroup', mention: 'Iron Viking', target: 'Sandworm', docId: 2 },
+    { op: 'decision', decision: 'mint', category: 'MalwareFamily', mention: 'Industroyer', target: 'Industroyer', docId: 3 },
+  ];
+  for (const event of seed) applyEvent(state, event as never);
+
+  applyEvent(state, {
+    op: 'repair-move', doc: 6, alias: 'Iron Viking', from: 'Sandworm', to: 'Industroyer',
+    categories: ['HackerGroup', 'MalwareFamily'], evidence: null, by: 'StreamingRepairer',
+  } as never);
+
+  assert.ok(!state.categories.HackerGroup.entities.Sandworm.aliases.includes('Iron Viking'), 'alias left the source');
+  assert.ok(state.categories.MalwareFamily.entities.Industroyer.aliases.includes('Iron Viking'), 'alias arrived at the target');
+});
+
+test('suspect / repair-distinct / repair-spillover / gloss-flagged accumulate counters without touching entities', () => {
+  const state = createEmptyState();
+  applyEvent(state, { op: 'decision', decision: 'mint', category: 'C', mention: 'A', target: 'A', docId: 1 } as never);
+  applyEvent(state, { op: 'decision', decision: 'mint', category: 'C', mention: 'B', target: 'B', docId: 1 } as never);
+
+  applyEvent(state, {
+    op: 'suspect', doc: 2, pair: ['A', 'B'], categories: ['C', 'C'], signal: 'coherence', score: 0.6,
+  } as never);
+  applyEvent(state, {
+    op: 'repair-distinct', doc: 2, pair: ['A', 'B'], categories: ['C', 'C'], confidence: 'low',
+    demotedFrom: 'merge', by: 'StreamingRepairer',
+  } as never);
+  applyEvent(state, { op: 'repair-spillover', doc: 2, size: 3, reason: 'token-cap' } as never);
+  applyEvent(state, { op: 'repair-spillover', doc: 2, size: 2, reason: 'op-rejected' } as never);
+  applyEvent(state, { op: 'gloss-flagged', doc: 2, mention: 'A', category: 'C', kind: 'too-short' } as never);
+
+  assert.deepEqual(state.repairCounts, { suspects: 1, distinct: 1, spillover: 5, glossFlagged: 1 });
+  // Telemetry events never mutate the registry fold.
+  assert.deepEqual(Object.keys(state.categories.C.entities).sort(), ['A', 'B']);
+});
+
 test('self-check passes when the replay reproduces the registry, and localizes any drift', () => {
   const state = createEmptyState();
   applyEvent(state, { op: 'decision', decision: 'mint', category: 'C', mention: 'A', target: 'A', docId: 1 } as never);
@@ -125,6 +204,31 @@ test('loadRunData + renderRunViewHtml produce a self-contained page from a real 
      return s;`
   )();
   assert.deepEqual(Object.keys(embedded.categories.C.entities).sort(), ['A', 'A2']);
+});
+
+test('the -1 chapter reads "batch-reference chapter" now that repair ops carry real doc ids (T11)', async () => {
+  const dir = await fakeRun({
+    condition: 'solo', provider: 'anthropic', model: 'claude-opus-5', canonical: 'Sandworm', docIds: [1],
+  });
+  const html = renderRunViewHtml(await loadRunData(dir));
+  assert.ok(html.includes('after batch-reference chapter'));
+  assert.ok(html.includes('batch-reference chapter: consolidator operations'));
+  assert.ok(html.includes('Batch-reference operations'));
+  assert.ok(!html.includes('repair chapter:'), 'the old wording is gone');
+  assert.ok(!html.includes("'after repair (consolidator)'"), 'the old wording is gone');
+});
+
+test('the per-document event renderer gained the new T11 repair-op kinds, not just the fallback row', async () => {
+  const dir = await fakeRun({
+    condition: 'solo', provider: 'anthropic', model: 'claude-opus-5', canonical: 'Sandworm', docIds: [1],
+  });
+  const html = renderRunViewHtml(await loadRunData(dir));
+  for (const op of [
+    'repair-merge', 'repair-split', 'repair-move', 'repair-distinct', 'repair-keep',
+    'suspect', 'repair-spillover', 'gloss-flagged', 'repair-op-rejected', 'repair-op-skipped',
+  ]) {
+    assert.ok(html.includes(`'${op}'`), `${op} is matched by the per-document event renderer, not just the '<op>' fallback`);
+  }
 });
 
 /** Minimal run directory: one document, one mint, and a run card naming the arm. */

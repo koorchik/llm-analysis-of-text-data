@@ -341,8 +341,10 @@ var RUNS = ${payload};
 var runIndex = 0;
 
 // Frame f = state after processing docOrder[f-1]; frame 0 = empty; the last frame appends the
-// consolidator's repair chapter (doc -1 events logged after the stream). Every arm has its own
-// journal and therefore its own frame axis, so these are rebound on each arm switch.
+// consolidator's batch-reference chapter (doc -1 events logged after the stream — T11: per-document
+// repair ops now carry their own real doc id, so this trailing frame is specific to the older
+// whole-corpus consolidator pass). Every arm has its own journal and therefore its own frame axis,
+// so these are rebound on each arm switch.
 var repairEvents = [];
 var frameCount = 0;
 var frame = 0;
@@ -435,7 +437,7 @@ function render() {
   document.getElementById('scrubber').value = String(frame);
 
   var posLabel = frame === 0 ? 'before first document'
-    : frame > DATA.docOrder.length ? 'after repair (consolidator)'
+    : frame > DATA.docOrder.length ? 'after batch-reference chapter'
     : 'after doc ' + frame + '/' + DATA.docOrder.length;
   document.getElementById('pos').textContent = posLabel +
     ' · links ' + state.counts.links + ' · mints ' + state.counts.mints + ' · defers ' + state.counts.defers;
@@ -445,7 +447,7 @@ function render() {
     var ref = DATA.docOrder[frame - 1];
     docline = 'doc ' + ref.id + ' — ' + esc(ref.title) + ' (' + esc(ref.date) + ')';
   } else if (docId === -1) {
-    docline = 'repair chapter: consolidator operations (merge / split / edge / rename / category correction)';
+    docline = 'batch-reference chapter: consolidator operations (merge / split / edge / rename / category correction)';
   }
   document.getElementById('docline').innerHTML = docline;
 
@@ -616,7 +618,9 @@ function renderDocEvents(docId) {
   var el = document.getElementById('doc-events');
   var title = document.getElementById('doc-events-title');
   if (docId === null) { title.textContent = 'This document'; el.innerHTML = '<div class="empty">scrub forward to see per-document changes</div>'; return; }
-  title.textContent = docId === -1 ? 'Repair operations' : 'Changes from doc ' + docId;
+  // T11: "Repair operations" would now be misleading here — per-document repairs render under their
+  // own doc id ('Changes from doc N'); this frame is specifically the older batch consolidator pass.
+  title.textContent = docId === -1 ? 'Batch-reference operations' : 'Changes from doc ' + docId;
   var rows = DATA.events.filter(function (e) { return docOf(e) === docId && e.op !== 'llm-call'; });
   var calls = DATA.events.filter(function (e) { return docOf(e) === docId && e.op === 'llm-call'; });
   var html = rows.map(function (e) {
@@ -637,13 +641,32 @@ function renderDocEvents(docId) {
       return '<div class="event"><span class="op">ladder</span> ' + esc(e.category) + ' v' + esc(e.version) +
         ' — ' + esc(e.outcome) + '</div>';
     }
-    if (e.op === 'merge-canonical' || e.op === 'split-canonical' || e.op === 'rename-edge' || e.op === 'category-correction') {
-      var desc = e.op === 'merge-canonical' ? esc(e.from) + ' ⇒ ' + esc(e.into)
-        : e.op === 'split-canonical' ? esc(e.canonical) + ' ⇏ ' + esc((e.detached || []).join(', '))
+    // T11: repair-merge/repair-split/repair-move/repair-distinct/repair-keep are the StreamingRepairer's
+    // structural verdicts — same "repair" chip as the older consolidator ops they sit alongside (a T9
+    // review flagged that leaving them out of this list makes them fall through to the generic
+    // '<op>' row below, with no description).
+    if (e.op === 'merge-canonical' || e.op === 'split-canonical' || e.op === 'rename-edge' || e.op === 'category-correction' ||
+        e.op === 'repair-merge' || e.op === 'repair-split' || e.op === 'repair-move' || e.op === 'repair-distinct' || e.op === 'repair-keep') {
+      var desc = e.op === 'merge-canonical' || e.op === 'repair-merge' ? esc(e.from) + ' ⇒ ' + esc(e.into)
+        : e.op === 'split-canonical' || e.op === 'repair-split' ? esc(e.canonical) + ' ⇏ ' + esc((e.detached || []).join(', '))
         : e.op === 'rename-edge' ? esc(e.from) + ' → ' + esc(e.to)
+        : e.op === 'repair-move' ? esc(e.alias) + ': ' + esc(e.from) + ' → ' + esc(e.to)
+        : e.op === 'repair-distinct' ? esc((e.pair || []).join(' ≠ '))
+        : e.op === 'repair-keep' ? esc(e.entity)
         : esc(e.from && e.from.category) + '/' + esc(e.from && e.from.canonical) + ' ⇒ ' + esc(e.into && e.into.category);
-      return '<div class="event"><span class="op repair">' + esc(e.op.replace('-canonical', '').replace('-edge', '')) +
+      var label = e.op.replace('-canonical', '').replace('-edge', '').replace('repair-', '');
+      return '<div class="event"><span class="op repair">' + esc(label) +
         '</span> ' + desc + ' <span class="why">' + esc(e.category || '') + '</span></div>';
+    }
+    // T11 telemetry: no structural fold, but still worth surfacing as low-key rows rather than
+    // falling through to the bare '<op>' default.
+    if (e.op === 'suspect' || e.op === 'repair-spillover' || e.op === 'gloss-flagged' ||
+        e.op === 'repair-op-rejected' || e.op === 'repair-op-skipped') {
+      var telemetry = e.op === 'suspect' ? esc((e.pair || []).join(' ~ ')) + ' <span class="why">' + esc(e.signal) + ' ' + esc(e.score) + '</span>'
+        : e.op === 'repair-spillover' ? esc(e.size) + ' suspect(s) <span class="why">' + esc(e.reason) + '</span>'
+        : e.op === 'gloss-flagged' ? esc(e.mention) + ' <span class="why">' + esc(e.kind) + '</span>'
+        : esc(e.verdict) + ' <span class="why">' + esc(e.reason) + (e.detail ? ': ' + esc(e.detail) : '') + '</span>';
+      return '<div class="event"><span class="op">' + esc(e.op) + '</span> ' + telemetry + '</div>';
     }
     return '<div class="event"><span class="op">' + esc(e.op) + '</span></div>';
   }).join('');
