@@ -18,8 +18,12 @@ export interface SuspectComponent {
   coherence: EntityRef[];
 }
 
+/** Separator-free encoding — a plain `"${category} ${canonical}"` join is not collision-safe (the
+ * real category domain already contains "Government Body", and `{category:'A', canonical:'B C'}` /
+ * `{category:'A B', canonical:'C'}` would both join to `"A B C"`), and a collision here would
+ * silently fold two distinct entities into one union-find node with zero error signal. */
 function refKey(ref: EntityRef): string {
-  return `${ref.category} ${ref.canonical}`;
+  return JSON.stringify([ref.category, ref.canonical]);
 }
 
 function refEquals(a: EntityRef, b: EntityRef): boolean {
@@ -147,6 +151,12 @@ function estimatedTokens(renderBlock: (c: SuspectComponent) => string, c: Suspec
  * single (by construction, highest-scoring) pair is kept, and a component with zero pair edges
  * (coherence-only, or a lone entity) has nothing evictable at all. Either way `renderBlock` is
  * called only on non-empty components, and a component is never handed to the judge empty.
+ *
+ * A fragment produced by a split can end up with BOTH zero pairs and zero coherence entries (every
+ * edge that used to touch its one remaining entity was the one just evicted). That fragment has
+ * nothing for the judge to adjudicate — no pair op, no coherence question — and the pair(s) that
+ * used to connect it are already recorded in `spilled`, so dropping it loses no information. It is
+ * filtered out before ever reaching `renderBlock` or `fitted`/`due`.
  */
 function shrinkComponent(
   component: SuspectComponent,
@@ -159,6 +169,8 @@ function shrinkComponent(
 
   while (queue.length > 0) {
     const current = queue.shift()!;
+    if (current.pairs.length === 0 && current.coherence.length === 0) continue; // bare singleton: drop
+
     if (estimatedTokens(renderBlock, current) <= tokenCap || current.pairs.length <= 1) {
       fitted.push(current);
       continue;

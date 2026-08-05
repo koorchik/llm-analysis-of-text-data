@@ -98,6 +98,25 @@ test('buildComponents output is deterministically ordered regardless of input or
   );
 });
 
+test('refKey must not collide across a category/canonical boundary (e.g. "A"/"B C" vs "A B"/"C")', () => {
+  // A naive `${category} ${canonical}` join folds both of these to the same string "A B C" even
+  // though they name two entirely different entities — which would silently merge two unrelated
+  // pairs into one component through that shared (bogus) key.
+  const ref1 = ref('A', 'B C');
+  const other1 = ref('A', 'X');
+  const ref2 = ref('A B', 'C');
+  const other2 = ref('A B', 'Y');
+
+  const components = buildComponents([pair(ref1, other1, { score: 0.9 }), pair(ref2, other2, { score: 0.9 })]);
+
+  assert.equal(components.length, 2, 'a colliding string key must not fold unrelated entities into one component');
+  const componentOf = (target: EntityRef) =>
+    components.find((c) => c.entities.some((e) => e.category === target.category && e.canonical === target.canonical));
+  const c1 = componentOf(ref1);
+  const c2 = componentOf(ref2);
+  assert.ok(c1 && c2 && c1 !== c2, 'ref1 and ref2 must land in distinct components');
+});
+
 // --- capComponents ---------------------------------------------------------------------------------
 
 /** Concatenates each pair's two canonicals, `;`-joined — deterministic, and short enough that tests
@@ -168,10 +187,12 @@ test('a component still over cap after evicting down to one pair keeps that pair
   );
 });
 
-test('evicting an edge that would split a component re-scopes connectivity: an entity still reachable via another edge is not lost', () => {
-  // A-B (low score) and B-C (high score) chain three entities. Evicting A-B (lowest) should split
-  // the component into {A} alone and {B,C} still joined by the surviving edge — not silently drop A
-  // from every component, and not keep A falsely bundled with B/C.
+test('evicting an edge that would split a component re-scopes connectivity: B-C survives together, A is not falsely bundled with them', () => {
+  // A-B (low score) and B-C (high score) chain three entities. Evicting A-B (lowest) splits the
+  // component into {A} alone and {B,C} still joined by the surviving edge. A is left with zero
+  // pairs and zero coherence entries, so it is dropped from `due` (see the dedicated
+  // "bare singleton" test below) — but it must never be silently lost: it still shows up via the
+  // evicted pair in `spillover`, and it must never end up falsely bundled into the B-C component.
   const A = ref('HackerGroup', 'A');
   const B = ref('HackerGroup', 'B');
   const C = ref('HackerGroup', 'C');
@@ -184,15 +205,38 @@ test('evicting an edge that would split a component re-scopes connectivity: an e
   const tinyCap = renderBlock({ pairs: [highBC], entities: [], coherence: [] }).length / 4;
   const { due, spillover } = capComponents(components, renderBlock, tinyCap);
 
-  assert.deepEqual(spillover, [lowAB]);
-  // A must still show up SOMEWHERE in `due` (as its own singleton piece), never dropped entirely.
+  assert.deepEqual(spillover, [lowAB], 'A is only visible via the spilled pair, not a due entry');
   const allEntities = due.flatMap((c) => c.entities.map((e) => e.canonical));
-  assert.deepEqual(allEntities.sort(), ['A', 'B', 'C']);
+  assert.deepEqual(allEntities.sort(), ['B', 'C'], 'A must not appear as a bare due singleton');
   const bcComponent = due.find((c) => c.pairs.some((p) => p === highBC));
   assert.ok(bcComponent, 'B-C must survive as a fitted component');
   assert.deepEqual(
     bcComponent!.entities.map((e) => e.canonical).sort(),
     ['B', 'C']
+  );
+});
+
+test('a fragment left with zero pairs and zero coherence after eviction is dropped from due entirely — no bare singletons reach the judge', () => {
+  // Hub A connects to B (low score) and C (high score). Evicting A-B leaves B with no pairs and no
+  // coherence entries at all — nothing for a judge call to adjudicate, and A-B is already captured
+  // in spillover, so B must be dropped rather than emitted as an empty-ish due entry.
+  const A = ref('HackerGroup', 'A');
+  const B = ref('HackerGroup', 'B');
+  const C = ref('HackerGroup', 'C');
+  const lowAB = pair(A, B, { score: 0.1 });
+  const highAC = pair(A, C, { score: 0.9 });
+  const components = buildComponents([lowAB, highAC]);
+  assert.equal(components.length, 1);
+
+  const tinyCap = renderBlock({ pairs: [highAC], entities: [], coherence: [] }).length / 4;
+  const { due, spillover } = capComponents(components, renderBlock, tinyCap);
+
+  assert.deepEqual(spillover, [lowAB]);
+  assert.equal(due.length, 1, 'the bare B singleton must be dropped, not emitted as its own due entry');
+  assert.deepEqual(due[0].entities.map((e) => e.canonical).sort(), ['A', 'C']);
+  assert.ok(
+    !due.some((c) => c.entities.some((e) => e.canonical === 'B')),
+    'B must not appear anywhere in due'
   );
 });
 
