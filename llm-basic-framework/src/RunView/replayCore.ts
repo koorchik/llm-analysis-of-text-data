@@ -192,13 +192,11 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
       .filter(function (edge) {
         return edge.from !== edge.to;
       });
-    bucket.renames = bucket.renames
-      .map(function (edge) {
-        return { from: project(edge.from), to: project(edge.to), kind: edge.kind, by: edge.by, doc: edge.doc };
-      })
-      .filter(function (edge) {
-        return edge.from !== edge.to;
-      });
+    // Renames are LEFT ALONE, deliberately — mirrors `EntityRegistry#rewriteAfterMerge`, which never
+    // touches rename edges in either direction (user ruling 2026-08-05). The `renamed` verdict path
+    // logs `rename-edge(A→B)` immediately followed by `repair-merge(A→B)` as dual-replayable history;
+    // projecting A→B through this merge would turn it into a B→B self-loop and the same filter above
+    // would then delete it, silently erasing the rename from the Renames panel on the ROUTINE path.
     return;
   }
 

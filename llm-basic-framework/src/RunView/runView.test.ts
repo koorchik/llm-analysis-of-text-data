@@ -93,6 +93,29 @@ test('repair-merge folds like merge-canonical: mint -> suspect -> repair-merge y
   assert.equal(state.repairCounts.suspects, 1, 'the suspect event accumulated');
 });
 
+test('rename-edge survives a following repair-merge untouched — the routine renamed-verdict path (review fix)', () => {
+  // StreamingRepairer's `renamed` case logs rename-edge(A→B) immediately followed by
+  // repair-merge(A→B) as dual-replayable history (design note). The merge fold must NOT project
+  // rename edges through from→into: EntityRegistry#rewriteAfterMerge deliberately never touches
+  // rename edges in either direction (user ruling 2026-08-05), and a merge fold that did would turn
+  // {from:A,to:B} into a B→B self-loop and the edge self-loop filter would then delete it —
+  // silently erasing the rename from the Renames panel on the ROUTINE path, not an edge case.
+  const state = createEmptyState();
+  const events = [
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'A', target: 'A', docId: 1 },
+    { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'B', target: 'B', docId: 2 },
+    { op: 'rename-edge', doc: 3, category: 'HackerGroup', from: 'A', to: 'B', evidence: null, by: 'StreamingRepairer' },
+    { op: 'repair-merge', doc: 3, category: 'HackerGroup', from: 'A', into: 'B', confidence: 'high', by: 'StreamingRepairer' },
+  ];
+  for (const event of events) applyEvent(state, event as never);
+
+  const bucket = state.categories.HackerGroup;
+  assert.deepEqual(Object.keys(bucket.entities), ['B'], 'A folded into B, one surviving entity');
+  assert.equal(bucket.renames.length, 1, 'the rename edge survives the merge');
+  assert.equal(bucket.renames[0].from, 'A', 'literal from endpoint — not rewritten to the survivor');
+  assert.equal(bucket.renames[0].to, 'B', 'literal to endpoint');
+});
+
 test('repair-split folds like split-canonical (structural fields: canonical/detached/newCanonical)', () => {
   const state = createEmptyState();
   const seed = [
@@ -211,7 +234,7 @@ test('the -1 chapter reads "batch-reference chapter" now that repair ops carry r
     condition: 'solo', provider: 'anthropic', model: 'claude-opus-5', canonical: 'Sandworm', docIds: [1],
   });
   const html = renderRunViewHtml(await loadRunData(dir));
-  assert.ok(html.includes('after batch-reference chapter'));
+  assert.ok(html.includes('after the batch-reference chapter'));
   assert.ok(html.includes('batch-reference chapter: consolidator operations'));
   assert.ok(html.includes('Batch-reference operations'));
   assert.ok(!html.includes('repair chapter:'), 'the old wording is gone');
@@ -229,6 +252,47 @@ test('the per-document event renderer gained the new T11 repair-op kinds, not ju
   ]) {
     assert.ok(html.includes(`'${op}'`), `${op} is matched by the per-document event renderer, not just the '<op>' fallback`);
   }
+});
+
+test('a real repair-move and repair-spillover event render with a description, not the bare op-name fallback', async () => {
+  const dir = await fakeRun({
+    condition: 'solo', provider: 'anthropic', model: 'claude-opus-5', canonical: 'Sandworm', docIds: [1],
+  });
+  const data = await loadRunData(dir);
+  const html = renderRunViewHtml(data);
+
+  // Run the SHIPPED renderDocEvents against a minimal fake DOM — a stronger check than grepping the
+  // source for the op-name string, since it exercises the actual `desc`/`telemetry` branches.
+  const reducerSource = html.match(/<script>\n([\s\S]*?)\nvar DATA =/)![1];
+  const escSource = html.match(/var esc = function[\s\S]*?\n};\n/)![0];
+  const renderDocEventsSource = html.match(/function renderDocEvents[\s\S]*?\n}\n/)![0];
+  const events = [
+    {
+      op: 'repair-move', doc: 1, alias: 'Iron Viking', from: 'Sandworm', to: 'Industroyer',
+      categories: ['HackerGroup', 'MalwareFamily'], evidence: null, by: 'StreamingRepairer',
+    },
+    { op: 'repair-spillover', doc: 1, size: 3, reason: 'token-cap' },
+  ];
+  const rendered = new Function(
+    `${reducerSource}
+     ${escSource}
+     var elements = {};
+     var document = { getElementById: function (id) {
+       if (!elements[id]) elements[id] = { innerHTML: '', textContent: '' };
+       return elements[id];
+     } };
+     var DATA = { events: ${JSON.stringify(events)} };
+     ${renderDocEventsSource}
+     renderDocEvents(1);
+     return elements['doc-events'].innerHTML;`
+  )();
+
+  assert.match(rendered, /<span class="op repair">move<\/span>/, 'repair-move gets the repair chip, labeled "move"');
+  assert.ok(rendered.includes('Iron Viking') && rendered.includes('Sandworm') && rendered.includes('Industroyer'),
+    'repair-move description names the alias and both endpoints');
+  assert.match(rendered, /<span class="op">repair-spillover<\/span>/, 'repair-spillover keeps its raw op name (telemetry bucket)');
+  assert.ok(rendered.includes('3 suspect(s)') && rendered.includes('token-cap'),
+    'repair-spillover description carries size and reason');
 });
 
 /** Minimal run directory: one document, one mint, and a run card naming the arm. */

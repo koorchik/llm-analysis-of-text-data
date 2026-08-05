@@ -437,7 +437,7 @@ function render() {
   document.getElementById('scrubber').value = String(frame);
 
   var posLabel = frame === 0 ? 'before first document'
-    : frame > DATA.docOrder.length ? 'after batch-reference chapter'
+    : frame > DATA.docOrder.length ? 'after the batch-reference chapter'
     : 'after doc ' + frame + '/' + DATA.docOrder.length;
   document.getElementById('pos').textContent = posLabel +
     ' · links ' + state.counts.links + ' · mints ' + state.counts.mints + ' · defers ' + state.counts.defers;
