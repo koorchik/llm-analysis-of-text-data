@@ -1,0 +1,132 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    },
+    {
+      "name": "об'єкт критичної енергетичної інфраструктури України",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "об'єкт критичної енергетичної інфраструктури України",
+      "matchedVia": "об'єкт критичної енергетичної інфраструктури України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Україна",
+      "matchedVia": "Україна",
+      "code": "UA"
+    },
+    {
+      "name": "Microsoft Edge",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Microsoft Edge",
+      "matchedVia": "Microsoft Edge"
+    },
+    {
+      "name": "Windows Script Host (wscript.exe)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "wscript.exe",
+      "matchedVia": "Windows Script Host (wscript.exe)"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "curl",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "curl.exe",
+      "matchedVia": "curl"
+    },
+    {
+      "name": "TOR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Tor",
+      "matchedVia": "Tor"
+    },
+    {
+      "name": "HeadLace",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HeadLace",
+      "matchedVia": "HeadLace"
+    },
+    {
+      "name": "mockbin.org",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mockbin.org",
+      "matchedVia": "mockbin.org"
+    },
+    {
+      "name": "mocky.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mocky.io",
+      "matchedVia": "mocky.io"
+    },
+    {
+      "name": "run.mocky.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "run.mocky.io",
+      "matchedVia": "run.mocky.io"
+    },
+    {
+      "name": "webhook.site",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "webhook.site",
+      "matchedVia": "webhook.site"
+    },
+    {
+      "name": "file.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "file.io",
+      "matchedVia": "file.io"
+    },
+    {
+      "name": "ipapi.co",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ipapi.co",
+      "matchedVia": "ipapi.co"
+    },
+    {
+      "name": "portugalmail.pt",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "portugalmail.pt",
+      "matchedVia": "portugalmail.pt"
+    },
+    {
+      "name": "seznam.cz",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "seznam.cz",
+      "matchedVia": "seznam.cz"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "04.09.2023",
+    "id": 5702579,
+    "title": "Кібератака APT28: msedge як завантажувач, TOR та сервіси mockbin.org/website.hook як центр управління (CERT-UA#7469)",
+    "llmProcessingTimeSeconds": 79.239
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    },
+    {
+      "name": "MASEPIE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MASEPIE",
+      "matchedVia": "MASEPIE"
+    },
+    {
+      "name": "OCEANMAP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OCEANMAP",
+      "matchedVia": "OCEANMAP"
+    },
+    {
+      "name": "STEELHOOK",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "STEELHOOK",
+      "matchedVia": "STEELHOOK"
+    },
+    {
+      "name": "OpenSSH",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "OpenSSH",
+      "matchedVia": "OpenSSH"
+    },
+    {
+      "name": "Impacket",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Impacket",
+      "matchedVia": "Impacket"
+    },
+    {
+      "name": "SMBEXEC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "smbexec",
+      "matchedVia": "smbexec"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python",
+      "matchedVia": "Python"
+    },
+    {
+      "name": "Google Chrome",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Chrome",
+      "matchedVia": "Google Chrome"
+    },
+    {
+      "name": "Microsoft Edge",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Edge",
+      "matchedVia": "Microsoft Edge"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvs4knf1av02demj.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "czyrqdnvpujmmjkfhhvs4knf1av02demj.oast.fun",
+      "matchedVia": "czyrqdnvpujmmjkfhhvs4knf1av02demj.oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsclx05sfi23bfr.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "czyrqdnvpujmmjkfhhvsclx05sfi23bfr.oast.fun",
+      "matchedVia": "czyrqdnvpujmmjkfhhvsclx05sfi23bfr.oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsgapqr3hclnhhj.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "czyrqdnvpujmmjkfhhvsgapqr3hclnhhj.oast.fun",
+      "matchedVia": "czyrqdnvpujmmjkfhhvsgapqr3hclnhhj.oast.fun"
+    },
+    {
+      "name": "czyrqdnvpujmmjkfhhvsvlaax17vd5r6v.oast.fun",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "czyrqdnvpujmmjkfhhvsvlaax17vd5r6v.oast.fun",
+      "matchedVia": "czyrqdnvpujmmjkfhhvsvlaax17vd5r6v.oast.fun"
+    },
+    {
+      "name": "nas-files.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "nas-files.firstcloudit.com",
+      "matchedVia": "nas-files.firstcloudit.com"
+    },
+    {
+      "name": "e-nas.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "e-nas.firstcloudit.com",
+      "matchedVia": "e-nas.firstcloudit.com"
+    },
+    {
+      "name": "ua-calendar.firstcloudit.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ua-calendar.firstcloudit.com",
+      "matchedVia": "ua-calendar.firstcloudit.com"
+    },
+    {
+      "name": "webmail.facadesolutionsuae.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "webmail.facadesolutionsuae.com",
+      "matchedVia": "webmail.facadesolutionsuae.com"
+    },
+    {
+      "name": "bahouholdings.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bahouholdings.com",
+      "matchedVia": "bahouholdings.com"
+    },
+    {
+      "name": "державні організації",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи України",
+      "matchedVia": "державні організації"
+    },
+    {
+      "name": "польські організації",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "польські організації",
+      "matchedVia": "польські організації"
+    },
+    {
+      "name": "Poland",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Poland",
+      "matchedVia": "Poland",
+      "code": "PL"
+    },
+    {
+      "name": "Trellix",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Trellix",
+      "matchedVia": "Trellix"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "28.12.2023",
+    "id": 6276894,
+    "title": "APT28: від первинного ураження до створення загроз для контролеру домену за годину (CERT-UA#8399)",
+    "llmProcessingTimeSeconds": 177.305
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0057",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0057",
+      "matchedVia": "UAC-0057"
+    },
+    {
+      "name": "CVE-2023-38831",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2023-38831",
+      "matchedVia": "CVE-2023-38831"
+    },
+    {
+      "name": "WinRAR",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "WinRAR",
+      "matchedVia": "WinRAR"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "mshta.exe",
+      "matchedVia": "mshta.exe"
+    },
+    {
+      "name": "Cobalt Strike Beacon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Cobalt Strike Beacon",
+      "matchedVia": "Cobalt Strike Beacon"
+    },
+    {
+      "name": "PicassoLoader",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PicassoLoader",
+      "matchedVia": "PicassoLoader"
+    },
+    {
+      "name": "topibuzz.space",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "topibuzz.space",
+      "matchedVia": "topibuzz.space"
+    },
+    {
+      "name": "windacarmelita.pw",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "windacarmelita.pw",
+      "matchedVia": "windacarmelita.pw"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "31.08.2023",
+    "id": 5661411,
+    "title": "Кібератака UAC-0057: експлойт для CVE-2023-38831, JavaScript-варіація PicassoLoader, алгоритм Rabbit та Cobalt Strike Beacon (CERT-UA#7435)",
+    "llmProcessingTimeSeconds": 93.561
+  }
+}

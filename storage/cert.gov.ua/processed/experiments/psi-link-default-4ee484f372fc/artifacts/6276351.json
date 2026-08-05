@@ -1,0 +1,85 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050",
+      "matchedVia": "UAC-0050"
+    },
+    {
+      "name": "Remcos RAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos",
+      "matchedVia": "Remcos RAT"
+    },
+    {
+      "name": "davincigroup.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "davincigroup.online",
+      "matchedVia": "davincigroup.online"
+    },
+    {
+      "name": "groupdavinci.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "groupdavinci.online",
+      "matchedVia": "groupdavinci.online"
+    },
+    {
+      "name": "Shinjiru",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Shinjiru",
+      "matchedVia": "Shinjiru"
+    },
+    {
+      "name": "Malaysia",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Malaysia",
+      "matchedVia": "Malaysia",
+      "code": "MY"
+    },
+    {
+      "name": "REG.RU",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "reg.ru",
+      "matchedVia": "reg.ru"
+    },
+    {
+      "name": "Russia",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Russia",
+      "matchedVia": "Russia",
+      "code": "RU"
+    },
+    {
+      "name": "Security Service of Ukraine (SBU)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Security Service of Ukraine (SBU)",
+      "matchedVia": "Security Service of Ukraine (SBU)"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "13.11.2023",
+    "id": 6276351,
+    "title": "Кібератака UAC-0050 з використанням Remcos RAT, замаскована під \"запит СБУ\" (CERT-UA#8026)",
+    "llmProcessingTimeSeconds": 49.971
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "name": "Zoom",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Zoom",
+      "matchedVia": "Zoom"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Windows",
+      "matchedVia": "Windows"
+    },
+    {
+      "name": "Hashcat",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Hashcat",
+      "matchedVia": "Hashcat"
+    },
+    {
+      "name": "evil.server.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "evil.server.com",
+      "matchedVia": "evil.server.com"
+    },
+    {
+      "name": "BleepingComputer",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "BleepingComputer",
+      "matchedVia": "BleepingComputer"
+    },
+    {
+      "name": "iTnews",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "iTnews",
+      "matchedVia": "iTnews"
+    },
+    {
+      "name": "Andrea Fortuna",
+      "category": "Individual",
+      "role": "Neutral",
+      "normalizedName": "Andrea Fortuna",
+      "matchedVia": "Andrea Fortuna"
+    },
+    {
+      "name": "Security Newspaper",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Security Newspaper",
+      "matchedVia": "Security Newspaper"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "06.04.2020",
+    "id": 27,
+    "title": "Вразливість в Zoom для Windows",
+    "llmProcessingTimeSeconds": 91.484
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0063",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0063",
+      "matchedVia": "UAC-0063"
+    },
+    {
+      "name": "HATVIBE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "HATVIBE",
+      "matchedVia": "HATVIBE"
+    },
+    {
+      "name": "LOGPIE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LOGPIE",
+      "matchedVia": "LOGPIE"
+    },
+    {
+      "name": "CHERRYSPY",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CHERRYSPY",
+      "matchedVia": "CHERRYSPY"
+    },
+    {
+      "name": "STILLARCH",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "STILLARCH",
+      "matchedVia": "STILLARCH"
+    },
+    {
+      "name": "DOWNEX",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DOWNEX",
+      "matchedVia": "DOWNEX"
+    },
+    {
+      "name": "PyArmor",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PyArmor",
+      "matchedVia": "PyArmor"
+    },
+    {
+      "name": "Themida",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Themida",
+      "matchedVia": "Themida"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "mshta.exe",
+      "matchedVia": "mshta.exe"
+    },
+    {
+      "name": "Windows Script Host",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Windows Script Host",
+      "matchedVia": "Windows Script Host"
+    },
+    {
+      "name": "wscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "wscript.exe",
+      "matchedVia": "wscript.exe"
+    },
+    {
+      "name": "cscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "cscript.exe",
+      "matchedVia": "cscript.exe"
+    },
+    {
+      "name": "Python",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Python",
+      "matchedVia": "Python"
+    },
+    {
+      "name": "diagnostic-resolver.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "diagnostic-resolver.com",
+      "matchedVia": "diagnostic-resolver.com"
+    },
+    {
+      "name": "ms-webdav-miniredir.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ms-webdav-miniredir.com",
+      "matchedVia": "ms-webdav-miniredir.com"
+    },
+    {
+      "name": "net-certificate.services",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "net-certificate.services",
+      "matchedVia": "net-certificate.services"
+    },
+    {
+      "name": "Embassy of Tajikistan in Ukraine",
+      "category": "Government Body",
+      "role": "Attacker",
+      "normalizedName": "Embassy of Tajikistan in Ukraine",
+      "matchedVia": "Embassy of Tajikistan in Ukraine"
+    },
+    {
+      "name": "Tajikistan",
+      "category": "Country",
+      "role": "Attacker",
+      "normalizedName": "Tajikistan",
+      "matchedVia": "Tajikistan",
+      "code": "TJ"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Attacker",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "Government bodies of Ukraine",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Government bodies of Ukraine",
+      "matchedVia": "Government bodies of Ukraine"
+    },
+    {
+      "name": "Mongolia",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Mongolia",
+      "matchedVia": "Mongolia",
+      "code": "MN"
+    },
+    {
+      "name": "Kazakhstan",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Kazakhstan",
+      "matchedVia": "Kazakhstan",
+      "code": "KZ"
+    },
+    {
+      "name": "Kyrgyzstan",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Kyrgyzstan",
+      "matchedVia": "Kyrgyzstan",
+      "code": "KG"
+    },
+    {
+      "name": "Israel",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Israel",
+      "matchedVia": "Israel",
+      "code": "IL"
+    },
+    {
+      "name": "India",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "India",
+      "matchedVia": "India",
+      "code": "IN"
+    },
+    {
+      "name": "Bitdefender",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Bitdefender",
+      "matchedVia": "Bitdefender"
+    },
+    {
+      "name": "Namecheap",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Namecheap",
+      "matchedVia": "Namecheap"
+    },
+    {
+      "name": "Linode",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Linode",
+      "matchedVia": "Linode"
+    },
+    {
+      "name": "Cherry Servers",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Cherry Servers",
+      "matchedVia": "Cherry Servers"
+    },
+    {
+      "name": "VPS.AG",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "VPS.AG",
+      "matchedVia": "VPS.AG"
+    },
+    {
+      "name": "4vendeta",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "4vendeta",
+      "matchedVia": "4vendeta"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "22.05.2023",
+    "id": 4697016,
+    "title": "Шпигунська активність UAC-0063 у відношенні України, Казахстану, Киргизстану, Монголії, Ізраїлю, Індії (CERT-UA#6549)",
+    "llmProcessingTimeSeconds": 146.248
+  }
+}

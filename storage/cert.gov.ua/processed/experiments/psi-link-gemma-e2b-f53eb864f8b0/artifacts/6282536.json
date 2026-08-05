@@ -1,0 +1,153 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0173",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0173",
+      "matchedVia": "UAC-0173"
+    },
+    {
+      "name": "DARKCRYSTALRAT (DCRAT)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkCrystal RAT",
+      "matchedVia": "DARKCRYSTALRAT (DCRAT)"
+    },
+    {
+      "name": "RDP Wrapper",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RDPWrapper",
+      "matchedVia": "RDP Wrapper"
+    },
+    {
+      "name": "BORE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Tor",
+      "matchedVia": "BORE"
+    },
+    {
+      "name": "Nmap",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "nmap",
+      "matchedVia": "nmap"
+    },
+    {
+      "name": "Fiddler",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Fiddler",
+      "matchedVia": "Fiddler"
+    },
+    {
+      "name": "XWORM",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "XWorm",
+      "matchedVia": "XWorm"
+    },
+    {
+      "name": "SENDEMAIL",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SENDEMAIL",
+      "matchedVia": "SENDEMAIL"
+    },
+    {
+      "name": "PEAKLIGHT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PEAKLIGHT",
+      "matchedVia": "PEAKLIGHT"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "MSHTA",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "mshta.exe",
+      "matchedVia": "MSHTA"
+    },
+    {
+      "name": "WMIC",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "wmiexec",
+      "matchedVia": "WMIC"
+    },
+    {
+      "name": "LAPTOP-EBMNTFEL",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "LAPTOP-EBMNTFEL",
+      "matchedVia": "LAPTOP-EBMNTFEL"
+    },
+    {
+      "name": "Нотаріуси України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Нотаріуси України",
+      "matchedVia": "Нотаріуси України"
+    },
+    {
+      "name": "Державні реєстри України",
+      "category": "Infrastructure",
+      "role": "Target",
+      "normalizedName": "Державні реєстри України",
+      "matchedVia": "Державні реєстри України"
+    },
+    {
+      "name": "Міністерство юстиції України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство юстиції України",
+      "matchedVia": "Міністерство юстиції України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "Нотаріальна палата України",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Нотаріальна палата України",
+      "matchedVia": "Нотаріальна палата України"
+    },
+    {
+      "name": "Комісія з питань інформатизації, цифрової трансформації та запобігання кіберзлочинності Нотаріальної палати України",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Комісія з питань інформатизації, цифрової трансформації та запобігання кіберзлочинності Нотаріальної палати України",
+      "matchedVia": "Комісія з питань інформатизації, цифрової трансформації та запобігання кіберзлочинності Нотаріальної палати України"
+    },
+    {
+      "name": "ДП \"НАІС\"",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "ДП \"НАІС\"",
+      "matchedVia": "ДП \"НАІС\""
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "25.02.2025",
+    "id": 6282536,
+    "title": "UAC-0173 проти Нотаріату України (CERT-UA#13738)",
+    "llmProcessingTimeSeconds": 127.03
+  }
+}

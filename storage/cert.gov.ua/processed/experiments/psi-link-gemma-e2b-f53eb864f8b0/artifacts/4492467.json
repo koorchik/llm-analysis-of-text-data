@@ -1,0 +1,83 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "tasklist",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "tasklist",
+      "matchedVia": "tasklist"
+    },
+    {
+      "name": "systeminfo",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "systeminfo",
+      "matchedVia": "systeminfo"
+    },
+    {
+      "name": "run.mocky.io",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "run.mocky.io",
+      "matchedVia": "run.mocky.io"
+    },
+    {
+      "name": "mockbin.org",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "mockbin.org",
+      "matchedVia": "mockbin.org"
+    },
+    {
+      "name": "outlook.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "outlook.com",
+      "matchedVia": "outlook.com"
+    },
+    {
+      "name": "www.catalog.update.microsoft.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "answers.microsoft.com",
+      "matchedVia": "www.catalog.update.microsoft.com"
+    },
+    {
+      "name": "державні органи України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи України",
+      "matchedVia": "державні органи України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "28.04.2023",
+    "id": 4492467,
+    "title": "Кібератака групи APT28: розповсюдження електронних листів з \"інструкціями\" щодо \"оновлення операційної системи\" (CERT-UA#6562)",
+    "llmProcessingTimeSeconds": 60.566
+  }
+}

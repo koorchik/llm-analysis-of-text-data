@@ -1,0 +1,134 @@
+{
+  "version": "run-card-v1",
+  "runId": "psi-link-default-4ee484f372fc",
+  "condition": "psi-link-default",
+  "createdAt": "2026-08-04T17:29:50.507Z",
+  "updatedAt": "2026-08-04T19:59:12.761Z",
+  "config": {
+    "condition": "psi-link-default",
+    "orchestration": "incremental",
+    "input": {
+      "path": "../storage/cert.gov.ua/fetched",
+      "contentHash": "908f3f606afd9e4bd24724bb8e90ef33f1fdd0a3cd52fd0714ce8c2b2f71de92",
+      "fileCount": 204
+    },
+    "llm": {
+      "provider": "anthropic",
+      "model": "claude-opus-5"
+    },
+    "embeddings": {
+      "provider": "openai",
+      "model": "text-embedding-3-large"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": false,
+        "seed": false,
+        "topP": false,
+        "note": "Claude Opus 4.7+ removes temperature/top_p/top_k; non-default values return HTTP 400. Determinism substitute is replication at provider-default sampling (temperature 1.0)."
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+      "link-judge": "04514b756ee24c46644f5b9f3cae1bf965f940f618d50c4cb2674db98cc4c8ec",
+      "listwise-select": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingPipeline"
+      ],
+      "edgesFrom": "layered",
+      "decisionStrategy": "builtin-link-judge",
+      "decisionStrategyConfig": null,
+      "candidateGenerator": "string-sim(identity,max-lev-dice)",
+      "candidateGeneratorConfig": {
+        "analyzers": [
+          "identity"
+        ],
+        "metric": "max-lev-dice"
+      },
+      "candidateK": null,
+      "candidateMinSim": null,
+      "embeddings": false,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 8
+      }
+    },
+    "git": {
+      "sha": "32280d2e5220fc6764798e9cd7d39fb1d5b24370",
+      "dirty": false,
+      "diffHash": null
+    },
+    "runId": "psi-link-default-4ee484f372fc"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "psi-link-default-4ee484f372fc",
+    "totals": {
+      "calls": 105,
+      "inputTokens": 358254,
+      "outputTokens": 202382,
+      "costUsd": 6.850820000000002,
+      "unpricedCalls": 0,
+      "wallClockMs": 2405349
+    },
+    "byOperator": {
+      "ladder": {
+        "calls": 24,
+        "inputTokens": 127773,
+        "outputTokens": 77662,
+        "costUsd": 2.580415,
+        "unpricedCalls": 0,
+        "wallClockMs": 1084007
+      },
+      "link-judge": {
+        "calls": 61,
+        "inputTokens": 206662,
+        "outputTokens": 116589,
+        "costUsd": 3.948034999999999,
+        "unpricedCalls": 0,
+        "wallClockMs": 1184083
+      },
+      "country-normalize": {
+        "calls": 8,
+        "inputTokens": 6740,
+        "outputTokens": 173,
+        "costUsd": 0.038024999999999996,
+        "unpricedCalls": 0,
+        "wallClockMs": 19604
+      },
+      "pair-rule": {
+        "calls": 12,
+        "inputTokens": 17079,
+        "outputTokens": 7958,
+        "costUsd": 0.28434500000000007,
+        "unpricedCalls": 0,
+        "wallClockMs": 117655
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 0,
+    "misses": 0,
+    "entries": 0
+  },
+  "completedAt": "2026-08-04T19:59:12.760Z"
+}

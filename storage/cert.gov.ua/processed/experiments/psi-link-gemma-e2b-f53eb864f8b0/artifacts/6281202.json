@@ -1,0 +1,111 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050",
+      "matchedVia": "UAC-0050"
+    },
+    {
+      "name": "LITEMANAGER",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LiteManager",
+      "matchedVia": "LiteManager"
+    },
+    {
+      "name": "LiteManager Pro - Server",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "LiteManager",
+      "matchedVia": "LiteManager Pro - Server"
+    },
+    {
+      "name": "ROMFUSClient.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ROMFUSClient.exe",
+      "matchedVia": "ROMFUSClient.exe"
+    },
+    {
+      "name": "ROMServer.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ROMServer.exe",
+      "matchedVia": "ROMServer.exe"
+    },
+    {
+      "name": "tax-gov-ua.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gov.ua",
+      "matchedVia": "tax-gov-ua.com"
+    },
+    {
+      "name": "dpsu-gov-ua.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "gov.ua",
+      "matchedVia": "dpsu-gov-ua.com"
+    },
+    {
+      "name": "qaz.im",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.im",
+      "matchedVia": "qaz.im"
+    },
+    {
+      "name": "qaz.is",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.is",
+      "matchedVia": "qaz.is"
+    },
+    {
+      "name": "qaz.su",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "qaz.su",
+      "matchedVia": "qaz.su"
+    },
+    {
+      "name": "rozsenich.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rozsenich.com",
+      "matchedVia": "rozsenich.com"
+    },
+    {
+      "name": "Державна податкова служба України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державна податкова служба України",
+      "matchedVia": "Державна податкова служба України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "Бухгалтери підприємств",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "підприємства",
+      "matchedVia": "Бухгалтери підприємств"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "30.10.2024",
+    "id": 6281202,
+    "title": "Кібератака UAC-0050 з використанням податкової тематики та LITEMANAGER (CERT-UA#11776)",
+    "llmProcessingTimeSeconds": 69.968
+  }
+}

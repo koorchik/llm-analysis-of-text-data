@@ -1,0 +1,938 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0102",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0102",
+      "matchedVia": "UAC-0102"
+    },
+    {
+      "name": "accounts.cm1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.cm1-ukr.net",
+      "matchedVia": "accounts.cm1-ukr.net"
+    },
+    {
+      "name": "accounts.regs-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts.regs-ukr.net",
+      "matchedVia": "accounts.regs-ukr.net"
+    },
+    {
+      "name": "se-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "se-ukr.net",
+      "matchedVia": "se-ukr.net"
+    },
+    {
+      "name": "sb-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "sb-ukr.net",
+      "matchedVia": "sb-ukr.net"
+    },
+    {
+      "name": "regs-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "regs-ukr.net",
+      "matchedVia": "regs-ukr.net"
+    },
+    {
+      "name": "om-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "om-ukr.net",
+      "matchedVia": "om-ukr.net"
+    },
+    {
+      "name": "mst-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mst-ukr.net",
+      "matchedVia": "mst-ukr.net"
+    },
+    {
+      "name": "f3-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "f3-ukr.net",
+      "matchedVia": "f3-ukr.net"
+    },
+    {
+      "name": "dat1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dat1-ukr.net",
+      "matchedVia": "dat1-ukr.net"
+    },
+    {
+      "name": "8-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "8-ukr.net",
+      "matchedVia": "8-ukr.net"
+    },
+    {
+      "name": "5-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "5-ukr.net",
+      "matchedVia": "5-ukr.net"
+    },
+    {
+      "name": "4e-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "4e-ukr.net",
+      "matchedVia": "4e-ukr.net"
+    },
+    {
+      "name": "v-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "v-ukr.net",
+      "matchedVia": "v-ukr.net"
+    },
+    {
+      "name": "verify-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "verify-ukr.net",
+      "matchedVia": "verify-ukr.net"
+    },
+    {
+      "name": "v1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "v1-ukr.net",
+      "matchedVia": "v1-ukr.net"
+    },
+    {
+      "name": "tc-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tc-ukr.net",
+      "matchedVia": "tc-ukr.net"
+    },
+    {
+      "name": "signup-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "signup-ukr.net",
+      "matchedVia": "signup-ukr.net"
+    },
+    {
+      "name": "score-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "score-ukr.net",
+      "matchedVia": "score-ukr.net"
+    },
+    {
+      "name": "p3-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "p3-ukr.net",
+      "matchedVia": "p3-ukr.net"
+    },
+    {
+      "name": "k-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "k-ukr.net",
+      "matchedVia": "k-ukr.net"
+    },
+    {
+      "name": "k1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "k1-ukr.net",
+      "matchedVia": "k1-ukr.net"
+    },
+    {
+      "name": "details-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "details-ukr.net",
+      "matchedVia": "details-ukr.net"
+    },
+    {
+      "name": "cm1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cm1-ukr.net",
+      "matchedVia": "cm1-ukr.net"
+    },
+    {
+      "name": "1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "1-ukr.net",
+      "matchedVia": "1-ukr.net"
+    },
+    {
+      "name": "0-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "0-ukr.net",
+      "matchedVia": "0-ukr.net"
+    },
+    {
+      "name": "uf1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "uf1-ukr.net",
+      "matchedVia": "uf1-ukr.net"
+    },
+    {
+      "name": "mx3-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mx3-ukr.net",
+      "matchedVia": "mx3-ukr.net"
+    },
+    {
+      "name": "lvc-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "lvc-ukr.net",
+      "matchedVia": "lvc-ukr.net"
+    },
+    {
+      "name": "bnt-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bnt-ukr.net",
+      "matchedVia": "bnt-ukr.net"
+    },
+    {
+      "name": "private-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "private-ukr.net",
+      "matchedVia": "private-ukr.net"
+    },
+    {
+      "name": "msx-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "msx-ukr.net",
+      "matchedVia": "msx-ukr.net"
+    },
+    {
+      "name": "edisk-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "edisk-ukr.net",
+      "matchedVia": "edisk-ukr.net"
+    },
+    {
+      "name": "cck-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cck-ukr.net",
+      "matchedVia": "cck-ukr.net"
+    },
+    {
+      "name": "news-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "news-ukr.net",
+      "matchedVia": "news-ukr.net"
+    },
+    {
+      "name": "password-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "password-ukr.net",
+      "matchedVia": "password-ukr.net"
+    },
+    {
+      "name": "accounts-s-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts-s-ukr.net",
+      "matchedVia": "accounts-s-ukr.net"
+    },
+    {
+      "name": "kt-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "kt-ukr.net",
+      "matchedVia": "kt-ukr.net"
+    },
+    {
+      "name": "a3-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "a3-ukr.net",
+      "matchedVia": "a3-ukr.net"
+    },
+    {
+      "name": "uo-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "uo-ukr.net",
+      "matchedVia": "uo-ukr.net"
+    },
+    {
+      "name": "bh-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bh-ukr.net",
+      "matchedVia": "bh-ukr.net"
+    },
+    {
+      "name": "lv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "lv-ukr.net",
+      "matchedVia": "lv-ukr.net"
+    },
+    {
+      "name": "kg-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "kg-ukr.net",
+      "matchedVia": "kg-ukr.net"
+    },
+    {
+      "name": "dx-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dx-ukr.net",
+      "matchedVia": "dx-ukr.net"
+    },
+    {
+      "name": "kb-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "kb-ukr.net",
+      "matchedVia": "kb-ukr.net"
+    },
+    {
+      "name": "tt-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "tt-ukr.net",
+      "matchedVia": "tt-ukr.net"
+    },
+    {
+      "name": "o1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "o1-ukr.net",
+      "matchedVia": "o1-ukr.net"
+    },
+    {
+      "name": "hj-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "hj-ukr.net",
+      "matchedVia": "hj-ukr.net"
+    },
+    {
+      "name": "uq-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "uq-ukr.net",
+      "matchedVia": "uq-ukr.net"
+    },
+    {
+      "name": "serv1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "serv1-ukr.net",
+      "matchedVia": "serv1-ukr.net"
+    },
+    {
+      "name": "rew-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rew-ukr.net",
+      "matchedVia": "rew-ukr.net"
+    },
+    {
+      "name": "vv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "vv-ukr.net",
+      "matchedVia": "vv-ukr.net"
+    },
+    {
+      "name": "lc-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "lc-ukr.net",
+      "matchedVia": "lc-ukr.net"
+    },
+    {
+      "name": "td-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "td-ukr.net",
+      "matchedVia": "td-ukr.net"
+    },
+    {
+      "name": "mf-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mf-ukr.net",
+      "matchedVia": "mf-ukr.net"
+    },
+    {
+      "name": "reg-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "reg-ukr.net",
+      "matchedVia": "reg-ukr.net"
+    },
+    {
+      "name": "el-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "el-ukr.net",
+      "matchedVia": "el-ukr.net"
+    },
+    {
+      "name": "acc-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "acc-ukr.net",
+      "matchedVia": "acc-ukr.net"
+    },
+    {
+      "name": "login-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "login-ukr.net",
+      "matchedVia": "login-ukr.net"
+    },
+    {
+      "name": "confirm-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "confirm-ukr.net",
+      "matchedVia": "confirm-ukr.net"
+    },
+    {
+      "name": "accounts-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts-ukr.net",
+      "matchedVia": "accounts-ukr.net"
+    },
+    {
+      "name": "support-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "support-ukr.net",
+      "matchedVia": "support-ukr.net"
+    },
+    {
+      "name": "numsecukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "numsecukr.net",
+      "matchedVia": "numsecukr.net"
+    },
+    {
+      "name": "crv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "crv-ukr.net",
+      "matchedVia": "crv-ukr.net"
+    },
+    {
+      "name": "bld-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bld-ukr.net",
+      "matchedVia": "bld-ukr.net"
+    },
+    {
+      "name": "virtual-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "virtual-ukr.net",
+      "matchedVia": "virtual-ukr.net"
+    },
+    {
+      "name": "settingsukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "settingsukr.net",
+      "matchedVia": "settingsukr.net"
+    },
+    {
+      "name": "session-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "session-ukr.net",
+      "matchedVia": "session-ukr.net"
+    },
+    {
+      "name": "mxukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mxukr.net",
+      "matchedVia": "mxukr.net"
+    },
+    {
+      "name": "dubl-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dubl-ukr.net",
+      "matchedVia": "dubl-ukr.net"
+    },
+    {
+      "name": "cmx-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cmx-ukr.net",
+      "matchedVia": "cmx-ukr.net"
+    },
+    {
+      "name": "static-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "static-ukr.net",
+      "matchedVia": "static-ukr.net"
+    },
+    {
+      "name": "stage-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "stage-ukr.net",
+      "matchedVia": "stage-ukr.net"
+    },
+    {
+      "name": "safe-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "safe-ukr.net",
+      "matchedVia": "safe-ukr.net"
+    },
+    {
+      "name": "s9-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "s9-ukr.net",
+      "matchedVia": "s9-ukr.net"
+    },
+    {
+      "name": "reply-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "reply-ukr.net",
+      "matchedVia": "reply-ukr.net"
+    },
+    {
+      "name": "prot-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "prot-ukr.net",
+      "matchedVia": "prot-ukr.net"
+    },
+    {
+      "name": "pm-kv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "pm-kv-ukr.net",
+      "matchedVia": "pm-kv-ukr.net"
+    },
+    {
+      "name": "mta-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mta-ukr.net",
+      "matchedVia": "mta-ukr.net"
+    },
+    {
+      "name": "mod-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mod-ukr.net",
+      "matchedVia": "mod-ukr.net"
+    },
+    {
+      "name": "ksr1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ksr1-ukr.net",
+      "matchedVia": "ksr1-ukr.net"
+    },
+    {
+      "name": "files-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "files-ukr.net",
+      "matchedVia": "files-ukr.net"
+    },
+    {
+      "name": "client-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "client-ukr.net",
+      "matchedVia": "client-ukr.net"
+    },
+    {
+      "name": "clients-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "clients-ukr.net",
+      "matchedVia": "clients-ukr.net"
+    },
+    {
+      "name": "web-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "web-ukr.net",
+      "matchedVia": "web-ukr.net"
+    },
+    {
+      "name": "step-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "step-ukr.net",
+      "matchedVia": "step-ukr.net"
+    },
+    {
+      "name": "site-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "site-ukr.net",
+      "matchedVia": "site-ukr.net"
+    },
+    {
+      "name": "settings-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "settings-ukr.net",
+      "matchedVia": "settings-ukr.net"
+    },
+    {
+      "name": "pgh-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "pgh-ukr.net",
+      "matchedVia": "pgh-ukr.net"
+    },
+    {
+      "name": "pas-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "pas-ukr.net",
+      "matchedVia": "pas-ukr.net"
+    },
+    {
+      "name": "int-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "int-ukr.net",
+      "matchedVia": "int-ukr.net"
+    },
+    {
+      "name": "inbox-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "inbox-ukr.net",
+      "matchedVia": "inbox-ukr.net"
+    },
+    {
+      "name": "cca-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cca-ukr.net",
+      "matchedVia": "cca-ukr.net"
+    },
+    {
+      "name": "btx-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "btx-ukr.net",
+      "matchedVia": "btx-ukr.net"
+    },
+    {
+      "name": "2fa-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "2fa-ukr.net",
+      "matchedVia": "2fa-ukr.net"
+    },
+    {
+      "name": "vh-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "vh-ukr.net",
+      "matchedVia": "vh-ukr.net"
+    },
+    {
+      "name": "out-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "out-ukr.net",
+      "matchedVia": "out-ukr.net"
+    },
+    {
+      "name": "in-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "in-ukr.net",
+      "matchedVia": "in-ukr.net"
+    },
+    {
+      "name": "cvi-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "cvi-ukr.net",
+      "matchedVia": "cvi-ukr.net"
+    },
+    {
+      "name": "stv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "stv-ukr.net",
+      "matchedVia": "stv-ukr.net"
+    },
+    {
+      "name": "pge-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "pge-ukr.net",
+      "matchedVia": "pge-ukr.net"
+    },
+    {
+      "name": "accounts---ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts---ukr.net",
+      "matchedVia": "accounts---ukr.net"
+    },
+    {
+      "name": "changepassword-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "changepassword-ukr.net",
+      "matchedVia": "changepassword-ukr.net"
+    },
+    {
+      "name": "accounts--ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "accounts--ukr.net",
+      "matchedVia": "accounts--ukr.net"
+    },
+    {
+      "name": "uc-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "uc-ukr.net",
+      "matchedVia": "uc-ukr.net"
+    },
+    {
+      "name": "ub-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ub-ukr.net",
+      "matchedVia": "ub-ukr.net"
+    },
+    {
+      "name": "ck-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ck-ukr.net",
+      "matchedVia": "ck-ukr.net"
+    },
+    {
+      "name": "kv-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "kv-ukr.net",
+      "matchedVia": "kv-ukr.net"
+    },
+    {
+      "name": "k1v-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "k1v-ukr.net",
+      "matchedVia": "k1v-ukr.net"
+    },
+    {
+      "name": "vn-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "vn-ukr.net",
+      "matchedVia": "vn-ukr.net"
+    },
+    {
+      "name": "ser-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ser-ukr.net",
+      "matchedVia": "ser-ukr.net"
+    },
+    {
+      "name": "p-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "p-ukr.net",
+      "matchedVia": "p-ukr.net"
+    },
+    {
+      "name": "lt-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "lt-ukr.net",
+      "matchedVia": "lt-ukr.net"
+    },
+    {
+      "name": "ml-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ml-ukr.net",
+      "matchedVia": "ml-ukr.net"
+    },
+    {
+      "name": "m1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "m1-ukr.net",
+      "matchedVia": "m1-ukr.net"
+    },
+    {
+      "name": "u1-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "u1-ukr.net",
+      "matchedVia": "u1-ukr.net"
+    },
+    {
+      "name": "l-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "l-ukr.net",
+      "matchedVia": "l-ukr.net"
+    },
+    {
+      "name": "mail-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mail-ukr.net",
+      "matchedVia": "mail-ukr.net"
+    },
+    {
+      "name": "conf-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "conf-ukr.net",
+      "matchedVia": "conf-ukr.net"
+    },
+    {
+      "name": "account-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "account-ukr.net",
+      "matchedVia": "account-ukr.net"
+    },
+    {
+      "name": "notify-ukr.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "notify-ukr.net",
+      "matchedVia": "notify-ukr.net"
+    },
+    {
+      "name": "UKR.NET",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "UKR.NET",
+      "matchedVia": "UKR.NET"
+    },
+    {
+      "name": "Користувачі UKR.NET",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Користувачі UKR.NET",
+      "matchedVia": "Користувачі UKR.NET"
+    },
+    {
+      "name": "громадяни України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи України",
+      "matchedVia": "громадяни України"
+    },
+    {
+      "name": "Internet Domain Service BS Corp.",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Internet Domain Service BS Corp.",
+      "matchedVia": "Internet Domain Service BS Corp."
+    },
+    {
+      "name": "internet.bs",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "internet.bs",
+      "matchedVia": "internet.bs"
+    },
+    {
+      "name": "Domaintools",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Domaintools",
+      "matchedVia": "Domaintools"
+    },
+    {
+      "name": "Nice-IT",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Nice-IT",
+      "matchedVia": "Nice-IT"
+    },
+    {
+      "name": "as49447.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "as49447.net",
+      "matchedVia": "as49447.net"
+    },
+    {
+      "name": "Нідерланди",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Нідерланди",
+      "matchedVia": "Нідерланди",
+      "code": "NL"
+    },
+    {
+      "name": "Багамські острови",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Багамські острови",
+      "matchedVia": "Багамські острови",
+      "code": "BS"
+    },
+    {
+      "name": "CSIRT-NBU",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "CSIRT-NBU",
+      "matchedVia": "CSIRT-NBU"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "19.06.2023",
+    "id": 4928679,
+    "title": "Цільові кібератаки UAC-0102 у відношенні користувачів сервісу UKR.NET (CERT-UA#6858)",
+    "llmProcessingTimeSeconds": 196.42
+  }
+}

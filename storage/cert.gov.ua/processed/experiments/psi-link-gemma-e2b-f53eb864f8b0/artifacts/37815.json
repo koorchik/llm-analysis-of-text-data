@@ -1,0 +1,154 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0020 (Vermin)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0020 (Vermin)",
+      "matchedVia": "UAC-0020 (Vermin)"
+    },
+    {
+      "name": "ЛНР",
+      "category": "Country",
+      "role": "Attacker",
+      "normalizedName": "ЛНР",
+      "matchedVia": "ЛНР",
+      "code": "N/A"
+    },
+    {
+      "name": "SPECTR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR",
+      "matchedVia": "SPECTR"
+    },
+    {
+      "name": "SPECTR.Usb",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Usb",
+      "matchedVia": "SPECTR.Usb"
+    },
+    {
+      "name": "SPECTR.Shell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Shell",
+      "matchedVia": "SPECTR.Shell"
+    },
+    {
+      "name": "SPECTR.Fs",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Fs",
+      "matchedVia": "SPECTR.Fs"
+    },
+    {
+      "name": "SPECTR.Info",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Info",
+      "matchedVia": "SPECTR.Info"
+    },
+    {
+      "name": "SPECTR.Archiver",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Archiver",
+      "matchedVia": "SPECTR.Archiver"
+    },
+    {
+      "name": "SPECTR.Installer",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "installer.exe",
+      "matchedVia": "SPECTR.Installer"
+    },
+    {
+      "name": "SPECTR.PluginLoader",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.PluginLoader",
+      "matchedVia": "SPECTR.PluginLoader"
+    },
+    {
+      "name": "SPECTR.Spectator2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR.Spectator2",
+      "matchedVia": "SPECTR.Spectator2"
+    },
+    {
+      "name": "getmod.host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "getmod.host",
+      "matchedVia": "getmod.host"
+    },
+    {
+      "name": "syncapp.host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "syncapp.host",
+      "matchedVia": "syncapp.host"
+    },
+    {
+      "name": "netbin.host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "netbin.host",
+      "matchedVia": "netbin.host"
+    },
+    {
+      "name": "stormpredictor.host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "stormpredictor.host",
+      "matchedVia": "stormpredictor.host"
+    },
+    {
+      "name": "meteolink.host",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "meteolink.host",
+      "matchedVia": "meteolink.host"
+    },
+    {
+      "name": "Міністерство оборони України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство оборони України",
+      "matchedVia": "Міністерство оборони України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Україна",
+      "matchedVia": "Україна",
+      "code": "UA"
+    },
+    {
+      "name": "державні органи України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи України",
+      "matchedVia": "державні органи України"
+    },
+    {
+      "name": "vServerCo",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "vServerCo",
+      "matchedVia": "vServerCo"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "17.03.2022",
+    "id": 37815,
+    "title": "Кібератака групи UAC-0020 (Vermin) на державні організації України з використанням шкідливої програми SPECTR (CERT-UA#4207)",
+    "llmProcessingTimeSeconds": 87.351
+  }
+}

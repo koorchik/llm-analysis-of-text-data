@@ -1,0 +1,96 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0097",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0097",
+      "matchedVia": "UAC-0097"
+    },
+    {
+      "name": "CVE-2018-6882",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2018-6882",
+      "matchedVia": "CVE-2018-6882"
+    },
+    {
+      "name": "Zimbra Collaboration Suite",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Zimbra Collaboration Suite",
+      "matchedVia": "Zimbra Collaboration Suite"
+    },
+    {
+      "name": "junit.js",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "junit.js",
+      "matchedVia": "junit.js"
+    },
+    {
+      "name": "kmtacn.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "kmtacn.com",
+      "matchedVia": "kmtacn.com"
+    },
+    {
+      "name": "cdn.jsdelivr.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "cdn.jsdelivr.net",
+      "matchedVia": "cdn.jsdelivr.net"
+    },
+    {
+      "name": "github.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "github.com",
+      "matchedVia": "github.com"
+    },
+    {
+      "name": "wiki.zimbra.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "wiki.zimbra.com",
+      "matchedVia": "wiki.zimbra.com"
+    },
+    {
+      "name": "hotmail.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "hotmail.com",
+      "matchedVia": "hotmail.com"
+    },
+    {
+      "name": "yandex.ru",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "yandex.ru",
+      "matchedVia": "yandex.ru"
+    },
+    {
+      "name": "Zimbra",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Zimbra",
+      "matchedVia": "Zimbra"
+    },
+    {
+      "name": "GitHub",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "GitHub",
+      "matchedVia": "GitHub"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "14.04.2022",
+    "id": 39606,
+    "title": "Кібератака на державні організації України з використанням експлойту для XSS вразливості в Zimbra Collaboration Suite (CVE-2018-6882) (CERT-UA#4461)",
+    "llmProcessingTimeSeconds": 67.039
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0041",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0041",
+      "matchedVia": "UAC-0041"
+    },
+    {
+      "name": "MarsStealer",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MarsStealer",
+      "matchedVia": "MarsStealer"
+    },
+    {
+      "name": "drive.google.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "drive.google.com",
+      "matchedVia": "drive.google.com"
+    },
+    {
+      "name": "api.dev-com.sc",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "api.dev-com.sc",
+      "matchedVia": "api.dev-com.sc"
+    },
+    {
+      "name": "dev-com.sc",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "dev-com.sc",
+      "matchedVia": "dev-com.sc"
+    },
+    {
+      "name": "Ukrainian citizens",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian citizens",
+      "matchedVia": "Ukrainian citizens"
+    },
+    {
+      "name": "Ukrainian organizations",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian organizations",
+      "matchedVia": "Ukrainian organizations"
+    },
+    {
+      "name": "Міністерство освіти та науки України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Міністерство освіти та науки України",
+      "matchedVia": "Міністерство освіти та науки України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Ukraine",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "Racoon",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Racoon",
+      "matchedVia": "Racoon"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "30.03.2022",
+    "id": 38606,
+    "title": "Масове розповсюдження шкідливої програми MarsStealer серед громадян України та вітчизняних організацій (CERT-UA#4315)",
+    "llmProcessingTimeSeconds": 83.073
+  }
+}

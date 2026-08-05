@@ -1,0 +1,82 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0028",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0028",
+      "matchedVia": "UAC-0028"
+    },
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    },
+    {
+      "name": "UKR.NET",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "UKR.NET",
+      "matchedVia": "UKR.NET"
+    },
+    {
+      "name": "Pipedream",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Pipedream",
+      "matchedVia": "Pipedream"
+    },
+    {
+      "name": "panelunregistertle-348.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "panelunregistertle-348.frge.io",
+      "matchedVia": "panelunregistertle-348.frge.io"
+    },
+    {
+      "name": "eoy7zvsvn6xfcmy.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eoy7zvsvn6xfcmy.m.pipedream.net",
+      "matchedVia": "eoy7zvsvn6xfcmy.m.pipedream.net"
+    },
+    {
+      "name": "eo9p1d2bfmioiot.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eo9p1d2bfmioiot.m.pipedream.net",
+      "matchedVia": "eo9p1d2bfmioiot.m.pipedream.net"
+    },
+    {
+      "name": "eoiw8lhjwuc3sh2.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eoiw8lhjwuc3sh2.m.pipedream.net",
+      "matchedVia": "eoiw8lhjwuc3sh2.m.pipedream.net"
+    },
+    {
+      "name": "frge.io",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "frge.io",
+      "matchedVia": "frge.io"
+    },
+    {
+      "name": "tinyurl.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "tinyurl.com",
+      "matchedVia": "tinyurl.com"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "16.03.2022",
+    "id": 37788,
+    "title": "Фішингова кампанія з використанням тематики сервісу UKR.NET та QR-кодів (CERT-UA#4193)",
+    "llmProcessingTimeSeconds": 61.285
+  }
+}

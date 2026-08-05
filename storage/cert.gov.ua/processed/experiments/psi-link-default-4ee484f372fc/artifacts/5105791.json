@@ -1,0 +1,154 @@
+{
+  "entities": [
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    },
+    {
+      "name": "ГУ ГШ ЗС РФ",
+      "category": "Government Body",
+      "role": "Attacker",
+      "normalizedName": "гу гш зс рф",
+      "matchedVia": "гу гш зс рф"
+    },
+    {
+      "name": "Russia",
+      "category": "Country",
+      "role": "Attacker",
+      "normalizedName": "Russia",
+      "matchedVia": "Russia",
+      "code": "RU"
+    },
+    {
+      "name": "Ubiquiti devices (EdgeOS)",
+      "category": "Device",
+      "role": "Attacker",
+      "normalizedName": "Ubiquiti devices (EdgeOS)",
+      "matchedVia": "Ubiquiti devices (EdgeOS)"
+    },
+    {
+      "name": "EdgeOS",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "EdgeOS",
+      "matchedVia": "EdgeOS"
+    },
+    {
+      "name": "robot-876.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "robot-876.frge.io",
+      "matchedVia": "robot-876.frge.io"
+    },
+    {
+      "name": "setnewcreds.ukr.net.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "setnewcreds.ukr.net.frge.io",
+      "matchedVia": "setnewcreds.ukr.net.frge.io"
+    },
+    {
+      "name": "setnewcred.ukr.net.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "setnewcred.ukr.net.frge.io",
+      "matchedVia": "setnewcred.ukr.net.frge.io"
+    },
+    {
+      "name": "mail-gov-ua.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "mail-gov-ua.frge.io",
+      "matchedVia": "mail-gov-ua.frge.io"
+    },
+    {
+      "name": "_.ukr.net.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "_.ukr.net.frge.io",
+      "matchedVia": "_.ukr.net.frge.io"
+    },
+    {
+      "name": "ukr.net.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ukr.net.frge.io",
+      "matchedVia": "ukr.net.frge.io"
+    },
+    {
+      "name": "net.frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "net.frge.io",
+      "matchedVia": "net.frge.io"
+    },
+    {
+      "name": "frge.io",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "frge.io",
+      "matchedVia": "frge.io"
+    },
+    {
+      "name": "eos93vb2cwsu3xf.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eos93vb2cwsu3xf.m.pipedream.net",
+      "matchedVia": "eos93vb2cwsu3xf.m.pipedream.net"
+    },
+    {
+      "name": "eopkne8kapj01xi.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eopkne8kapj01xi.m.pipedream.net",
+      "matchedVia": "eopkne8kapj01xi.m.pipedream.net"
+    },
+    {
+      "name": "Посольство Ісламської Республіки Іран в Тірані",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Посольство Ісламської Республіки Іран в Тірані",
+      "matchedVia": "Посольство Ісламської Республіки Іран в Тірані"
+    },
+    {
+      "name": "Iran",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Iran",
+      "matchedVia": "Iran",
+      "code": "IR"
+    },
+    {
+      "name": "Центр оборонних стратегій",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Центр оборонних стратегій",
+      "matchedVia": "Центр оборонних стратегій"
+    },
+    {
+      "name": "@cyber__sloth",
+      "category": "Individual",
+      "role": "Neutral",
+      "normalizedName": "@cyber__sloth",
+      "matchedVia": "@cyber__sloth"
+    },
+    {
+      "name": "@BushidoToken",
+      "category": "Individual",
+      "role": "Neutral",
+      "normalizedName": "@BushidoToken",
+      "matchedVia": "@BushidoToken"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "08.07.2023",
+    "id": 5105791,
+    "title": "Фішингові атаки групи APT28 (UAC-0028) з метою отримання автентифікаційних даних до публічних поштових сервісів (CERT-UA#6975)",
+    "llmProcessingTimeSeconds": 89.315
+  }
+}

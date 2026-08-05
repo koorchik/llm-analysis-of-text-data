@@ -1,0 +1,82 @@
+{
+  "entities": [
+    {
+      "name": "Check Point",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Check Point",
+      "matchedVia": "Check Point"
+    },
+    {
+      "name": "WinRAR",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "WinRAR",
+      "matchedVia": "WinRAR"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Windows",
+      "matchedVia": "Windows"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "zakon.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "zakon.rar",
+      "matchedVia": "zakon.rar"
+    },
+    {
+      "name": "CVE-2018-20250",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "CVE-2018-20250",
+      "matchedVia": "CVE-2018-20250"
+    },
+    {
+      "name": "CVE-2018-20251",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "CVE-2018-20251",
+      "matchedVia": "CVE-2018-20251"
+    },
+    {
+      "name": "CVE-2018-20252",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "CVE-2018-20252",
+      "matchedVia": "CVE-2018-20252"
+    },
+    {
+      "name": "CVE-2018-20253",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "CVE-2018-20253",
+      "matchedVia": "CVE-2018-20253"
+    },
+    {
+      "name": "WinRAR 5.70 Beta 1",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "WinRAR 5.70 Beta 1",
+      "matchedVia": "WinRAR 5.70 Beta 1"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "28.02.2019",
+    "id": 2695,
+    "title": "Зараз в Україні активно розповсюджується шкідливе програмне забезпечення, яке використовує WinRAR exploit (#CVE-2018-20250).",
+    "llmProcessingTimeSeconds": 97.277
+  }
+}

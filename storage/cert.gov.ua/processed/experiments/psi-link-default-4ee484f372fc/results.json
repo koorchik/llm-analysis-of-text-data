@@ -1,0 +1,129 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 2559,
+    "members": 2687,
+    "byStratum": {
+      "b": 2,
+      "c": 66,
+      "a": 2491
+    },
+    "bySplit": {
+      "test": 2559
+    },
+    "clustersWithEvidence": 0,
+    "edges": 155,
+    "nilLabels": 3224
+  },
+  "results": [
+    {
+      "condition": "psi-link-default",
+      "runIds": [
+        "psi-link-default-4ee484f372fc"
+      ],
+      "tier": "default-sampling",
+      "merge": {
+        "b": {
+          "stratum": "b",
+          "pairs": 2,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 2,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": null,
+          "recall": 0,
+          "f1": null
+        },
+        "c": {
+          "stratum": "c",
+          "pairs": 3491,
+          "truePositives": 90,
+          "falsePositives": 0,
+          "falseNegatives": 162,
+          "trueNegatives": 3239,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.35714285714285715,
+          "f1": 0.5263157894736842
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 1383438,
+          "truePositives": 15,
+          "falsePositives": 3,
+          "falseNegatives": 5,
+          "trueNegatives": 1383415,
+          "skipped": 0,
+          "precision": 0.8333333333333334,
+          "recall": 0.75,
+          "f1": 0.7894736842105262
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 1386931,
+          "truePositives": 105,
+          "falsePositives": 3,
+          "falseNegatives": 169,
+          "trueNegatives": 1386654,
+          "skipped": 0,
+          "precision": 0.9722222222222222,
+          "recall": 0.38321167883211676,
+          "f1": 0.5497382198952879
+        }
+      },
+      "nil": {
+        "truePositives": 2563,
+        "falsePositives": 51,
+        "falseNegatives": 8,
+        "trueNegatives": 65,
+        "deferred": 5,
+        "deferredOnNil": 2,
+        "observations": 2692,
+        "deferralRate": 0.0018573551263001485,
+        "precision": 0.9804896710022953,
+        "recall": 0.996113486202876,
+        "f1": 0.9882398303450934
+      },
+      "cluster": {
+        "universeSize": 2687,
+        "predictedClusters": 2617,
+        "goldClusters": 2559,
+        "macro": {
+          "precision": 0.9977072984333206,
+          "recall": 0.9792887846815163,
+          "f1": 0.9884122443088242
+        },
+        "micro": {
+          "precision": 0.9977670264235207,
+          "recall": 0.9754372906587272,
+          "f1": 0.9864758114885128
+        },
+        "pairwise": {
+          "precision": 0.9459459459459459,
+          "recall": 0.38321167883211676,
+          "f1": 0.5454545454545454
+        },
+        "bCubed": {
+          "precision": 0.9977670264235207,
+          "recall": 0.9730244386552538,
+          "f1": 0.9852404153329962
+        },
+        "ari": 0.54543464351225
+      },
+      "cost": {
+        "calls": 105,
+        "inputTokens": 358254,
+        "outputTokens": 202382,
+        "costUsd": 6.850820000000002,
+        "unpricedCalls": 0,
+        "wallClockMs": 2405349
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

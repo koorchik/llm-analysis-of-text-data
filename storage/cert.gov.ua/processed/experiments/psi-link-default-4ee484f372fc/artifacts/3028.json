@@ -1,0 +1,439 @@
+{
+  "entities": [
+    {
+      "name": "Agent Tesla",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Agent Tesla",
+      "matchedVia": "Agent Tesla"
+    },
+    {
+      "name": "badpdf.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "badpdf.com",
+      "matchedVia": "badpdf.com"
+    },
+    {
+      "name": "chinagrill.co",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "chinagrill.co",
+      "matchedVia": "chinagrill.co"
+    },
+    {
+      "name": "RegAsm.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RegAsm.exe",
+      "matchedVia": "RegAsm.exe"
+    },
+    {
+      "name": "vaultcli.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "vaultcli.dll",
+      "matchedVia": "vaultcli.dll"
+    },
+    {
+      "name": "WinSCP",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "WinSCP",
+      "matchedVia": "WinSCP"
+    },
+    {
+      "name": "WinSCP",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "WinSCP",
+      "matchedVia": "WinSCP"
+    },
+    {
+      "name": "dyndns.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "dyndns.com",
+      "matchedVia": "dyndns.com"
+    },
+    {
+      "name": "docs.microsoft.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "docs.microsoft.com",
+      "matchedVia": "docs.microsoft.com"
+    },
+    {
+      "name": "winscp.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "winscp.net",
+      "matchedVia": "winscp.net"
+    },
+    {
+      "name": "virustotal.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "virustotal.com",
+      "matchedVia": "virustotal.com"
+    },
+    {
+      "name": "cert.gov.ua",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "cert.gov.ua",
+      "matchedVia": "cert.gov.ua"
+    },
+    {
+      "name": "cuckoo.cert.ee",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "cuckoo.cert.ee",
+      "matchedVia": "cuckoo.cert.ee"
+    },
+    {
+      "name": "app.any.run",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "app.any.run",
+      "matchedVia": "app.any.run"
+    },
+    {
+      "name": "analyze.intezer.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "analyze.intezer.com",
+      "matchedVia": "analyze.intezer.com"
+    },
+    {
+      "name": "Google Chrome",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Chrome",
+      "matchedVia": "Google Chrome"
+    },
+    {
+      "name": "Mozilla Firefox",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Firefox",
+      "matchedVia": "Mozilla Firefox"
+    },
+    {
+      "name": "Microsoft Outlook",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Outlook",
+      "matchedVia": "Microsoft Outlook"
+    },
+    {
+      "name": "IceDragon",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "IceDragon",
+      "matchedVia": "IceDragon"
+    },
+    {
+      "name": "Yandex Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Yandex Browser",
+      "matchedVia": "Yandex Browser"
+    },
+    {
+      "name": "Iridium Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Iridium Browser",
+      "matchedVia": "Iridium Browser"
+    },
+    {
+      "name": "Epic Privacy Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Epic Privacy Browser",
+      "matchedVia": "Epic Privacy Browser"
+    },
+    {
+      "name": "Chromium Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Chromium Browser",
+      "matchedVia": "Chromium Browser"
+    },
+    {
+      "name": "7Star Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "7Star Browser",
+      "matchedVia": "7Star Browser"
+    },
+    {
+      "name": "Torch Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Torch Browser",
+      "matchedVia": "Torch Browser"
+    },
+    {
+      "name": "ChromePlus Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "ChromePlus Browser",
+      "matchedVia": "ChromePlus Browser"
+    },
+    {
+      "name": "Kometa Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Kometa Browser",
+      "matchedVia": "Kometa Browser"
+    },
+    {
+      "name": "Amigo Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Amigo Browser",
+      "matchedVia": "Amigo Browser"
+    },
+    {
+      "name": "Brave Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Brave Browser",
+      "matchedVia": "Brave Browser"
+    },
+    {
+      "name": "CentBrowser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CentBrowser",
+      "matchedVia": "CentBrowser"
+    },
+    {
+      "name": "Liebao Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Liebao Browser",
+      "matchedVia": "Liebao Browser"
+    },
+    {
+      "name": "Elements Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Elements Browser",
+      "matchedVia": "Elements Browser"
+    },
+    {
+      "name": "Vivaldi Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Vivaldi Browser",
+      "matchedVia": "Vivaldi Browser"
+    },
+    {
+      "name": "Citrio Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Citrio Browser",
+      "matchedVia": "Citrio Browser"
+    },
+    {
+      "name": "360Chrome Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "360Chrome Browser",
+      "matchedVia": "360Chrome Browser"
+    },
+    {
+      "name": "Uran Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Uran Browser",
+      "matchedVia": "Uran Browser"
+    },
+    {
+      "name": "Chedot Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Chedot Browser",
+      "matchedVia": "Chedot Browser"
+    },
+    {
+      "name": "Orbitum Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Orbitum Browser",
+      "matchedVia": "Orbitum Browser"
+    },
+    {
+      "name": "Sputnik Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Sputnik Browser",
+      "matchedVia": "Sputnik Browser"
+    },
+    {
+      "name": "Comodo Dragon Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Comodo Dragon Browser",
+      "matchedVia": "Comodo Dragon Browser"
+    },
+    {
+      "name": "CocCoc Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CocCoc Browser",
+      "matchedVia": "CocCoc Browser"
+    },
+    {
+      "name": "QIP Surf Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "QIP Surf Browser",
+      "matchedVia": "QIP Surf Browser"
+    },
+    {
+      "name": "Coowon Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Coowon Browser",
+      "matchedVia": "Coowon Browser"
+    },
+    {
+      "name": "Opera Browser",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Opera Browser",
+      "matchedVia": "Opera Browser"
+    },
+    {
+      "name": "Internet Explorer",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Internet Explorer",
+      "matchedVia": "Internet Explorer"
+    },
+    {
+      "name": "Thunderbird",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Thunderbird",
+      "matchedVia": "Thunderbird"
+    },
+    {
+      "name": "Claws Mail",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Claws Mail",
+      "matchedVia": "Claws Mail"
+    },
+    {
+      "name": "Postbox Credential",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Postbox Credential",
+      "matchedVia": "Postbox Credential"
+    },
+    {
+      "name": "Foxmail",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Foxmail",
+      "matchedVia": "Foxmail"
+    },
+    {
+      "name": "Opera Mail",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Opera Mail",
+      "matchedVia": "Opera Mail"
+    },
+    {
+      "name": "Pocomail",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Pocomail",
+      "matchedVia": "Pocomail"
+    },
+    {
+      "name": "Becky!",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Becky!",
+      "matchedVia": "Becky!"
+    },
+    {
+      "name": "OpenVPN",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "OpenVPN",
+      "matchedVia": "OpenVPN"
+    },
+    {
+      "name": "FileZilla",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Filezilla",
+      "matchedVia": "Filezilla"
+    },
+    {
+      "name": "Paltalk",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Paltalk",
+      "matchedVia": "Paltalk"
+    },
+    {
+      "name": "jDownloader",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "jDownloader",
+      "matchedVia": "jDownloader"
+    },
+    {
+      "name": "SmartFTP",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "SmartFTP",
+      "matchedVia": "SmartFTP"
+    },
+    {
+      "name": "FTP Commander",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "FTP Commander",
+      "matchedVia": "FTP Commander"
+    },
+    {
+      "name": "WS_FTP",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "WS_FTP",
+      "matchedVia": "WS_FTP"
+    },
+    {
+      "name": "FTPGetter",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "FTPGetter",
+      "matchedVia": "FTPGetter"
+    },
+    {
+      "name": "Trillian",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Trillian",
+      "matchedVia": "Trillian"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "07.08.2020",
+    "id": 3028,
+    "title": "Agent Tesla (шкідливе програмне забезпечення)",
+    "llmProcessingTimeSeconds": 143.046
+  }
+}
