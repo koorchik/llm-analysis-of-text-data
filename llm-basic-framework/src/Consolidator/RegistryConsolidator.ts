@@ -7,12 +7,10 @@ import {
 } from '../Normalization/analyzers';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
+import { restampArtifacts } from '../Repair/restampArtifacts';
 import { SchemaRegistry, SchemaEntry } from '../SchemaRegistry/SchemaRegistry';
-import { sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import { stringSimilarity } from '../utils/similarityUtils';
-import { StreamingArtifact, extractAndParseJson } from '../utils/validationUtils';
-import { existsSync } from 'fs';
-import fs from 'fs/promises';
+import { extractAndParseJson } from '../utils/validationUtils';
 
 interface Params {
   artifactsDir: string;
@@ -131,7 +129,12 @@ export class RegistryConsolidator {
     await this.#schemaRegistry.save();
 
     console.time('CONSOLIDATE re-stamp');
-    await this.#restampArtifacts();
+    const { changed, total } = await restampArtifacts({
+      artifactsDir: this.#artifactsDir,
+      entityRegistry: this.#entityRegistry,
+      schemaRegistry: this.#schemaRegistry,
+    });
+    console.log(`Re-stamped ${changed}/${total} artifacts`);
     console.timeEnd('CONSOLIDATE re-stamp');
 
     console.log('Consolidation done. Re-run the streamingGraphBuilder step to rebuild the graph.');
@@ -470,50 +473,5 @@ export class RegistryConsolidator {
         completionTokens: response?.usage.outputTokens,
       });
     }
-  }
-
-  // Pass 3: deterministic re-stamp of artifacts through the updated alias→canonical maps.
-  // No LLM, no re-extraction — the only permitted artifact mutation (spec §3.4).
-  async #restampArtifacts() {
-    if (!existsSync(this.#artifactsDir)) return;
-
-    const files = sortByNumericId(await fs.readdir(this.#artifactsDir));
-    let changed = 0;
-
-    for (const file of files) {
-      const filePath = `${this.#artifactsDir}/${file}`;
-      const original = (await fs.readFile(filePath)).toString();
-      const artifact = JSON.parse(original) as StreamingArtifact;
-
-      for (const entity of artifact.entities) {
-        entity.category = this.#schemaRegistry.resolveCategory(entity.category) || entity.category;
-        // Re-stamp by `matchedVia` — the alias surface the mention actually hit — never by the
-        // now-ambiguous canonical. This is what keeps a split LOCAL: detached aliases now resolve
-        // to the split-off canonical, and exactly their mentions follow.
-        const canonical =
-          (entity.matchedVia && this.#entityRegistry.resolve(entity.category, entity.matchedVia)) ||
-          this.#entityRegistry.resolve(entity.category, entity.name);
-        if (canonical) entity.normalizedName = canonical;
-      }
-
-      for (const relation of artifact.relations || []) {
-        relation.headCategory =
-          this.#schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
-        relation.tailCategory =
-          this.#schemaRegistry.resolveCategory(relation.tailCategory) || relation.tailCategory;
-        const head = this.#entityRegistry.resolve(relation.headCategory, relation.head);
-        if (head) relation.normalizedHead = head;
-        const tail = this.#entityRegistry.resolve(relation.tailCategory, relation.tail);
-        if (tail) relation.normalizedTail = tail;
-      }
-
-      const updated = JSON.stringify(artifact, undefined, 2);
-      if (updated !== original) {
-        await writeJsonAtomic(filePath, artifact);
-        changed++;
-      }
-    }
-
-    console.log(`Re-stamped ${changed}/${files.length} artifacts`);
   }
 }
