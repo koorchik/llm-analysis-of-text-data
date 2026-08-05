@@ -1,4 +1,12 @@
-import { EntityRegistry, type RegistryDataV1, type RegistryDataV2 } from './EntityRegistry';
+import {
+  EntityRegistry,
+  type RegistryDataV1,
+  type RegistryDataV2,
+  type RegistryDataV3,
+  type RegistryDataV4,
+  type AdjudicatedEntry,
+  type SuspectPair,
+} from './EntityRegistry';
 import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -87,14 +95,14 @@ test('an explicit constructor policy wins over the file’s', async () => {
   assert.equal(registry.canonicalPolicy, 'highest-degree');
 });
 
-test('writes v3 and round-trips through the reader', async () => {
+test('writes v4 and round-trips through the reader', async () => {
   const registry = await seeded([
     { category: 'HackerGroup', canonical: 'APT28', aliases: ['Fancy Bear'], doc: 5 },
   ]);
   await registry.save();
 
   const written = JSON.parse(await fs.readFile(registry.filePath, 'utf8'));
-  assert.equal(written.version, 3);
+  assert.equal(written.version, 4);
   assert.equal(written.canonicalPolicy, 'first-seen');
   assert.equal(written.categories.HackerGroup.APT28.aliases[0].surface, 'APT28');
   assert.equal(written.categories.HackerGroup.APT28.aliases[0].decision, 'mint');
@@ -601,7 +609,7 @@ test('v3 round-trips rungs, granularity/rename edges and the defer queue', async
   await registry.save();
 
   const raw = JSON.parse(await fs.readFile(registry.filePath, 'utf8'));
-  assert.equal(raw.version, 3);
+  assert.equal(raw.version, 4, 'save() always writes the current file version, v4 since T3');
 
   const reloaded = new EntityRegistry({ filePath: registry.filePath });
   await reloaded.load();
@@ -712,4 +720,321 @@ test('clearDeferred removes only consumed entries', async () => {
 
   registry.clearDeferred([{ category: 'C', mention: 'x', mintedAs: 'A', candidates: [], docId: 1 }]);
   assert.deepEqual(registry.deferred().map((d) => d.mention), ['y']);
+});
+
+// --- v4: repair state (T3) -------------------------------------------------------------------------
+
+test('a v3 file loads with empty repair state', async () => {
+  const filePath = await tmpPath();
+  const v3: RegistryDataV3 = {
+    version: 3,
+    canonicalPolicy: 'first-seen',
+    categories: {
+      C: { A: { aliases: [{ surface: 'A', docId: 1, decision: 'mint' }], firstSeen: { doc: 1, date: '' } } },
+    },
+    granularityEdges: {},
+    renameEdges: {},
+    deferQueue: [],
+  };
+  await fs.writeFile(filePath, JSON.stringify(v3));
+
+  const registry = new EntityRegistry({ filePath });
+  await registry.load();
+  assert.deepEqual(registry.repairState(), { adjudicated: [], spillover: [], repairedThrough: -1 });
+});
+
+test('v4 round-trips repair state through parse/toJSON', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+  ]);
+  registry.pushAdjudicated({
+    a: { category: 'C', canonical: 'A' },
+    b: { category: 'C', canonical: 'B' },
+    signature: 'sig-1',
+    verdict: 'distinct',
+    docId: 5,
+  });
+  registry.pushSpillover([
+    {
+      a: { category: 'C', canonical: 'A' },
+      b: { category: 'C', canonical: 'B' },
+      signal: 'defer',
+      score: 0.5,
+      docId: 6,
+    },
+  ]);
+  registry.setRepairedThrough(6);
+  await registry.save();
+
+  const written = JSON.parse(await fs.readFile(registry.filePath, 'utf8')) as RegistryDataV4;
+  assert.equal(written.version, 4);
+  assert.equal(written.repair.adjudicated.length, 1);
+  assert.equal(written.repair.spillover.length, 1);
+  assert.equal(written.repair.repairedThrough, 6);
+
+  const reloaded = new EntityRegistry({ filePath: registry.filePath });
+  await reloaded.load();
+  assert.deepEqual(reloaded.repairState(), registry.repairState());
+});
+
+test('setRepairedThrough / pushSpillover / drainSpillover round-trip in memory', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', doc: 1 }]);
+  assert.equal(registry.repairState().repairedThrough, -1, 'nothing repaired yet');
+
+  registry.setRepairedThrough(3);
+  assert.equal(registry.repairState().repairedThrough, 3);
+
+  const pair: SuspectPair = {
+    a: { category: 'C', canonical: 'A' },
+    b: { category: 'C', canonical: 'A' },
+    signal: 'coherence',
+    score: 0.9,
+    docId: 4,
+  };
+  registry.pushSpillover([pair]);
+  assert.deepEqual(registry.repairState().spillover, [pair]);
+
+  const drained = registry.drainSpillover();
+  assert.deepEqual(drained, [pair]);
+  assert.deepEqual(registry.repairState().spillover, [], 'drained, not just read');
+});
+
+test('findAdjudicated matches an unordered pair', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+  ]);
+  const entry: AdjudicatedEntry = {
+    a: { category: 'C', canonical: 'A' },
+    b: { category: 'C', canonical: 'B' },
+    signature: 'sig',
+    verdict: 'distinct',
+    docId: 3,
+  };
+  registry.pushAdjudicated(entry);
+
+  assert.deepEqual(
+    registry.findAdjudicated({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'B' }),
+    entry
+  );
+  assert.deepEqual(
+    registry.findAdjudicated({ category: 'C', canonical: 'B' }, { category: 'C', canonical: 'A' }),
+    entry,
+    'unordered'
+  );
+  assert.equal(
+    registry.findAdjudicated({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'ghost' }),
+    undefined
+  );
+});
+
+test('adjudicated entries naming absorbed canonicals are pruned lazily on findAdjudicated', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+    { category: 'C', canonical: 'Untouched1', doc: 3 },
+    { category: 'C', canonical: 'Untouched2', doc: 4 },
+  ]);
+  const stale: AdjudicatedEntry = {
+    a: { category: 'C', canonical: 'A' },
+    b: { category: 'C', canonical: 'B' },
+    signature: 'sig-stale',
+    verdict: 'distinct',
+    docId: 1,
+  };
+  const alive: AdjudicatedEntry = {
+    a: { category: 'C', canonical: 'Untouched1' },
+    b: { category: 'C', canonical: 'Untouched2' },
+    signature: 'sig-alive',
+    verdict: 'distinct',
+    docId: 1,
+  };
+  registry.pushAdjudicated(stale);
+  registry.pushAdjudicated(alive);
+
+  registry.applyMerges('C', [{ from: 'B', into: 'A' }]); // B absorbed — stale entry's premise is gone
+
+  assert.equal(
+    registry.findAdjudicated({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'B' }),
+    undefined,
+    'B no longer exists as a live canonical — its verdict is stale'
+  );
+  assert.deepEqual(registry.repairState().adjudicated, [alive], 'untouched entry survives');
+});
+
+test('adjudicated entries naming unknown canonicals are pruned on load', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', doc: 1 }]);
+  registry.pushAdjudicated({
+    a: { category: 'C', canonical: 'A' },
+    b: { category: 'C', canonical: 'Ghost' }, // never a live canonical — e.g. a hand-edited file
+    signature: 'sig',
+    verdict: 'distinct',
+    docId: 1,
+  });
+  await registry.save();
+
+  const reloaded = new EntityRegistry({ filePath: registry.filePath });
+  await reloaded.load();
+  assert.deepEqual(reloaded.repairState().adjudicated, []);
+});
+
+// --- moveAlias (T3) ---------------------------------------------------------------------------------
+
+test('moveAlias reattaches one alias record to a different canonical', async () => {
+  const registry = await seeded(
+    [
+      { category: 'C', canonical: 'A', aliases: ['stray'], doc: 1 },
+      { category: 'C', canonical: 'B', doc: 2 },
+    ],
+    { runId: 'run-repair' }
+  );
+
+  const ok = registry.moveAlias(
+    { category: 'C', canonical: 'A' },
+    { category: 'C', canonical: 'B' },
+    'stray',
+    { docId: 9, evidence: 'misattributed' }
+  );
+
+  assert.equal(ok, true);
+  assert.deepEqual(surfaces(registry, 'C', 'A'), ['A']);
+  assert.deepEqual(surfaces(registry, 'C', 'B'), ['B', 'stray']);
+  assert.equal(registry.resolve('C', 'stray'), 'B', 'index follows the move');
+  assert.equal(registry.matchedSurface('C', 'stray'), 'stray');
+
+  const moved = registry.records('C').B.aliases.find((a) => a.surface === 'stray')!;
+  assert.equal(moved.decision, 'move');
+  assert.equal(moved.docId, 9);
+  assert.equal(moved.evidence, 'misattributed');
+  assert.equal(moved.addedBy, 'run-repair');
+});
+
+test('moveAlias works across categories', async () => {
+  const registry = await seeded([
+    { category: 'Organization', canonical: 'atera', aliases: ['Atera Networks'], doc: 1 },
+    { category: 'Software', canonical: 'atera-rmm', doc: 2 },
+  ]);
+
+  assert.equal(
+    registry.moveAlias(
+      { category: 'Organization', canonical: 'atera' },
+      { category: 'Software', canonical: 'atera-rmm' },
+      'Atera Networks',
+      { docId: 3 }
+    ),
+    true
+  );
+  assert.equal(registry.resolve('Organization', 'Atera Networks'), undefined);
+  assert.equal(registry.resolve('Software', 'Atera Networks'), 'atera-rmm');
+});
+
+test('moveAlias refuses to detach a canonical from its own name', async () => {
+  const registry = await seeded([
+    { category: 'C', canonical: 'A', doc: 1 },
+    { category: 'C', canonical: 'B', doc: 2 },
+  ]);
+  assert.equal(
+    registry.moveAlias({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'B' }, 'A', { docId: 1 }),
+    false
+  );
+  assert.deepEqual(surfaces(registry, 'C', 'A'), ['A'], 'unchanged');
+});
+
+test('moveAlias refuses unknown endpoints and unknown aliases', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', aliases: ['x'], doc: 1 }]);
+  assert.equal(
+    registry.moveAlias({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'ghost' }, 'x', {
+      docId: 1,
+    }),
+    false
+  );
+  assert.equal(
+    registry.moveAlias({ category: 'C', canonical: 'ghost' }, { category: 'C', canonical: 'A' }, 'x', {
+      docId: 1,
+    }),
+    false
+  );
+  assert.equal(
+    registry.moveAlias({ category: 'C', canonical: 'A' }, { category: 'C', canonical: 'A' }, 'not-there', {
+      docId: 1,
+    }),
+    false,
+    'unknown alias surface'
+  );
+});
+
+// --- renameInto (T3) --------------------------------------------------------------------------------
+
+test('renameInto absorbs from into to and records a literal renamed-to edge', async () => {
+  const registry = await seeded([
+    { category: 'HackerGroup', canonical: 'Sandworm', aliases: ['Voodoo Bear'], doc: 1 },
+    { category: 'HackerGroup', canonical: 'APT44', doc: 2 },
+  ]);
+
+  const ok = registry.renameInto('HackerGroup', {
+    from: 'Sandworm',
+    to: 'APT44',
+    docId: 10,
+    evidence: 'CERT rename bulletin',
+    validFrom: '2024-01-01',
+  });
+
+  assert.equal(ok, true);
+  assert.deepEqual(Object.keys(registry.records('HackerGroup')).sort(), ['APT44']);
+  assert.deepEqual(surfaces(registry, 'HackerGroup', 'APT44'), ['APT44', 'Sandworm', 'Voodoo Bear']);
+  assert.equal(registry.resolve('HackerGroup', 'Sandworm'), 'APT44');
+
+  const edges = registry.renameEdges('HackerGroup');
+  assert.equal(edges.length, 1);
+  assert.deepEqual(
+    { from: edges[0].from, to: edges[0].to, decision: edges[0].decision },
+    { from: 'Sandworm', to: 'APT44', decision: 'repairer' },
+    'literal historical endpoints, repairer provenance'
+  );
+});
+
+test('renameInto keeps the rename edge intact through a later unrelated merge', async () => {
+  const registry = await seeded([
+    { category: 'HackerGroup', canonical: 'Sandworm', doc: 1 },
+    { category: 'HackerGroup', canonical: 'APT44', doc: 2 },
+    { category: 'HackerGroup', canonical: 'X', doc: 3 },
+    { category: 'HackerGroup', canonical: 'Y', doc: 4 },
+  ]);
+  registry.renameInto('HackerGroup', { from: 'Sandworm', to: 'APT44', docId: 5 });
+
+  // Unrelated merge elsewhere in the same category — must not touch the rename edge at all, not
+  // even to rewrite it or drop a self-loop it never had. #rewriteAfterMerge is shared by both
+  // callers, so this pins the change at the shared method, not just renameInto's own call.
+  registry.applyMerges('HackerGroup', [{ from: 'Y', into: 'X' }]);
+
+  const edges = registry.renameEdges('HackerGroup');
+  assert.equal(edges.length, 1);
+  assert.equal(edges[0].from, 'Sandworm');
+  assert.equal(edges[0].to, 'APT44');
+});
+
+test('renameInto edge stays literal even when a later applyMerges folds away its own "to" endpoint', async () => {
+  const registry = await seeded([
+    { category: 'HackerGroup', canonical: 'Sandworm', doc: 1 },
+    { category: 'HackerGroup', canonical: 'APT44', doc: 2 },
+    { category: 'HackerGroup', canonical: 'APT44-Alt', doc: 3 },
+  ]);
+  registry.renameInto('HackerGroup', { from: 'Sandworm', to: 'APT44', docId: 5 });
+  registry.applyMerges('HackerGroup', [{ from: 'APT44-Alt', into: 'APT44' }]);
+
+  const edges = registry.renameEdges('HackerGroup');
+  assert.equal(edges.length, 1);
+  assert.deepEqual(
+    { from: edges[0].from, to: edges[0].to },
+    { from: 'Sandworm', to: 'APT44' },
+    'endpoints stay literal even though APT44 just absorbed another canonical'
+  );
+});
+
+test('renameInto refuses unknown or identical endpoints', async () => {
+  const registry = await seeded([{ category: 'C', canonical: 'A', doc: 1 }]);
+  assert.equal(registry.renameInto('C', { from: 'A', to: 'A', docId: 1 }), false);
+  assert.equal(registry.renameInto('C', { from: 'A', to: 'ghost', docId: 1 }), false);
+  assert.equal(registry.renameInto('C', { from: 'ghost', to: 'A', docId: 1 }), false);
 });

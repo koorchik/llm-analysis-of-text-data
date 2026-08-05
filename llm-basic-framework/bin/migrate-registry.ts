@@ -61,13 +61,15 @@ async function main() {
   );
 
   console.log(`file:        ${inPath}`);
-  console.log(`detected:    ${wasV1 ? 'v1' : 'v2'}${filePolicy ? ` (canonicalPolicy: ${filePolicy})` : ''}`);
+  // parse() now accepts v1-v4 (T3 added v4's repair layer); this script only cares which side of
+  // the v1 boundary a file falls on, since v2+ all read and write without needing a migration step.
+  console.log(`detected:    ${wasV1 ? 'v1' : 'v2+'}${filePolicy ? ` (canonicalPolicy: ${filePolicy})` : ''}`);
   console.log(`categories:  ${Object.keys(categories).length}`);
   console.log(`canonicals:  ${canonicals}`);
   console.log(`aliases:     ${aliases}`);
 
   if (!wasV1) {
-    console.log('\nAlready v2 — nothing to migrate.');
+    console.log('\nAlready v2 or newer — nothing to migrate (only v1 needs this script).');
     return;
   }
 

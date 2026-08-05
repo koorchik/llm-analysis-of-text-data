@@ -74,7 +74,7 @@ export type Rung = 'g0' | 'g1' | 'g2' | 'g3';
  */
 export type GranularityEdgeKind = 'coarsens-to' | 'part-of';
 
-export type EdgeDecision = 'judge' | 'consolidator' | 'ladder-binding' | 'migrated';
+export type EdgeDecision = 'judge' | 'consolidator' | 'ladder-binding' | 'migrated' | 'repairer';
 
 /** Finer → coarser, same category. Per-edge provenance mirrors `AliasRecord` — the precondition
  * for a *local* split (one bad edge deletes without unpicking a transitive merge). */
@@ -104,8 +104,9 @@ export interface RenameEdge {
 }
 
 /**
- * A judge `defer` = provisional mint + this queue entry. The consolidator reviews the queue;
- * decisions.jsonl is never read at runtime (deck rule 10), so the queue lives in registry state.
+ * A judge `defer` = provisional mint + this queue entry. The StreamingRepairer consumes the queue
+ * each document, replacing the old deferred-to-the-end RegistryConsolidator sweep; decisions.jsonl
+ * is never read at runtime (wiki rule 10), so the queue lives in registry state.
  */
 export interface DeferredPair {
   category: string;
@@ -153,6 +154,68 @@ export interface RegistryDataV3 {
   deferQueue: DeferredPair[];
 }
 
+// --- v4: repair layer (SKEIN v2 StreamingRepairer) ---------------------------------------------
+
+/** Points at one canonical, the unit the repairer's suspects and verdicts are expressed over. */
+export interface EntityRef {
+  category: string;
+  canonical: string;
+}
+
+/**
+ * A candidate duplicate pair surfaced during streaming — the input to adjudication, not yet a
+ * verdict. Spillover (pairs a document's judge budget did not reach) is this same shape, queued for
+ * the next document rather than lost, which is what makes the repairer incremental instead of a
+ * deferred batch sweep in disguise.
+ */
+export interface SuspectPair {
+  a: EntityRef;
+  b: EntityRef;
+  signal: 'gloss-ann' | 'union-blocker' | 'defer' | 'coherence';
+  score: number;
+  docId: number;
+}
+
+/**
+ * A recorded verdict on one suspect pair (or one entity, for `keep`, where `b === a`) — the
+ * repairer's memo so the same pair is never re-adjudicated after a `distinct` call, and a `keep`
+ * entity is not re-flagged by future gloss/rung noise.
+ *
+ * `signature` is opaque here by design: the registry stores and compares strings, never computes
+ * the hash itself. It is a sha256 over both members' sorted folded alias sets plus glosses,
+ * computed by the caller (SuspectGenerator) at adjudication time; a later call recomputes the same
+ * signature over the *current* member state and compares. `''` is the sentinel for "no computable
+ * signature" (a retained suspect awaiting more evidence) and must never compare equal to anything,
+ * including another `''` — that comparison is the caller's job, this type just carries the string.
+ */
+export interface AdjudicatedEntry {
+  a: EntityRef;
+  b: EntityRef; // b === a for single-entity (coherence 'keep') entries
+  signature: string;
+  verdict: 'distinct' | 'rung' | 'keep';
+  docId: number;
+}
+
+/**
+ * v4 adds the repair layer on top of v3's identity graph. `adjudicated` and `spillover` are the
+ * StreamingRepairer's own working memory, not derived from the graph — which is why they need
+ * their own persistence rather than being reconstructible from categories/edges.
+ */
+export interface RegistryDataV4 extends Omit<RegistryDataV3, 'version'> {
+  version: 4;
+  repair: {
+    adjudicated: AdjudicatedEntry[];
+    spillover: SuspectPair[];
+    /** Highest docId the repairer has fully processed; -1 means none yet. */
+    repairedThrough: number;
+  };
+}
+
+/** A fresh, unaliased default — every v1/v2/v3 load and every constructed registry gets its own. */
+function emptyRepair(): RegistryDataV4['repair'] {
+  return { adjudicated: [], spillover: [], repairedThrough: -1 };
+}
+
 export interface MergeOp {
   from: string;
   into: string;
@@ -188,6 +251,7 @@ export class EntityRegistry {
   #granularityEdges: Record<string, GranularityEdge[]> = {};
   #renameEdges: Record<string, RenameEdge[]> = {};
   #deferQueue: DeferredPair[] = [];
+  #repair: RegistryDataV4['repair'] = emptyRepair();
   #aliasIndex = new Map<string, Map<string, string>>(); // category → lowercased alias → canonical
   #loaded = false;
   #dirty = false;
@@ -217,22 +281,27 @@ export class EntityRegistry {
     if (existsSync(this.filePath)) {
       const content = await fs.readFile(this.filePath);
       const parsed = JSON.parse(content.toString());
-      const { categories, policy, wasV1, granularityEdges, renameEdges, deferQueue } =
+      const { categories, policy, wasV1, granularityEdges, renameEdges, deferQueue, repair } =
         EntityRegistry.parse(parsed);
       this.#categories = categories;
       this.#granularityEdges = granularityEdges;
       this.#renameEdges = renameEdges;
       this.#deferQueue = deferQueue;
+      this.#repair = repair;
       this.#loadedFromV1 = wasV1;
       // An explicit constructor policy wins; otherwise adopt whatever the file recorded.
       if (policy && this.canonicalPolicy === DEFAULT_POLICY) this.canonicalPolicy = policy;
     }
 
     this.#rebuildIndex();
+    // Adjudicated entries name canonicals literally; a repair absorbed since the entry was written
+    // (merge/renameInto/split from a previous run) leaves it stale. Prune on load as well as lazily
+    // on findAdjudicated, so a reload never carries dead-canonical verdicts forward silently.
+    this.#pruneAdjudicated();
     this.#loaded = true;
   }
 
-  /** Normalises any on-disk shape (v1/v2/v3) into v3 state. Exported for the migrator and for tests. */
+  /** Normalises any on-disk shape (v1/v2/v3/v4) into v4 state. Exported for the migrator and for tests. */
   static parse(parsed: unknown): {
     categories: Record<string, Record<string, CanonicalRecord>>;
     policy?: CanonicalPolicy;
@@ -240,7 +309,21 @@ export class EntityRegistry {
     granularityEdges: Record<string, GranularityEdge[]>;
     renameEdges: Record<string, RenameEdge[]>;
     deferQueue: DeferredPair[];
+    repair: RegistryDataV4['repair'];
   } {
+    if (parsed !== null && typeof parsed === 'object' && (parsed as RegistryDataV4).version === 4) {
+      const v4 = parsed as RegistryDataV4;
+      return {
+        categories: v4.categories ?? {},
+        policy: v4.canonicalPolicy,
+        wasV1: false,
+        granularityEdges: v4.granularityEdges ?? {},
+        renameEdges: v4.renameEdges ?? {},
+        deferQueue: v4.deferQueue ?? [],
+        repair: v4.repair ?? emptyRepair(),
+      };
+    }
+
     if (parsed !== null && typeof parsed === 'object' && (parsed as RegistryDataV3).version === 3) {
       const v3 = parsed as RegistryDataV3;
       return {
@@ -250,6 +333,7 @@ export class EntityRegistry {
         granularityEdges: v3.granularityEdges ?? {},
         renameEdges: v3.renameEdges ?? {},
         deferQueue: v3.deferQueue ?? [],
+        repair: emptyRepair(),
       };
     }
 
@@ -262,6 +346,7 @@ export class EntityRegistry {
         granularityEdges: {},
         renameEdges: {},
         deferQueue: [],
+        repair: emptyRepair(),
       };
     }
 
@@ -284,18 +369,26 @@ export class EntityRegistry {
         };
       }
     }
-    return { categories, wasV1: true, granularityEdges: {}, renameEdges: {}, deferQueue: [] };
+    return {
+      categories,
+      wasV1: true,
+      granularityEdges: {},
+      renameEdges: {},
+      deferQueue: [],
+      repair: emptyRepair(),
+    };
   }
 
-  /** The v3 document as written to disk. */
-  toJSON(): RegistryDataV3 {
+  /** The v4 document as written to disk. */
+  toJSON(): RegistryDataV4 {
     return {
-      version: 3,
+      version: 4,
       canonicalPolicy: this.canonicalPolicy,
       categories: this.#categories,
       granularityEdges: this.#granularityEdges,
       renameEdges: this.#renameEdges,
       deferQueue: this.#deferQueue,
+      repair: this.#repair,
     };
   }
 
@@ -593,7 +686,7 @@ export class EntityRegistry {
     return this.#renameEdges[category] ?? [];
   }
 
-  /** Queues a judge `defer` for the consolidator. Idempotent on (category, mention, docId). */
+  /** Queues a judge `defer` for the StreamingRepairer. Idempotent on (category, mention, docId). */
   pushDeferred(entry: DeferredPair): void {
     const key = (d: DeferredPair) => `${d.category}|${d.mention.trim().toLowerCase()}|${d.docId}`;
     if (this.#deferQueue.some((d) => key(d) === key(entry))) return;
@@ -605,7 +698,7 @@ export class EntityRegistry {
     return [...this.#deferQueue];
   }
 
-  /** Consolidator calls this after reviewing; entries not passed stay queued. */
+  /** The StreamingRepairer calls this after reviewing a document's queue; entries not passed stay queued. */
   clearDeferred(consumed: DeferredPair[]): void {
     const key = (d: DeferredPair) => `${d.category}|${d.mention.trim().toLowerCase()}|${d.docId}`;
     const gone = new Set(consumed.map(key));
@@ -614,6 +707,57 @@ export class EntityRegistry {
       this.#deferQueue = next;
       this.#dirty = true;
     }
+  }
+
+  // --- repair state (v4) -------------------------------------------------------------------------
+
+  /**
+   * A copy of the StreamingRepairer's working memory. Copied (not live) so a caller mutating the
+   * returned arrays cannot corrupt registry state behind `#dirty`'s back — every other write here
+   * goes through a method that sets it.
+   */
+  repairState(): { adjudicated: AdjudicatedEntry[]; spillover: SuspectPair[]; repairedThrough: number } {
+    return {
+      adjudicated: [...this.#repair.adjudicated],
+      spillover: [...this.#repair.spillover],
+      repairedThrough: this.#repair.repairedThrough,
+    };
+  }
+
+  /** High-water mark: the StreamingRepairer has fully processed every document up to and including this one. */
+  setRepairedThrough(doc: number): void {
+    this.#repair.repairedThrough = doc;
+    this.#dirty = true;
+  }
+
+  /** Suspects a document's judge budget did not reach — carried forward instead of dropped. */
+  pushSpillover(pairs: SuspectPair[]): void {
+    if (pairs.length === 0) return;
+    this.#repair.spillover.push(...pairs);
+    this.#dirty = true;
+  }
+
+  /** Empties and returns the spillover queue — a drain, not a peek, so the next document starts clean. */
+  drainSpillover(): SuspectPair[] {
+    const drained = this.#repair.spillover;
+    this.#repair.spillover = [];
+    if (drained.length > 0) this.#dirty = true;
+    return drained;
+  }
+
+  /** Records a verdict so the pair (or entity, for `keep`) is not re-adjudicated. */
+  pushAdjudicated(entry: AdjudicatedEntry): void {
+    this.#repair.adjudicated.push(entry);
+    this.#dirty = true;
+  }
+
+  /** Unordered lookup: `(a, b)` and `(b, a)` are the same suspect pair. */
+  findAdjudicated(a: EntityRef, b: EntityRef): AdjudicatedEntry | undefined {
+    this.#pruneAdjudicated();
+    const sameRef = (x: EntityRef, y: EntityRef) => x.category === y.category && x.canonical === y.canonical;
+    return this.#repair.adjudicated.find(
+      (entry) => (sameRef(entry.a, a) && sameRef(entry.b, b)) || (sameRef(entry.a, b) && sameRef(entry.b, a))
+    );
   }
 
   // --- repair operators -------------------------------------------------------------------------
@@ -835,6 +979,129 @@ export class EntityRegistry {
     return true;
   }
 
+  /**
+   * Reattach one alias record to a different canonical — `move()` above relocates a whole
+   * canonical, but the StreamingRepairer's most common correction is finer-grained: one surface
+   * form was linked under the wrong entity, and the fix is to move *it*, not everything the wrong
+   * entity has accumulated since. Works across categories, since a mis-linked alias can land in the
+   * wrong bucket entirely (e.g. an org name linked under Software).
+   *
+   * Refuses to detach a canonical's own name: `mint` always stores the canonical as its first
+   * alias, so that surface *is* the record's identity, not an attachable alias — letting it walk
+   * away would leave a canonical unable to match itself.
+   */
+  moveAlias(
+    from: EntityRef,
+    to: EntityRef,
+    alias: string,
+    provenance: { docId: number; evidence?: string | null }
+  ): boolean {
+    const fromRecord = this.#categories[from.category]?.[from.canonical];
+    const toRecord = this.#categories[to.category]?.[to.canonical];
+    if (!fromRecord || !toRecord) {
+      console.warn(
+        `EntityRegistry: moveAlias needs existing endpoints — ${from.category}/"${from.canonical}" -> ${to.category}/"${to.canonical}"`
+      );
+      return false;
+    }
+
+    const key = alias.trim().toLowerCase();
+    if (key === from.canonical.trim().toLowerCase()) {
+      console.warn(
+        `EntityRegistry: refusing to detach ${from.category}/"${from.canonical}"'s own canonical name via moveAlias`
+      );
+      return false;
+    }
+
+    const index = fromRecord.aliases.findIndex((a) => a.surface.trim().toLowerCase() === key);
+    if (index === -1) {
+      console.warn(`EntityRegistry: moveAlias found no "${alias}" on ${from.category}/"${from.canonical}"`);
+      return false;
+    }
+
+    const [source] = fromRecord.aliases.splice(index, 1);
+    const moved: AliasRecord = {
+      ...source,
+      docId: provenance.docId,
+      decision: 'move',
+      evidence: provenance.evidence ?? source.evidence ?? null,
+      addedBy: this.#runId ?? source.addedBy ?? null,
+    };
+    if (!toRecord.aliases.some((existing) => existing.surface === moved.surface)) {
+      toRecord.aliases.push(moved);
+    }
+
+    this.#dirty = true;
+    this.#rebuildIndex();
+    return true;
+  }
+
+  /**
+   * Absorb `from` into `to` as a rename, not a merge: the survivor is always `to` — the caller's
+   * chosen direction, never `canonicalPolicy`'s — because a rename records which name is *current*,
+   * a fact the policy (first-seen / frequency / degree) has no opinion on and must not overrule.
+   *
+   * The `renamed-to` edge is recorded FIRST, before absorption, because `addRenameEdge` requires
+   * both endpoints to still be live records — the guard that exists specifically so a rename edge
+   * can never name something that was never real. Absorption then reuses `applyMerges`' member-fold
+   * steps (alias union, earliest firstSeen, merged counts/ids/gloss) with the survivor fixed to `to`.
+   *
+   * A rename is history, not topology: `#rewriteAfterMerge` (below) deliberately never touches
+   * rename edges, so this edge's endpoints stay `from → to` literally, forever — even once neither
+   * name is a live canonical any more. Rewriting them to whatever eventually survives would erase
+   * the very fact the edge exists to record (dissertation wiki rule 5: edge layers stay separated;
+   * user ruling 2026-08-05: renames are a historical layer, never rewritten nor self-loop-dropped).
+   */
+  renameInto(
+    category: string,
+    op: { from: string; to: string; docId: number; evidence?: string | null; validFrom?: string | null }
+  ): boolean {
+    const records = this.#categories[category];
+    if (!records?.[op.from] || !records?.[op.to] || op.from === op.to) {
+      console.warn(`EntityRegistry: renameInto needs existing distinct endpoints — ${category}/"${op.from}" -> "${op.to}"`);
+      return false;
+    }
+
+    this.addRenameEdge(category, {
+      from: op.from,
+      to: op.to,
+      docId: op.docId,
+      decision: 'repairer',
+      evidence: op.evidence ?? null,
+      validFrom: op.validFrom ?? null,
+    });
+
+    const source = records[op.from];
+    const target = records[op.to];
+
+    // Same absorption steps as applyMerges' member loop — see its doc comment — but the survivor is
+    // fixed to `to` rather than chosen by canonicalPolicy.
+    const incoming: AliasRecord[] = source.aliases.map((a) => ({
+      ...a,
+      decision: 'merge' as const,
+      addedBy: this.#runId ?? a.addedBy ?? null,
+    }));
+    for (const aliasRecord of incoming) {
+      if (!target.aliases.some((existing) => existing.surface === aliasRecord.surface)) {
+        target.aliases.push({ ...aliasRecord, evidence: aliasRecord.evidence ?? op.evidence ?? null });
+      }
+    }
+
+    if (source.firstSeen.doc >= 0 && (target.firstSeen.doc < 0 || source.firstSeen.doc < target.firstSeen.doc)) {
+      target.firstSeen = source.firstSeen;
+    }
+    target.categoryCounts = mergeCounts(target.categoryCounts, source.categoryCounts);
+    target.externalIds = { ...(source.externalIds ?? {}), ...(target.externalIds ?? {}) };
+    if (!target.gloss && source.gloss) target.gloss = source.gloss;
+
+    delete records[op.from];
+
+    this.#rewriteAfterMerge(category, new Map([[op.from, op.to]]));
+    this.#rebuildIndex();
+    this.#dirty = true;
+    return true;
+  }
+
   /** For schema-level category merges: registry buckets are keyed by canonical category. */
   moveCategory(from: string, into: string): void {
     const fromRecords = this.#categories[from];
@@ -884,9 +1151,19 @@ export class EntityRegistry {
   }
 
   /**
-   * After a merge fold, edges and defer entries naming a removed canonical are rewritten to its
-   * survivor. Self-loops produced by the rewrite are dropped (the two rungs became one node);
-   * duplicates dedupe on (from, to, kind), keeping the earliest.
+   * After a merge (or a `renameInto` absorption — same closure mechanics, survivor fixed instead of
+   * policy-chosen) fold, granularity edges and defer entries naming a removed canonical are
+   * rewritten to its survivor. Self-loops produced by the rewrite are dropped (the two rungs became
+   * one node); duplicates dedupe on (from, to, kind), keeping the earliest.
+   *
+   * Rename edges are the one layer this deliberately never touches, in either direction — not
+   * rewritten to a survivor, not dropped as a self-loop. A `renamed-to` edge records *history*
+   * ("APT44 used to be called Sandworm"); once Sandworm is later absorbed by something else, the
+   * edge naming it becomes a dangling reference by graph-topology standards but stays a true
+   * historical fact. Rewriting it would make the graph consistent at the cost of making the record
+   * false (dissertation wiki rule 5: edge layers stay separated; user ruling 2026-08-05). This is
+   * also what lets `renameInto` (T3) call this method for its own granularity/defer rewrite and
+   * trust its own just-recorded `from → to` edge to survive untouched.
    */
   #rewriteAfterMerge(category: string, survivorOf: Map<string, string>): void {
     if (survivorOf.size === 0) return;
@@ -906,25 +1183,28 @@ export class EntityRegistry {
       });
     }
 
-    const rEdges = this.#renameEdges[category];
-    if (rEdges) {
-      const seen = new Set<string>();
-      this.#renameEdges[category] = rEdges.flatMap((edge) => {
-        const from = project(edge.from);
-        const to = project(edge.to);
-        if (from === to) return [];
-        const key = `${from}|${to}`;
-        if (seen.has(key)) return [];
-        seen.add(key);
-        return [{ ...edge, from, to }];
-      });
-    }
-
     this.#deferQueue = this.#deferQueue.map((entry) =>
       entry.category === category
         ? { ...entry, mintedAs: project(entry.mintedAs), candidates: entry.candidates.map(project) }
         : entry
     );
+  }
+
+  /**
+   * Adjudicated entries name canonicals literally (`EntityRef`, not a resolved alias). Once a
+   * merge, `renameInto`, or split absorbs one into a survivor, the literal name is no longer a live
+   * canonical and the verdict it recorded is stale — its premise, that entity as a standalone
+   * record, no longer exists. Pruned lazily on read (`findAdjudicated`) and on `load()`, rather than
+   * eagerly at absorption time, because `#rewriteAfterMerge`'s survivor map does not know about this
+   * layer at all and adjudicated entries are cheap to re-derive from suspects if ever needed again.
+   */
+  #pruneAdjudicated(): void {
+    const alive = (ref: EntityRef) => this.#categories[ref.category]?.[ref.canonical] !== undefined;
+    const next = this.#repair.adjudicated.filter((entry) => alive(entry.a) && alive(entry.b));
+    if (next.length !== this.#repair.adjudicated.length) {
+      this.#repair.adjudicated = next;
+      this.#dirty = true;
+    }
   }
 
   /** Applies `canonicalPolicy` to pick the survivor of a group. */
