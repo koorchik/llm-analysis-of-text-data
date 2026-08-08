@@ -1,0 +1,194 @@
+{
+  "entities": [
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft",
+      "matchedVia": "Microsoft"
+    },
+    {
+      "name": "CVE-2021-26855",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CVE-2021-26855",
+      "matchedVia": "CVE-2021-26855"
+    },
+    {
+      "name": "CVE-2021-26857",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CVE-2021-26857",
+      "matchedVia": "CVE-2021-26857"
+    },
+    {
+      "name": "CVE-2021-26858",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CVE-2021-26858",
+      "matchedVia": "CVE-2021-26858"
+    },
+    {
+      "name": "CVE-2021-27065",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "CVE-2021-27065",
+      "matchedVia": "CVE-2021-27065"
+    },
+    {
+      "name": "Microsoft Exchange Server 2010",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Exchange Server 2010",
+      "matchedVia": "Microsoft Exchange Server 2010"
+    },
+    {
+      "name": "Microsoft Exchange Server 2013",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Exchange Server 2013",
+      "matchedVia": "Microsoft Exchange Server 2013"
+    },
+    {
+      "name": "Microsoft Exchange Server 2016",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Exchange Server 2016",
+      "matchedVia": "Microsoft Exchange Server 2016"
+    },
+    {
+      "name": "Microsoft Exchange Server 2019",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Microsoft Exchange Server 2019",
+      "matchedVia": "Microsoft Exchange Server 2019"
+    },
+    {
+      "name": "Exchange On-premises Mitigation Tool (EOMT)",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Exchange On-premises Mitigation Tool (EOMT)",
+      "matchedVia": "Exchange On-premises Mitigation Tool (EOMT)"
+    },
+    {
+      "name": "Test-ProxyLogon.ps1",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Test-ProxyLogon.ps1",
+      "matchedVia": "Test-ProxyLogon.ps1"
+    },
+    {
+      "name": "http-vuln-cve2021-26855.nse",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "http-vuln-cve2021-26855.nse",
+      "matchedVia": "http-vuln-cve2021-26855.nse"
+    },
+    {
+      "name": "nmap",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "nmap",
+      "matchedVia": "nmap"
+    },
+    {
+      "name": "Microsoft Safety Scanner",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Microsoft Safety Scanner",
+      "matchedVia": "Microsoft Safety Scanner"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "IIS",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "IIS",
+      "matchedVia": "IIS"
+    },
+    {
+      "name": "Burp Suite",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Burp Suite",
+      "matchedVia": "Burp Suite"
+    },
+    {
+      "name": "python-requests",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "python-requests",
+      "matchedVia": "python-requests"
+    },
+    {
+      "name": "curl",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "curl",
+      "matchedVia": "curl"
+    },
+    {
+      "name": "Zenmap",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Zenmap",
+      "matchedVia": "Zenmap"
+    },
+    {
+      "name": "Державний центр кіберзахисту Держспецзв’язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Державний центр кіберзахисту та протидії кіберзагрозам Держспецзв’язку",
+      "matchedVia": "Державний центр кіберзахисту Держспецзв’язку"
+    },
+    {
+      "name": "державні органи України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи України",
+      "matchedVia": "державні органи України"
+    },
+    {
+      "name": "організації України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "організації України",
+      "matchedVia": "організації України"
+    },
+    {
+      "name": "CISA",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "CISA",
+      "matchedVia": "CISA"
+    },
+    {
+      "name": "HAFNIUM",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "HAFNIUM",
+      "matchedVia": "HAFNIUM"
+    },
+    {
+      "name": "proxylogon.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "proxylogon.com",
+      "matchedVia": "proxylogon.com"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "17.03.2021",
+    "id": 11113,
+    "title": "Державним центром кіберзахисту Держспецзв’язку вживаються заходи з протидії кібератакам з використанням вразливостей Microsoft Exchange Server (ProxyLogon)",
+    "llmProcessingTimeSeconds": 107.903
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "entities": [
+    {
+      "name": "@xaknet_team",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "@xaknet_team",
+      "matchedVia": "@xaknet_team"
+    },
+    {
+      "name": "@CyberArmyofRussia_Reborn",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "CyberArmyofRussia_Reborn",
+      "matchedVia": "@CyberArmyofRussia_Reborn"
+    },
+    {
+      "name": "@solntsepekZ",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "@solntsepekZ",
+      "matchedVia": "@solntsepekZ"
+    },
+    {
+      "name": "@informZarya",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "@informZarya",
+      "matchedVia": "@informZarya"
+    },
+    {
+      "name": "@frwl_team",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "FRwL",
+      "matchedVia": "@frwl_team"
+    },
+    {
+      "name": "ЗСУ",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "ЗСУ",
+      "matchedVia": "ЗСУ"
+    },
+    {
+      "name": "СБУ",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "СБУ",
+      "matchedVia": "СБУ"
+    },
+    {
+      "name": "НБУ",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Національний банк України",
+      "matchedVia": "НБУ"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Україна",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "PHP",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "PHP",
+      "matchedVia": "PHP"
+    },
+    {
+      "name": "MS Exchange",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "MS Exchange",
+      "matchedVia": "MS Exchange"
+    },
+    {
+      "name": "FortiGate",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "FortiGate",
+      "matchedVia": "FortiGate"
+    },
+    {
+      "name": "Zimbra",
+      "category": "Software",
+      "role": "Target",
+      "normalizedName": "Zimbra",
+      "matchedVia": "Zimbra"
+    },
+    {
+      "name": "censys.io",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "censys.io",
+      "matchedVia": "censys.io"
+    },
+    {
+      "name": "shodan.io",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "shodan.io",
+      "matchedVia": "shodan.io"
+    },
+    {
+      "name": "Nmap",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "nmap",
+      "matchedVia": "nmap"
+    },
+    {
+      "name": "Windows Defender",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Microsoft Defender",
+      "matchedVia": "Windows Defender"
+    },
+    {
+      "name": "Sysmon",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Sysmon",
+      "matchedVia": "Sysmon"
+    },
+    {
+      "name": "AppLocker",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "AppLocker",
+      "matchedVia": "AppLocker"
+    },
+    {
+      "name": "TCP Wrappers",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "TCP Wrappers",
+      "matchedVia": "TCP Wrappers"
+    },
+    {
+      "name": "pfSense",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "pfSense",
+      "matchedVia": "pfSense"
+    },
+    {
+      "name": "Mikrotik",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Mikrotik",
+      "matchedVia": "Mikrotik"
+    },
+    {
+      "name": "Windows",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Windows",
+      "matchedVia": "Windows"
+    },
+    {
+      "name": "wscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "wscript.exe",
+      "matchedVia": "wscript.exe"
+    },
+    {
+      "name": "cscript.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "cscript.exe",
+      "matchedVia": "cscript.exe"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "mshta.exe",
+      "matchedVia": "mshta.exe"
+    },
+    {
+      "name": "powershell.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "powershell.exe",
+      "matchedVia": "powershell.exe"
+    },
+    {
+      "name": "post.mil.gov.ua",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "post.mil.gov.ua",
+      "matchedVia": "post.mil.gov.ua"
+    },
+    {
+      "name": "dis.gov.ua",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "dis.gov.ua",
+      "matchedVia": "dis.gov.ua"
+    },
+    {
+      "name": "nbu.gov.ua",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "nbu.gov.ua",
+      "matchedVia": "nbu.gov.ua"
+    },
+    {
+      "name": "ESET",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "ESET",
+      "matchedVia": "ESET"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "09.08.2023",
+    "id": 5436463,
+    "title": "Як бути відповідальним та втримати кіберфронт",
+    "llmProcessingTimeSeconds": 161.212
+  }
+}

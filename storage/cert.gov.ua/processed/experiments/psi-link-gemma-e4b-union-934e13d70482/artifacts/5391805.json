@@ -1,0 +1,96 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0154",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0154",
+      "matchedVia": "UAC-0154"
+    },
+    {
+      "name": "MerlinAgent",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MerlinAgent",
+      "matchedVia": "MerlinAgent"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "ctlhost.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ctlhost.exe",
+      "matchedVia": "ctlhost.exe"
+    },
+    {
+      "name": "Catbox",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Catbox",
+      "matchedVia": "Catbox"
+    },
+    {
+      "name": "GitHub",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "GitHub",
+      "matchedVia": "GitHub"
+    },
+    {
+      "name": "files.catbox.moe",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "files.catbox.moe",
+      "matchedVia": "files.catbox.moe"
+    },
+    {
+      "name": "catbox.moe",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "catbox.moe",
+      "matchedVia": "catbox.moe"
+    },
+    {
+      "name": "listen.servemp3.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "listen.servemp3.com",
+      "matchedVia": "listen.servemp3.com"
+    },
+    {
+      "name": "shorturl.at",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "shorturl.at",
+      "matchedVia": "shorturl.at"
+    },
+    {
+      "name": "ukr.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "ukr.net",
+      "matchedVia": "ukr.net"
+    },
+    {
+      "name": "державна організація України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи України",
+      "matchedVia": "державна організація України"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "05.08.2023",
+    "id": 5391805,
+    "title": "MerlinAgent: новий open-source інструмент для здійснення кібератак у відношенні державних організацій України (CERT-UA#6995, CERT-UA#7183)",
+    "llmProcessingTimeSeconds": 110.808
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "entities": [
+    {
+      "name": "сайти державних органів",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "вебсайти державних органів",
+      "matchedVia": "сайти державних органів"
+    },
+    {
+      "name": "МЗС",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "МЗС",
+      "matchedVia": "МЗС"
+    },
+    {
+      "name": "МОН",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "МОН України",
+      "matchedVia": "МОН"
+    },
+    {
+      "name": "Держспецзв'язку",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Держспецзв’язку",
+      "matchedVia": "Держспецзв'язку"
+    },
+    {
+      "name": "Служба безпеки України",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Служба безпеки України",
+      "matchedVia": "Служба безпеки України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Україна",
+      "matchedVia": "Україна",
+      "code": "UA"
+    },
+    {
+      "name": "Кіберполіція",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Кіберполіція",
+      "matchedVia": "Кіберполіція"
+    },
+    {
+      "name": "October CMS",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "October CMS",
+      "matchedVia": "October CMS"
+    },
+    {
+      "name": "CVE-2021-32648",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-32648",
+      "matchedVia": "CVE-2021-32648"
+    },
+    {
+      "name": "GHSA-mxr5-mc97-63rc",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "GHSA-mxr5-mc97-63rc",
+      "matchedVia": "GHSA-mxr5-mc97-63rc"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "14.01.2022",
+    "id": 17899,
+    "title": "Кібератака на сайти державних органів",
+    "llmProcessingTimeSeconds": 86.844
+  }
+}

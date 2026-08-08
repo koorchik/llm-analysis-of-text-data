@@ -53,6 +53,11 @@
       "inputPerMTok": null,
       "outputPerMTok": null
     },
+    "$comment_gpt-5-6-sol": "Reasoning-class model used as the cloud quality-ceiling arm in the 2026-08-08 4-arm study, served via a FREE LiteLLM proxy (openai.corewars.cc), so priced at 0 for that run — the run card reads $0.00 rather than UNPRICED. Visible completionTokens exclude hidden reasoning tokens, so a real-provider $ figure would be higher; see SUMMARY-2026-08-08.md for the token-based estimate.",
+    "gpt-5-6-sol": {
+      "inputPerMTok": 0.0,
+      "outputPerMTok": 0.0
+    },
     "$comment_embeddings": "M5. An embedding call has NO completion, so `outputPerMTok` must be 0 \u2014 NOT null. CostMeter.priceFor only accepts an entry when BOTH legs are non-null, so a null output leg makes every embedding call report as UNPRICED rather than as priced on input alone. The input rate below is still pending the dashboard check (verification item 11), which is why it is null and the model reads as unpriced overall \u2014 fill it in, keep the 0.",
     "text-embedding-3-large": {
       "inputPerMTok": null,

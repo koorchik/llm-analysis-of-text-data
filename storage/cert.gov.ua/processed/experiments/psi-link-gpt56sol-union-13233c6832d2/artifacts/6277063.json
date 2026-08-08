@@ -1,0 +1,96 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050",
+      "matchedVia": "UAC-0050"
+    },
+    {
+      "name": "RemcosRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos",
+      "matchedVia": "RemcosRAT"
+    },
+    {
+      "name": "QuasarRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "QuasarRAT",
+      "matchedVia": "QuasarRAT"
+    },
+    {
+      "name": "Remote Utilities",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remote Utilities",
+      "matchedVia": "Remote Utilities"
+    },
+    {
+      "name": "AutoIt",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AutoIt",
+      "matchedVia": "AutoIt"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "rmssrv.ru",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "rmssrv.ru",
+      "matchedVia": "rmssrv.ru"
+    },
+    {
+      "name": "bitbucket.org",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "bitbucket.org",
+      "matchedVia": "bitbucket.org"
+    },
+    {
+      "name": "drive.google.com",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "drive.google.com",
+      "matchedVia": "drive.google.com"
+    },
+    {
+      "name": "Medoc",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Medoc",
+      "matchedVia": "Medoc"
+    },
+    {
+      "name": "Usoris",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Usoris",
+      "matchedVia": "Usoris"
+    },
+    {
+      "name": "AS215939",
+      "category": "Infrastructure",
+      "role": "Neutral",
+      "normalizedName": "AS215939",
+      "matchedVia": "AS215939"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "11.01.2024",
+    "id": 6277063,
+    "title": "RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)",
+    "llmProcessingTimeSeconds": 98.23
+  }
+}

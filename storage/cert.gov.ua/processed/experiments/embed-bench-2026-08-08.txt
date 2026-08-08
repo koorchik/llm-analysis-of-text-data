@@ -1,0 +1,9 @@
+embed-bench 2026-08-08 — name+gloss, --k 20, 24 cross-script multi-member gold clusters (pool 1274 surfaces)
+Chosen dense-channel model for the union-blocker arms (gemma4:e4b-32k, gpt-5-6-sol).
+
+model                dim    recall@1  recall@5  recall@20  sanity-control (must be low)
+embeddinggemma       768    17.5%     48.0%     84.7%      banana~Russia 0.575, MSWord~Росія 0.452  [CHOSEN]
+qwen3-embedding:4b   2560   16.7%     44.9%     77.7%      banana~Russia 0.562, MSWord~Росія 0.420
+bge-m3               1024   15.5%     39.5%     69.5%      banana~Russia 0.394, MSWord~Росія 0.445
+
+Pick: embeddinggemma — best recall@20 AND smallest (621 MB), so it co-resides trivially with the judge.

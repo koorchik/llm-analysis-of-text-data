@@ -1,0 +1,72 @@
+{
+  "entities": [
+    {
+      "name": "Сили оборони України",
+      "category": "Government Body",
+      "role": "Target"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "COOKBOX",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CVE-2023-38831",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "WinRAR",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Signal",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "NoIP",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "netman.servehttp.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "worker-misty-mouse-6ac7.aky15825.workers.dev",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "Департамент операцій з підтримки миру ООН",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "ООН",
+      "category": "Organization",
+      "role": "Neutral"
+    }
+  ],
+  "metadata": {
+    "date": "18.04.2024",
+    "id": 6278620,
+    "title": "Чергова кібератака UAC-0149 з використанням Signal, вразливості CVE-2023-38831 та програми COOKBOX (CERT-UA#9522)",
+    "llmProcessingTimeSeconds": 45.181
+  },
+  "relations": [],
+  "schemaProposals": []
+}

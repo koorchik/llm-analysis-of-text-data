@@ -1,0 +1,47 @@
+{
+  "entities": [
+    {
+      "name": "CVE-2020-7048",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "CVE-2020-7047",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "WP Database Reset",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Websites using WP Database Reset plugin",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "WebFactory Ltd",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "WordFence",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "WordPress",
+      "category": "Software",
+      "role": "Neutral"
+    }
+  ],
+  "metadata": {
+    "date": "20.01.2020",
+    "id": 17,
+    "title": "Критичні помилки плагіну WordPress дозволяють зловмисникам заволодіти вашим сайтом.",
+    "llmProcessingTimeSeconds": 64.188
+  },
+  "relations": [],
+  "schemaProposals": []
+}

@@ -1,0 +1,76 @@
+{
+  "entities": [
+    {
+      "name": "Cobalt Strike Beacon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Cobalt Strike Beacon",
+      "matchedVia": "Cobalt Strike Beacon"
+    },
+    {
+      "name": "CVE-2021-40444",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2021-40444",
+      "matchedVia": "CVE-2021-40444"
+    },
+    {
+      "name": "CVE-2022-30190",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CVE-2022-30190",
+      "matchedVia": "CVE-2022-30190"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "ms-msdt.exe",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ms-msdt.exe",
+      "matchedVia": "ms-msdt.exe"
+    },
+    {
+      "name": "nod-update.it",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "nod-update.it",
+      "matchedVia": "nod-update.it"
+    },
+    {
+      "name": "державні організації України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські органи державної влади",
+      "matchedVia": "державні організації України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Україна",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Microsoft",
+      "matchedVia": "Microsoft"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "02.06.2022",
+    "id": 40559,
+    "title": "Кібератака на державні організації України з використанням шкідливої програми Cobalt Strike Beacon та експлойтів до вразливостей CVE-2021-40444 і CVE-2022-30190 (CERT-UA#4753)",
+    "llmProcessingTimeSeconds": 54.253
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "entities": [
+    {
+      "name": "FireEye",
+      "category": "Organization",
+      "role": "Target",
+      "normalizedName": "FireEye",
+      "matchedVia": "FireEye"
+    },
+    {
+      "name": "FireEye red team tools",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "VMware Tools",
+      "matchedVia": "FireEye red team tools"
+    },
+    {
+      "name": "Snort",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Snort",
+      "matchedVia": "Snort"
+    },
+    {
+      "name": "YARA",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "YARA",
+      "matchedVia": "YARA"
+    },
+    {
+      "name": "ClamAV",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "ClamAV",
+      "matchedVia": "ClamAV"
+    },
+    {
+      "name": "HXIOC",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "HXIOC",
+      "matchedVia": "HXIOC"
+    },
+    {
+      "name": "OpenIOC",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "OpenIOC",
+      "matchedVia": "OpenIOC"
+    },
+    {
+      "name": "STIX",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "STIX",
+      "matchedVia": "STIX"
+    },
+    {
+      "name": "CyBOX",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "CyBOX",
+      "matchedVia": "CyBOX"
+    },
+    {
+      "name": "OASIS",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "OASIS",
+      "matchedVia": "OASIS"
+    },
+    {
+      "name": "державні установи США",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні установи США",
+      "matchedVia": "державні установи США"
+    },
+    {
+      "name": "об’єкти критичної інфраструктури",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "об’єкти критичної інфраструктури",
+      "matchedVia": "об’єкти критичної інфраструктури"
+    },
+    {
+      "name": "SolarWinds Orion",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SolarWinds Orion",
+      "matchedVia": "SolarWinds Orion"
+    },
+    {
+      "name": "USA",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "USA",
+      "matchedVia": "USA",
+      "code": "US"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "14.12.2020",
+    "id": 9483,
+    "title": "Хакери отримали доступ до спеціалізованого програмного забезпечення, що може бути використано для реалізації кібератак в Україні",
+    "llmProcessingTimeSeconds": 74.484
+  }
+}

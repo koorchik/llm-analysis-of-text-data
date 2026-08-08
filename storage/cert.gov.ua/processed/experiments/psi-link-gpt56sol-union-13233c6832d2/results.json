@@ -1,0 +1,131 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 2559,
+    "members": 2687,
+    "byStratum": {
+      "b": 2,
+      "c": 66,
+      "a": 2491
+    },
+    "bySplit": {
+      "test": 2559
+    },
+    "clustersWithEvidence": 0,
+    "edges": 155,
+    "nilLabels": 3224
+  },
+  "results": [
+    {
+      "condition": "psi-link-gpt56sol-union",
+      "runIds": [
+        "psi-link-gpt56sol-union-13233c6832d2"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "b": {
+          "stratum": "b",
+          "pairs": 2,
+          "truePositives": 1,
+          "falsePositives": 0,
+          "falseNegatives": 1,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        },
+        "c": {
+          "stratum": "c",
+          "pairs": 3491,
+          "truePositives": 116,
+          "falsePositives": 20,
+          "falseNegatives": 136,
+          "trueNegatives": 3219,
+          "skipped": 0,
+          "precision": 0.8529411764705882,
+          "recall": 0.4603174603174603,
+          "f1": 0.5979381443298968
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 1383438,
+          "truePositives": 13,
+          "falsePositives": 7,
+          "falseNegatives": 7,
+          "trueNegatives": 1383411,
+          "skipped": 0,
+          "precision": 0.65,
+          "recall": 0.65,
+          "f1": 0.65
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 1386931,
+          "truePositives": 130,
+          "falsePositives": 27,
+          "falseNegatives": 144,
+          "trueNegatives": 1386630,
+          "skipped": 0,
+          "precision": 0.8280254777070064,
+          "recall": 0.4744525547445255,
+          "f1": 0.6032482598607889
+        }
+      },
+      "nil": {
+        "truePositives": 2550,
+        "falsePositives": 39,
+        "falseNegatives": 13,
+        "trueNegatives": 75,
+        "deferred": 10,
+        "deferredOnNil": 6,
+        "observations": 2687,
+        "deferralRate": 0.003721622627465575,
+        "precision": 0.984936268829664,
+        "recall": 0.9926041261191125,
+        "f1": 0.9887553315238464
+      },
+      "cluster": {
+        "universeSize": 2687,
+        "predictedClusters": 2602,
+        "goldClusters": 2559,
+        "macro": {
+          "precision": 0.995772482705611,
+          "recall": 0.9808518952715904,
+          "f1": 0.9882558748168601
+        },
+        "micro": {
+          "precision": 0.9955340528470413,
+          "recall": 0.9791589132861928,
+          "f1": 0.9872785876519283
+        },
+        "pairwise": {
+          "precision": 0.8125,
+          "recall": 0.4744525547445255,
+          "f1": 0.5990783410138248
+        },
+        "bCubed": {
+          "precision": 0.9950378364967126,
+          "recall": 0.9763614936112143,
+          "f1": 0.9856111985068136
+        },
+        "ari": 0.5990558943932426
+      },
+      "cost": {
+        "calls": 2862,
+        "inputTokens": 1895997,
+        "outputTokens": 777894,
+        "costUsd": 0,
+        "unpricedCalls": 441,
+        "wallClockMs": 17590508
+      },
+      "unpricedModels": [
+        "openai/gpt-5-6-sol"
+      ],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

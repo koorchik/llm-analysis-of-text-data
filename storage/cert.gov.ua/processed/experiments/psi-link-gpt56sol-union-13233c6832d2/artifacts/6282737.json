@@ -1,0 +1,69 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0200",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0200",
+      "matchedVia": "UAC-0200"
+    },
+    {
+      "name": "DarkTortilla",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkTortilla",
+      "matchedVia": "DarkTortilla"
+    },
+    {
+      "name": "Dark Crystal RAT (DCRAT)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "DarkCrystal RAT",
+      "matchedVia": "Dark Crystal RAT (DCRAT)"
+    },
+    {
+      "name": "Signal",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Signal",
+      "matchedVia": "Signal"
+    },
+    {
+      "name": "imgurl.ir",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "imgurl.ir",
+      "matchedVia": "imgurl.ir"
+    },
+    {
+      "name": "підприємств оборонно-промислового комплексу",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "українські оборонні підприємства",
+      "matchedVia": "підприємств оборонно-промислового комплексу"
+    },
+    {
+      "name": "Сили оборони України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Сили оборони України",
+      "matchedVia": "Сили оборони України"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Україна",
+      "matchedVia": "Україна",
+      "code": "UA"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "18.03.2025",
+    "id": 6282737,
+    "title": "UAC-0200: Шпигунство за оборонно-промисловим комплексом за допомогою DarkCrystal RAT (CERT-UA#14045)",
+    "llmProcessingTimeSeconds": 91.223
+  }
+}

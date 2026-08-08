@@ -1,0 +1,131 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0165",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0165",
+      "matchedVia": "UAC-0165"
+    },
+    {
+      "name": "Ukrainian telecommunications providers",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "Ukrainian telecommunications providers",
+      "matchedVia": "Ukrainian telecommunications providers"
+    },
+    {
+      "name": "Mikrotik equipment",
+      "category": "Device",
+      "role": "Target",
+      "normalizedName": "Mikrotik equipment",
+      "matchedVia": "Mikrotik equipment"
+    },
+    {
+      "name": "masscan",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "masscan",
+      "matchedVia": "masscan"
+    },
+    {
+      "name": "nmap",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "nmap",
+      "matchedVia": "nmap"
+    },
+    {
+      "name": "ffuf",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "ffuf",
+      "matchedVia": "ffuf"
+    },
+    {
+      "name": "dirbuster",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "dirbuster",
+      "matchedVia": "dirbuster"
+    },
+    {
+      "name": "gowitness",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "gowitness",
+      "matchedVia": "gowitness"
+    },
+    {
+      "name": "Dante",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Dante",
+      "matchedVia": "Dante"
+    },
+    {
+      "name": "TOR network",
+      "category": "Infrastructure",
+      "role": "Attacker",
+      "normalizedName": "TOR network",
+      "matchedVia": "TOR network"
+    },
+    {
+      "name": "POEMGATE",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "POEMGATE",
+      "matchedVia": "POEMGATE"
+    },
+    {
+      "name": "WHITECAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "WHITECAT",
+      "matchedVia": "WHITECAT"
+    },
+    {
+      "name": "POSEIDON",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "POSEIDON",
+      "matchedVia": "POSEIDON"
+    },
+    {
+      "name": "Weevely",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Weevely",
+      "matchedVia": "Weevely"
+    },
+    {
+      "name": "eurotelle.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eurotelle.com",
+      "matchedVia": "eurotelle.com"
+    },
+    {
+      "name": "Telegram",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Telegram",
+      "matchedVia": "Telegram"
+    },
+    {
+      "name": "Facebook",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Facebook",
+      "matchedVia": "Facebook"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "15.10.2023",
+    "id": 6123309,
+    "title": "Особливості деструктивних кібератак Sandworm у відношенні українських провайдерів (CERT-UA#7627)",
+    "llmProcessingTimeSeconds": 102.612
+  }
+}

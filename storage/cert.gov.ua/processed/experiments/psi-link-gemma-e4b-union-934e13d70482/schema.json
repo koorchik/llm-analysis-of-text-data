@@ -1,0 +1,4714 @@
+{
+  "categories": [
+    {
+      "name": "Organization",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 16,
+      "ladder": {
+        "version": 5,
+        "exampleCount": 138,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "company name",
+            "example": "Microsoft",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "tech vendor",
+            "example": "Adobe",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'Cisco was targeted by X' -> 'a tech vendor was targeted by X': same claim, less precise — a specific corporate entity blurred into its general type of business",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "technology industry",
+            "example": "Information Technology sector",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'Adobe was targeted by X' -> 'the technology industry was targeted by X': same claim, less precise — a vendor is blurred into the overall economic group it belongs to",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Inc.",
+            "gate": "1",
+            "reason": "This is an abbreviation/suffix, not a wider entity name. While removing it reduces detail, it does not change the referent's scope in a meaningful way for this ladder."
+          },
+          {
+            "candidate": "International Foundation of Election Systems (IFES)",
+            "gate": "2",
+            "reason": "This coarsening requires assuming that all IFES-related organizations are contained by 'The Global Political NGO'. While plausible, the resulting node ('Global Political NGO') is too generic and lacks a specific corpus anchor or recognized designation within this domain to be reliable for knowledge graph matching."
+          }
+        ],
+        "notes": "This category covers both commercial entities (vendors) and academic institutions. The derived rungs prioritize the common corporate naming structure found in cybersecurity contexts (vendor -> tech vendor -> industry). Given the variety of examples, a deterministic ladder is challenging; most folds are presumptive but preserve the core claim.",
+        "disagreements": [
+          "g1 \"Adobe\": omitted by run 2",
+          "g1 \"Adobe\": omitted by run 3",
+          "g2 \"Information Technology sector\": omitted by run 2",
+          "g2 \"Information Technology sector\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 5436463
+      }
+    },
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 16,
+      "ladder": {
+        "version": 6,
+        "exampleCount": 634,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "build",
+            "example": "Adobe Illustrator CC",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "version",
+            "example": "Microsoft Word",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Adobe Illustrator CC was exploited' -> 'Adobe Illustrator was exploited': same claim, less precise — specific build details blurred",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "suite",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'MS Word was exploited' -> 'Microsoft Office was exploited': same claim, less precise — the specific application is grouped into its family/suite",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 3,
+            "alias": "vendor",
+            "example": "adobe:* (any product by Adobe)",
+            "disputed": false,
+            "move": "grouped-by",
+            "preserving": true,
+            "foldTest": "'Adobe Illustrator CC was targeted' -> 'an Adobe product was targeted': same claim, wider net — the family is a collection of products, not a singular thing that acts",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Windows software",
+            "gate": "1",
+            "reason": "Too generic; fails to maintain the 'thing' anchor. This is a general type or container, not a specific level of granularity above vendor."
+          }
+        ],
+        "notes": "The ladder focuses on product/version decay (g0 -> g1) then structural grouping (g2 -> g3). Since many examples are version-specific build names and others represent suites, the transition from specific application (g1) to its encompassing suite/family (g2) is treated as a general 'drop-qualifier' for abstraction. All rungs are assumed deterministic via standard vendor/product family tables (e.g., CPE).",
+        "disagreements": [],
+        "discoveredAtDoc": 4755642
+      }
+    },
+    {
+      "name": "Sector",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 17,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 70,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "site component",
+            "example": "Websites using WP Database Reset plugin",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "state site",
+            "example": "State websites (e.g., державні установи)",
+            "disputed": false,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'Websites using WP Database Reset plugin were exploited' -> 'state sites were exploited': same claim, less precise — specific technical implementation blurred into general type",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "sector domain",
+            "example": "Government Sector of Ukraine",
+            "disputed": false,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'State websites were exploited' -> 'the Government Sector of Ukraine was exploited': same claim, less precise — a collection of sites blurred into its overall economic domain",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "critical infrastructure",
+            "gate": "1",
+            "reason": "Too broad to be the first step. While critical infrastructure is a sector, it acts as a classification *within* G2 or later (G3), not a direct parent of general state sites/websites. It belongs either on the assertional layer (as affected-infrastructure) or needs to follow the development of 'Government Sector' (G2 -> G3)."
+          }
+        ],
+        "notes": "This category is extremely heterogeneous, mixing physical infrastructure targeting with digital site taxonomy and abstract economic classification. The ladder uses 'kind-of' throughout as it tracks a functional blurring (specific implementation -> general type -> broad domain). Since the inputs include concepts ranging from specific plugins to global economic sectors, the system must rely heavily on classifying the target space rather than pure linguistic containment (part-of).\n\nDue to the lack of a core definition, G1 and G2 rungs are representative groupings drawn from multiple examples (e.g., state sites encompasses both 'Ukrainian government bodies' and 'сайти державних органів'). This ladder only achieves depth 2 due to the extreme variance of the input domain.",
+        "disagreements": [],
+        "discoveredAtDoc": 6123309
+      }
+    },
+    {
+      "name": "Government Body",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 18,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 74,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "center",
+            "example": "Державний центр кіберзахисту та протидії кіберзагрозам Держспецзв'язку",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "service_agency",
+            "example": "Держспецзв'язку",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Державний центр кіберзахисту... был атакован' -> 'Держспецзв'язку был атакован': same claim, less precise — specific center details blurred into the parent agency",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "ministry",
+            "example": "Міністерство охорони здоров'я",
+            "disputed": true,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'Держспецзв'язку был атакован' -> 'Міністерство охорони здоров'я был атаковано': a claim about a different thing — the ministry is a high-level structural container that contains many specific agencies like Derzhspetszvyaz",
+            "edgeKind": "part-of"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "government agency group (*)",
+            "gate": "3",
+            "reason": "This coarsening (e.g., 'gov:*') cannot compute membership from the name or facets alone; determining if a unit belongs to this generic star-group requires global world knowledge, making it unadmissible as a rung."
+          }
+        ],
+        "notes": "The hierarchy moves from specific departments/centers (g0) -> parent functional service agencies (g1) -> high-level governmental ministries or bodies (g2). The move at g2 is structural widening, implying that the subject of an attack shifts from a concrete agency to a broad category of state governance.",
+        "disagreements": [
+          "g2 \"Міністерство охорони здоров'я\": preserving false vs true (run 3)"
+        ],
+        "discoveredAtDoc": 5213167
+      }
+    },
+    {
+      "name": "Domain",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 18,
+      "ladder": {
+        "version": 8,
+        "exampleCount": 1256,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "domain",
+            "example": "cert.gov.ua",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "primary-domain",
+            "example": "microsoft.com",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'A vulnerability affected cert.gov.ua' -> 'A vulnerability affected gov.ua': same claim, less precise — the subdomain was blurred",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "tld",
+            "example": ".com (generic)",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'A vulnerability affected microsoft.com' -> 'a .com domain was attacked': same claim, less precise — the specific second-level domain was blurred",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "top-level directory (e.g., /etc/domains)",
+            "gate": "1",
+            "reason": "This is a filesystem path structure, not a networked DNS domain identifier and belongs outside the scope of entity domains."
+          },
+          {
+            "candidate": "Internet Root Zone (.)",
+            "gate": "2",
+            "reason": "While conceptually accurate as the widest container, this cannot be represented by a discrete string from the corpus or easily used in graph matching; the g2 TLD alias (.com) suffices to capture the structure."
+          }
+        ],
+        "notes": "This category models Fully Qualified Domain Names (FQDNs). The hierarchy proceeds by iteratively dropping the most specific components: subdomain -> second-level domain + TLD -> general TLD. All movements are non-anchored structural simplifications, making them inherently 'preserving' in the sense that a fact about a specific instance remains a valid claim type for the wider category.",
+        "disagreements": [
+          "g2 \".com (generic)\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6276894
+      }
+    },
+    {
+      "name": "Device",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 22,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 20,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "unit",
+            "example": "Cisco IP phones",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "series",
+            "example": "Cisco 8000 Series IP cameras",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'The Netgear R7000 was targeted' -> 'Netgear router series devices were targeted': same claim, less precise — specific model blurred into its general product family.",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "appliance",
+            "example": "Router Appliance",
+            "disputed": false,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'The Cisco switches were vulnerable' -> 'the network appliance was vulnerable': same claim, less precise — the specific type of device blurred into its general functional category.",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Vendor (e.g., Cisco)",
+            "gate": "3",
+            "reason": "This coarsening is too broad and generic ('cisco:*') without a deterministic computation table provided in the pipeline that maps unit membership (like Unit 74455) to the vendor group. The functional type rungs are stronger candidates."
+          }
+        ],
+        "notes": "The category spans multiple vendors, functions, and form factors (router, camera, NAS). The ladder focuses on moving from specific identifiers to broad functional categories ('appliance'), using 'kind-of' as the primary widening move. All rungs are highly defeasible unless specialized vendor/product taxonomies are integrated.",
+        "disagreements": [],
+        "discoveredAtDoc": 2722
+      }
+    },
+    {
+      "name": "Individual",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 27,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 16,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "individual",
+            "example": "Andrea Fortuna",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "surname",
+            "example": "Кузміч",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Андрій Кузміч was observed' -> 'Кузміч was observed': same claim, less precise — first name blurred",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Nationality (e.g., Ukrainian citizen)",
+            "gate": "1",
+            "reason": "A separate category (Nationality/Citizenship). While a person belongs to many groups, 'Individual' is the name-centric category and should not cross into geopolitical classification unless that classification is provided as an integral part of the observed name."
+          }
+        ],
+        "notes": "This schema models a simple identification structure. The ladder depth stops at surname because further coarsening (e.g., initial, first letter) loses too much precision to be reliable without defined corpus constraints or explicit knowledge tables; furthermore, grouping by surname is usually contained within the 'drop-qualifier' move and does not typically need the dedicated 'grouped-by' move unless specific cross-lingual standards compute it.",
+        "disagreements": [
+          "g1 \"Кузміч\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 5105791
+      }
+    },
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2625,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 20,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "entity",
+            "example": "Російська Федерація",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "nation",
+            "example": "Russia",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'The Russian Federation signed the treaty' -> 'Russia signed the treaty': same claim, less precise — legal/administrative qualification blurred",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "continent (e.g., Europe)",
+            "gate": "1",
+            "reason": "Not a Country category member. Continents are geographic regions, not recognized sovereign countries in the schema's sense, making it an invalid rung under GATE 1."
+          },
+          {
+            "candidate": "macro-region (e.g., Eurasia)",
+            "gate": "2",
+            "reason": "Conceptual grouping that exceeds geographical/political boundaries sufficient to be considered a coarser name within the 'Country' category scope. This is better classified as an assertional relation rather than an entity subsumption."
+          }
+        ],
+        "notes": "This category demonstrates depth pressure, but strict adherence to GATE 1 (the rung must itself belong to Country) limits the ladder greatly. The only safe coarsening observed is dropping administrative/legal qualifiers ('Federation', 'People's Republic') to retrieve a base country name. All rungs are highly defeasible.",
+        "disagreements": [
+          "g1 \"Russia\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 4905718
+      }
+    },
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2687,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 67,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "group",
+            "example": "APT41",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "advanced threat group",
+            "example": "APT28",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'APT41 executed a spearphishing campaign' -> 'an advanced threat group executed a spearphishing campaign': same claim, less precise — the specific nature of the APT is generalized into its class",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "threat actor",
+            "example": "a known cyber threat group",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'APT41 executed a spearphishing campaign' -> 'a known cyber threat group executed a spearphishing campaign': same claim, less precise — the specific classification is generalized into its wider category of malicious actors",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "nation-state actor",
+            "gate": "1",
+            "reason": "This adds the 'state' attribute, which is an assertional judgment (origin/attribution) about the group, not a structural coarsening of its name or class. The category itself already covers state actors like APT41."
+          }
+        ],
+        "notes": "The initial examples mix highly specific identifiers (UAC-XXXXX) with named proper nouns (HAFNIUM). This ladder follows the generalization path from specific identified group to functional classification ('advanced threat group') and finally to broad category ('threat actor'). The underlying type of move is 'kind-of', as we are generalizing the *type* of entity rather than identifying a physical container or parent company. All rungs are treated as defeasible because their structure relies on generalization, not formal referencing tables.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 3",
+          "g2 \"a known cyber threat group\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6276824
+      }
+    },
+    {
+      "name": "Infrastructure",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2808,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 8,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "system",
+            "example": "Єдина судова інформаційно-телекомунікаційна система (ЄСІТС)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "information_service",
+            "example": "DNS-сервери для зони gov.ua",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'The court system was targeted' -> 'An information service was targeted': same claim, less precise — dropped the specific judicial context and generalized to a functional system type.",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "national_service",
+            "example": "високовольтні електричні підстанції",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'An information service was targeted' -> 'A national service was targeted': same claim, less precise — abstracted from a specific functional IT system to the broader category of essential services.",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "critical infrastructure",
+            "gate": "1",
+            "reason": "This is an overarching designation or regulatory concept (a meta-category), not an entity name in the corpus. It belongs to the assertional layer of classification rather than being a widenable, named component."
+          }
+        ],
+        "notes": "The depth structure follows: Specific System/Instance (g0) -> Defined Technical Service Type (g1) -> Essential Functional Domain (g2). Given the diversity (physical power vs. digital data), the ladder must generalize based on function rather than physical connection, leading to 'kind-of' and increasing abstraction.",
+        "disagreements": [
+          "g2 \"високовольтні електричні підстанції\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 5702579
+      }
+    }
+  ],
+  "relationTypes": [
+    {
+      "name": "Associated_With",
+      "definition": "Indicates that the organization uses or is impacted by this piece of software.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 16
+    },
+    {
+      "name": "Exploits",
+      "definition": "Indicates that the source software attempts to exploit or interact negatively with the target software.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 17
+    },
+    {
+      "name": "Connected_To",
+      "definition": "The two devices are related by physical proximity or network scope within the incident environment.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 22
+    },
+    {
+      "name": "Attacked_By",
+      "definition": "Indicates that the source sector was targeted by the domain attacker.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2697
+    },
+    {
+      "name": "Operates_On",
+      "definition": "Indicates that the attacker group utilizes the resources or infrastructure associated with the device type.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2720
+    },
+    {
+      "name": "Impacts_Region",
+      "definition": "Indicates that the resources represented by the device are capable of affecting systems within this country.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2720
+    },
+    {
+      "name": "Geographically_Linked",
+      "definition": "Indicates that the two countries have documented interaction, border proximity, or shared regional interest in cyber reporting.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2720
+    },
+    {
+      "name": "Targeting",
+      "definition": "Implies that the activity of the hacker group was directed toward the resources or people within this specific country.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10702
+    },
+    {
+      "name": "Attributed_To",
+      "definition": "Indicates that the malware's threat activity or characteristics are attributed to cyber threats originating from this country.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10702
+    },
+    {
+      "name": "Controlled_By",
+      "definition": "Suggests that the infrastructure represented by the domain is controlled by resources associated with this country.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10702
+    },
+    {
+      "name": "Uses_Infrastructure",
+      "definition": "Indicates that the hacker group utilizes this specific domain for command and control or operational purposes.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 11113
+    },
+    {
+      "name": "Utilizes_Tool",
+      "definition": "Implies that the specified hacker group is known to use or deploy this piece of software in its operations.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 18108
+    },
+    {
+      "name": "Country_Supports",
+      "definition": "Indicates documented suspicion or attribution that the specified country supports, originates, or facilitates the activities of the given hacker group.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 18108
+    },
+    {
+      "name": "Potential_Target",
+      "definition": "Implies that the activity profile or resources of the given hacker group are highly likely directed toward this specific industry sector.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 18108
+    },
+    {
+      "name": "Attacked_Organization",
+      "definition": "Implies that the specified hacker group was responsible for the attack or compromise of the target organization.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788
+    },
+    {
+      "name": "Associated_Domain",
+      "definition": "Indicates that the domain was utilized by or compromised in an incident targeting this specific organization.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788
+    },
+    {
+      "name": "Target_Infrastructure",
+      "definition": "Implies that the domain was used by or directed against this specific type of high-value target resource.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 861292
+    },
+    {
+      "name": "Associated_Staff",
+      "definition": "Implies that the individual is associated with the operations or personnel of the government body.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 3192088
+    },
+    {
+      "name": "Originates_From",
+      "definition": "Implies that the individual is a national of or represents this specific country.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 3192088
+    },
+    {
+      "name": "Conflicts_With",
+      "definition": "Indicates that the two attacking entities have a documented adversarial relationship in cyber conflict.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 3718487
+    },
+    {
+      "name": "Requires_Infrastructure",
+      "definition": "The specified domain is necessary for the intended function or continued operation of this type of device.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 5160737
+    },
+    {
+      "name": "Sector_Affiliation",
+      "definition": "Implies that the individual is associated with the operations, personnel, or resources of the specified industry sector.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6032734
+    },
+    {
+      "name": "Manages_Infrastructure",
+      "definition": "Implies that the individual has administrative access, ownership, operational control, or deep knowledge of the specified resource/system.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6032734
+    },
+    {
+      "name": "Targets_Device",
+      "definition": "Implies that the hacker group possesses capabilities or intent to compromise this specific device type.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6123309
+    },
+    {
+      "name": "Vulnerable_To_Infrastructure",
+      "definition": "Implies that this specific device type requires or interacts with infrastructure utilized by attackers for compromise.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6123309
+    },
+    {
+      "name": "Activity_Against",
+      "definition": "Indicates that the operational infrastructure was utilized to conduct malicious activities directed against this specific organization.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6123309
+    }
+  ],
+  "pairRules": [
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Exploits"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": "Exploits"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": "Operates_On"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Target"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Operates_On"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Operates_On"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Attributed_To"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Controlled_By"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": "Utilizes_Tool"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": "Country_Supports"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": "Utilizes_Tool"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Exploits"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": "Attacked_Organization"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": "Associated_Domain"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Geographically_Linked"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Associated_Domain"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Connected_To"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Attacked_Organization"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Country_Supports"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Target_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Attacker"
+      },
+      "relation": "Associated_Domain"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Associated_Staff"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Originates_From"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Neutral"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Attacked_By"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Conflicts_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Country_Supports"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": "Utilizes_Tool"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Conflicts_With"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": "Associated_Staff"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Associated_Staff"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "relation": "Controlled_By"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Targeting"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Originates_From"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Exploits"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "relation": "Operates_On"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Country_Supports"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "relation": "Operates_On"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Controlled_By"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": "Originates_From"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "relation": "Exploits"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Associated_Domain"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Neutral"
+      },
+      "relation": "Requires_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Government Body",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "Impacts_Region"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "relation": "Requires_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Associated_Domain"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "relation": "Uses_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Sector_Affiliation"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Individual",
+        "role": "Neutral"
+      },
+      "relation": "Manages_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "relation": "Targets_Device"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "relation": "Vulnerable_To_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Device",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Domain",
+        "role": "Attacker"
+      },
+      "relation": "Target_Infrastructure"
+    },
+    {
+      "source": {
+        "category": "Infrastructure",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Organization",
+        "role": "Neutral"
+      },
+      "relation": "Activity_Against"
+    },
+    {
+      "source": {
+        "category": "Organization",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "HackerGroup",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": "Potential_Target"
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Sector",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Device",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Neutral"
+      },
+      "relation": "Associated_With"
+    },
+    {
+      "source": {
+        "category": "Government Body",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Software",
+        "role": "Target"
+      },
+      "relation": null
+    }
+  ],
+  "history": [
+    {
+      "doc": 16,
+      "op": "admit-category",
+      "name": "Organization"
+    },
+    {
+      "doc": 16,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 16,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 16,
+      "op": "admit-relation-type",
+      "name": "Associated_With"
+    },
+    {
+      "doc": 16,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Software/Target"
+    },
+    {
+      "doc": 16,
+      "op": "admit-pair-rule",
+      "signature": "Software/Target × Software/Target"
+    },
+    {
+      "doc": 17,
+      "op": "admit-category",
+      "name": "Sector"
+    },
+    {
+      "doc": 17,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Software/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 17,
+      "op": "admit-relation-type",
+      "name": "Exploits"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Software/Attacker × Software/Target"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Target × Software/Attacker"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Software/Attacker × Software/Neutral"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Target × Software/Target"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Software/Neutral × Software/Target"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Sector/Target"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Target × Software/Neutral"
+    },
+    {
+      "doc": 17,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 18,
+      "op": "admit-category",
+      "name": "Government Body"
+    },
+    {
+      "doc": 18,
+      "op": "admit-category",
+      "name": "Domain"
+    },
+    {
+      "doc": 18,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Sector/Target"
+    },
+    {
+      "doc": 18,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Government Body/Neutral"
+    },
+    {
+      "doc": 18,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Sector/Target"
+    },
+    {
+      "doc": 22,
+      "op": "admit-category",
+      "name": "Device"
+    },
+    {
+      "doc": 22,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Organization/Neutral"
+    },
+    {
+      "doc": 22,
+      "op": "admit-pair-rule",
+      "signature": "Software/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 22,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Software/Neutral"
+    },
+    {
+      "doc": 22,
+      "op": "admit-relation-type",
+      "name": "Connected_To"
+    },
+    {
+      "doc": 22,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Device/Target"
+    },
+    {
+      "doc": 23,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 25,
+      "op": "discover-ladder",
+      "name": "Organization"
+    },
+    {
+      "doc": 25,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 25,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 25,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 25,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Government Body/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Software/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Domain/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 26,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Domain/Neutral"
+    },
+    {
+      "doc": 27,
+      "op": "admit-category",
+      "name": "Individual"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Software/Target"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Software/Target"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Individual/Neutral"
+    },
+    {
+      "doc": 27,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 2492,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Software/Target"
+    },
+    {
+      "doc": 2496,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2624,
+      "op": "discover-ladder",
+      "name": "Organization"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Government Body/Neutral"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Government Body/Neutral"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Software/Target"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 2625,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Software/Target"
+    },
+    {
+      "doc": 2628,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Target × Sector/Target"
+    },
+    {
+      "doc": 2656,
+      "op": "discover-ladder",
+      "name": "Government Body"
+    },
+    {
+      "doc": 2661,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 2661,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Software/Target"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Individual/Neutral"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Neutral"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Individual/Neutral"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Individual/Neutral"
+    },
+    {
+      "doc": 2683,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Sector/Neutral"
+    },
+    {
+      "doc": 2683,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Sector/Neutral"
+    },
+    {
+      "doc": 2683,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Sector/Neutral"
+    },
+    {
+      "doc": 2683,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Sector/Neutral"
+    },
+    {
+      "doc": 2685,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Sector/Target"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Software/Target"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Software/Target"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 2687,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × HackerGroup/Attacker"
+    },
+    {
+      "doc": 2693,
+      "op": "discover-ladder",
+      "name": "Organization"
+    },
+    {
+      "doc": 2693,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Neutral × Organization/Target"
+    },
+    {
+      "doc": 2697,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2697,
+      "op": "admit-relation-type",
+      "name": "Attacked_By"
+    },
+    {
+      "doc": 2697,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Sector/Target"
+    },
+    {
+      "doc": 2697,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Domain/Attacker"
+    },
+    {
+      "doc": 2699,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Software/Attacker"
+    },
+    {
+      "doc": 2699,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Sector/Target"
+    },
+    {
+      "doc": 2699,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Domain/Attacker"
+    },
+    {
+      "doc": 2699,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Domain/Neutral"
+    },
+    {
+      "doc": 2699,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Organization/Neutral"
+    },
+    {
+      "doc": 2703,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 2718,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 2720,
+      "op": "discover-ladder",
+      "name": "Government Body"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-relation-type",
+      "name": "Operates_On"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Domain/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Domain/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Device/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Government Body/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Device/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-relation-type",
+      "name": "Impacts_Region"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Device/Attacker"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Software/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Government Body/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-relation-type",
+      "name": "Geographically_Linked"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Target"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Software/Neutral"
+    },
+    {
+      "doc": 2722,
+      "op": "discover-ladder",
+      "name": "Device"
+    },
+    {
+      "doc": 2722,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Software/Target"
+    },
+    {
+      "doc": 2722,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Device/Target"
+    },
+    {
+      "doc": 2722,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Software/Attacker"
+    },
+    {
+      "doc": 2722,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Government Body/Neutral"
+    },
+    {
+      "doc": 2722,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Device/Target"
+    },
+    {
+      "doc": 2725,
+      "op": "discover-ladder",
+      "name": "Sector"
+    },
+    {
+      "doc": 2807,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-category",
+      "name": "Infrastructure"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Infrastructure/Target"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Domain/Neutral"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Infrastructure/Target"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Target × Sector/Target"
+    },
+    {
+      "doc": 2808,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Infrastructure/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Sector/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Domain/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Software/Neutral"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Target × Sector/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Target × Software/Neutral"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Domain/Target"
+    },
+    {
+      "doc": 9483,
+      "op": "discover-ladder",
+      "name": "Sector"
+    },
+    {
+      "doc": 9483,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Target × Software/Attacker"
+    },
+    {
+      "doc": 9483,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Target × Software/Neutral"
+    },
+    {
+      "doc": 9483,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Target × Sector/Target"
+    },
+    {
+      "doc": 9483,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Organization/Target"
+    },
+    {
+      "doc": 9668,
+      "op": "discover-ladder",
+      "name": "Individual"
+    },
+    {
+      "doc": 9668,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × HackerGroup/Attacker"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-relation-type",
+      "name": "Targeting"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × HackerGroup/Attacker"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Sector/Target"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-relation-type",
+      "name": "Attributed_To"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-relation-type",
+      "name": "Controlled_By"
+    },
+    {
+      "doc": 10702,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Domain/Attacker"
+    },
+    {
+      "doc": 11113,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Software/Neutral"
+    },
+    {
+      "doc": 11113,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × HackerGroup/Attacker"
+    },
+    {
+      "doc": 11113,
+      "op": "admit-relation-type",
+      "name": "Uses_Infrastructure"
+    },
+    {
+      "doc": 11113,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × HackerGroup/Attacker"
+    },
+    {
+      "doc": 12081,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Individual/Neutral"
+    },
+    {
+      "doc": 17696,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Infrastructure/Neutral"
+    },
+    {
+      "doc": 17899,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Sector/Target"
+    },
+    {
+      "doc": 17899,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Government Body/Target"
+    },
+    {
+      "doc": 17899,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Government Body/Target"
+    },
+    {
+      "doc": 17899,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Government Body/Target"
+    },
+    {
+      "doc": 17899,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Software/Attacker"
+    },
+    {
+      "doc": 18101,
+      "op": "discover-ladder",
+      "name": "Government Body"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-relation-type",
+      "name": "Utilizes_Tool"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × HackerGroup/Neutral"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-relation-type",
+      "name": "Country_Supports"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × HackerGroup/Neutral"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-relation-type",
+      "name": "Potential_Target"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Neutral × Sector/Target"
+    },
+    {
+      "doc": 18108,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 18273,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × HackerGroup/Attacker"
+    },
+    {
+      "doc": 37121,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Sector/Neutral"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Infrastructure/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Organization/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Organization/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Target × Software/Attacker"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Sector/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Infrastructure/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Organization/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Target × Organization/Neutral"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Target × Software/Neutral"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Target × Organization/Target"
+    },
+    {
+      "doc": 37139,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Target × Organization/Target"
+    },
+    {
+      "doc": 37211,
+      "op": "discover-ladder",
+      "name": "Organization"
+    },
+    {
+      "doc": 37211,
+      "op": "discover-ladder",
+      "name": "Sector"
+    },
+    {
+      "doc": 37246,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Country/Target"
+    },
+    {
+      "doc": 37626,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 37626,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 37626,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × HackerGroup/Attacker"
+    },
+    {
+      "doc": 37626,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Individual/Neutral"
+    },
+    {
+      "doc": 37788,
+      "op": "admit-relation-type",
+      "name": "Attacked_Organization"
+    },
+    {
+      "doc": 37788,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Organization/Target"
+    },
+    {
+      "doc": 37788,
+      "op": "admit-relation-type",
+      "name": "Associated_Domain"
+    },
+    {
+      "doc": 37788,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Organization/Target"
+    },
+    {
+      "doc": 37788,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Organization/Target"
+    },
+    {
+      "doc": 37815,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Government Body/Neutral"
+    },
+    {
+      "doc": 37815,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Neutral"
+    },
+    {
+      "doc": 38097,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 39518,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Infrastructure/Target"
+    },
+    {
+      "doc": 39518,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Infrastructure/Target"
+    },
+    {
+      "doc": 39518,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Sector/Target"
+    },
+    {
+      "doc": 39923,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 40125,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Infrastructure/Neutral"
+    },
+    {
+      "doc": 40125,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 40125,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Infrastructure/Neutral"
+    },
+    {
+      "doc": 40125,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Infrastructure/Neutral"
+    },
+    {
+      "doc": 40125,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 761668,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 761668,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Neutral × Organization/Attacker"
+    },
+    {
+      "doc": 761668,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Organization/Attacker"
+    },
+    {
+      "doc": 761668,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Organization/Attacker"
+    },
+    {
+      "doc": 861292,
+      "op": "admit-relation-type",
+      "name": "Target_Infrastructure"
+    },
+    {
+      "doc": 861292,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Government Body/Target"
+    },
+    {
+      "doc": 861292,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Government Body/Target"
+    },
+    {
+      "doc": 1545776,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Organization/Attacker"
+    },
+    {
+      "doc": 2681855,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × HackerGroup/Attacker"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Organization/Neutral"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-relation-type",
+      "name": "Associated_Staff"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Individual/Neutral"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-relation-type",
+      "name": "Originates_From"
+    },
+    {
+      "doc": 3192088,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Individual/Neutral"
+    },
+    {
+      "doc": 3349703,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × HackerGroup/Neutral"
+    },
+    {
+      "doc": 3349703,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × HackerGroup/Neutral"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Organization/Target"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Organization/Target"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-relation-type",
+      "name": "Conflicts_With"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × HackerGroup/Attacker"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Government Body/Attacker"
+    },
+    {
+      "doc": 3718487,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 4697016,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Government Body/Attacker"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Sector/Target"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Government Body/Attacker"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Attacker"
+    },
+    {
+      "doc": 4755642,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 4789582,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Neutral × Sector/Target"
+    },
+    {
+      "doc": 4789582,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Neutral × Software/Target"
+    },
+    {
+      "doc": 4789582,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Neutral × Infrastructure/Neutral"
+    },
+    {
+      "doc": 4905718,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 5105791,
+      "op": "discover-ladder",
+      "name": "Individual"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × HackerGroup/Attacker"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Government Body/Attacker"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Government Body/Target"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Individual/Neutral"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Device/Attacker"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Government Body/Target"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Individual/Neutral"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Government Body/Target"
+    },
+    {
+      "doc": 5105791,
+      "op": "admit-pair-rule",
+      "signature": "Device/Attacker × Individual/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × HackerGroup/Attacker"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Government Body/Attacker"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Government Body/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Government Body/Attacker"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Government Body/Attacker"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Domain/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Device/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Software/Attacker"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Sector/Target"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Neutral × Government Body/Target"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Government Body/Target"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Device/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Organization/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-relation-type",
+      "name": "Requires_Infrastructure"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Domain/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Government Body/Neutral"
+    },
+    {
+      "doc": 5160737,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Device/Neutral"
+    },
+    {
+      "doc": 5213167,
+      "op": "discover-ladder",
+      "name": "Government Body"
+    },
+    {
+      "doc": 5269451,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Infrastructure/Attacker"
+    },
+    {
+      "doc": 5269451,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Attacker × Software/Attacker"
+    },
+    {
+      "doc": 5269451,
+      "op": "admit-pair-rule",
+      "signature": "Domain/Attacker × Infrastructure/Attacker"
+    },
+    {
+      "doc": 5436463,
+      "op": "discover-ladder",
+      "name": "Organization"
+    },
+    {
+      "doc": 5702579,
+      "op": "discover-ladder",
+      "name": "Infrastructure"
+    },
+    {
+      "doc": 5702579,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Infrastructure/Target"
+    },
+    {
+      "doc": 6032734,
+      "op": "admit-relation-type",
+      "name": "Sector_Affiliation"
+    },
+    {
+      "doc": 6032734,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Sector/Target"
+    },
+    {
+      "doc": 6032734,
+      "op": "admit-relation-type",
+      "name": "Manages_Infrastructure"
+    },
+    {
+      "doc": 6032734,
+      "op": "admit-pair-rule",
+      "signature": "Individual/Neutral × Infrastructure/Target"
+    },
+    {
+      "doc": 6123309,
+      "op": "discover-ladder",
+      "name": "Sector"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-relation-type",
+      "name": "Targets_Device"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × HackerGroup/Attacker"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Attacker × Sector/Target"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-relation-type",
+      "name": "Vulnerable_To_Infrastructure"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Infrastructure/Attacker"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-pair-rule",
+      "signature": "Device/Target × Domain/Attacker"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-relation-type",
+      "name": "Activity_Against"
+    },
+    {
+      "doc": 6123309,
+      "op": "admit-pair-rule",
+      "signature": "Infrastructure/Attacker × Organization/Neutral"
+    },
+    {
+      "doc": 6276799,
+      "op": "admit-pair-rule",
+      "signature": "Organization/Target × Software/Target"
+    },
+    {
+      "doc": 6276824,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6276894,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 6277896,
+      "op": "admit-pair-rule",
+      "signature": "HackerGroup/Attacker × Sector/Neutral"
+    },
+    {
+      "doc": 6277896,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 6277896,
+      "op": "admit-pair-rule",
+      "signature": "Sector/Neutral × Sector/Neutral"
+    },
+    {
+      "doc": 6278274,
+      "op": "admit-pair-rule",
+      "signature": "Device/Neutral × Software/Neutral"
+    },
+    {
+      "doc": 6278521,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Software/Target"
+    },
+    {
+      "doc": 6278620,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Target × Software/Neutral"
+    },
+    {
+      "doc": 6280129,
+      "op": "admit-pair-rule",
+      "signature": "Government Body/Attacker × Software/Target"
+    }
+  ]
+}

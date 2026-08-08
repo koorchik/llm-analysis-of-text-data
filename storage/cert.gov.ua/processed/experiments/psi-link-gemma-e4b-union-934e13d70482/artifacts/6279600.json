@@ -1,0 +1,146 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0020 (Vermin)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0020 (Vermin)",
+      "matchedVia": "UAC-0020 (Vermin)"
+    },
+    {
+      "name": "SPECTR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR",
+      "matchedVia": "SPECTR"
+    },
+    {
+      "name": "SpecMon",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SpecMon",
+      "matchedVia": "SpecMon"
+    },
+    {
+      "name": "Screengrabber",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Screengrabber",
+      "matchedVia": "Screengrabber"
+    },
+    {
+      "name": "FileGrabber",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "FileGrabber",
+      "matchedVia": "FileGrabber"
+    },
+    {
+      "name": "Usb",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Usb",
+      "matchedVia": "Usb"
+    },
+    {
+      "name": "Social",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Social",
+      "matchedVia": "Social"
+    },
+    {
+      "name": "Browsers",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Browsers",
+      "matchedVia": "Browsers"
+    },
+    {
+      "name": "Syncthing",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Syncthing",
+      "matchedVia": "Syncthing"
+    },
+    {
+      "name": "InnoSetup",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "InnoSetup",
+      "matchedVia": "InnoSetup"
+    },
+    {
+      "name": "Robocopy",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Robocopy",
+      "matchedVia": "Robocopy"
+    },
+    {
+      "name": "NSSM",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "NSSM",
+      "matchedVia": "NSSM"
+    },
+    {
+      "name": "Центр кібербезпеки ЗСУ (ЦКБ)",
+      "category": "Government Body",
+      "role": "Neutral",
+      "normalizedName": "Центр кібербезпеки ЗСУ (ЦКБ)",
+      "matchedVia": "Центр кібербезпеки ЗСУ (ЦКБ)"
+    },
+    {
+      "name": "Сили оборони України",
+      "category": "Government Body",
+      "role": "Target",
+      "normalizedName": "Сили оборони України",
+      "matchedVia": "Сили оборони України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Україна",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    },
+    {
+      "name": "crash.syncthing.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "crash.syncthing.net",
+      "matchedVia": "crash.syncthing.net"
+    },
+    {
+      "name": "data.syncthing.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "data.syncthing.net",
+      "matchedVia": "data.syncthing.net"
+    },
+    {
+      "name": "upgrades.syncthing.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "upgrades.syncthing.net",
+      "matchedVia": "upgrades.syncthing.net"
+    },
+    {
+      "name": "syncthing.net",
+      "category": "Domain",
+      "role": "Neutral",
+      "normalizedName": "syncthing.net",
+      "matchedVia": "syncthing.net"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "05.06.2024",
+    "id": 6279600,
+    "title": "UAC-0020 (Vermin) атакує Сили оборони України з використанням ШПЗ SPECTR в тандемі з легітимним SyncThing (кампанія \"SickSync\") (CERT-UA#9934)",
+    "llmProcessingTimeSeconds": 117.857
+  }
+}

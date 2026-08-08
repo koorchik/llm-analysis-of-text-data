@@ -1,0 +1,642 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0215",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "mstsc.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "органи державної влади",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "підприємства основних галузей промисловості",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "військові формування",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Amazon",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "ca-central-1.awsplatform.online",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ca-west-1.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "central-2-aws.ua-aws.army",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-central-1-aws.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-central-1.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-central-1.ukrtelecom.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-central-2-aws.ua-aws.army",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-north-1-aws.ua-energy.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-north-1-aws.ua-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-south-1-aws.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-south-2-aws.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-southeast-1-aws.gov-ua.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-southeast-1-aws.govtr.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eu-southeast-1-aws.zero-trust.solutions",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-east-1-aws.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-east-2-aws.ua-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-east-console.awsplatform.online",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-west-1-amazon.ua-energy.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-west-1.aws-ukraine.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-west-1.ua-aws.army",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-west-1.ukrtelecom.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "us-west-2-aws.mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "zero-trust.solutions",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ukrtelecom.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "awsplatform.online",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-ukraine.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-s3.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-meet.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-il.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-data.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-meetings.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-secure.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-join.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "aws-online.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-au.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-aws.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-fi.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-gr.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-lt.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-lv.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-pl.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-sk.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-trust.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "gov-ua.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "govps.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "govtr.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "govua.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "eru-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "feedzai-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "md-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mf-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mo-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mpo-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mpsv-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "msmt-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mv-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "my-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mzd-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mze-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mzp-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mzv-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "nakit-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "nbu-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "nukib-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "policie-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mmr-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "uohs-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "uoou-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "vlada-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "voa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mfa-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mfa-gov-il.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mfa-gov-tr.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mil-be.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mil-ee.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mil-pl.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mil-pt.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mod-gov-il.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-acronis.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-army.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-atlassian.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-aws.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-bah.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-be.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-blackberry.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-csis.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-de.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-dgap.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-dk.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-dnc.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-esa.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-fbi.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-hudson.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-ida.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-iri.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-knowbe4.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-marcus.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-monitoring.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-nato.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-ned.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-nsa.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-proofpoint.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-pt.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-rackspace.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-rand.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-spacex.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-state.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-stig.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-ua.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-ucia.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "s3-zoho.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-aws.army",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-energy.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-gov.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-mil.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-sec.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-se.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ua-sn.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "townoflakelure.com",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "23.10.2024",
+    "id": 6281076,
+    "title": "Файли конфігурацій RDP як засіб отримання віддаленого доступу до комп'ютера або \"Rogue RDP\" (CERT-UA#11690)",
+    "llmProcessingTimeSeconds": 284.564
+  },
+  "relations": [],
+  "schemaProposals": []
+}

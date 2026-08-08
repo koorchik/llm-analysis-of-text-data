@@ -1,0 +1,142 @@
+{
+  "entities": [
+    {
+      "name": "Microsoft",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "CVE-2021-26855",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "CVE-2021-26857",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "CVE-2021-26858",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "CVE-2021-27065",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Microsoft Exchange Server 2010",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Microsoft Exchange Server 2013",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Microsoft Exchange Server 2016",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Microsoft Exchange Server 2019",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Exchange On-premises Mitigation Tool (EOMT)",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Test-ProxyLogon.ps1",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "http-vuln-cve2021-26855.nse",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "nmap",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Microsoft Safety Scanner",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "IIS",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Burp Suite",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "python-requests",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "curl",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Zenmap",
+      "category": "Software",
+      "role": "Neutral"
+    },
+    {
+      "name": "Державний центр кіберзахисту Держспецзв’язку",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "державні органи України",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "організації України",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "CISA",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "HAFNIUM",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "proxylogon.com",
+      "category": "Domain",
+      "role": "Neutral"
+    }
+  ],
+  "metadata": {
+    "date": "17.03.2021",
+    "id": 11113,
+    "title": "Державним центром кіберзахисту Держспецзв’язку вживаються заходи з протидії кібератакам з використанням вразливостей Microsoft Exchange Server (ProxyLogon)",
+    "llmProcessingTimeSeconds": 107.903
+  },
+  "relations": [],
+  "schemaProposals": []
+}

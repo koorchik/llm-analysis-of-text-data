@@ -1,0 +1,82 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0057",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0057",
+      "matchedVia": "UAC-0057"
+    },
+    {
+      "name": "UNC1151",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "unc1151",
+      "matchedVia": "unc1151"
+    },
+    {
+      "name": "PicassoLoader",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PicassoLoader",
+      "matchedVia": "PicassoLoader"
+    },
+    {
+      "name": "njRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "njRAT",
+      "matchedVia": "njRAT"
+    },
+    {
+      "name": "carpetmarker.pw",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "carpetmarker.pw",
+      "matchedVia": "carpetmarker.pw"
+    },
+    {
+      "name": "everything-everywhere.at.ply.gg",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "everything-everywhere.at.ply.gg",
+      "matchedVia": "everything-everywhere.at.ply.gg"
+    },
+    {
+      "name": "Mandiant",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Mandiant",
+      "matchedVia": "Mandiant"
+    },
+    {
+      "name": "Avast",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Avast",
+      "matchedVia": "Avast"
+    },
+    {
+      "name": "FireEye",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "FireEye",
+      "matchedVia": "FireEye"
+    },
+    {
+      "name": "Fortinet",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Fortinet",
+      "matchedVia": "Fortinet"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "07.07.2023",
+    "id": 5098518,
+    "title": "Цільова кібератака UAC-0057 у відношенні державних органів із застосуванням PicassoLoader/njRAT (CERT-UA#6948)",
+    "llmProcessingTimeSeconds": 69.306
+  }
+}

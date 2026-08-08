@@ -1,0 +1,104 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0010",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0010",
+      "matchedVia": "UAC-0010"
+    },
+    {
+      "name": "SRP",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "SRP",
+      "matchedVia": "SRP"
+    },
+    {
+      "name": "AppLocker",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "AppLocker",
+      "matchedVia": "AppLocker"
+    },
+    {
+      "name": "YARA",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "YARA",
+      "matchedVia": "YARA"
+    },
+    {
+      "name": "MISP",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Malware Information Sharing Platform (MISP)",
+      "matchedVia": "MISP"
+    },
+    {
+      "name": "Mikrotik",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Mikrotik",
+      "matchedVia": "Mikrotik"
+    },
+    {
+      "name": "pfSense",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "pfSense",
+      "matchedVia": "pfSense"
+    },
+    {
+      "name": "SIEM",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "SIEM",
+      "matchedVia": "SIEM"
+    },
+    {
+      "name": "Україна",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Україна",
+      "matchedVia": "Україна",
+      "code": "UA"
+    },
+    {
+      "name": "органи державної влади",
+      "category": "Sector",
+      "role": "Neutral",
+      "normalizedName": "українські органи державної влади",
+      "matchedVia": "Органи державної влади"
+    },
+    {
+      "name": "місцеве самоврядування",
+      "category": "Sector",
+      "role": "Neutral",
+      "normalizedName": "місцеве самоврядування",
+      "matchedVia": "місцеве самоврядування"
+    },
+    {
+      "name": "військові формування",
+      "category": "Sector",
+      "role": "Neutral",
+      "normalizedName": "військові формування",
+      "matchedVia": "військові формування"
+    },
+    {
+      "name": "державні установи та підприємства",
+      "category": "Sector",
+      "role": "Neutral",
+      "normalizedName": "державні установи та підприємства",
+      "matchedVia": "державні установи та підприємства"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "28.02.2024",
+    "id": 6277896,
+    "title": "АНОНС: Практичний семінар для кіберфахівців",
+    "llmProcessingTimeSeconds": 83.906
+  }
+}

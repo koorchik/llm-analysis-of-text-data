@@ -1,0 +1,241 @@
+{
+  "version": "run-card-v1",
+  "runId": "psi-link-gemma-e4b-union-934e13d70482",
+  "condition": "psi-link-gemma-e4b-union",
+  "createdAt": "2026-08-06T07:00:01.475Z",
+  "updatedAt": "2026-08-06T11:27:10.254Z",
+  "config": {
+    "condition": "psi-link-gemma-e4b-union",
+    "orchestration": "incremental",
+    "input": {
+      "path": "../storage/cert.gov.ua/fetched",
+      "contentHash": "908f3f606afd9e4bd24724bb8e90ef33f1fdd0a3cd52fd0714ce8c2b2f71de92",
+      "fileCount": 204
+    },
+    "llm": {
+      "provider": "ollama",
+      "model": "gemma4:e4b-32k"
+    },
+    "embeddings": {
+      "provider": "ollama",
+      "model": "embeddinggemma"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": true,
+        "seed": true,
+        "topP": true
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+      "link-judge": "326934c3d133867eaa1d5fa01e238fded32c408a3897cf08ae000a0100ee9015",
+      "listwise-select": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "repair-judge": "0b74e73c637d1830fb333e083fde4a722e2392cb030efc2315644739788e6425",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingPipeline"
+      ],
+      "edgesFrom": "layered",
+      "decisionStrategy": "builtin-link-judge",
+      "decisionStrategyConfig": null,
+      "candidateGenerator": "rrf(string-sim(identity,max-lev-dice),string-sim(identity+transliterate+confusable-skeleton,max-lev-dice),tfidf-3gram(identity),bm25(identity),embedding(embeddinggemma,name+gloss,max-over-aliases))",
+      "candidateGeneratorConfig": {
+        "rrfK": 60,
+        "perChildK": 20,
+        "children": [
+          {
+            "id": "string-sim(identity,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "string-sim(identity+transliterate+confusable-skeleton,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity",
+                "transliterate",
+                "confusable-skeleton"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "tfidf-3gram(identity)",
+            "config": {
+              "n": 3,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "bm25(identity)",
+            "config": {
+              "k1": 1.2,
+              "b": 0.75,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "embedding(embeddinggemma,name+gloss,max-over-aliases)",
+            "config": {
+              "provider": "ollama",
+              "model": "embeddinggemma",
+              "representation": "name+gloss",
+              "clusterRepresentation": "max-over-aliases",
+              "backend": {
+                "provider": "ollama",
+                "model": "embeddinggemma",
+                "host": "default"
+              }
+            }
+          }
+        ]
+      },
+      "candidateK": null,
+      "candidateMinSim": null,
+      "embeddings": true,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 8
+      },
+      "repair": true,
+      "repairGlossThresholds": null,
+      "repairBlockerThresholds": null,
+      "repairCoherenceThreshold": null,
+      "repairTokenCap": null,
+      "repairTopK": null
+    },
+    "git": {
+      "sha": "8515d8744c8a7c2069fa5cff8021a0a44127e812",
+      "dirty": true,
+      "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runId": "psi-link-gemma-e4b-union-934e13d70482"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "psi-link-gemma-e4b-union-934e13d70482",
+    "totals": {
+      "calls": 4255,
+      "inputTokens": 12363301,
+      "outputTokens": 1634014,
+      "costUsd": 0,
+      "unpricedCalls": 0,
+      "wallClockMs": 12493995
+    },
+    "byOperator": {
+      "pair-rule": {
+        "calls": 59,
+        "inputTokens": 32510,
+        "outputTokens": 42678,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 346568
+      },
+      "repair-judge": {
+        "calls": 204,
+        "inputTokens": 5607666,
+        "outputTokens": 449697,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 3805177
+      },
+      "repair-judge-retry": {
+        "calls": 204,
+        "inputTokens": 5606761,
+        "outputTokens": 422690,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 3064702
+      },
+      "ladder": {
+        "calls": 111,
+        "inputTokens": 420315,
+        "outputTokens": 220306,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1484985
+      },
+      "link-judge": {
+        "calls": 197,
+        "inputTokens": 595623,
+        "outputTokens": 463063,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 3128872
+      },
+      "gloss-index": {
+        "calls": 161,
+        "inputTokens": 24777,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 25938
+      },
+      "embed-query": {
+        "calls": 3272,
+        "inputTokens": 27753,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 389934
+      },
+      "country-normalize": {
+        "calls": 22,
+        "inputTokens": 12470,
+        "outputTokens": 4752,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 40180
+      },
+      "link-judge-retry": {
+        "calls": 24,
+        "inputTokens": 35340,
+        "outputTokens": 30828,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 207498
+      },
+      "embed-index": {
+        "calls": 1,
+        "inputTokens": 86,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 141
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 221743,
+    "misses": 4268,
+    "entries": 4374
+  },
+  "completedAt": "2026-08-06T11:27:10.252Z"
+}

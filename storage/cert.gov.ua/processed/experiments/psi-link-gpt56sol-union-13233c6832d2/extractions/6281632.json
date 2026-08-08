@@ -1,0 +1,572 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0185 (UNC4221)",
+      "category": "HackerGroup",
+      "role": "Attacker"
+    },
+    {
+      "name": "MESHAGENT",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "ULTRAVNC",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "mshta.exe",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker"
+    },
+    {
+      "name": "Signal",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Telegram",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "WhatsApp",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "DELTA",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "ТЕНЕТА",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Кропива",
+      "category": "Software",
+      "role": "Target"
+    },
+    {
+      "name": "Сили оборони України",
+      "category": "Government Body",
+      "role": "Target"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target"
+    },
+    {
+      "name": "Підприємства оборонно-промислового комплексу",
+      "category": "Sector",
+      "role": "Target"
+    },
+    {
+      "name": "Український союз промисловців та підприємців (УСПП)",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "MIL.CERT-UA",
+      "category": "Government Body",
+      "role": "Neutral"
+    },
+    {
+      "name": "НАТО",
+      "category": "Organization",
+      "role": "Neutral"
+    },
+    {
+      "name": "live.outloolc.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "device.redirecl.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mail.outloolc.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "svc.odwebp.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "uspp.derzhposluhy.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "odwebp.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "outloolc.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "redirecl.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "derzhposluhy.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "i-ua.account-guard.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram.defender-bot.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram.token-defender.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "account-guard.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "defender-bot.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "token-defender.cloud",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mirotrent.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "plntr.mirotrent.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "cloud.account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "get.god-le.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "plntr.account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "god-le.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "god-le.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "in-touc.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mail-gov.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mail-gov.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "sign-cert.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "palantir.ink",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "clouddrive.world",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "emtserviceca.info",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "account-saver.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "mails.support",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "check.sign-cert.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "cloud.god-le.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "confirm.account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "dhl.redirecl.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "drive.redirecl.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "get.in-touc.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "get.mail-gov.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "get.sign-cert.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "ivanti.account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "my.mail-gov.net",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "stellar.account-viewer.com",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "cancel-auth.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "confirmphone.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "milgov.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "milgov.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "teiegram.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram-account.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram-auth.website",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegramm-account.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "web-telegram.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "delta.milgov.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "web.teiegram.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "web.telegram-account.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "web.telegramm-account.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "web.web.telegram-account.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.teiegram.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.telegram-auth.website",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.telegramm-account.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "212nj0b42w.web.telegram-account.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "658pvbhj2k7veemmv4.web.telegram-account.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "spam.web-telegram.host",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "kropyva.group",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "kropyva.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "teneta.group",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "teneta.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "group-teneta.online",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "group.kropyva.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "group.teneta.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "whatsapp-confirm.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "passport-ukr-net.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "protect-password.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram-confirm.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "accept-action.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "signal-confirm.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "cancel-action.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "drive-share.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "share-drive.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "group-invitation.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "check-active.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "qweasdzx.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "qsrgh.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.protect-password.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.confirm-signal.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.google-drive.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.signal-confirm.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.qsrgh.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "www.accept-action.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "whatsapp.protect-password.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram.check-active.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "whatsapp.group-invitation.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "google.drive-share.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "google.share-drive.site",
+      "category": "Domain",
+      "role": "Attacker"
+    },
+    {
+      "name": "telegram.qweasdzx.site",
+      "category": "Domain",
+      "role": "Attacker"
+    }
+  ],
+  "metadata": {
+    "date": "07.12.2024",
+    "id": 6281632,
+    "title": "Цільові кібератаки UAC-0185 у відношенні Сил оборони та підприємств ОПК України (CERT-UA#12414)",
+    "llmProcessingTimeSeconds": 212.52
+  },
+  "relations": [],
+  "schemaProposals": []
+}

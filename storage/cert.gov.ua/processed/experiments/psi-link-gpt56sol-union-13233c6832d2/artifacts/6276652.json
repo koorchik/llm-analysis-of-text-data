@@ -1,0 +1,98 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050",
+      "matchedVia": "UAC-0050"
+    },
+    {
+      "name": "RemcosRAT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos",
+      "matchedVia": "RemcosRAT"
+    },
+    {
+      "name": "MeduzaStealer",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "MeduzaStealer",
+      "matchedVia": "MeduzaStealer"
+    },
+    {
+      "name": "AutoIt3",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "AutoIt",
+      "matchedVia": "AutoIt3"
+    },
+    {
+      "name": "Shinjiru",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Shinjiru",
+      "matchedVia": "Shinjiru"
+    },
+    {
+      "name": "Malaysia",
+      "category": "Country",
+      "role": "Neutral",
+      "normalizedName": "Malaysia",
+      "matchedVia": "Malaysia",
+      "code": "MY"
+    },
+    {
+      "name": "ndibk.gov.ua",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ndibk.gov.ua",
+      "matchedVia": "ndibk.gov.ua"
+    },
+    {
+      "name": "aten.ua",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "aten.ua",
+      "matchedVia": "aten.ua"
+    },
+    {
+      "name": "bdf.gov.ua",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "bdf.gov.ua",
+      "matchedVia": "bdf.gov.ua"
+    },
+    {
+      "name": "trnvk.gov.ua",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "trnvk.gov.ua",
+      "matchedVia": "trnvk.gov.ua"
+    },
+    {
+      "name": "органи державної влади Польщі",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "органи державної влади Польщі",
+      "matchedVia": "органи державної влади Польщі"
+    },
+    {
+      "name": "Poland",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Польща",
+      "matchedVia": "Poland",
+      "code": "PL"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "07.12.2023",
+    "id": 6276652,
+    "title": "Масова кібератака UAC-0050 з використанням RemcosRAT/MeduzaStealer у відношенні України та Польщі (CERT-UA#8218)",
+    "llmProcessingTimeSeconds": 90.456
+  }
+}

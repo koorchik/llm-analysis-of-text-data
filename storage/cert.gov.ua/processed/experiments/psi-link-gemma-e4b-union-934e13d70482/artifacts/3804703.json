@@ -1,0 +1,69 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0050",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "UAC-0050",
+      "matchedVia": "UAC-0050"
+    },
+    {
+      "name": "Remcos",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Remcos",
+      "matchedVia": "Remcos"
+    },
+    {
+      "name": "RemoteUtilities",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "RemoteUtilities",
+      "matchedVia": "RemoteUtilities"
+    },
+    {
+      "name": "telecomds.online",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "telecomds.online",
+      "matchedVia": "telecomds.online"
+    },
+    {
+      "name": "АТ \"Укртелеком\"",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "АТ \"Укртелеком\"",
+      "matchedVia": "АТ \"Укртелеком\""
+    },
+    {
+      "name": "BreakingSecurity",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "BreakingSecurity",
+      "matchedVia": "BreakingSecurity"
+    },
+    {
+      "name": "органи державної влади України",
+      "category": "Sector",
+      "role": "Target",
+      "normalizedName": "державні органи України",
+      "matchedVia": "органи державної влади України"
+    },
+    {
+      "name": "Ukraine",
+      "category": "Country",
+      "role": "Target",
+      "normalizedName": "Україна",
+      "matchedVia": "Ukraine",
+      "code": "UA"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "06.02.2023",
+    "id": 3804703,
+    "title": "Кібератака UAC-0050 у відношенні державних органів України із застосуванням програми для віддаленого контролю та спостереження Remcos (CERT-UA#5926)",
+    "llmProcessingTimeSeconds": 46.085
+  }
+}
