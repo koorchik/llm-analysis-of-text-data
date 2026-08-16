@@ -3,24 +3,45 @@ import { jsonrepair } from 'jsonrepair'
 import LIVR from 'livr';
 LIVR.Validator.defaultAutoTrim(true);
 
+/**
+ * The fixed extraction category vocabulary — single source for the LIVR oneOf rule below, the
+ * `Category` union, and the `CATEGORIES` env-knob validation in `bin/app.ts`.
+ */
+export const CATEGORY_VALUES = [
+  'Organization',
+  'HackerGroup',
+  'Software',
+  'Country',
+  'Individual',
+  'Domain',
+  'Sector',
+  'Government Body',
+  'Infrastructure',
+  'Device',
+] as const;
+
+/**
+ * Parse the `CATEGORIES` env knob. Unset/blank means "all categories" (undefined). Unknown names
+ * throw — the knob must fail at startup, not silently filter everything out mid-run.
+ */
+export function parseCategories(raw: string | undefined): Category[] | undefined {
+  if (raw === undefined || raw.trim() === '') return undefined;
+  const names = raw.split(',').map((name) => name.trim()).filter((name) => name.length > 0);
+  const unknown = names.filter((name) => !(CATEGORY_VALUES as readonly string[]).includes(name));
+  if (unknown.length > 0) {
+    throw new Error(
+      `CATEGORIES: unknown category ${unknown.map((name) => JSON.stringify(name)).join(', ')} — ` +
+        `valid values: ${CATEGORY_VALUES.join(', ')}`
+    );
+  }
+  return names as Category[];
+}
+
 const validator = new LIVR.Validator({
   entities: [{ default: [[]] }, {
     listOfObjects: [{
       name: ['required', 'string'],
-      category: ['required', 'string', { 
-        oneOf: [
-          'Organization', 
-          'HackerGroup', 
-          'Software', 
-          'Country', 
-          'Individual', 
-          'Domain', 
-          'Sector', 
-          'Government Body', 
-          'Infrastructure', 
-          'Device'
-        ] 
-      }],
+      category: ['required', 'string', { oneOf: [...CATEGORY_VALUES] }],
       role: ['required', 'string', { oneOf: ['Target', 'Attacker', 'Neutral'] }]
     }]
   }]
