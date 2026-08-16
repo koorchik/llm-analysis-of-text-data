@@ -38,6 +38,12 @@ interface Params {
   preprocessor?: Preprocessor;
   candidateK?: number;
   candidateMinSim?: number;
+  /**
+   * Fast-iteration category filter (spec 2026-08-16): when set, only mentions whose canonical
+   * category is listed are normalized; everything else — and any relation touching it — is
+   * dropped from plans and artifacts. Frozen extractions on disk are untouched. Unset = all.
+   */
+  categories?: string[];
   /** Defaults to the generator the M2.5 gate proved equivalent to the pre-M4 registry path. */
   candidateGenerator?: CandidateGenerator;
   /**
@@ -119,6 +125,7 @@ export class StreamingNormalizer {
   #sourceDir?: string;
   #candidateK: number;
   #candidateMinSim: number;
+  #categories: Set<string> | null;
   #candidateGenerator: CandidateGenerator;
   #generatorPrepared = false;
   #preprocessor: Preprocessor = (content: string) =>
@@ -144,6 +151,7 @@ export class StreamingNormalizer {
     this.#sourceDir = params.sourceDir;
     this.#candidateK = params.candidateK ?? 5;
     this.#candidateMinSim = params.candidateMinSim ?? 0.5;
+    this.#categories = params.categories ? new Set(params.categories) : null;
     this.#candidateGenerator = params.candidateGenerator ?? new StringSimilarityGenerator();
 
     if (params.preprocessor) {
@@ -203,8 +211,17 @@ export class StreamingNormalizer {
 
     // ---- Phase A: read-only + LLM verdicts (no state mutation on failure) ----
 
+    // CATEGORIES filter: match on the canonical category (fall back to the raw name when the
+    // schema has not seen it yet — first-doc case), so raw variants of a kept category survive.
+    const keptEntities = this.#categories
+      ? extraction.entities.filter((entity) => {
+          const canonical = this.#schemaRegistry.resolveCategory(entity.category) ?? entity.category;
+          return this.#categories!.has(canonical);
+        })
+      : extraction.entities;
+
     // Category canonicalization (raw proposed names → canonical schema names)
-    const plans: MentionPlan[] = extraction.entities.map((entity) => {
+    const plans: MentionPlan[] = keptEntities.map((entity) => {
       let category = this.#schemaRegistry.resolveCategory(entity.category);
       if (!category) {
         console.warn(
@@ -440,8 +457,18 @@ export class StreamingNormalizer {
       }
     }
 
+    // A relation with a filtered-out endpoint has no resolvable normalizedHead/Tail — drop it.
+    const keptRelations = this.#categories
+      ? extraction.relations.filter((relation) => {
+          const head =
+            this.#schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
+          const tail =
+            this.#schemaRegistry.resolveCategory(relation.tailCategory) || relation.tailCategory;
+          return this.#categories!.has(head) && this.#categories!.has(tail);
+        })
+      : extraction.relations;
     // Stamp relations (relation.type stays raw — canonicalized at graph-build time)
-    for (const relation of extraction.relations) {
+    for (const relation of keptRelations) {
       const headCategory = this.#schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
       const tailCategory = this.#schemaRegistry.resolveCategory(relation.tailCategory) || relation.tailCategory;
       relation.headCategory = headCategory;
@@ -454,8 +481,8 @@ export class StreamingNormalizer {
     await this.#entityRegistry.save();
     await this.#schemaRegistry.save();
     await writeJsonAtomic(outputFile, {
-      entities: extraction.entities,
-      relations: extraction.relations,
+      entities: keptEntities,
+      relations: keptRelations,
       schemaProposals: extraction.schemaProposals,
       metadata: extraction.metadata,
     });
