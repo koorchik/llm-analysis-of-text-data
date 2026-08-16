@@ -35,6 +35,7 @@ import { GlossIndex } from '../src/Repair/GlossIndex';
 import { parseThresholds } from '../src/Repair/SuspectGenerator';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
+import { parseCategories } from '../src/utils/validationUtils';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
@@ -123,6 +124,12 @@ const CONFIG = {
     process.env.REPAIR_TOKEN_CAP === undefined ? undefined : Number(process.env.REPAIR_TOKEN_CAP),
   repairTopK: process.env.REPAIR_TOP_K === undefined ? undefined : Number(process.env.REPAIR_TOP_K),
 
+  // Fast-iteration category filter (spec 2026-08-16): only listed canonical categories are
+  // normalized; unset means all. parseCategories throws on unknown names at startup — module
+  // evaluation time, before any LLM call. Folds into the runId below: a filtered run measures a
+  // different population and must never share a directory with (or resume) a full arm.
+  categories: parseCategories(process.env.CATEGORIES),
+
   // M1 run identity. CONDITION names the experimental arm; two arms on the same model no longer
   // share an output directory, so they cannot silently resume each other.
   condition: process.env.CONDITION || (FLOW === 'incremental' ? 'psi-link-default' : 'psi-norm-default'),
@@ -199,6 +206,7 @@ async function main() {
       repairCoherenceThreshold: CONFIG.repairCoherenceThreshold ?? null,
       repairTokenCap: CONFIG.repairTokenCap ?? null,
       repairTopK: CONFIG.repairTopK ?? null,
+      categories: CONFIG.categories ?? null,
     },
   });
 
@@ -559,6 +567,7 @@ function createProcessors(
     // T5 hook: phase 2 rides inside processFile once this document's registry writes have landed.
     // Omitted entirely under REPAIR=0, so a repairer-free arm behaves exactly as before T9.
     ...(streamingRepairer ? { repairer: streamingRepairer } : {}),
+    ...(CONFIG.categories ? { categories: CONFIG.categories } : {}),
   });
 
   const streamingGraphBuilder = new StreamingGraphBuilder({
