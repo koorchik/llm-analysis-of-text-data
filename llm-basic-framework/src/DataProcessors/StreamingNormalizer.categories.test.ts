@@ -135,6 +135,19 @@ describe('StreamingNormalizer CATEGORIES filter', () => {
     assert.equal(artifact.relations.length, 2);
   });
 
+  it('treats omitted relations as empty in a filtered frozen extraction', async () => {
+    const { dir, normalizer } = await setup('no-relations', ['Software']);
+    const extractionPath = path.join(dir, 'extractions', '1.json');
+    const extraction = JSON.parse(await fs.readFile(extractionPath, 'utf8'));
+    delete extraction.relations;
+    await fs.writeFile(extractionPath, JSON.stringify(extraction));
+
+    await normalizer.processFile('1.json');
+
+    const artifact = JSON.parse(await fs.readFile(path.join(dir, 'artifacts', '1.json'), 'utf8'));
+    assert.deepEqual(artifact.relations, []);
+  });
+
   it('does not discover role-based pair rules during entity normalization', async () => {
     const { normalizer, llm } = await setup('no-pair-rules');
     await normalizer.processFile('1.json');

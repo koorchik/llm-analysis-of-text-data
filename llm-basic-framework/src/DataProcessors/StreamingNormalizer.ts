@@ -421,15 +421,16 @@ export class StreamingNormalizer {
     }
 
     // A relation with a filtered-out endpoint has no resolvable normalizedHead/Tail — drop it.
+    const relations = extraction.relations ?? [];
     const keptRelations = this.#categories
-      ? extraction.relations.filter((relation) => {
+      ? relations.filter((relation) => {
           const head =
             this.#schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
           const tail =
             this.#schemaRegistry.resolveCategory(relation.tailCategory) || relation.tailCategory;
           return this.#categories!.has(head) && this.#categories!.has(tail);
         })
-      : extraction.relations;
+      : relations;
     // Stamp relations (relation.type stays raw — canonicalized at graph-build time)
     for (const relation of keptRelations) {
       const headCategory = this.#schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
