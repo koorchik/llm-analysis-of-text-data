@@ -18,6 +18,7 @@ import { resolveRunConfig, type ResolvedRunConfig } from '../src/Experiment/RunC
 import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
 import { LadderDiscovery } from '../src/Ladder/LadderDiscovery';
+import { LlmCallLog } from '../src/LlmClient/LlmCallLog';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import type { LlmBackendBase, LlmCallOptions } from '../src/LlmClient/LlmClientBackendBase';
 import { createLlmBackend as buildLlmBackend } from '../src/LlmClient/createBackend';
@@ -124,6 +125,12 @@ const CONFIG = {
     process.env.REPAIR_TOKEN_CAP === undefined ? undefined : Number(process.env.REPAIR_TOKEN_CAP),
   repairTopK: process.env.REPAIR_TOP_K === undefined ? undefined : Number(process.env.REPAIR_TOP_K),
 
+  // Full-fidelity LLM transcripts under `<runDir>/llm-calls/` (spec 2026-08-17). On by default.
+  // Deliberately NOT part of the runId: writing files does not change what the pipeline computes,
+  // and folding it in would rotate every arm's runId and make a logged run incomparable with the
+  // committed ones. That is also why it does NOT appear in the `extra` block below.
+  llmLog: process.env.LLM_LOG !== '0',
+
   // Fast-iteration category filter (spec 2026-08-16): only listed canonical categories are
   // normalized; unset means all. parseCategories throws on unknown names at startup — module
   // evaluation time, before any LLM call. Folds into the runId below: a filtered run measures a
@@ -212,7 +219,12 @@ async function main() {
 
   const runDir = `${CONFIG.outputDir}/experiments/${runConfig.runId}`;
   const costMeter = new CostMeter({ runId: runConfig.runId });
-  const llmClient = createLlmClient(backend, costMeter);
+  const callLog = new LlmCallLog({
+    dir: `${runDir}/llm-calls`,
+    runId: runConfig.runId,
+    enabled: CONFIG.llmLog,
+  });
+  const llmClient = createLlmClient(backend, costMeter, callLog);
 
   // Record what the client will really send, after unsupported parameters are dropped.
   sampling.effective = llmClient.effectiveDefaults;
@@ -232,7 +244,7 @@ async function main() {
   const candidateGenerator = createCandidateGenerator(embeddingsClient);
 
   // Create processors
-  const processors = createProcessors(llmClient, embeddingsClient, runDir, candidateGenerator, costMeter);
+  const processors = createProcessors(llmClient, embeddingsClient, runDir, candidateGenerator, costMeter, callLog);
 
   // Build flow
   const batchSteps: Record<string, () => Promise<void>> = {
@@ -328,10 +340,15 @@ function createLlmBackend(): LlmBackendBase {
   return buildLlmBackend({ provider: CONFIG.llmProvider, model: CONFIG.llmModel });
 }
 
-function createLlmClient(backend: LlmBackendBase, costMeter: CostMeter): LlmClient {
+function createLlmClient(
+  backend: LlmBackendBase,
+  costMeter: CostMeter,
+  callLog?: LlmCallLog
+): LlmClient {
   return new LlmClient({
     backend,
     costMeter,
+    ...(callLog ? { callLog } : {}),
     // Sampling defaults are per-call and get filtered per backend: LlmClient drops any
     // parameter the provider does not accept rather than forwarding it into a 400.
     defaultCallOptions: {
@@ -391,7 +408,8 @@ function createProcessors(
   embeddingsClient: EmbeddingsClient,
   runDir: string,
   candidateGenerator: CandidateGenerator,
-  costMeter?: CostMeter
+  costMeter?: CostMeter,
+  callLog?: LlmCallLog
 ) {
   const modelDir = llmClient.modelName.replace(/:/g, '-');
   const baseDir = CONFIG.outputDir;
@@ -495,7 +513,7 @@ function createProcessors(
       return {
         label: spec,
         client: costMeter
-          ? createLlmClient(buildLlmBackend({ provider, model }), costMeter)
+          ? createLlmClient(buildLlmBackend({ provider, model }), costMeter, callLog)
           : llmClient,
       };
     });
