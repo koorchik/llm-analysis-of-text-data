@@ -229,6 +229,47 @@ runs as a bug without checking whether glosses changed underneath it first.
 
 ---
 
+## 3b. Fast iteration loop — single category, dev split (NON-REPORTABLE)
+
+For algorithm iteration only. Every number this loop produces is non-reportable three times over:
+dev split, single-category slice, subset corpus. Promotion ladder: iterate here → confirm on
+full-corpus `CATEGORIES=Software` (~1 h on the local arm) → only then run the full test-split
+protocol on all arms.
+
+Why Software: it holds the densest gold signal (40 test + 10 dev multi-member clusters of 110
+total) while Domain — 57% of all judge decisions on the e4b baseline — is almost entirely
+singletons. The 22-doc list covers every member surface of all 10 dev-split Software multi-member
+clusters at least twice.
+
+```bash
+# One-time per iteration session: materialize the committed subset
+npm run make-subset -- --list gold/subsets/dev-software-22.txt \
+  --from ../storage/cert.gov.ua/fetched --to /tmp/subset-dev-software
+
+# Run the arm (pre-seed frozen extractions for these 22 docs per RUN-STREAMING.md §4 first)
+INPUT_DIR=/tmp/subset-dev-software OUTPUT_DIR=/tmp/fastloop-out \
+  STEPS=streamingPipeline FLOW=incremental CONDITION=fastloop-software \
+  CATEGORIES=Software \
+  LLM_PROVIDER=ollama LLM_MODEL=gemma4:e4b-32k \
+  CANDIDATE_GENERATOR=union EMBEDDINGS=1 EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=embeddinggemma \
+  DECISIONS_LOG=1 npm start
+
+# Score on dev, Software only
+npm run evaluate -- --gold gold/gold.json --split dev --allow-dev --category Software \
+  --run /tmp/fastloop-out/experiments/<runId>
+```
+
+`CATEGORIES` drops non-listed mentions (and relations touching them) at plan-build time inside
+`streamingNormalizer`; frozen extractions are untouched. It folds into the runId, so a filtered
+run can never share a directory with a full arm. The input-hash mismatch against the frozen
+corpus is expected — same status as the smoke test in RUN-STREAMING.md §3.
+
+Every algorithm edit changes the runId (dirty-diff hash), so each iteration lands in a fresh run
+directory under `/tmp/fastloop-out` — compare `results.json` across iterations, and delete the
+directory when the session is done.
+
+---
+
 ## 4. Decision strategies
 
 The decision stage is a port (`src/Normalization/types.ts`), and five strategies implement it.
