@@ -614,6 +614,9 @@ export class StreamingNormalizer {
     console.time(`LINK-JUDGE doc ${docId}`);
     // Hoisted so the finally block can log tokens for a call that may have thrown.
     let response: LlmResponse | undefined;
+    // Hoisted so the catch block can annotate the transcript even if the try throws before this
+    // is assigned (e.g. `send` itself rejects).
+    let transcript: ReturnType<LlmClient['lastCallHandle']> = null;
     try {
       response = await this.#llmClient.send(
         instructions,
@@ -623,7 +626,19 @@ export class StreamingNormalizer {
           docId,
         }
       );
-      const verdicts = normalizeLinkVerdicts(extractAndParseJson(response.text) || {}) || [];
+      transcript = this.#llmClient.lastCallHandle?.() ?? null;
+      // HTTP 200 with unparseable or schema-invalid content is exactly the failure this method's
+      // catch block exists to mark: an `|| {}`/`|| []` fallback here would silently treat "the
+      // model returned garbage" the same as "the model correctly returned zero verdicts", so the
+      // two are distinguished explicitly and the former is thrown to route through the catch.
+      const parsed = extractAndParseJson(response.text);
+      if (!parsed) {
+        throw new Error('link-judge response was not valid JSON');
+      }
+      const verdicts = normalizeLinkVerdicts(parsed);
+      if (!verdicts) {
+        throw new Error('link-judge response failed verdicts schema validation');
+      }
 
       const outcomeMap = new Map<string, JudgeOutcome>();
       // Key by category|mention, exactly as the caller does. Keying by mention alone silently lost a
@@ -701,6 +716,12 @@ export class StreamingNormalizer {
       // Mint-all is conservative and repairable by the StreamingRepairer (this document's phase
       // 2; the duplicate lives ≤1 document) — never abort the doc
       console.error(`LINK-JUDGE failed for doc ${docId}, minting all:`, error);
+      await this.#llmClient.callLog?.logOutcome(transcript, {
+        ok: false,
+        detail: `link-judge response unusable, minting all: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      });
       return new Map();
     } finally {
       console.timeEnd(`LINK-JUDGE doc ${docId}`);

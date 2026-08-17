@@ -195,6 +195,9 @@ export class StreamingRepairer {
   /** docId -> first-attempt repair-judge calls, the in-memory counter I2 is checked against. */
   #firstAttempts = new Map<number, number>();
 
+  /** Handle of the most recent `#send`, so the judge path can annotate its transcript. */
+  #lastTranscript: ReturnType<LlmClient['lastCallHandle']> = null;
+
   constructor(params: Params) {
     this.#artifactsDir = params.artifactsDir;
     this.#llmClient = params.llmClient;
@@ -463,6 +466,12 @@ export class StreamingRepairer {
     }
 
     const accepted = await this.#validate(response, due, docId);
+    await this.#llmClient.callLog?.logOutcome(
+      this.#lastTranscript,
+      accepted.length > 0
+        ? { ok: true, detail: `${accepted.length} op(s) accepted` }
+        : { ok: false, detail: 'no repair op survived validation' }
+    );
     let incomplete = this.#incompleteComponents(due, accepted);
 
     if (incomplete.length > 0) {
@@ -482,6 +491,14 @@ export class StreamingRepairer {
 
       if (retryResponse !== undefined) {
         const retried = await this.#validate(retryResponse, incomplete.map((index) => due[index]), docId);
+        // Annotated with the RETRY's own outcome (retried.length), not the cumulative `accepted`
+        // count — the retry's transcript must reflect what the retry itself settled.
+        await this.#llmClient.callLog?.logOutcome(
+          this.#lastTranscript,
+          retried.length > 0
+            ? { ok: true, detail: `${retried.length} op(s) accepted` }
+            : { ok: false, detail: 'no repair op survived validation' }
+        );
         // The re-ask FILLS GAPS; it does not replace. A first-attempt op that passed every validator
         // is a legitimate verdict, and discarding it because a *sibling* op in the same component was
         // rejected would throw away settled work and re-queue a pair that already has an answer.
@@ -522,6 +539,7 @@ export class StreamingRepairer {
         'Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.',
         { operator: kind, docId }
       );
+      this.#lastTranscript = this.#llmClient.lastCallHandle?.() ?? null;
       return response.text;
     } finally {
       console.log(`${kind.toUpperCase()} doc ${docId}: ${elapsed(started)}`);
