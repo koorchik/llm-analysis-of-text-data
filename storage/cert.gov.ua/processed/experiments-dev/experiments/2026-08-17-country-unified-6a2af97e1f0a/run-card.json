@@ -1,0 +1,220 @@
+{
+  "version": "run-card-v1",
+  "runId": "country-unified-6a2af97e1f0a",
+  "condition": "country-unified",
+  "createdAt": "2026-08-17T16:56:59.867Z",
+  "updatedAt": "2026-08-17T17:09:31.813Z",
+  "config": {
+    "condition": "country-unified",
+    "orchestration": "incremental",
+    "input": {
+      "path": "/tmp/subset-country",
+      "contentHash": "31283ae096141c62fd0a8726e895b2d665d77bd095c6141c322ae385e4e8b61f",
+      "fileCount": 14
+    },
+    "llm": {
+      "provider": "ollama",
+      "model": "gemma4:e2b-16k"
+    },
+    "embeddings": {
+      "provider": "ollama",
+      "model": "embeddinggemma"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": true,
+        "seed": true,
+        "topP": true
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+      "link-judge": "326934c3d133867eaa1d5fa01e238fded32c408a3897cf08ae000a0100ee9015",
+      "listwise-select": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "repair-judge": "5adfc592c2419f134941f8902fa01a1111066310735bd03c0b002d5044af0c23",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingPipeline"
+      ],
+      "edgesFrom": "layered",
+      "decisionStrategy": "builtin-link-judge",
+      "decisionStrategyConfig": null,
+      "candidateGenerator": "rrf(string-sim(identity,max-lev-dice),string-sim(identity+transliterate+confusable-skeleton,max-lev-dice),tfidf-3gram(identity),bm25(identity),embedding(embeddinggemma,name+gloss,max-over-aliases))",
+      "candidateGeneratorConfig": {
+        "rrfK": 60,
+        "perChildK": 20,
+        "children": [
+          {
+            "id": "string-sim(identity,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "string-sim(identity+transliterate+confusable-skeleton,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity",
+                "transliterate",
+                "confusable-skeleton"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "tfidf-3gram(identity)",
+            "config": {
+              "n": 3,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "bm25(identity)",
+            "config": {
+              "k1": 1.2,
+              "b": 0.75,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "embedding(embeddinggemma,name+gloss,max-over-aliases)",
+            "config": {
+              "provider": "ollama",
+              "model": "embeddinggemma",
+              "representation": "name+gloss",
+              "clusterRepresentation": "max-over-aliases",
+              "backend": {
+                "provider": "ollama",
+                "model": "embeddinggemma",
+                "host": "default"
+              }
+            }
+          }
+        ]
+      },
+      "candidateK": null,
+      "candidateMinSim": null,
+      "embeddings": true,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 8
+      },
+      "repair": true,
+      "repairGlossThresholds": null,
+      "repairBlockerThresholds": null,
+      "repairCoherenceThreshold": null,
+      "repairTokenCap": null,
+      "repairTopK": null,
+      "categories": [
+        "Country"
+      ]
+    },
+    "git": {
+      "sha": "ea1d638ef91fbfe29dfa6d3cbd5d79c6197d276e",
+      "dirty": true,
+      "diffHash": "ad58f0325cd8bcedaa70868eceabbcc6bd046a69af846b4a741cc9315a4beed0"
+    },
+    "runId": "country-unified-6a2af97e1f0a"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "country-unified-6a2af97e1f0a",
+    "totals": {
+      "calls": 44,
+      "inputTokens": 55338,
+      "outputTokens": 34787,
+      "costUsd": 0,
+      "unpricedCalls": 0,
+      "wallClockMs": 678187
+    },
+    "byOperator": {
+      "pair-rule": {
+        "calls": 6,
+        "inputTokens": 1352,
+        "outputTokens": 2941,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 54699
+      },
+      "link-judge": {
+        "calls": 10,
+        "inputTokens": 13560,
+        "outputTokens": 9153,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 179079
+      },
+      "gloss-index": {
+        "calls": 9,
+        "inputTokens": 301,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1786
+      },
+      "repair-judge": {
+        "calls": 7,
+        "inputTokens": 10078,
+        "outputTokens": 9362,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 175817
+      },
+      "repair-judge-retry": {
+        "calls": 5,
+        "inputTokens": 7752,
+        "outputTokens": 7123,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 133248
+      },
+      "embed-index": {
+        "calls": 1,
+        "inputTokens": 17,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 73
+      },
+      "ladder": {
+        "calls": 6,
+        "inputTokens": 22278,
+        "outputTokens": 6208,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 133485
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 215,
+    "misses": 17,
+    "entries": 90
+  },
+  "completedAt": "2026-08-17T17:09:31.813Z"
+}

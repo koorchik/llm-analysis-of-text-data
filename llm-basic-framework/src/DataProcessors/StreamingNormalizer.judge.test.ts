@@ -1,4 +1,3 @@
-import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
@@ -104,7 +103,6 @@ async function setup(
     llmClient: llm.client,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
     decisionLog,
     repairer: options.repairer,
   });
@@ -162,7 +160,6 @@ async function setupGlossRetry(tag: string, replies: string[]) {
     llmClient: llm.client,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
     decisionLog,
   });
   return { dir, normalizer, llm, entityRegistry, decisionLog };
@@ -457,7 +454,6 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
       llmClient: llm.client,
       schemaRegistry,
       entityRegistry,
-      countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
       decisionLog,
       repairer,
     });
@@ -490,7 +486,6 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
       llmClient: llm.client,
       schemaRegistry,
       entityRegistry,
-      countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
       decisionLog,
       repairer,
     });

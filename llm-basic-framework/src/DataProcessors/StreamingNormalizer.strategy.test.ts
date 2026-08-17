@@ -1,4 +1,3 @@
-import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
@@ -95,7 +94,6 @@ async function setup(tag: string, strategy?: DecisionStrategy) {
     llmClient: llm.client,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
     decisionLog,
     decisionStrategy: strategy,
   });

@@ -1,6 +1,7 @@
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import { REPLAY_SOURCE, ReplayState, applyEvent, createEmptyState, docOf } from './replayCore';
 import { sortByNumericId } from '../utils/fsUtils';
+import { stripRunDate } from '../Experiment/runDirName';
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
@@ -118,7 +119,8 @@ export async function loadRunData(runDir: string): Promise<RunViewData> {
     }
   }
 
-  let runId = path.basename(runDir);
+  // The directory carries a `<YYYY-MM-DD>-` presentation prefix; the runId is what follows it.
+  let runId = stripRunDate(path.basename(runDir));
   const arm: ArmId = { condition: runId, provider: 'unknown', model: 'unknown', ladderModels: null };
   const cardPath = path.join(runDir, 'run-card.json');
   if (existsSync(cardPath)) {

@@ -1,4 +1,3 @@
-import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import { LlmCallLog } from '../LlmClient/LlmCallLog';
@@ -75,13 +74,13 @@ describe('link-judge transcript outcome', () => {
       llmClient,
       schemaRegistry,
       entityRegistry,
-      countryNameNormalizer: new CountryNameNormalizer({ llmClient, decisionLog }),
       decisionLog,
     });
 
     await normalizer.processFile('1.json');
 
-    const files = await fs.readdir(path.join(dir, 'llm-calls', '1'));
+    // Doc folders are numbered by processing order: the first document processed is `001-<docId>`.
+    const files = await fs.readdir(path.join(dir, 'llm-calls', '001-1'));
     const judged = files.filter((name) => name.includes('link-judge') && name.endsWith('.json'));
     assert.ok(judged.length > 0, 'a link-judge transcript was written');
     assert.ok(

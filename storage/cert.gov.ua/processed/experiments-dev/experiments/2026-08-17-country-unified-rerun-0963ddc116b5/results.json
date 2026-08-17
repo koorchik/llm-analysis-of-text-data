@@ -1,0 +1,236 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 23,
+    "members": 31,
+    "byStratum": {
+      "b": 1,
+      "c": 5,
+      "a": 17
+    },
+    "bySplit": {
+      "test": 23
+    },
+    "clustersWithEvidence": 0,
+    "edges": 0,
+    "nilLabels": 134
+  },
+  "results": [
+    {
+      "condition": "country-unified",
+      "runIds": [
+        "country-unified-6a2af97e1f0a"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "b": {
+          "stratum": "b",
+          "pairs": 1,
+          "truePositives": 1,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "c": {
+          "stratum": "c",
+          "pairs": 66,
+          "truePositives": 3,
+          "falsePositives": 0,
+          "falseNegatives": 7,
+          "trueNegatives": 56,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.3,
+          "f1": 0.4615384615384615
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 136,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 21,
+          "skipped": 115,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 203,
+          "truePositives": 4,
+          "falsePositives": 0,
+          "falseNegatives": 7,
+          "trueNegatives": 77,
+          "skipped": 115,
+          "precision": 1,
+          "recall": 0.36363636363636365,
+          "f1": 0.5333333333333333
+        }
+      },
+      "nil": {
+        "truePositives": 5,
+        "falsePositives": 5,
+        "falseNegatives": 0,
+        "trueNegatives": 1,
+        "deferred": 10,
+        "deferredOnNil": 5,
+        "observations": 21,
+        "deferralRate": 0.47619047619047616,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5
+      },
+      "cluster": {
+        "universeSize": 21,
+        "predictedClusters": 17,
+        "goldClusters": 13,
+        "macro": {
+          "precision": 1,
+          "recall": 0.7692307692307693,
+          "f1": 0.8695652173913044
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 0.8095238095238095,
+          "f1": 0.8947368421052632
+        },
+        "pairwise": {
+          "precision": 1,
+          "recall": 0.36363636363636365,
+          "f1": 0.5333333333333333
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 0.7857142857142857,
+          "f1": 0.88
+        },
+        "ari": 0.519921619856303
+      },
+      "cost": {
+        "calls": 44,
+        "inputTokens": 55338,
+        "outputTokens": 34787,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 678187
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    },
+    {
+      "condition": "country-unified-rerun",
+      "runIds": [
+        "country-unified-rerun-0963ddc116b5"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "b": {
+          "stratum": "b",
+          "pairs": 1,
+          "truePositives": 1,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "c": {
+          "stratum": "c",
+          "pairs": 66,
+          "truePositives": 4,
+          "falsePositives": 0,
+          "falseNegatives": 6,
+          "trueNegatives": 56,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.4,
+          "f1": 0.5714285714285715
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 136,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 21,
+          "skipped": 115,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 203,
+          "truePositives": 5,
+          "falsePositives": 0,
+          "falseNegatives": 6,
+          "trueNegatives": 77,
+          "skipped": 115,
+          "precision": 1,
+          "recall": 0.45454545454545453,
+          "f1": 0.625
+        }
+      },
+      "nil": {
+        "truePositives": 10,
+        "falsePositives": 9,
+        "falseNegatives": 0,
+        "trueNegatives": 2,
+        "deferred": 0,
+        "deferredOnNil": 0,
+        "observations": 21,
+        "deferralRate": 0,
+        "precision": 0.5263157894736842,
+        "recall": 1,
+        "f1": 0.6896551724137931
+      },
+      "cluster": {
+        "universeSize": 21,
+        "predictedClusters": 16,
+        "goldClusters": 13,
+        "macro": {
+          "precision": 1,
+          "recall": 0.8461538461538461,
+          "f1": 0.9166666666666666
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 0.8571428571428571,
+          "f1": 0.923076923076923
+        },
+        "pairwise": {
+          "precision": 1,
+          "recall": 0.45454545454545453,
+          "f1": 0.625
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091
+        },
+        "ari": 0.6123076923076923
+      },
+      "cost": {
+        "calls": 38,
+        "inputTokens": 41684,
+        "outputTokens": 20867,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 417583
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

@@ -15,10 +15,12 @@ import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { RunCard } from '../src/Experiment/RunCard';
 import { resolveRunConfig, type ResolvedRunConfig } from '../src/Experiment/RunConfig';
+import { resolveRunDir, stripRunDate } from '../src/Experiment/runDirName';
 import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
 import { LadderDiscovery } from '../src/Ladder/LadderDiscovery';
 import { LlmCallLog } from '../src/LlmClient/LlmCallLog';
+import { loadRunData, renderRunViewHtml } from '../src/RunView/runView';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import type { LlmBackendBase, LlmCallOptions } from '../src/LlmClient/LlmClientBackendBase';
 import { createLlmBackend as buildLlmBackend } from '../src/LlmClient/createBackend';
@@ -217,7 +219,10 @@ async function main() {
     },
   });
 
-  const runDir = `${CONFIG.outputDir}/experiments/${runConfig.runId}`;
+  // `<YYYY-MM-DD>-<runId>` so `ls experiments/` reads chronologically. The date is presentation
+  // only — never part of the runId — and an existing directory for this runId always wins, so a
+  // run resumed on a later day keeps its original directory instead of silently starting over.
+  const runDir = resolveRunDir(`${CONFIG.outputDir}/experiments`, runConfig.runId, new Date());
   const costMeter = new CostMeter({ runId: runConfig.runId });
   const callLog = new LlmCallLog({
     dir: `${runDir}/llm-calls`,
@@ -320,6 +325,27 @@ async function main() {
     if (costMeter.unpricedModels.length) {
       console.warn(`COST: no price entry for ${costMeter.unpricedModels.join(', ')} — add to config/model-prices.json`);
     }
+    await writeRunView(runDir);
+  }
+}
+
+/**
+ * Write `<runDir>/run-view.html` at the end of every run, so the replay page is simply there
+ * instead of needing a remembered `npm run view` invocation.
+ *
+ * Best-effort by design: it runs in the same `finally` that records cost, and a viewer that cannot
+ * be built (no decision log, an aborted run with nothing to replay) must never turn a completed
+ * experiment into a failed one. `npm run view` still exists for multi-run comparison pages.
+ */
+async function writeRunView(runDir: string): Promise<void> {
+  try {
+    const data = await loadRunData(runDir);
+    await fs.writeFile(`${runDir}/run-view.html`, renderRunViewHtml(data));
+    console.log(`VIEW ${runDir}/run-view.html`);
+  } catch (error) {
+    console.warn(
+      `VIEW: could not write run-view.html (${error instanceof Error ? error.message : error})`
+    );
   }
 }
 
@@ -428,7 +454,10 @@ function createProcessors(
   const decisionLog = new DecisionLog({
     filePath: `${runDir}/decisions.jsonl`,
     enabled: CONFIG.decisionsLog,
-    runId: path.basename(runDir),
+    // The pure runId, NOT the directory name: the directory carries a presentation date prefix,
+    // and stamping that into every logged event would break replay/scoring comparisons against
+    // runs recorded before dating existed.
+    runId: stripRunDate(path.basename(runDir)),
   });
 
   const preprocessor = (content: string) => {
@@ -571,7 +600,6 @@ function createProcessors(
     llmClient,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient, decisionLog }),
     decisionLog,
     sourceDir: inputDir,
     preprocessor,

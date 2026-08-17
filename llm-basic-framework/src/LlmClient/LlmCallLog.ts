@@ -26,6 +26,10 @@ export interface LlmCallRecord {
 export interface LlmCallHandle {
   docId: number | null;
   seq: number;
+  /** Needed so an outcome is attached to this exact call, not merely to this seq. */
+  operator: string;
+  /** The `<NNN>-<docId>` folder this call was written to. */
+  folder: string;
 }
 
 interface Params {
@@ -55,8 +59,11 @@ export class LlmCallLog {
   readonly #dir: string;
   readonly #runId?: string;
   readonly #enabled: boolean;
-  /** Per-document call counter — the pipeline is sequential per document. */
+  /** Per-document call counter, keyed by folder name — the pipeline is sequential per document. */
   readonly #seq = new Map<string, number>();
+  /** docId → folder name, so every call for a document lands in the same numbered folder. */
+  readonly #folders = new Map<string, string>();
+  #seeded = false;
   #warned = false;
 
   constructor(params: Params) {
@@ -72,7 +79,8 @@ export class LlmCallLog {
   async write(record: LlmCallRecord): Promise<LlmCallHandle | null> {
     if (!this.#enabled) return null;
 
-    const folder = record.docId === null ? '_no-doc' : String(record.docId);
+    await this.#seedFromDisk();
+    const folder = this.#folderFor(record.docId);
     const seq = (this.#seq.get(folder) ?? 0) + 1;
     this.#seq.set(folder, seq);
 
@@ -99,7 +107,7 @@ export class LlmCallLog {
       this.#warnOnce(error);
     }
 
-    return { docId: record.docId, seq };
+    return { docId: record.docId, seq, operator: record.operator, folder };
   }
 
   /**
@@ -109,10 +117,11 @@ export class LlmCallLog {
   async logOutcome(handle: LlmCallHandle | null, outcome: Outcome): Promise<void> {
     if (!this.#enabled || handle === null) return;
 
-    const folder = handle.docId === null ? '_no-doc' : String(handle.docId);
     try {
-      const dir = path.join(this.#dir, folder);
-      const prefix = `${pad(handle.seq)}-`;
+      const dir = path.join(this.#dir, handle.folder);
+      // Match the seq AND the operator: a resumed run can leave a previous attempt's files in the
+      // same folder, and a seq-only prefix would annotate — or rename to .FAILED — the wrong call.
+      const prefix = `${pad(handle.seq)}-${sanitize(handle.operator)}.`;
       const names = (await fs.readdir(dir)).filter((name) => name.startsWith(prefix));
 
       const jsonName = names.find((name) => name.endsWith('.json'));
@@ -138,6 +147,54 @@ export class LlmCallLog {
       }
     } catch (error) {
       this.#warnOnce(error);
+    }
+  }
+
+  /**
+   * `<NNN>-<docId>`, numbered in the order documents are first seen — which IS the processing
+   * order, since a document's first call happens while it is being processed. Without the prefix
+   * a directory listing sorts lexicographically (`10011` before `2681`) and tells you nothing
+   * about what ran when.
+   */
+  #folderFor(docId: number | null): string {
+    if (docId === null) return '_no-doc';
+    const key = String(docId);
+    const existing = this.#folders.get(key);
+    if (existing) return existing;
+
+    const folder = `${pad(this.#folders.size + 1)}-${key}`;
+    this.#folders.set(key, folder);
+    return folder;
+  }
+
+  /**
+   * Rebuild the document-order and per-document counters from what is already on disk.
+   *
+   * A resumed run is a second process writing into the same directory: without this it would
+   * restart both counters at 1 and overwrite the first attempt's transcripts — destroying exactly
+   * the diagnostic record this class exists to keep, in the crash case where it matters most.
+   */
+  async #seedFromDisk(): Promise<void> {
+    if (this.#seeded) return;
+    this.#seeded = true;
+
+    try {
+      const entries = await fs.readdir(this.#dir, { withFileTypes: true });
+      const folders = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+
+      for (const folder of folders.sort()) {
+        const docKey = folder === '_no-doc' ? null : folder.replace(/^\d+-/, '');
+        if (docKey !== null) this.#folders.set(docKey, folder);
+
+        const files = await fs.readdir(path.join(this.#dir, folder));
+        const maxSeq = files.reduce((max, name) => {
+          const seq = Number(name.slice(0, name.indexOf('-')));
+          return Number.isFinite(seq) && seq > max ? seq : max;
+        }, 0);
+        if (maxSeq > 0) this.#seq.set(folder, maxSeq);
+      }
+    } catch {
+      // No directory yet (the common case: a fresh run) — nothing to seed.
     }
   }
 

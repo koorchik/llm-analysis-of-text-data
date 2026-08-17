@@ -24,6 +24,7 @@ import { RegistryConsolidator } from '../src/Consolidator/RegistryConsolidator';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
 import { CostMeter } from '../src/Experiment/CostMeter';
+import { stripRunDate } from '../src/Experiment/runDirName';
 import { LlmClient } from '../src/LlmClient/LlmClient';
 import { createLlmBackend } from '../src/LlmClient/createBackend';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
@@ -64,7 +65,9 @@ async function main() {
 
   const provider = process.env.LLM_PROVIDER || 'openai';
   const model = process.env.LLM_MODEL || 'gpt-5';
-  const costMeter = new CostMeter({ runId: `batch-reference-${path.basename(runDir)}` });
+  // Run directories carry a `<YYYY-MM-DD>-` presentation prefix; the identity is the runId under it.
+  const runId = stripRunDate(path.basename(runDir));
+  const costMeter = new CostMeter({ runId: `batch-reference-${runId}` });
   const llmClient = new LlmClient({ backend: createLlmBackend({ provider, model }), costMeter });
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(runDir, 'schema.json') });
@@ -74,7 +77,7 @@ async function main() {
   const decisionLog = new DecisionLog({
     filePath: path.join(runDir, 'decisions.jsonl'),
     enabled: process.env.DECISIONS_LOG === '1',
-    runId: path.basename(runDir),
+    runId,
   });
 
   const consolidator = new RegistryConsolidator({

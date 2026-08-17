@@ -1,0 +1,22 @@
+# Greedy covering set for the multi-member Country gold clusters (gold-aliases-v2):
+# every one of the 14 member surfaces appears in >=2 of these docs' frozen gpt-5 extractions.
+# Generated 2026-08-17. Greedy: docs ranked by distinct members hit, ties to the lower numeric id.
+#
+# NOTE: all 6 multi-member Country clusters live in the TEST split (dev has none), so a
+# `--split dev --category Country` scoring run yields no labelled pairs. Every Country cluster is
+# cross-lingual (Росія=Russia, Індія=India, США=USA), which makes this subset a direct probe of
+# the script-bridging that only the strongest cloud judge managed in the 2026-08-08 four-arm study.
+2681.json
+2720.json
+2722.json
+4475.json
+10011.json
+10702.json
+18108.json
+37246.json
+375404.json
+3761023.json
+4697016.json
+6276652.json
+6276894.json
+6280129.json

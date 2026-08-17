@@ -1,0 +1,228 @@
+{
+  "version": "run-card-v1",
+  "runId": "country-probe-f7231e6e58e9",
+  "condition": "country-probe",
+  "createdAt": "2026-08-17T15:16:22.655Z",
+  "updatedAt": "2026-08-17T15:30:47.775Z",
+  "config": {
+    "condition": "country-probe",
+    "orchestration": "incremental",
+    "input": {
+      "path": "/tmp/subset-country",
+      "contentHash": "31283ae096141c62fd0a8726e895b2d665d77bd095c6141c322ae385e4e8b61f",
+      "fileCount": 14
+    },
+    "llm": {
+      "provider": "ollama",
+      "model": "gemma4:e2b-16k"
+    },
+    "embeddings": {
+      "provider": "ollama",
+      "model": "embeddinggemma"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": true,
+        "seed": true,
+        "topP": true
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+      "link-judge": "326934c3d133867eaa1d5fa01e238fded32c408a3897cf08ae000a0100ee9015",
+      "listwise-select": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "repair-judge": "0b74e73c637d1830fb333e083fde4a722e2392cb030efc2315644739788e6425",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingPipeline"
+      ],
+      "edgesFrom": "layered",
+      "decisionStrategy": "builtin-link-judge",
+      "decisionStrategyConfig": null,
+      "candidateGenerator": "rrf(string-sim(identity,max-lev-dice),string-sim(identity+transliterate+confusable-skeleton,max-lev-dice),tfidf-3gram(identity),bm25(identity),embedding(embeddinggemma,name+gloss,max-over-aliases))",
+      "candidateGeneratorConfig": {
+        "rrfK": 60,
+        "perChildK": 20,
+        "children": [
+          {
+            "id": "string-sim(identity,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "string-sim(identity+transliterate+confusable-skeleton,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity",
+                "transliterate",
+                "confusable-skeleton"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "tfidf-3gram(identity)",
+            "config": {
+              "n": 3,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "bm25(identity)",
+            "config": {
+              "k1": 1.2,
+              "b": 0.75,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "embedding(embeddinggemma,name+gloss,max-over-aliases)",
+            "config": {
+              "provider": "ollama",
+              "model": "embeddinggemma",
+              "representation": "name+gloss",
+              "clusterRepresentation": "max-over-aliases",
+              "backend": {
+                "provider": "ollama",
+                "model": "embeddinggemma",
+                "host": "default"
+              }
+            }
+          }
+        ]
+      },
+      "candidateK": null,
+      "candidateMinSim": null,
+      "embeddings": true,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 8
+      },
+      "repair": true,
+      "repairGlossThresholds": null,
+      "repairBlockerThresholds": null,
+      "repairCoherenceThreshold": null,
+      "repairTokenCap": null,
+      "repairTopK": null,
+      "categories": [
+        "Country"
+      ]
+    },
+    "git": {
+      "sha": "ea1d638ef91fbfe29dfa6d3cbd5d79c6197d276e",
+      "dirty": true,
+      "diffHash": "bb4d55776630dc57bb1b608fcdbdef1bcaeb7249c9895f69aa67894eca72ff9d"
+    },
+    "runId": "country-probe-f7231e6e58e9"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "country-probe-f7231e6e58e9",
+    "totals": {
+      "calls": 79,
+      "inputTokens": 65704,
+      "outputTokens": 40489,
+      "costUsd": 0,
+      "unpricedCalls": 0,
+      "wallClockMs": 864758
+    },
+    "byOperator": {
+      "pair-rule": {
+        "calls": 6,
+        "inputTokens": 1264,
+        "outputTokens": 2191,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 42001
+      },
+      "country-normalize": {
+        "calls": 13,
+        "inputTokens": 7357,
+        "outputTokens": 5165,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 111108
+      },
+      "gloss-index": {
+        "calls": 10,
+        "inputTokens": 309,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1114
+      },
+      "link-judge": {
+        "calls": 10,
+        "inputTokens": 13605,
+        "outputTokens": 9508,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 199132
+      },
+      "repair-judge": {
+        "calls": 10,
+        "inputTokens": 10998,
+        "outputTokens": 8753,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 181373
+      },
+      "embed-query": {
+        "calls": 15,
+        "inputTokens": 71,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1282
+      },
+      "ladder": {
+        "calls": 6,
+        "inputTokens": 22278,
+        "outputTokens": 6763,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 150632
+      },
+      "repair-judge-retry": {
+        "calls": 9,
+        "inputTokens": 9822,
+        "outputTokens": 8109,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 178116
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 185,
+    "misses": 35,
+    "entries": 39
+  },
+  "completedAt": "2026-08-17T15:30:47.775Z"
+}

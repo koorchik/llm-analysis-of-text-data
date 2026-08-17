@@ -1,0 +1,437 @@
+{
+  "version": 4,
+  "canonicalPolicy": "first-seen",
+  "categories": {
+    "Country": {
+      "Естонія": {
+        "aliases": [
+          {
+            "surface": "Естонія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        },
+        "rung": "g0"
+      },
+      "Індія": {
+        "aliases": [
+          {
+            "surface": "Індія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "India",
+            "docId": 4697016,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention links directly to the candidate 'Індія' based on exact name match.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        },
+        "rung": "g1"
+      },
+      "США": {
+        "aliases": [
+          {
+            "surface": "США",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "USA",
+            "docId": 2720,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "The evidence links both 'USA' (d2720) and 'США' (d2681) to the same geopolitical context.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "No context in the excerpt links the USA to the VPNFilter attack.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        },
+        "rung": "g1"
+      },
+      "Росія": {
+        "aliases": [
+          {
+            "surface": "Росія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Russian Federation",
+            "docId": 4475,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "The names 'Russian Federation' and 'Росія' refer to the same geopolitical entity.",
+            "confidence": 1
+          },
+          {
+            "surface": "Russia",
+            "docId": 10702,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The document explicitly links the hacking group to the government of the RF, aligning with the candidate 'Росія' at granularity g2.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No evidence in the document excerpt links the cyberattack or phishing to the Russian Federation.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 3
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        },
+        "rung": "g2"
+      },
+      "Ukraine": {
+        "aliases": [
+          {
+            "surface": "Ukraine",
+            "docId": 2720,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Україна",
+            "docId": 18108,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention refers directly to the country and links perfectly to the candidate entity at the g0 level.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "The country where a possible large-scale cyberattack was warned about.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 2720,
+          "date": "23.05.2018"
+        },
+        "rung": "g0"
+      },
+      "Російська Федерація": {
+        "aliases": [
+          {
+            "surface": "Російська Федерація",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Entity mentioned in the prompt context but not referenced in the provided document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g3"
+      },
+      "China": {
+        "aliases": [
+          {
+            "surface": "China",
+            "docId": 375404,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "China is mentioned in the document title regarding cyberattacks.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 375404,
+          "date": "22.06.2022"
+        },
+        "rung": "g3"
+      },
+      "Польща": {
+        "aliases": [
+          {
+            "surface": "Польща",
+            "docId": 3761023,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Poland",
+            "docId": 6276652,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "The evidence points to two representations of the same entity, 'Poland' and 'Польща', indicating a merge.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "No information regarding Poland is present in the provided document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 3761023,
+          "date": "01.02.2023"
+        }
+      },
+      "Tajikistan": {
+        "aliases": [
+          {
+            "surface": "Tajikistan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No specific facts linking Tajikistan to the provided candidates are present in the document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g3"
+      },
+      "Mongolia": {
+        "aliases": [
+          {
+            "surface": "Mongolia",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No specific facts linking Mongolia to the provided candidates are present in the document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g3"
+      },
+      "Kazakhstan": {
+        "aliases": [
+          {
+            "surface": "Kazakhstan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        }
+      },
+      "Kyrgyzstan": {
+        "aliases": [
+          {
+            "surface": "Kyrgyzstan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No specific facts linking Kyrgyzstan to the provided candidates are present in the document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g3"
+      },
+      "Israel": {
+        "aliases": [
+          {
+            "surface": "Israel",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No specific facts linking Israel to the provided candidates are present in the document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g3"
+      },
+      "Malaysia": {
+        "aliases": [
+          {
+            "surface": "Malaysia",
+            "docId": 6276652,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No information regarding Malaysia is present in the provided document excerpt.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6276652,
+          "date": "07.12.2023"
+        },
+        "rung": "g3"
+      },
+      "Вірменія": {
+        "aliases": [
+          {
+            "surface": "Вірменія",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        }
+      },
+      "Киргизька Республіка": {
+        "aliases": [
+          {
+            "surface": "Киргизька Республіка",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        }
+      }
+    }
+  },
+  "granularityEdges": {
+    "Country": [
+      {
+        "from": "Естонія",
+        "to": "США",
+        "kind": "part-of",
+        "docId": 10702,
+        "decision": "ladder-binding",
+        "evidence": "",
+        "addedBy": null
+      },
+      {
+        "from": "США",
+        "to": "Росія",
+        "kind": "part-of",
+        "docId": 10702,
+        "decision": "ladder-binding",
+        "evidence": "",
+        "addedBy": null
+      },
+      {
+        "from": "Естонія",
+        "to": "Індія",
+        "kind": "part-of",
+        "docId": 6276652,
+        "decision": "ladder-binding",
+        "evidence": "",
+        "addedBy": null
+      }
+    ]
+  },
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "efca9aeaa30fe5014b16a3acc253c7059acfc8907f7a461656321c2ab602d983",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "США"
+        },
+        "signature": "21ab0d3c2454f716e3c8daadb8e0586ea400e0901717748b7121af2c88976346",
+        "verdict": "distinct",
+        "docId": 2720
+      }
+    ],
+    "spillover": [],
+    "repairedThrough": 6280129
+  }
+}

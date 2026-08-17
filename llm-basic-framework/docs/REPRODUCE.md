@@ -15,8 +15,8 @@ Everything needed to reproduce or compare against the baseline, with no download
 | frozen gpt-5 extractions (the pre-seed source) | `storage/cert.gov.ua/processed/raw-unified/gpt-5/` | 204 files |
 | gold table + inventory | `llm-basic-framework/gold/` | 13 files |
 | prompts (hashed into every runId) | `llm-basic-framework/prompts/` | 17 files |
-| **baseline run: claude-opus-5** | `storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/` | 6.8M |
-| **baseline run: gemma4:e2b** | `…/psi-link-gemma-e2b-f53eb864f8b0/` | 6.6M |
+| **baseline run: claude-opus-5** | `storage/cert.gov.ua/processed/experiments/2026-08-04-psi-link-default-4ee484f372fc/` | 6.8M |
+| **baseline run: gemma4:e2b** | `…/2026-08-04-psi-link-gemma-e2b-f53eb864f8b0/` | 6.6M |
 | two-arm comparison page | `…/experiments/compare-opus5-vs-gemma.html` | 3.0M |
 | written summary + call histograms | `…/experiments/SUMMARY-2026-08-04.md`, `call-histograms.txt` | — |
 

@@ -1,0 +1,180 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "specific name",
+            "example": "Естонія",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "transliterated form",
+            "example": "Россия",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Россия была атакована' -> 'Russia was attacked': same claim, less precise — linguistic variation blurred into the standard form",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "formal name",
+            "example": "Russian Federation",
+            "disputed": true,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'Россия была атакована' -> 'Russian Federation was attacked': a claim about a different thing — the formal name denotes the political entity containing the name, not a blurrier name for it",
+            "edgeKind": "part-of"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "USA",
+            "gate": "3",
+            "reason": "A star node like USA is not admitted because there is no reference table computed membership or grouping for specific country names provided. It is an instance, not a synthetic group."
+          }
+        ],
+        "notes": "The ladder is based purely on linguistic and formal variations found in the examples. No external facts or reference tables are available to guide 'preserving' decisions, thus making the foldTest highly speculative. Depth 2 is the maximum derived hierarchy without external relational data.",
+        "disagreements": [
+          "g1 \"Россия\": omitted by run 2",
+          "g1 \"Россия\": preserving true vs false (run 3)",
+          "g2 \"Russian Federation\": omitted by run 2",
+          "g2 \"Russian Federation\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    }
+  ],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Target"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 37246,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Country/Target"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Attacker"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6280129,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Neutral"
+    }
+  ]
+}

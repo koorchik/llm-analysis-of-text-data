@@ -1,5 +1,4 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
-import { CountryNameNormalizer } from '../CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry, GranularityEdgeKind } from '../EntityRegistry/EntityRegistry';
 import { LadderDiscovery } from '../Ladder/LadderDiscovery';
@@ -32,7 +31,6 @@ interface Params {
   llmClient: LlmClient;
   schemaRegistry: SchemaRegistry;
   entityRegistry: EntityRegistry;
-  countryNameNormalizer: CountryNameNormalizer;
   decisionLog: DecisionLog;
   sourceDir?: string; // original fetched docs — for the link-judge snippet
   preprocessor?: Preprocessor;
@@ -120,7 +118,6 @@ export class StreamingNormalizer {
   #llmClient: LlmClient;
   #schemaRegistry: SchemaRegistry;
   #entityRegistry: EntityRegistry;
-  #countryNameNormalizer: CountryNameNormalizer;
   #decisionLog: DecisionLog;
   #sourceDir?: string;
   #candidateK: number;
@@ -146,7 +143,6 @@ export class StreamingNormalizer {
     this.#llmClient = params.llmClient;
     this.#schemaRegistry = params.schemaRegistry;
     this.#entityRegistry = params.entityRegistry;
-    this.#countryNameNormalizer = params.countryNameNormalizer;
     this.#decisionLog = params.decisionLog;
     this.#sourceDir = params.sourceDir;
     this.#candidateK = params.candidateK ?? 5;
@@ -451,10 +447,6 @@ export class StreamingNormalizer {
       // document's phase 2; the duplicate lives ≤1 document) split reassigns by. Registry writes
       // above guarantee the lookup now resolves.
       plan.entity.matchedVia = this.#entityRegistry.matchedSurface(plan.category, plan.entity.name);
-      if (plan.category.toLowerCase() === 'country') {
-        const code = await this.#countryNameNormalizer.normalizeCountry(plan.entity.name, docId);
-        if (code) plan.entity.code = code;
-      }
     }
 
     // A relation with a filtered-out endpoint has no resolvable normalizedHead/Tail — drop it.

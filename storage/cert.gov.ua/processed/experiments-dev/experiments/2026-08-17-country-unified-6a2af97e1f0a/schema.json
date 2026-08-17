@@ -1,0 +1,202 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "specific name",
+            "example": "Естонія",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "short form",
+            "example": "USA",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": false,
+            "foldTest": "",
+            "edgeKind": "part-of"
+          },
+          {
+            "g": 2,
+            "alias": "russian_sphere",
+            "example": "Russian Federation",
+            "disputed": true,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "",
+            "edgeKind": "part-of"
+          },
+          {
+            "g": 3,
+            "alias": "east_europe",
+            "example": "Росія",
+            "disputed": true,
+            "move": "kind-of",
+            "preserving": false,
+            "foldTest": "",
+            "edgeKind": "part-of"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Russia, the country (as an entity)",
+            "gate": "1",
+            "reason": "The category itself is not a coarser entity; it is the set of entities. The ladder must operate strictly on entity names."
+          }
+        ],
+        "notes": "The ladder is derived solely from the linguistic and formal variations present in the examples. Due to the lack of explicit geometric or political hierarchy in the input examples, the moves reflect common linguistic/political relationships observed between the listed names (e.g., specific form -> short form, specific state -> federation, large state -> broader region/concept). The rungs are highly defeasible as no external reference tables are provided to mandate their structure.",
+        "disagreements": [
+          "g1 \"USA\": preserving false vs true (run 2)",
+          "g2 \"Russian Federation\": preserving false vs true (run 2)",
+          "g3 \"Росія\": preserving false vs true (run 2)"
+        ],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [
+    {
+      "name": "ASSOCIATED_WITH",
+      "definition": "Indicates that the neutral country is associated with the target country in the context of a cyber-incident.",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2720
+    }
+  ],
+  "pairRules": [
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "ASSOCIATED_WITH"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": "ASSOCIATED_WITH"
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Target"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "relation": null
+    },
+    {
+      "source": {
+        "category": "Country",
+        "role": "Attacker"
+      },
+      "target": {
+        "category": "Country",
+        "role": "Neutral"
+      },
+      "relation": "ASSOCIATED_WITH"
+    }
+  ],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2681,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Neutral"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-relation-type",
+      "name": "ASSOCIATED_WITH"
+    },
+    {
+      "doc": 2720,
+      "op": "admit-pair-rule",
+      "signature": "Country/Neutral × Country/Target"
+    },
+    {
+      "doc": 4475,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Target"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 37246,
+      "op": "admit-pair-rule",
+      "signature": "Country/Target × Country/Target"
+    },
+    {
+      "doc": 4697016,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Attacker"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6280129,
+      "op": "admit-pair-rule",
+      "signature": "Country/Attacker × Country/Neutral"
+    }
+  ]
+}

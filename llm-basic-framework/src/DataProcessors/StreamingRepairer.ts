@@ -720,7 +720,17 @@ export class StreamingRepairer {
       }
 
       const listed = new Map(component.entities.map((ref) => [ref.canonical.trim().toLowerCase(), ref]));
-      const find = (name: string) => listed.get(name.trim().toLowerCase());
+      // The component listing labels entities `A.`, `B.`, `C.` for readability, and weaker judges
+      // echo those labels back instead of the canonical names — which used to reject every op in
+      // the review as `unlisted-entity`. Accept a bare label as a last resort, AFTER a real name
+      // match, so an entity actually called "A" still wins its own name.
+      const labelled = new Map(
+        component.entities.map((ref, position) => [entityLetter(position).toLowerCase(), ref])
+      );
+      const find = (name: string) => {
+        const key = name.trim().toLowerCase();
+        return listed.get(key) ?? labelled.get(key);
+      };
 
       for (const verdict of review.ops) {
         const [nameA, nameB] = opEntityNames(verdict);

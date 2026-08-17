@@ -174,14 +174,15 @@
   "extractedFrom": null,
   "authoredFor": "src/DataProcessors/StreamingRepairer.ts",
   "copiedFrom": "dissert/wiki/notes/prompts.md § Suspect-component repair judge (Ψ_repair), verbatim fenced block — new prompt for the synchronous StreamingRepairer (T2), replacing the deleted deferred RegistryConsolidator in the main pipeline",
-  "sha256": "0b74e73c637d1830fb333e083fde4a722e2392cb030efc2315644739788e6425",
+  "note": "2026-08-17 amendment: the op-schema line documented `distinct{pair:[A,B]}`, whose A/B metavariables collide with the A./B./C. labels the component listing uses for readability. Measured on the Country probe (run 2026-08-17-country-probe-f7231e6e58e9): gemma4:e2b-16k answered `\"pair\": [\"A\",\"C\"]` and ALL 17 repair calls were rejected as `unlisted-entity`, so repair could correct nothing on that model. The slot is now spelled `[\"<canonical name>\",\"<canonical name>\"]` with an explicit never-use-the-letter rule. StreamingRepairer additionally accepts a bare label as a fallback (name match takes precedence). This rotates every runId that includes this prompt.",
+  "sha256": "5adfc592c2419f134941f8902fa01a1111066310735bd03c0b002d5044af0c23",
   "variables": [
    {
     "placeholder": "components",
     "source": "numbered suspect-component blocks: triggering signal(s) with scores (union-blocker / gloss-ANN / defer / coherence) and, per entity, canonical name, category, rung, aliases, gloss, minting document, and evidence snippets"
    }
   ],
-  "bytes": 3402
+  "bytes": 3719
  },
  "type-judge": {
   "file": "prompts/type-judge.md",

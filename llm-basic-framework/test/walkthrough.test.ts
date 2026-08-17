@@ -1,4 +1,3 @@
-import { CountryNameNormalizer } from '../src/CountryNameNormalizer/CountryNameNormalizer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import type { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
 import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
@@ -425,7 +424,6 @@ async function runWalkthrough(): Promise<Walkthrough> {
     llmClient: llm.client,
     schemaRegistry,
     entityRegistry,
-    countryNameNormalizer: new CountryNameNormalizer({ llmClient: llm.client, decisionLog }),
     decisionLog,
     candidateGenerator: blocker,
     // The walkthrough judges candidates the default 0.5 floor would never retrieve — "UAC-0002 …

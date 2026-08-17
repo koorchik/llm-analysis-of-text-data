@@ -187,11 +187,11 @@ for it:
 
 ```bash
 # 1. Fresh run directory, pre-seeded with an existing arm's extractions (the frozen baseline run
-#    committed at storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc/ —
+#    committed at storage/cert.gov.ua/processed/experiments/2026-08-04-psi-link-default-4ee484f372fc/ —
 #    see docs/REPRODUCE.md §1). Only normalize + repair run; extraction is skipped entirely
 #    because every file already exists.
-SRC=../storage/cert.gov.ua/processed/experiments/psi-link-default-4ee484f372fc
-RUNDIR=../storage/cert.gov.ua/processed/experiments/<new-runId>   # printed once the run starts
+SRC=../storage/cert.gov.ua/processed/experiments/2026-08-04-psi-link-default-4ee484f372fc
+RUNDIR=../storage/cert.gov.ua/processed/experiments/<YYYY-MM-DD>-<new-runId>   # printed once the run starts
 mkdir -p "$RUNDIR/extractions"
 cp "$SRC"/extractions/*.json "$RUNDIR/extractions/"
 
@@ -246,27 +246,36 @@ clusters at least twice.
 npm run make-subset -- --list gold/subsets/dev-software-22.txt \
   --from ../storage/cert.gov.ua/fetched --to /tmp/subset-dev-software
 
-# Run the arm (pre-seed frozen extractions for these 22 docs per RUN-STREAMING.md §4 first)
-INPUT_DIR=/tmp/subset-dev-software OUTPUT_DIR=/tmp/fastloop-out \
+# Run the arm (pre-seed frozen extractions for these 22 docs per RUN-STREAMING.md §4 first).
+# OUTPUT_DIR is the DEV tree, not /tmp: iterations survive reboots and stay comparable across
+# sessions, while the published-arm tree keeps only what the paper cites. It is gitignored.
+INPUT_DIR=/tmp/subset-dev-software \
+  OUTPUT_DIR=../storage/cert.gov.ua/processed/experiments-dev \
   STEPS=streamingPipeline FLOW=incremental CONDITION=fastloop-software \
   CATEGORIES=Software \
-  LLM_PROVIDER=ollama LLM_MODEL=gemma4:e4b-32k \
+  LLM_PROVIDER=ollama LLM_MODEL=gemma4:e2b-16k \
   CANDIDATE_GENERATOR=union EMBEDDINGS=1 EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=embeddinggemma \
   DECISIONS_LOG=1 npm start
 
-# Score on dev, Software only
+# Score on dev, Software only (run dirs are dated: <YYYY-MM-DD>-<runId>)
 npm run evaluate -- --gold gold/gold.json --split dev --allow-dev --category Software \
-  --run /tmp/fastloop-out/experiments/<runId>
+  --run ../storage/cert.gov.ua/processed/experiments-dev/experiments/<YYYY-MM-DD>-<runId>
 ```
+
+Judge model: `gemma4:e2b-16k` fits GPU memory here and runs ~165 s/doc (the repair-judge dominates,
+~70–110 s including its retry, vs ~15 s for the link-judge), so 22 documents is roughly an hour.
+`gemma4:e4b-32k` is the stronger local judge from the 4-arm study — use it when the GPU is free.
 
 `CATEGORIES` drops non-listed mentions (and relations touching them) at plan-build time inside
 `streamingNormalizer`; frozen extractions are untouched. It folds into the runId, so a filtered
 run can never share a directory with a full arm. The input-hash mismatch against the frozen
 corpus is expected — same status as the smoke test in RUN-STREAMING.md §3.
 
-Every algorithm edit changes the runId (dirty-diff hash), so each iteration lands in a fresh run
-directory under `/tmp/fastloop-out` — compare `results.json` across iterations, and delete the
-directory when the session is done.
+Every algorithm edit changes the runId (dirty-diff hash), so each iteration lands in its own dated
+run directory under `experiments-dev/` rather than resuming the previous one. Compare two
+iterations directly — `npm run evaluate … --run <dirA> --run <dirB>`, or
+`npm run view -- --run <dirA> --run <dirB> --out compare-iterations.html`. Delete freely: nothing
+there feeds a published result. See `storage/cert.gov.ua/processed/experiments-dev/README.md`.
 
 ---
 

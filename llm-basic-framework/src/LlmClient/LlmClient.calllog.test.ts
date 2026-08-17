@@ -52,7 +52,7 @@ describe('LlmClient → LlmCallLog', () => {
 
     await client.send('INSTRUCTIONS', 'TEXT', { operator: 'link-judge', docId: 42 });
 
-    const file = path.join(dir, '42', '001-link-judge.json');
+    const file = path.join(dir, '001-42', '001-link-judge.json');
     assert.ok(existsSync(file));
     const parsed = JSON.parse((await fs.readFile(file)).toString());
     assert.equal(parsed.provider, 'fakeprovider');
@@ -75,7 +75,7 @@ describe('LlmClient → LlmCallLog', () => {
       /ECONNRESET/
     );
 
-    const file = path.join(dir, '7', '001-repair-judge.FAILED.json');
+    const file = path.join(dir, '001-7', '001-repair-judge.FAILED.json');
     assert.ok(existsSync(file));
     const parsed = JSON.parse((await fs.readFile(file)).toString());
     assert.match(parsed.error, /ECONNRESET/);
@@ -96,9 +96,14 @@ describe('LlmClient → LlmCallLog', () => {
     const client = new LlmClient({ backend, callLog: new LlmCallLog({ dir }) });
 
     await client.send('I', 'T', { operator: 'link-judge', docId: 5 });
-    assert.deepEqual(client.lastCallHandle(), { docId: 5, seq: 1 });
+    assert.deepEqual(client.lastCallHandle(), {
+      docId: 5,
+      seq: 1,
+      operator: 'link-judge',
+      folder: '001-5',
+    });
 
     await client.callLog!.logOutcome(client.lastCallHandle(), { ok: false, detail: 'bad json' });
-    assert.ok(existsSync(path.join(dir, '5', '001-link-judge.FAILED.json')));
+    assert.ok(existsSync(path.join(dir, '001-5', '001-link-judge.FAILED.json')));
   });
 });

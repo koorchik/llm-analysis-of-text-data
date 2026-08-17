@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Rules
+
+- **NEVER run `git commit` (or `git push`) without the user's explicit approval.** Prepare the change, show what would be committed, and wait for the user to say commit.
+
 ## Project Overview
 
 This is a TypeScript-based LLM framework for analyzing Ukrainian cybersecurity incident reports from CERT-UA. The application processes unstructured text reports to extract structured entities (attack targets, hacker groups, countries), normalize data, generate embeddings, and create visualizations.
@@ -128,6 +132,7 @@ Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EM
 ### Code Conventions
 - No build process - uses ts-node for direct TypeScript execution
 - Data lives at the repo root under `storage/cert.gov.ua/` (committed to git), one level up from this subproject — hence the `../storage/...` paths in `bin/app.ts` (override via `INPUT_DIR`/`OUTPUT_DIR`)
+- Run directories are `experiments/<YYYY-MM-DD>-<runId>/`, dated by run start so `ls` reads chronologically. The date is presentation only — it is NEVER part of the `runId` (a config+code hash), never enters logs or run cards, and an existing directory for a runId always wins so a resumed run keeps its original directory. `src/Experiment/runDirName.ts` owns both halves (`resolveRunDir`, `stripRunDate`); anything deriving identity from a directory name must strip the prefix.
 - Entry point: `bin/app.ts`
 - All processors follow constructor injection pattern with config objects
 - Data flows through directories under `storage/`

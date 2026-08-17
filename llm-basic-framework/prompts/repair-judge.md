@@ -41,4 +41,8 @@ Output ONLY a single valid raw JSON object (no markdown code fences, no extra co
     }
   ]
 }
-Op-specific fields: merge{from,into} · distinct{pair:[A,B]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.

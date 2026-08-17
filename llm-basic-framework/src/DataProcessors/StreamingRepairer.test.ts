@@ -311,6 +311,64 @@ test('merge applies and re-stamps normalizedName/normalizedHead in the affected 
   assert.ok(changes.some((event) => event.type === 'merge' && event.canonical === 'Sandworm'), 'blocker index invalidated');
 });
 
+test('an op naming the component LETTER instead of the canonical name still resolves', async () => {
+  // Measured on the 2026-08-17 Country probe: `gemma4:e2b-16k` answered `"pair": ["A","C"]`,
+  // echoing the component listing's readability labels, and EVERY repair op in the run was
+  // rejected as `unlisted-entity` — so the repairer could never correct anything on that model.
+  // The prompt now says to use canonical names; this fallback keeps a label-echoing judge working.
+  const { dir, entityRegistry, repairer } = await twoHackerGroups({
+    replies: [review([{ op: 'merge', from: 'B', into: 'A', confidence: 'high', evidence: 'also tracked as' }])],
+  });
+
+  await writeArtifact(
+    dir,
+    '2.json',
+    artifact(
+      [{ name: 'Voodoo Bear', category: 'HackerGroup', role: 'Attacker', matchedVia: 'Voodoo Bear', normalizedName: 'Voodoo Bear' }],
+      [],
+      2
+    )
+  );
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.equal(
+    (await readArtifact(dir, '2.json')).entities[0].normalizedName,
+    'Sandworm',
+    'A/B resolved to the first/second listed entity and the merge was applied'
+  );
+  assert.equal(entityRegistry.records('HackerGroup')['Voodoo Bear'], undefined, 'B was merged away');
+});
+
+test('a real canonical name wins over a same-spelled component letter', async () => {
+  // Precedence guard: an entity genuinely called "A" must resolve to itself, never to the label.
+  const context = await setup({
+    blocker: { HackerGroup: [{ canonical: 'A', sim: 0.95 }, { canonical: 'Sandworm', sim: 0.95 }] },
+    replies: [review([{ op: 'merge', from: 'A', into: 'Sandworm', confidence: 'high', evidence: 'same group' }])],
+  });
+  context.schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 1 });
+  // Minted second, so it is listed second and its LABEL would be "B" — if the label map won, the
+  // op would name the wrong entity.
+  context.entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' }, { gloss: 'GRU-attributed group' });
+  context.entityRegistry.mint('HackerGroup', 'A', { doc: 2, date: '02.01.2024' }, { gloss: 'group literally named A' });
+  await context.entityRegistry.save();
+  await context.schemaRegistry.save();
+
+  await writeArtifact(
+    context.dir,
+    '2.json',
+    artifact([{ name: 'A', category: 'HackerGroup', role: 'Attacker', matchedVia: 'A', normalizedName: 'A' }], [], 2)
+  );
+
+  await context.repairer.processDoc('2.json', 2);
+
+  assert.equal(
+    (await readArtifact(context.dir, '2.json')).entities[0].normalizedName,
+    'Sandworm',
+    'the entity named "A" was merged, not whatever sat at label position A'
+  );
+});
+
 test('a merge re-stamps REPEAT mentions too, not just the doc that first introduced the surface', async () => {
   // Regression (review round 1). `EntityRegistry.link` is idempotent, so d3's repeat mention of an
   // already-known surface leaves NO alias record — a re-stamp restricted to the docIds found on the
