@@ -300,9 +300,12 @@ writing transcripts does not change what the pipeline computes, so a logged run 
 one are directly comparable — unlike `CATEGORIES`, which changes the population and does rotate
 the id.
 
-A full 204-document run writes roughly 30–50 MB of transcripts. `llm-calls/` is in `.gitignore`,
-but note that `git add -f` on a run directory overrides ignore rules: **do not force-add a run
-directory that still has its transcripts**, or delete `llm-calls/` first.
+Transcript volume scales with prompt size and call count: a measured 3-document run with a small
+local judge wrote ~45 KB per document, which extrapolates to roughly 10 MB for the 204-document
+corpus — but prompts grow with the registry and a larger judge writes more, so treat tens of
+megabytes per full run as the planning figure and check `du -sh` on your own arm. `llm-calls/` is
+in `.gitignore`, but note that `git add -f` on a run directory overrides ignore rules: **do not
+force-add a run directory that still has its transcripts**, or delete `llm-calls/` first.
 
 ---
 
