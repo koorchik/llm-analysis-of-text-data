@@ -109,7 +109,9 @@ All steps make live LLM/embedding calls **except** `dataAnalyzer` (pure-local t-
 `FLOW=incremental` selects the streaming SKEIN v2 pipeline instead, with its own steps
 (`streamingPipeline`, `streamingExtractor`, `streamingNormalizer`, `streamingGraphBuilder`,
 `streamingRepairer`, `dataAnalyzer`). Set `CONDITION` to name the experimental arm and
-`DECISIONS_LOG=1` to get a scorable log. `CANDIDATE_GENERATOR` selects the blocker and
+`DECISIONS_LOG=1` to get a scorable log. `LLM_LOG=0` disables the full request/response transcripts
+otherwise written to `<runDir>/llm-calls/` (per document, per operator; `.FAILED` marks calls the
+judge could not use). `CANDIDATE_GENERATOR` selects the blocker and
 `DECISION_STRATEGY` the judge — the two ports the experiments vary along; both are folded into the
 `runId`, so arms cannot share a directory. Since 2026-08-05, repair is synchronous: every document
 runs phase 2 (`StreamingRepairer`) inside `streamingNormalizer`'s own `processFile`

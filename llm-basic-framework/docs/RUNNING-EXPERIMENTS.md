@@ -270,6 +270,42 @@ directory when the session is done.
 
 ---
 
+## 3c. Reading what the model actually saw — `llm-calls/`
+
+Every run writes the full request and response of every LLM call to
+`<runDir>/llm-calls/<docId>/<NNN>-<operator>.json` plus a `.txt` rendering of the same content:
+
+```
+<runDir>/llm-calls/
+  _no-doc/            # calls with no document attached
+  20/
+    001-link-judge.json        001-link-judge.txt
+    002-repair-judge.FAILED.json   002-repair-judge.FAILED.txt
+  24/
+    001-link-judge.json        001-link-judge.txt
+```
+
+`NNN` counts calls within one document, in order. The `.json` is the machine-readable record —
+provider, model, the **effective** sampling actually sent, instructions, text, response, usage,
+latency — and is self-contained enough to retry by hand against another model. The `.txt` is the
+same thing laid out for reading.
+
+**`.FAILED` marks the calls worth looking at first.** A call is marked failed when the backend
+threw (timeout, connection reset) *or* when the judge could not use the response — an
+unparseable body or a schema violation, which is an HTTP 200 and therefore invisible in
+`decisions.jsonl` beyond a retry counter. The `outcome` field in the `.json` says which.
+
+On by default. `LLM_LOG=0` turns it off. The knob is deliberately **not** part of the `runId`:
+writing transcripts does not change what the pipeline computes, so a logged run and an unlogged
+one are directly comparable — unlike `CATEGORIES`, which changes the population and does rotate
+the id.
+
+A full 204-document run writes roughly 30–50 MB of transcripts. `llm-calls/` is in `.gitignore`,
+but note that `git add -f` on a run directory overrides ignore rules: **do not force-add a run
+directory that still has its transcripts**, or delete `llm-calls/` first.
+
+---
+
 ## 4. Decision strategies
 
 The decision stage is a port (`src/Normalization/types.ts`), and five strategies implement it.
