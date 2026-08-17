@@ -27,6 +27,7 @@ export const CATEGORY_VALUES = [
 export function parseCategories(raw: string | undefined): Category[] | undefined {
   if (raw === undefined || raw.trim() === '') return undefined;
   const names = raw.split(',').map((name) => name.trim()).filter((name) => name.length > 0);
+  if (names.length === 0) return undefined;
   const unknown = names.filter((name) => !(CATEGORY_VALUES as readonly string[]).includes(name));
   if (unknown.length > 0) {
     throw new Error(

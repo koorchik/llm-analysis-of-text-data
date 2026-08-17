@@ -7,6 +7,8 @@ describe('parseCategories', () => {
     assert.equal(parseCategories(undefined), undefined);
     assert.equal(parseCategories(''), undefined);
     assert.equal(parseCategories('   '), undefined);
+    assert.equal(parseCategories(','), undefined);
+    assert.equal(parseCategories(' , '), undefined);
   });
 
   it('parses a comma-separated list, trimming whitespace', () => {
