@@ -25,7 +25,7 @@ STEPS=dataExtractor     # batch default; incremental default is 'streamingPipeli
 
 # Incremental flow options
 DECISIONS_LOG=1         # enable decisions.jsonl (link/mint/llm-call events; off by default)
-EDGES_FROM=layered      # graph edge mode: 'layered' | 'extracted' | 'cooccurrence'
+EDGES_FROM=extracted    # graph edge mode: 'extracted' | 'layered' (pre-seeded rules) | 'cooccurrence'
 
 # StreamingRepairer (phase 2 of every document; on by default)
 REPAIR=1                          # default; 0 = RQ3 NAIVE arm, no repairer/GlossIndex constructed
@@ -102,4 +102,3 @@ directory, never against a live pipeline's own output. See `docs/streaming-pipel
 Note: never run two processes against the same `incremental/<model>/` directory
 concurrently — the shared state files (`schema.json`, `registry.json`) assume a
 single writer.
-

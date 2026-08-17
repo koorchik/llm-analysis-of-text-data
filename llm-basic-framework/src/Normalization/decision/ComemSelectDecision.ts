@@ -96,7 +96,7 @@ export class ComemSelectDecision implements DecisionStrategy {
       'Candidates:',
       ...shown.map((candidate, index) => `${index + 1}. ${serialize(candidate, request.category)}`),
       '0. none of the above',
-      ...(request.docSnippet ? ['', `Context: ${request.docSnippet}`] : []),
+      ...(request.docSnippet ? ['', `Source evidence: ${request.docSnippet}`] : []),
     ].join('\n');
 
     const started = Date.now();

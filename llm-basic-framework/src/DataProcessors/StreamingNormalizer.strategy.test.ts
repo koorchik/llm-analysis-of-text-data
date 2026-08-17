@@ -120,7 +120,7 @@ describe('StreamingNormalizer decision port', () => {
     assert.ok(!llm.operators.includes('link-judge'), 'built-in judge must not also run');
   });
 
-  it('passes the candidates, category and document context the strategy needs', async () => {
+  it('passes identity inputs and generic source evidence, but no role', async () => {
     const strategy = new StubStrategy((requests) =>
       requests.map(() => ({ kind: 'mint' as const, target: null, confidence: null, reason: 'stub' }))
     );
@@ -132,6 +132,7 @@ describe('StreamingNormalizer decision port', () => {
     assert.equal(request.category, 'HackerGroup');
     assert.equal(request.docId, 1);
     assert.equal(request.docTitle, 'test report');
+    assert.ok(!Object.prototype.hasOwnProperty.call(request, 'role'));
     assert.ok(request.candidates.length > 0, 'the near-miss candidate must reach the strategy');
     assert.equal(request.candidates[0].canonical, 'Fancy Bears');
     // Alias surfaces must survive: they are worth +2-14 F1 to a judge, and the non-LLM arms

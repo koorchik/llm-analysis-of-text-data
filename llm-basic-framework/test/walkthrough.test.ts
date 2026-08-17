@@ -46,10 +46,7 @@ import { before, describe, it } from 'node:test';
  * - Schema categories are pre-admitted rather than admitted from each extraction's `schemaProposals`
  *   (the normalizer never reads proposals — the extractor does). This reproduces d1's real behaviour:
  *   "no near-matches in an empty schema → all 5 proposals admitted without a judge call."
- * - Pair rules are likewise pre-admitted. The walkthrough charges d1's pair-rule discovery as one
- *   batched call; leaving the signatures novel here would spend that call on every document that
- *   introduces a new (category, role) pair and drown out the per-document call budget being asserted,
- *   which is about the *identity* calls (link-judge + repair-judge).
+ * - Pair rules are pre-admitted for graph-fold coverage; normalization does not discover them.
  * - `LadderDiscovery` is deliberately NOT injected (`StreamingNormalizer` skips the bootstrap when it
  *   is absent), so no ladder calls enter the budget either.
  */

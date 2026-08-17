@@ -154,7 +154,7 @@ export interface DecisionRequest {
   category: string;
   candidates: Candidate[];
   docId: number;
-  /** Document title and text snippet, for strategies that judge in context. */
+  /** Generic source evidence; strategies must not treat contextual role or behavior as identity. */
   docTitle?: string;
   docSnippet?: string;
 }

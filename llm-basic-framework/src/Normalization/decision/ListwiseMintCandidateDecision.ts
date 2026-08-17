@@ -107,8 +107,8 @@ export class ListwiseMintCandidateDecision implements DecisionStrategy {
     });
 
     const first = askable[0].request;
-    const header = first.docTitle ? `Document: "${first.docTitle}"` : 'Document: untitled';
-    const context = first.docSnippet ? ` — context: ${first.docSnippet}` : '';
+    const header = first.docTitle ? `Source: "${first.docTitle}"` : 'Source: untitled';
+    const context = first.docSnippet ? ` — evidence: ${first.docSnippet}` : '';
     const text = `${header}${context}\nMentions:\n${lines.join('\n')}`;
 
     const started = Date.now();

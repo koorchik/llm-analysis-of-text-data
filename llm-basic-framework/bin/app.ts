@@ -102,7 +102,7 @@ const CONFIG = {
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
   embeddings: process.env.EMBEDDINGS === '1',
 
-  edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'layered',
+  edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'extracted',
 
   // SKEIN v2 λ: merge granularity at fold time (streamingGraphBuilder only, zero LLM calls).
   // e.g. LAMBDA="Software=g2,default=g0"; LAMBDA_INTERPRETIVE=1 opts into folding part-of edges.

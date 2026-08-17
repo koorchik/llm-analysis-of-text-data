@@ -3,9 +3,9 @@
   "file": "prompts/comem-select.md",
   "extractedFrom": null,
   "authoredFor": "src/Normalization/decision/ComemSelectDecision.ts",
-  "sha256": "ff823d56e7ac393f0a0f67e46d7e36880931efbabe37c9d7493fa9986b3e27ea",
+  "sha256": "b077e5b79e2218e7bba562a18cd1752c4001e94f254cb6b4dd5757ab9a41ead8",
   "variables": [],
-  "bytes": 545
+  "bytes": 786
  },
  "consolidate-merge": {
   "file": "prompts/consolidate-merge.md",
@@ -77,8 +77,8 @@
   "file": "prompts/ladder.md",
   "extractedFrom": null,
   "authoredFor": "src/Ladder/LadderDiscovery.ts",
-  "copiedFrom": "dissert/wiki/notes/prompts.md § Category → granularity ladder (g0–g3), verbatim fenced block",
-  "sha256": "b1e77997efeb5d7ab672c0c90b2567e475c8123f188e64464643567a3210d993",
+  "note": "2026-08-17: replaced corpus-specific worked examples with a domain-neutral contract derived only from category definitions and observed surfaces. Same-day fix: the first neutral fold test ('<finer> is recorded') carried no attribution, so preserving vs part-of was undecidable from the rewrite; replaced with an attribution-rewrite test over a placeholder event ('<finer> was involved in an event') plus the collection-vs-thing tiebreak — neutral, but the subject can still visibly widen.",
+  "sha256": "db594b471762abec3e693fb58c7889f0bf87cfa6bd5db345ffb3b8a7f78123c9",
   "variables": [
    {
     "placeholder": "CATEGORY",
@@ -93,15 +93,15 @@
     "source": "8–20 real surface forms sampled from the registry, first-seen order"
    }
   ],
-  "bytes": 13945
+  "bytes": 4572
  },
  "link-judge": {
   "file": "prompts/link-judge.md",
   "extractedFrom": null,
   "authoredFor": "src/DataProcessors/StreamingNormalizer.ts",
-  "copiedFrom": "dissert/wiki/notes/prompts.md § Document entities streaming linking judge (Ψ_link), verbatim fenced block (replaced the pre-redesign two-verdict prompt 2026-08-04)",
-  "note": "2026-08-05: revised to streaming-repair Ψ_link — gloss output on mint/defer",
-  "sha256": "326934c3d133867eaa1d5fa01e238fded32c408a3897cf08ae000a0100ee9015",
+  "copiedFrom": "originally dissert/wiki/notes/prompts.md § Document entities streaming linking judge (Ψ_link) (replaced the pre-redesign two-verdict prompt 2026-08-04); diverged 2026-08-17 — the repo copy is now the source of truth",
+  "note": "2026-08-17: made domain-neutral. Structured roles are never rendered; source context may establish only explicit naming identity, not identity from behavior or relationships.",
+  "sha256": "eeba95805bf5772e2fe1d6a1ae901bca18d7fa5d7603fabef654b39a67002c6f",
   "variables": [
    {
     "placeholder": "docTitle",
@@ -116,15 +116,15 @@
     "source": "numbered unresolved mentions with candidate sets (canonical, rung, aliases)"
    }
   ],
-  "bytes": 3874
+  "bytes": 3478
  },
  "listwise-select": {
   "file": "prompts/listwise-select.md",
   "extractedFrom": null,
   "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-  "sha256": "66fc7ef0c14d1c19ecfe9ab477530f8c6d4a83fb5ffe1b7f494090ea64888569",
+  "sha256": "86c55200158baa55f5f0f29ea8c7a959e95a428fc37842e1fd60fdae72f07d59",
   "variables": [],
-  "bytes": 901
+  "bytes": 1124
  },
  "normalize-country": {
   "file": "prompts/normalize-country.md",
@@ -173,16 +173,16 @@
   "file": "prompts/repair-judge.md",
   "extractedFrom": null,
   "authoredFor": "src/DataProcessors/StreamingRepairer.ts",
-  "copiedFrom": "dissert/wiki/notes/prompts.md § Suspect-component repair judge (Ψ_repair), verbatim fenced block — new prompt for the synchronous StreamingRepairer (T2), replacing the deleted deferred RegistryConsolidator in the main pipeline",
+  "copiedFrom": "originally dissert/wiki/notes/prompts.md § Suspect-component repair judge (Ψ_repair) — new prompt for the synchronous StreamingRepairer (T2), replacing the deleted deferred RegistryConsolidator in the main pipeline; diverged 2026-08-17 — the repo copy is now the source of truth",
   "note": "2026-08-17 amendment: the op-schema line documented `distinct{pair:[A,B]}`, whose A/B metavariables collide with the A./B./C. labels the component listing uses for readability. Measured on the Country probe (run 2026-08-17-country-probe-f7231e6e58e9): gemma4:e2b-16k answered `\"pair\": [\"A\",\"C\"]` and ALL 17 repair calls were rejected as `unlisted-entity`, so repair could correct nothing on that model. The slot is now spelled `[\"<canonical name>\",\"<canonical name>\"]` with an explicit never-use-the-letter rule. StreamingRepairer additionally accepts a bare label as a fallback (name match takes precedence). This rotates every runId that includes this prompt.",
-  "sha256": "5adfc592c2419f134941f8902fa01a1111066310735bd03c0b002d5044af0c23",
+  "sha256": "815ada73de637b30f4ee71cb5e2e4b3c844ee793a76375b5ed95640942fdfb64",
   "variables": [
    {
     "placeholder": "components",
     "source": "numbered suspect-component blocks: triggering signal(s) with scores (union-blocker / gloss-ANN / defer / coherence) and, per entity, canonical name, category, rung, aliases, gloss, minting document, and evidence snippets"
    }
   ],
-  "bytes": 3719
+  "bytes": 3714
  },
  "type-judge": {
   "file": "prompts/type-judge.md",

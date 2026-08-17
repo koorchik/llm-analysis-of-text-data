@@ -43,8 +43,6 @@ function cannedLlm(reply: string) {
   return { client: client as unknown as LlmClient, prompts };
 }
 
-/** Replays canned responses in call order; repeats the last one when calls exceed replies — the
- * gloss-retry tests need a first reply (the batch) and a second (the one-mention retry). */
 function cannedLlmSequence(replies: string[]) {
   const prompts: string[] = [];
   let call = 0;
@@ -62,7 +60,7 @@ function cannedLlmSequence(replies: string[]) {
       };
     },
   };
-  return { client: client as unknown as LlmClient, prompts, calls: () => call };
+  return { client: client as unknown as LlmClient, prompts };
 }
 
 type RepairerStub = { processDoc: (file: string, docId: number) => Promise<void> };
@@ -89,6 +87,32 @@ async function setup(
   await schemaRegistry.load();
   await entityRegistry.load();
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
+  schemaRegistry.setLadder(
+    'HackerGroup',
+    {
+      version: 1,
+      exampleCount: 2,
+      runs: 1,
+      models: ['fake'],
+      rungs: [
+        { g: 0, alias: 'specific record', example: 'UAC-0002', disputed: false },
+        {
+          g: 1,
+          alias: 'primary entity',
+          example: 'UAC-0002x',
+          move: 'drop-qualifier',
+          preserving: true,
+          disputed: false,
+          edgeKind: 'coarsens-to',
+        },
+      ],
+      rejected: [],
+      notes: '',
+      disagreements: [],
+      discoveredAtDoc: 0,
+    },
+    0
+  );
   // A near-miss candidate so the judge is consulted (string-sim retrieves it).
   entityRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
   entityRegistry.setRung('HackerGroup', 'UAC-0002x', 'g1');
@@ -109,11 +133,6 @@ async function setup(
   return { dir, normalizer, llm, entityRegistry, decisionLog, schemaRegistry };
 }
 
-/**
- * Two mentions in one document, each with a near-miss candidate so the judge is consulted for
- * both — the fixture the gloss-retry tests need to prove a retry batch excludes the mention that
- * already had a valid gloss.
- */
 async function setupGlossRetry(tag: string, replies: string[]) {
   const dir = await scratchDir(tag);
   await fs.writeFile(
@@ -138,17 +157,6 @@ async function setupGlossRetry(tag: string, replies: string[]) {
   entityRegistry.setRung('HackerGroup', 'UAC-0002x', 'g1');
   entityRegistry.mint('HackerGroup', 'UAC-0099x', { doc: 0, date: '2023-01-01' });
   entityRegistry.setRung('HackerGroup', 'UAC-0099x', 'g1');
-  // Both mentions share a (category, role) signature — pre-register it as a known pair rule so
-  // #pairRuleJudge doesn't fire a THIRD llm.send() and throw off the retry-count assertions below;
-  // that judge is unrelated to gloss validation.
-  schemaRegistry.admitPairRule(
-    {
-      source: { category: 'HackerGroup', role: 'Attacker' },
-      target: { category: 'HackerGroup', role: 'Attacker' },
-      relation: null,
-    },
-    0
-  );
   await schemaRegistry.save();
   await entityRegistry.save();
 
@@ -162,7 +170,7 @@ async function setupGlossRetry(tag: string, replies: string[]) {
     entityRegistry,
     decisionLog,
   });
-  return { dir, normalizer, llm, entityRegistry, decisionLog };
+  return { dir, normalizer, llm, entityRegistry };
 }
 
 async function readDecisions(dir: string): Promise<Array<Record<string, unknown>>> {
@@ -192,18 +200,28 @@ const verdict = (extra: Record<string, unknown>) =>
   });
 
 describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
-  it('renders the prompt with title, snippet and rung-labelled candidates', async () => {
+  it('renders a domain-neutral prompt that does not expose the structured role', async () => {
     const { normalizer, llm } = await setup('prompt', verdict({}));
     await normalizer.processFile('1.json');
     const judgePrompt = llm.prompts.find((prompt) => prompt.includes('UNRESOLVED MENTIONS'));
     assert.ok(judgePrompt, 'link-judge prompt rendered');
-    assert.ok(judgePrompt!.includes('"test report"'), 'docTitle placeholder filled');
     assert.ok(judgePrompt!.includes('UAC-0002x [g1]'), 'candidate labelled with its rung');
+    assert.ok(judgePrompt!.includes('g0=specific record'), 'active category ladder is rendered');
+    assert.ok(judgePrompt!.includes('(HackerGroup)'), 'category remains available');
+    assert.ok(judgePrompt!.includes('test report'), 'generic source evidence remains available');
+    assert.ok(!judgePrompt!.includes('Attacker'), 'incident role is not matching evidence');
+    assert.ok(!judgePrompt!.includes('cyber'), 'prompt is not tied to the source dataset');
     assert.ok(!/\{\{\w+\}\}/.test(judgePrompt!), 'no unrendered placeholder');
   });
 
   it('mints at the judged rung', async () => {
     const { normalizer, entityRegistry } = await setup('rung', verdict({ mentionRung: 'g0' }));
+    await normalizer.processFile('1.json');
+    assert.equal(entityRegistry.rungOf('HackerGroup', 'UAC-0002'), 'g0');
+  });
+
+  it('demotes a rung that is absent from the active category ladder to g0', async () => {
+    const { normalizer, entityRegistry } = await setup('invalid-rung', verdict({ mentionRung: 'g3' }));
     await normalizer.processFile('1.json');
     assert.equal(entityRegistry.rungOf('HackerGroup', 'UAC-0002'), 'g0');
   });
@@ -219,7 +237,7 @@ describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
     assert.equal(edges.length, 1, 'the hard-non-merge-plus-edge outcome');
     assert.equal(edges[0].from, 'UAC-0002');
     assert.equal(edges[0].to, 'UAC-0002x');
-    assert.equal(edges[0].kind, 'part-of');
+    assert.equal(edges[0].kind, 'coarsens-to', 'edge kind is derived from the active ladder');
     assert.equal(edges[0].decision, 'judge');
     assert.equal(edges[0].evidence, 'test');
     // Still two distinct canonicals — the edge is a connection, never a merge.
@@ -278,8 +296,8 @@ describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
   });
 });
 
-describe('StreamingNormalizer gloss end-to-end (T5)', () => {
-  it('a mint verdict with a valid gloss stores it on the registry record', async () => {
+describe('StreamingNormalizer matching metadata', () => {
+  it('stores a source-grounded gloss for later candidate retrieval', async () => {
     const { normalizer, entityRegistry } = await setup(
       'gloss-mint',
       verdict({ gloss: 'Group linked to a wave of energy-sector intrusions' })
@@ -305,7 +323,7 @@ describe('StreamingNormalizer gloss end-to-end (T5)', () => {
     assert.ok(!log.some((e) => e.op === 'gloss-flagged'));
   });
 
-  it('a defer outcome carries its gloss into the provisional mint, like a mint verdict', async () => {
+  it('stores a source-grounded gloss on a deferred provisional mint', async () => {
     const { normalizer, entityRegistry } = await setup(
       'gloss-defer',
       verdict({ verdict: 'defer', gloss: 'Suspected alias of a known group; evidence insufficient' })
@@ -316,102 +334,71 @@ describe('StreamingNormalizer gloss end-to-end (T5)', () => {
     assert.equal(uac2?.gloss, 'Suspected alias of a known group; evidence insufficient');
   });
 
-  const glossBatchReply = (uac2Gloss: unknown) =>
+  const batchReply = (gloss: unknown) =>
     JSON.stringify({
       verdicts: [
         {
-          index: 1,
-          mention: 'UAC-0002',
-          category: 'HackerGroup',
-          mentionRung: 'g0',
-          verdict: 'mint',
-          target: null,
-          parentCandidate: null,
-          edgeKind: null,
-          gloss: uac2Gloss,
-          reasoning: 'test',
+          mention: 'UAC-0002', category: 'HackerGroup', mentionRung: 'g0', verdict: 'mint',
+          target: null, parentCandidate: null, edgeKind: null, gloss, reasoning: 'test',
         },
         {
-          index: 2,
-          mention: 'UAC-0099',
-          category: 'HackerGroup',
-          mentionRung: 'g0',
-          verdict: 'mint',
-          target: null,
-          parentCandidate: null,
-          edgeKind: null,
-          gloss: 'Ransomware group targeting regional hospitals',
-          reasoning: 'test',
+          mention: 'UAC-0099', category: 'HackerGroup', mentionRung: 'g0', verdict: 'mint',
+          target: null, parentCandidate: null, edgeKind: null,
+          gloss: 'Distinct organization operating in a separate region', reasoning: 'test',
         },
       ],
     });
 
-  const retryReply = (uac2Gloss: unknown) =>
+  const retryReply = (gloss: unknown) =>
     JSON.stringify({
-      verdicts: [
-        {
-          index: 1,
-          mention: 'UAC-0002',
-          category: 'HackerGroup',
-          mentionRung: 'g0',
-          verdict: 'mint',
-          target: null,
-          parentCandidate: null,
-          edgeKind: null,
-          gloss: uac2Gloss,
-          reasoning: 'test',
-        },
-      ],
+      verdicts: [{
+        mention: 'UAC-0002', category: 'HackerGroup', mentionRung: 'g0', verdict: 'mint',
+        target: null, parentCandidate: null, edgeKind: null, gloss, reasoning: 'test',
+      }],
     });
 
-  it('retries gloss validation once, asking only about the failing mention, and applies the corrected gloss', async () => {
-    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('retry-ok', [
-      glossBatchReply('UAC-0002'), // restates the mention's own name — fails validation
-      retryReply('Russian state-sponsored group targeting the energy sector'),
+  it('accepts an explicit null gloss as "no name-independent evidence" without a retry or flag', async () => {
+    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('null-ok', [
+      batchReply(null),
     ]);
     await normalizer.processFile('1.json');
 
-    assert.equal(llm.prompts.length, 2, 'exactly one retry call');
-    // Quoted form only — UAC-0002's own near-miss candidate list legitimately mentions
-    // "UAC-0099x" (unquoted), so a bare substring check would false-positive on that.
-    assert.ok(
-      !llm.prompts[1].includes('"UAC-0099"'),
-      'retry batch excludes the mention that already passed'
-    );
-    assert.ok(llm.prompts[1].includes('"UAC-0002"'), 'retry batch includes the failing mention');
-
-    const entries = entityRegistry.snapshot().entries('HackerGroup');
-    const uac2 = entries.find((e) => e.canonical === 'UAC-0002');
-    const uac99 = entries.find((e) => e.canonical === 'UAC-0099');
-    assert.equal(uac2?.gloss, 'Russian state-sponsored group targeting the energy sector');
-    assert.equal(uac99?.gloss, 'Ransomware group targeting regional hospitals');
-
+    assert.equal(llm.prompts.length, 1, 'a null gloss is a sanctioned answer, not a retry trigger');
+    const record = entityRegistry.snapshot().entries('HackerGroup')
+      .find((entry) => entry.canonical === 'UAC-0002');
+    assert.equal(record?.gloss, null);
     const log = await readDecisions(dir);
-    assert.ok(!log.some((e) => e.op === 'gloss-flagged'), 'no flag once the retry succeeds');
-    assert.ok(log.some((e) => e.op === 'llm-call' && e.kind === 'link-judge'));
-    assert.ok(log.some((e) => e.op === 'llm-call' && e.kind === 'link-judge-retry'));
+    assert.ok(!log.some((event) => event.op === 'gloss-flagged'), 'null is not a failure');
   });
 
-  it('still-bad gloss after retry logs gloss-flagged and mints with no gloss (never loops)', async () => {
-    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('retry-bad', [
-      glossBatchReply(null), // missing gloss — fails validation
-      retryReply('UAC-0002'), // retry also restates the name — still bad
+  it('retries a name-restating gloss once for only the failing mention', async () => {
+    const { normalizer, llm, entityRegistry } = await setupGlossRetry('retry-ok', [
+      batchReply('UAC-0002'),
+      retryReply('Organization identified by a stable external designation'),
     ]);
     await normalizer.processFile('1.json');
 
-    assert.equal(llm.prompts.length, 2, 'exactly one retry — never loops');
+    assert.equal(llm.prompts.length, 2);
+    assert.ok(llm.prompts[1].includes('"UAC-0002"'));
+    assert.ok(!llm.prompts[1].includes('"UAC-0099"'));
+    const record = entityRegistry.snapshot().entries('HackerGroup')
+      .find((entry) => entry.canonical === 'UAC-0002');
+    assert.equal(record?.gloss, 'Organization identified by a stable external designation');
+  });
 
-    const entries = entityRegistry.snapshot().entries('HackerGroup');
-    const uac2 = entries.find((e) => e.canonical === 'UAC-0002');
-    assert.equal(uac2?.gloss, null, 'mint proceeds without a gloss');
-    assert.equal(entityRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002', 'still minted');
+  it('drops a still-restating gloss after one retry and records the failure', async () => {
+    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('retry-bad', [
+      batchReply('uac-0002'),
+      retryReply('UAC-0002'),
+    ]);
+    await normalizer.processFile('1.json');
 
+    assert.equal(llm.prompts.length, 2, 'never loops');
+    const record = entityRegistry.snapshot().entries('HackerGroup')
+      .find((entry) => entry.canonical === 'UAC-0002');
+    assert.equal(record?.gloss, null);
     const log = await readDecisions(dir);
-    const flagged = log.find((e) => e.op === 'gloss-flagged');
-    assert.ok(flagged, 'gloss-flagged logged');
-    assert.equal(flagged!.mention, 'UAC-0002');
-    const retryCalls = log.filter((e) => e.op === 'llm-call' && e.kind === 'link-judge-retry');
-    assert.equal(retryCalls.length, 1, 'the retry is logged, but only once');
+    assert.ok(log.some((event) => event.op === 'gloss-flagged' && event.mention === 'UAC-0002'));
   });
 });
 

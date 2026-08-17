@@ -180,8 +180,8 @@ FLOW=incremental CONDITION=psi-link-default LLM_PROVIDER=anthropic LLM_MODEL=cla
 Expected log shape: the pipeline interleaves per document — `SKIP (exists)` from the extractor,
 then `NORMALIZE`/`LINK-JUDGE` for that same document, 204 times. Exact-hit mentions resolve free;
 the rest go through candidates + one `LINK-JUDGE` call per document. With extraction skipped
-there are NO extract or type-judge calls; the recurring calls are `link-judge` (≤1/doc),
-`pair-rule`, one country-normalize call per Country mention, and — new — `ladder` calls: N
+there are NO extract, type-judge, or pair-rule calls; the recurring calls are `link-judge` (≤1/doc),
+one country-normalize call per Country mention, and `ladder` calls: N
 ensemble runs per category, fired once per category when it crosses `LADDER_MIN_EXAMPLES`
 distinct surfaces and re-fired on ≥2× growth (expect roughly categories × N ≈ 30–60 calls over a
 full 204-doc run, front-loaded; `LADDER <category> vN: …` lines mark them). Wall-clock roughly

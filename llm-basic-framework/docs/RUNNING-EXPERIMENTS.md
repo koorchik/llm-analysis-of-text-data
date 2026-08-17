@@ -127,7 +127,7 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `EMBEDDINGS` | off | `FLOW=batch` only. `1` makes `DataNormalizer` write real vectors — and moves its output into the run directory (§4a) |
 | `SEED` | none | Recorded in the run card |
 | `TEMPERATURE`, `TOP_P`, `MAX_TOKENS` | unset | Unset means *send nothing* — see below |
-| `EDGES_FROM` | `layered` | Graph build only |
+| `EDGES_FROM` | `extracted` | Graph build only; `layered` consumes explicitly pre-seeded legacy pair rules |
 
 Steps for `FLOW=incremental`: `streamingPipeline` (all of them — extract → normalize →, inside the
 same call, repair, per document), `streamingExtractor`, `streamingNormalizer`,

@@ -43,21 +43,18 @@ manifest hashes exist.
 
 ## The prompts
 
-Three prompts are **copied verbatim from the wiki prompt library**
-(`dissert/wiki/notes/prompts.md`) rather than extracted from source: `ladder`, `link-judge`
-(since 2026-08-04, revised 2026-08-05 for gloss output), and `repair-judge` (new 2026-08-05).
-The wiki page is their source of truth — edit there first, then re-copy the fenced block
-byte-for-byte and update the manifest; never paraphrase (the wording encodes failure modes
-discovered iteratively).
+The streaming matching prompts originated in the wiki prompt library
+(`dissert/wiki/notes/prompts.md`). The repository copies are now the executable, hashed source of
+truth and have been generalized for domain-neutral entity matching.
 
 | id | used by | variables |
 |---|---|---|
 | `extract-streaming` | `StreamingExtractor` — per-document extraction (Ψ_link) | `knownCategories`, `knownRelationTypes` |
 | `type-judge` | `StreamingExtractor` — emergent-schema category/relation decisions | — |
 | `ladder` | `LadderDiscovery` — per-category granularity-ladder bootstrap (g0–g3, ensemble) | `CATEGORY`, `DEFINITION`, `EXAMPLES` |
-| `link-judge` | `StreamingNormalizer` — link / mint / defer verdict with rung + parent edge + gloss | `docTitle`, `docSnippet`, `mentionsBatch` |
+| `link-judge` | `StreamingNormalizer` — domain-neutral link / mint / defer verdict with rung + parent edge | `docTitle`, `docSnippet`, `mentionsBatch` |
 | `repair-judge` | `StreamingRepairer` — suspect-component adjudication (merge/distinct/rung/renamed/split/move/keep) | `components` |
-| `pair-rule` | `StreamingNormalizer` — co-occurrence inference rules | `knownRelationTypes` |
+| `pair-rule` | Reserved legacy prompt — role-based graph inference, not used by entity normalization | `knownRelationTypes` |
 | `consolidate-merge` | `RegistryConsolidator` — **harness-only**: RQ3 order-robustness batch-reference arm, no longer in the main pipeline | `subject` |
 | `country-normalize` | `CountryNameNormalizer` | `countryCodes` |
 | `psi-norm-batch` | `DataEntitiesCollector` — **the published Ψ_norm prompt E1 scores** | `entityType` |

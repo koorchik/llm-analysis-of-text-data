@@ -16,7 +16,6 @@ import {
   extractAndParseJson,
   glossRestatesMention,
   normalizeLinkVerdicts,
-  normalizePairRuleVerdicts,
 } from '../utils/validationUtils';
 import { existsSync } from 'fs';
 import fs from 'fs/promises';
@@ -32,7 +31,7 @@ interface Params {
   schemaRegistry: SchemaRegistry;
   entityRegistry: EntityRegistry;
   decisionLog: DecisionLog;
-  sourceDir?: string; // original fetched docs — for the link-judge snippet
+  sourceDir?: string;
   preprocessor?: Preprocessor;
   candidateK?: number;
   candidateMinSim?: number;
@@ -294,23 +293,6 @@ export class StreamingNormalizer {
       }
     }
 
-    // Pair-rule discovery for never-seen co-occurrence signatures
-    const novelSignatures = new Map<string, { a: MentionPlan; b: MentionPlan }>();
-    for (let i = 0; i < plans.length; i++) {
-      for (let j = i + 1; j < plans.length; j++) {
-        const key = this.#schemaRegistry.signatureKey(
-          { category: plans[i].category, role: plans[i].entity.role },
-          { category: plans[j].category, role: plans[j].entity.role }
-        );
-        if (!this.#schemaRegistry.hasPairRule(key) && !novelSignatures.has(key)) {
-          novelSignatures.set(key, { a: plans[i], b: plans[j] });
-        }
-      }
-    }
-
-    const pairRulePlans =
-      novelSignatures.size > 0 ? await this.#pairRuleJudge([...novelSignatures.values()], docId) : [];
-
     // ---- Phase B: mutate + save + write ----
 
     for (const plan of plans) {
@@ -415,17 +397,6 @@ export class StreamingNormalizer {
           });
         }
       }
-    }
-
-    for (const { rule, newRelationType } of pairRulePlans) {
-      if (newRelationType) {
-        this.#schemaRegistry.admitRelationType({
-          name: newRelationType.name,
-          definition: newRelationType.definition,
-          doc: docId,
-        });
-      }
-      this.#schemaRegistry.admitPairRule(rule, docId);
     }
 
     // Per-document resolution map: (canonical category, surface name) → canonical name
@@ -577,8 +548,9 @@ export class StreamingNormalizer {
 
   /**
    * The built-in SKEIN v2 linking judge: ONE batched call per document against
-   * `prompts/link-judge.md` (copied verbatim from the wiki prompt library). Everything the model
-   * sees goes through the prompt's `{{docTitle}}/{{docSnippet}}/{{mentionsBatch}}` placeholders.
+   * `prompts/link-judge.md`. Everything the model
+   * sees goes through generic source-evidence and mention/candidate placeholders. The prompt forbids
+   * treating contextual role, behavior, or relationships as identity evidence.
    *
    * Post-checks (code, belt and braces — the prompt states them too):
    * - `link` target must case-insensitively match a listed candidate, else the verdict is demoted
@@ -595,11 +567,10 @@ export class StreamingNormalizer {
   ): Promise<Map<string, JudgeOutcome>> {
     const title = String(extraction.metadata?.title || 'untitled');
     const snippet = await this.#loadSnippet(file);
-
     const instructions = this.#prompts.render('link-judge', {
       docTitle: title,
       docSnippet: snippet,
-      mentionsBatch: renderMentionLines(batch),
+      mentionsBatch: renderMentionLines(batch, this.#schemaRegistry),
     });
 
     const started = Date.now();
@@ -655,7 +626,7 @@ export class StreamingNormalizer {
             (candidate) => candidate.name.toLowerCase() === name.trim().toLowerCase()
           );
 
-        const mentionRung = verdict.mentionRung || undefined;
+        const mentionRung = this.#validatedMentionRung(plan.category, verdict.mentionRung);
         if (verdict.verdict === 'link') {
           const target = findCandidate(verdict.target);
           if (target) {
@@ -683,24 +654,29 @@ export class StreamingNormalizer {
         }
 
         // mint — possibly under a validated parent candidate
-        const parent = verdict.parentCandidate ? findCandidate(verdict.parentCandidate) : undefined;
-        if (verdict.parentCandidate && !parent) {
+        const parent = verdict.parentCandidate
+          ? findCandidate(verdict.parentCandidate)
+          : undefined;
+        const edgeKind = parent
+          ? this.#edgeKindForParent(plan.category, parent.rung)
+          : undefined;
+        if (verdict.parentCandidate && (!parent || !edgeKind)) {
           console.warn(
-            `LINK-JUDGE: parentCandidate "${verdict.parentCandidate}" for "${verdict.mention}" is not a listed candidate — edge dropped, mint stands`
+            `LINK-JUDGE: parentCandidate "${verdict.parentCandidate}" for "${verdict.mention}" is not supported by the active ladder and candidate list — edge dropped, mint stands`
           );
         }
         outcomeMap.set(key, {
           kind: 'mint',
           mentionRung,
-          parentCandidate: parent?.name,
-          edgeKind: parent ? (verdict.edgeKind || 'part-of') : undefined,
+          parentCandidate: edgeKind ? parent?.name : undefined,
+          edgeKind,
           gloss: verdict.gloss || undefined,
           reasoning: verdict.reasoning || undefined,
         });
       }
 
-      // Code-validate gloss on every mint/defer (prompts/link-judge.md rule 4): one re-ask, only
-      // for mentions that failed, before falling back to no gloss at all.
+      // Code-validate gloss on every mint/defer: one re-ask for failed descriptions before
+      // falling back to no gloss. Gloss supports retrieval; it is not identity evidence.
       await this.#validateGlosses(outcomeMap, batch, title, snippet, docId);
 
       return outcomeMap;
@@ -728,14 +704,29 @@ export class StreamingNormalizer {
     }
   }
 
+  #validatedMentionRung(category: string, requested: MentionRung | ''): MentionRung {
+    const ladder = this.#schemaRegistry.getLadder(category);
+    if (!ladder) return 'g0';
+    const available = new Set(ladder.rungs.map((rung) => `g${rung.g}`));
+    return requested && available.has(requested) ? requested : 'g0';
+  }
+
+  #edgeKindForParent(
+    category: string,
+    parentRung: string | undefined
+  ): GranularityEdgeKind | undefined {
+    if (!parentRung) return undefined;
+    const rung = this.#schemaRegistry
+      .getLadder(category)
+      ?.rungs.find((candidate) => `g${candidate.g}` === parentRung);
+    return rung?.edgeKind;
+  }
+
   /**
-   * Code-validates gloss on every mint/defer outcome (prompts/link-judge.md rule 4): empty, or
-   * `glossRestatesMention`, means the model gave nothing a duplicate-finder could use that the
-   * name doesn't already give it. ONE re-ask per document — containing ONLY the mentions that
-   * failed, over the same prompt template — so a model that keeps failing cannot loop the doc.
-   * Still-bad after the retry is logged (`gloss-flagged`) and the mint proceeds with no gloss;
-   * the retry only ever touches `gloss` on the outcomes already built by the caller. Mutates
-   * `outcomeMap` in place.
+   * A name-restating gloss gives the duplicate finder nothing beyond the name: re-ask once for
+   * only those mentions, then proceed without a gloss rather than looping or inventing data. A
+   * null/empty gloss is NOT a failure — the prompt instructs the model to answer null when the
+   * source carries no name-independent description, so it is accepted without a retry or a flag.
    */
   async #validateGlosses(
     outcomeMap: Map<string, JudgeOutcome>,
@@ -748,7 +739,7 @@ export class StreamingNormalizer {
       const outcome = outcomeMap.get(mentionKey(plan.category, plan.entity.name));
       if (!outcome || (outcome.kind !== 'mint' && outcome.kind !== 'defer')) return false;
       const gloss = outcome.gloss ?? '';
-      return !gloss.trim() || glossRestatesMention(gloss, plan.entity.name);
+      return Boolean(gloss.trim()) && glossRestatesMention(gloss, plan.entity.name);
     });
     if (failing.length === 0) return;
 
@@ -767,12 +758,12 @@ export class StreamingNormalizer {
     const instructions = this.#prompts.render('link-judge', {
       docTitle: title,
       docSnippet: snippet,
-      mentionsBatch: renderMentionLines(failing),
+      mentionsBatch: renderMentionLines(failing, this.#schemaRegistry),
     });
 
     const started = Date.now();
     console.time(`LINK-JUDGE-RETRY doc ${docId}`);
-    // Hoisted so the finally block can log tokens for a call that may have thrown.
+    // Hoisted so the finally block can meter a call that may throw.
     let response: LlmResponse | undefined;
     try {
       response = await this.#llmClient.send(
@@ -792,8 +783,7 @@ export class StreamingNormalizer {
         }
       }
     } catch (error) {
-      // Same conservative posture as #linkJudge itself: never abort the doc. Every mention that
-      // was pending a retried gloss proceeds with none.
+      // Never abort normalization because optional retrieval metadata could not be produced.
       console.error(`LINK-JUDGE-RETRY failed for doc ${docId}, proceeding without gloss:`, error);
       for (const plan of failing) await flagStillBad(plan);
     } finally {
@@ -809,93 +799,14 @@ export class StreamingNormalizer {
     }
   }
 
-  async #pairRuleJudge(
-    signatures: Array<{ a: MentionPlan; b: MentionPlan }>,
-    docId: number
-  ): Promise<
-    Array<{ rule: { source: { category: string; role: string }; target: { category: string; role: string }; relation: string | null }; newRelationType?: { name: string; definition: string } }>
-  > {
-    const lines = signatures.map(
-      ({ a, b }, index) =>
-        `${index + 1}. ${a.category}/${a.entity.role} × ${b.category}/${b.entity.role}`
-    );
-
-    const instructions = this.#prompts.render('pair-rule', {
-      knownRelationTypes: this.#schemaRegistry.renderKnownRelationTypes(),
-    });
-
-    const started = Date.now();
-    console.time(`PAIR-RULES doc ${docId}`);
-    // Hoisted so the finally block can log tokens for a call that may have thrown.
-    let response: LlmResponse | undefined;
-    try {
-      response = await this.#llmClient.send(
-        instructions,
-        `Signatures to rule on:\n${lines.join('\n')}`,
-        { operator: 'pair-rule', docId }
-      );
-      const verdicts = normalizePairRuleVerdicts(extractAndParseJson(response.text) || {}) || [];
-
-      const rules: Array<{
-        rule: {
-          source: { category: string; role: string };
-          target: { category: string; role: string };
-          relation: string | null;
-        };
-        newRelationType?: { name: string; definition: string };
-      }> = [];
-
-      for (const verdict of verdicts) {
-        const signature = signatures[verdict.signature - 1];
-        if (!signature) continue;
-
-        const endpointA = { category: signature.a.category, role: signature.a.entity.role };
-        const endpointB = { category: signature.b.category, role: signature.b.entity.role };
-
-        if (verdict.relation === null) {
-          rules.push({ rule: { source: endpointA, target: endpointB, relation: null } });
-          continue;
-        }
-
-        // Orient source/target by matching the verdict's "Category/Role" strings
-        const sourceKey = verdict.source.trim().toLowerCase();
-        const keyA = `${endpointA.category}/${endpointA.role}`.toLowerCase();
-        const [source, target] = sourceKey === keyA ? [endpointA, endpointB] : [endpointB, endpointA];
-
-        const isKnown = this.#schemaRegistry.resolveRelationType(verdict.relation);
-        rules.push({
-          rule: { source, target, relation: verdict.relation },
-          newRelationType: isKnown
-            ? undefined
-            : { name: verdict.relation, definition: verdict.definition },
-        });
-      }
-      return rules;
-    } catch (error) {
-      // Leave signatures unruled — retried on the next doc where they co-occur
-      console.error(`PAIR-RULES failed for doc ${docId}, leaving signatures unruled:`, error);
-      return [];
-    } finally {
-      console.timeEnd(`PAIR-RULES doc ${docId}`);
-      await this.#decisionLog.logLlmCall({
-        doc: docId,
-        kind: 'pair-rule',
-        seconds: (Date.now() - started) / 1000,
-        model: response?.model,
-        promptTokens: response?.usage.inputTokens,
-        completionTokens: response?.usage.outputTokens,
-      });
-    }
-  }
-
   async #loadSnippet(file: string): Promise<string> {
-    if (!this.#sourceDir) return '(no document text available)';
+    if (!this.#sourceDir) return '(no source evidence available)';
     try {
       const content = await fs.readFile(`${this.#sourceDir}/${file}`);
       const { text } = await this.#preprocessor(content.toString());
       return text.slice(0, 600).replace(/\s+/g, ' ').trim();
     } catch {
-      return '(no document text available)';
+      return '(no source evidence available)';
     }
   }
 }
@@ -930,9 +841,10 @@ function unambiguousPlan(batch: MentionPlan[], mention: string): MentionPlan | u
  * placeholder. Shared by the primary call and the one-shot gloss retry so a retry is provably the
  * same rendering, just over a smaller batch.
  */
-function renderMentionLines(plans: MentionPlan[]): string {
+function renderMentionLines(plans: MentionPlan[], schemaRegistry: SchemaRegistry): string {
   return plans
     .map((plan, index) => {
+      const ladder = renderLadder(plan.category, schemaRegistry);
       const candidates =
         plan.candidates
           .map((candidate) => {
@@ -940,19 +852,30 @@ function renderMentionLines(plans: MentionPlan[]): string {
             return `${candidate.name}${rung} (aliases: ${candidate.aliases.join(', ')})`;
           })
           .join('; ') || '(none)';
-      return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
+      return `${index + 1}. "${plan.entity.name}" (${plan.category}); ladder: ${ladder}; candidates: ${candidates}`;
     })
     .join('\n');
 }
 
-/**
- * The verdict for one plan out of a (usually small) gloss-retry response — same category-first,
- * unambiguous-name fallback as the primary judge loop's `batchByMention` lookup, scaled down since
- * a retry batch rarely has the cross-category collision `mentionKey` exists to prevent.
- */
+function renderLadder(category: string, schemaRegistry: SchemaRegistry): string {
+  const ladder = schemaRegistry.getLadder(category);
+  if (!ladder) return '(none; use g0)';
+  return ladder.rungs
+    .map((rung) => {
+      const relation = rung.g === 0
+        ? 'observed entity'
+        : `${rung.move ?? 'coarser'}; ${rung.preserving ? 'same referent' : 'containing referent'}`;
+      return `g${rung.g}=${rung.alias} (${relation}; example: ${rung.example})`;
+    })
+    .join(' | ');
+}
+
+/** Find the verdict for one plan in a gloss-retry response without conflating categories. */
 function findVerdict(verdicts: LinkVerdict[], plan: MentionPlan): LinkVerdict | undefined {
   const key = mentionKey(plan.category, plan.entity.name);
-  const exact = verdicts.find((verdict) => mentionKey(verdict.category || plan.category, verdict.mention) === key);
+  const exact = verdicts.find((verdict) =>
+    mentionKey(verdict.category || plan.category, verdict.mention) === key
+  );
   if (exact) return exact;
   const folded = plan.entity.name.trim().toLowerCase();
   const matches = verdicts.filter((verdict) => verdict.mention.trim().toLowerCase() === folded);

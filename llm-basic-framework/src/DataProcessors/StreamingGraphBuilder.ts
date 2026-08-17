@@ -87,7 +87,7 @@ export class StreamingGraphBuilder {
     this.outputDir = params.outputDir;
     this.#schemaRegistry = params.schemaRegistry;
     this.#entityRegistry = params.entityRegistry;
-    this.#edgesFrom = params.edgesFrom ?? 'layered';
+    this.#edgesFrom = params.edgesFrom ?? 'extracted';
     this.#lambda = params.lambda ?? { default: 'g0', perCategory: {} };
     this.#interpretive = params.interpretive ?? false;
   }

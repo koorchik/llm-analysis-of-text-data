@@ -112,6 +112,37 @@ test('λ=g0 (default) folds nothing — the detailed view is the unfolded graph'
   assert.ok(!nodes.some((line) => line.includes('"Microsoft Office"')), 'no rung node materialized');
 });
 
+test('default edge mode is extracted-only even when a legacy pair rule is present', async () => {
+  const dir = await scratch();
+  const registry = await seededRegistry(dir);
+  await writeArtifact(dir, 1, [actor, office2010], []);
+
+  const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
+  await schemaRegistry.load();
+  schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
+  schemaRegistry.admitCategory({ name: 'Software', definition: '', doc: 0 });
+  schemaRegistry.admitPairRule(
+    {
+      source: { category: 'HackerGroup', role: 'Attacker' },
+      target: { category: 'Software', role: 'Target' },
+      relation: 'attacks',
+    },
+    0
+  );
+  await schemaRegistry.save();
+
+  const builder = new StreamingGraphBuilder({
+    inputDir: path.join(dir, 'artifacts'),
+    outputDir: path.join(dir, 'graph'),
+    schemaRegistry,
+    entityRegistry: registry,
+  });
+  await builder.run();
+
+  const edges = (await fs.readFile(path.join(dir, 'graph', 'edges.csv'), 'utf8')).trim().split('\n');
+  assert.equal(edges.length, 1, 'only the CSV header: default mode ignores legacy pair rules');
+});
+
 test('coarse λ folds coarsens-to and RECOMPUTES weight as distinct incidents, never a sum', async () => {
   const dir = await scratch();
   const registry = await seededRegistry(dir);

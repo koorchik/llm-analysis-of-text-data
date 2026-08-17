@@ -111,6 +111,18 @@ describe('PromptProvider', () => {
     assert.deepEqual(prompt.variables, ['entityType']);
     assert.match(prompts.render('psi-norm-batch', { entityType: 'HackerGroup' }), /HackerGroup/);
   });
+
+  it('entity-matching prompts are domain-neutral and reject contextual roles as identity', () => {
+    for (const id of ['ladder', 'link-judge', 'listwise-select', 'comem-select']) {
+      const prompt = prompts.get(id);
+      assert.doesNotMatch(prompt.template, /cyber|CERT-UA|phishing|attacker|targeting/i, id);
+      assert.match(prompt.template, /role/i, `${id} must explicitly reject role as identity evidence`);
+    }
+    assert.deepEqual(
+      [...prompts.get('link-judge').variables].sort(),
+      ['docSnippet', 'docTitle', 'mentionsBatch']
+    );
+  });
 });
 
 let tempCounter = 0;

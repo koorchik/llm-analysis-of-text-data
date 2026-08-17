@@ -10,8 +10,8 @@ runbook: `docs/RUN-STREAMING.md`). The original "no code implemented yet" header
 
 > **Amendment 2026-08-04 (SKEIN v2 granularity sync — follows the deck, per its authority
 > rule).** The link-judge became the three-verdict rung-aware judge (`link | mint | defer`,
-> `mentionRung`, `parentCandidate`+`edgeKind`; prompt copied verbatim from
-> `dissert/wiki/notes/prompts.md`). The registry became a **v3 identity graph** (per-alias
+> `mentionRung`, `parentCandidate`+`edgeKind`; the repository's hashed prompt is authoritative).
+> The registry became a **v3 identity graph** (per-alias
 > provenance, per-entity `rung`, strictly layered `coarsens-to`/`part-of` granularity edges and
 > `renamed-to` rename edges, a consolidator defer queue). A **granularity-ladder bootstrap**
 > (`src/Ladder/LadderDiscovery.ts`, `prompts/ladder.md`, N≥3 ensemble, code validators, cached
@@ -34,25 +34,26 @@ Three changes relative to the batch pipeline, nothing else:
 2. **Streaming normalization** — no gather-all-names step. Each document is normalized against a
    growing registry the moment it is extracted; `DataEntitiesCollector` and `DataNormalizer` are
    replaced by one per-document processor.
-3. **Relation autodiscovery, layered** — two complementary sources, both emergent:
+3. **Relation extraction with optional legacy inference**:
    - **Extracted** (primary): relations stated in the text, extracted by the LLM in the same call
      as entities, with an emergent relation-type vocabulary. Evidence-grounded.
-   - **Inferred** (fallback): a **discovered signature-rule table** replaces
-     `DataGraphBuilder#inferRelationship`'s hardcoded rules. The first time a
-     `(category, role) × (category, role)` co-occurrence signature appears, one small cached LLM
-     verdict decides what relation (if any) that signature implies; thereafter co-occurring pairs
-     **without** an extracted relation get their rule edge deterministically.
-   - Every graph edge carries `kind: extracted | inferred` so analyses can use the dense
-     2025-comparable graph (both), the precise graph (extracted only), or the legacy-equivalent
-     baseline (inferred only).
+   - **Inferred** (fallback — discovery removed 2026-08-17): the graph fold still reads
+     `schema.json.pairRules` and emits `kind: inferred` edges for co-occurring pairs without an
+     extracted relation, but **nothing in the pipeline populates that table any more** — the
+     rule-discovery step and its `pair-rule` LLM call were deleted from `StreamingNormalizer`
+     because it keyed on contextual roles, which are outside entity-normalization evidence. A
+     fresh run therefore produces an extracted-only graph; the inferred channel only fires for a
+     schema whose rule table predates the removal or was pre-seeded (as the walkthrough test does).
+   - Every graph edge carries `kind: extracted | inferred`. `extracted` is the default mode;
+     `layered` and `cooccurrence` are explicit legacy/reference modes.
 
 **Principle: the per-document artifact is the primary output; the graph is a pure fold over
 artifacts; shared streaming state is exactly two small JSON files.** After any document, the
 pipeline can stop and the artifacts + graph are complete for everything seen so far.
 
-Per-document LLM budget: **1 extraction call + ≤1 type-judge call + ≤1 link-judge call**, plus
-≤1 pair-rule call while co-occurrence signatures are still novel (the rule table saturates, so
-this term goes to zero). Everything else is string matching and bookkeeping.
+Per-document LLM budget: **1 extraction call + ≤1 type-judge call + ≤1 link-judge call**.
+Everything else is string matching and bookkeeping, apart from occasional ladder discovery and
+optional synchronous repair calls.
 
 ## 2. Directory layout
 
@@ -117,7 +118,9 @@ incremental/<model>/
   (`relation` must reference a `relationTypes` entry — the verdict may propose a new one, which is
   admitted through the normal schema flow) or `null` ("this signature implies no relation").
   Because both categories and roles are finite-ish (roles fixed at 3, categories saturate), this
-  table **saturates fast** — a few dozen entries in practice.
+  table **saturates fast** — a few dozen entries in practice. **Read-only since 2026-08-17**: the
+  discovery step (§4.2 step 5) is removed, so entries exist only in schemas written before the
+  removal or pre-seeded by hand/tests.
 - `history` — append-only; the new-types-per-document curve ν(t) for RQ1 reads directly off it.
   New op since the 2026-08-04 amendment: `discover-ladder`.
 - Seeding: `schema.json` may start empty (pure autodiscovery) **or** pre-seeded with the legacy 10
@@ -282,7 +285,8 @@ events against the gold table. RQ5 call counts come from one `llm-call` event pe
 (`{ "op": "llm-call", "doc": N, "kind": "extract|type-judge|link-judge|consolidate", "tokens": … }`).
 
 **Amendment 2026-08-04 — new events.** `llm-call.kind` gains `ladder` (plus the already-present
-`pair-rule`, `country-normalize`). Decision events may carry `decision: "defer"` with
+legacy `pair-rule` and `country-normalize` values). Normalization no longer emits `pair-rule` calls.
+Decision events may carry `decision: "defer"` with
 `target: null` and a non-scoring `mintedAs` field (protocol §5 semantics preserved: a deferral is
 a withheld decision, provisionally minted). New ops: `granularity-edge`
 (`{category, from, to, kind, by?}` — from the judge, ladder binding, or the consolidator),
@@ -427,9 +431,8 @@ Per document (`extractions/NN.json` → `artifacts/NN.json`):
    mention: the mention, its category, the document title + a text snippet, and its candidates
    with alias lists. Verdict per mention: `link:<canonicalName>` or `mint`. Mentions with zero
    candidates skip the call and mint directly.
-   **Amendment 2026-08-04 — the three-verdict rung-aware judge.** The prompt is
-   `prompts/link-judge.md`, copied VERBATIM from `dissert/wiki/notes/prompts.md`
-   (§ *Document entities streaming linking judge*) with placeholders
+   **Amendment 2026-08-04 — the three-verdict rung-aware judge.** The authoritative prompt is
+   `prompts/link-judge.md`, with placeholders
    `{{docTitle}}/{{docSnippet}}/{{mentionsBatch}}`; candidates are shown with their current
    rung. Verdicts: `link | mint | defer`, plus `mentionRung ∈ g0..g3` and — on mint — an
    optional `parentCandidate` + `edgeKind` (`coarsens-to | part-of`). Post-checks in code: a
@@ -440,11 +443,11 @@ Per document (`extractions/NN.json` → `artifacts/NN.json`):
 4. **Registry update** — links append the mention to the canonical's `aliases`; mints create a
    new canonical record (`firstSeen` = doc, `rung` = the judged `mentionRung`). Registry saved
    once per document.
-5. **Pair-rule discovery** — compute the document's co-occurrence signatures
-   (`(category, role) × (category, role)` for every entity pair). For signatures **not yet in**
-   `schema.json.pairRules`: one batched LLM call (see prompt sketch below) → verdicts cached in
-   `pairRules` (+ `history` entry). Signatures already ruled cost nothing; the table saturates,
-   so this call disappears after the early corpus.
+5. **Pair-rule discovery — removed 2026-08-17.** The step computed `(category, role) ×
+   (category, role)` co-occurrence signatures and cached one batched LLM verdict per novel
+   signature in `schema.json.pairRules`. It keyed on contextual roles — not entity-normalization
+   evidence — so `#pairRuleJudge` and the per-document `pair-rule` call are gone; the table is now
+   read-only (§3.1) and the graph fold (§4.4) consumes it unchanged when pre-seeded.
 6. **Stamp & write** — `normalizedName` on every entity, `normalizedHead`/`normalizedTail` on
    every relation (resolved through the same map); `code` via the existing
    `CountryNameNormalizer` for `Country` entities; since 2026-08-04 also **`matchedVia`** (the
@@ -552,8 +555,8 @@ single ~22.6k-token prompt, over an 8k local window. Running every document keep
    coherence check after eviction (a bare singleton) is dropped, not queued. Whatever does not fit
    joins the **spillover queue** (registry v4 `repair.spillover`, §3.2) — carried into the next
    document's gather step, first-in.
-3. **Ψ_repair call** — ONE first-attempt `repair-judge` call over every due component (prompt
-   `prompts/repair-judge.md`, copied VERBATIM from `dissert/wiki/notes/prompts.md`; placeholder
+3. **Ψ_repair call** — ONE first-attempt `repair-judge` call over every due component (authoritative
+   prompt `prompts/repair-judge.md`; placeholder
    `{{components}}`). **User ruling 2**: at most one first-attempt call per document, plus at most
    one validator-driven completeness re-ask (`repair-judge-retry`) containing only the components a
    completeness check ("every listed pair needs an op, every coherence entity needs an op") found
@@ -638,7 +641,7 @@ optimizing for graph connectivity.
 
 Extend the existing class with an input mode:
 
-- `edgesFrom: 'layered'` (new default for the streaming pipeline): per document, per entity pair —
+- `edgesFrom: 'layered'` (explicit legacy/pre-seeded mode): per document, per entity pair —
   1. if the artifact contains extracted relation(s) between the two entities → emit them as
      `kind: extracted` edges;
   2. otherwise look the pair's signature up in `schema.json.pairRules` → emit the rule edge as

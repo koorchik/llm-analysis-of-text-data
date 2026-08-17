@@ -69,16 +69,6 @@ async function setup(tag: string, categories?: string[]) {
   await entityRegistry.load();
   schemaRegistry.admitCategory({ name: 'Software', definition: '', doc: 0 });
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
-  // Pre-register the pair signatures the kept mentions can form, so #pairRuleJudge never fires
-  // and the canned LLM is never consulted (all mentions mint — no candidates exist).
-  schemaRegistry.admitPairRule(
-    {
-      source: { category: 'Software', role: 'Neutral' },
-      target: { category: 'Software', role: 'Neutral' },
-      relation: null,
-    },
-    0
-  );
   await schemaRegistry.save();
   await entityRegistry.save();
 
@@ -143,5 +133,16 @@ describe('StreamingNormalizer CATEGORIES filter', () => {
     );
     assert.equal(artifact.entities.length, 3);
     assert.equal(artifact.relations.length, 2);
+  });
+
+  it('does not discover role-based pair rules during entity normalization', async () => {
+    const { normalizer, llm } = await setup('no-pair-rules');
+    await normalizer.processFile('1.json');
+
+    assert.equal(llm.prompts.length, 0, 'no candidates means normalization needs no LLM call');
+    const schema = JSON.parse(
+      await fs.readFile(path.join(normalizer.outputDir, '..', 'schema.json'), 'utf8')
+    );
+    assert.deepEqual(schema.pairRules, []);
   });
 });
