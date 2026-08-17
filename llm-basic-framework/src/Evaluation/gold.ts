@@ -302,6 +302,22 @@ export function selectSplit(table: GoldTable, split: Split): GoldTable {
 }
 
 /**
+ * Restrict a gold table to one category — the fast-iteration loop's scoring slice
+ * (spec 2026-08-16). Unlike selectSplit there is no membership subtlety: clusters, edges and NIL
+ * labels all carry the category directly. Case-insensitive to match elementKey's lowercasing.
+ */
+export function selectCategory(table: GoldTable, category: string): GoldTable {
+  const want = category.trim().toLowerCase();
+  const match = (name: string) => name.trim().toLowerCase() === want;
+  return {
+    ...table,
+    clusters: table.clusters.filter((cluster) => match(cluster.category)),
+    edges: (table.edges ?? []).filter((edge) => match(edge.category)),
+    nilLabels: table.nilLabels.filter((label) => match(label.category)),
+  };
+}
+
+/**
  * Guard against scoring on the wrong split.
  *
  * Called by `bin/evaluate.ts` before any reported number is produced. It cannot enforce that no

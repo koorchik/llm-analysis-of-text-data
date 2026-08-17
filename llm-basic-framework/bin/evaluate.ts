@@ -23,6 +23,7 @@ import {
   labeledPairs,
   loadGoldTable,
   nilObservations,
+  selectCategory,
   selectSplit,
   type Split,
 } from '../src/Evaluation/gold';
@@ -46,6 +47,7 @@ import path from 'path';
 interface Args {
   gold?: string;
   split: Split;
+  category?: string;
   runs: string[];
   batches: string[];
   json?: string;
@@ -69,6 +71,9 @@ function parseArgs(argv: string[]): Args {
         break;
       case '--split':
         args.split = argv[++i] as Split;
+        break;
+      case '--category':
+        args.category = argv[++i];
         break;
       case '--run':
         args.runs.push(argv[++i]);
@@ -122,7 +127,7 @@ async function main() {
 
   if (!args.gold) {
     console.error(
-      'usage: evaluate --gold <gold.json> [--split test|dev] --run <runDir> [--run …] [--batch <entities.json>] [--json out.json]'
+      'usage: evaluate --gold <gold.json> [--split test|dev] [--category <name>] --run <runDir> [--run …] [--batch <entities.json>] [--json out.json]'
     );
     process.exit(2);
   }
@@ -131,12 +136,18 @@ async function main() {
 
   const fullTable = await loadGoldTable(args.gold);
   const table = selectSplit(fullTable, args.split);
+  const scored = args.category ? selectCategory(table, args.category) : table;
   const keyOptions = { includeCategory: !args.ignoreCategories };
-  const gold = goldPartition(table, keyOptions);
-  const pairs = labeledPairs(table, keyOptions);
+  const gold = goldPartition(scored, keyOptions);
+  const pairs = labeledPairs(scored, keyOptions);
 
-  console.log('gold:', JSON.stringify(goldSummary(table)));
+  console.log('gold:', JSON.stringify(goldSummary(scored)));
   console.log(`split=${args.split} clusters=${gold.size} elements=${gold.elementCount} labelledPairs=${pairs.length}`);
+  if (args.category) {
+    console.log(
+      `category=${args.category} — single-category slice: NON-REPORTABLE, for fast iteration only`
+    );
+  }
   if (pairs.length === 0) {
     console.warn('WARNING: no labelled pairs in this split — merge P/R will be empty for every condition');
   }
@@ -163,9 +174,15 @@ async function main() {
     const events = existsSync(logPath)
       ? parseDecisionEvents(await fs.readFile(logPath, 'utf8'))
       : [];
+    const scoredEvents = args.category
+      ? events.filter(
+          (event) =>
+            (event.category ?? '').trim().toLowerCase() === args.category!.trim().toLowerCase()
+        )
+      : events;
     const { observations, unlabeled } = nilObservations(
-      table,
-      events.map((event) => ({
+      scored,
+      scoredEvents.map((event) => ({
         docId: event.docId,
         category: event.category,
         mention: event.mention,
@@ -229,7 +246,7 @@ async function main() {
   for (const note of tableNotes(results)) console.log(`- ${note}`);
 
   if (args.json) {
-    await fs.writeFile(args.json, `${JSON.stringify({ gold: goldSummary(table), results }, null, 2)}\n`);
+    await fs.writeFile(args.json, `${JSON.stringify({ gold: goldSummary(scored), results }, null, 2)}\n`);
     console.log(`\nwrote ${args.json}`);
   }
 }

@@ -6,6 +6,7 @@ import {
   goldSummary,
   labeledPairs,
   nilObservations,
+  selectCategory,
   selectSplit,
   validateGoldTable,
   type GoldTable,
@@ -13,7 +14,7 @@ import {
 import { nilMetrics } from './nilMetrics';
 import { Partition } from './partition';
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { describe, it, test } from 'node:test';
 
 const table = (over: Partial<GoldTable> = {}): GoldTable =>
   validateGoldTable({
@@ -296,4 +297,40 @@ test('goldSummary reports the shape the Phase 2 gate asks about', () => {
   assert.deepEqual(summary.bySplit, { test: 2, dev: 1 });
   assert.equal(summary.clustersWithEvidence, 1);
   assert.equal(summary.nilLabels, 2);
+});
+
+describe('selectCategory', () => {
+  const table = {
+    version: 'gold-aliases-v2',
+    inputContentHash: 'x',
+    order: 'numeric-id',
+    clusters: [
+      { id: 'g1', category: 'Software', members: ['LummaStealer', 'Lumma'], stratum: 'a', split: 'dev' },
+      { id: 'g2', category: 'HackerGroup', members: ['UAC-0006', 'UAC-6'], stratum: 'a', split: 'dev' },
+    ],
+    edges: [
+      { category: 'Software', from: 'Lumma', to: 'LummaStealer', kind: 'isa' },
+      { category: 'HackerGroup', from: 'UAC-6', to: 'UAC-0006', kind: 'isa' },
+    ],
+    nilLabels: [
+      { docId: 1, category: 'Software', mention: 'LummaStealer', label: 'known', clusterId: 'g1' },
+      { docId: 1, category: 'HackerGroup', mention: 'UAC-0006', label: 'known', clusterId: 'g2' },
+    ],
+  } as unknown as GoldTable;
+
+  it('keeps only the named category across clusters, edges and nilLabels', () => {
+    const sliced = selectCategory(table, 'Software');
+    assert.deepEqual(sliced.clusters.map((c) => c.id), ['g1']);
+    assert.equal(sliced.edges.length, 1);
+    assert.equal(sliced.edges[0].category, 'Software');
+    assert.deepEqual(sliced.nilLabels.map((l) => l.mention), ['LummaStealer']);
+  });
+
+  it('matches case-insensitively, like elementKey does', () => {
+    assert.equal(selectCategory(table, 'software').clusters.length, 1);
+  });
+
+  it('returns empty slices for a category with no gold rows', () => {
+    assert.equal(selectCategory(table, 'Device').clusters.length, 0);
+  });
 });
