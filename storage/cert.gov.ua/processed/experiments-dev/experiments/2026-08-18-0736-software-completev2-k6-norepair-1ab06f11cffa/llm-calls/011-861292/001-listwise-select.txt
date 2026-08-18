@@ -1,0 +1,55 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Кібератака на державні організації України з використанням теми ОК "Південь" та шкідливої програми AgentTesla (CERT-UA#4987)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA виявлено файл "Доповідь_050722_4.ppt", що містить зображення-мініатюру, на якій згадєуться оперативне командування "Південь".&nbsp;</p><p>У випадку відкриття документу та активації макросу останній забезпечить створення файлів "gksg023ig.lnk" та "sgegkseg23mjl.exe", а також виконання LNK-файлу за допомогою rundll32.exe, що, в свою чергу, призведе до запуску згаданого EXE-файлу.</p><p>Виконуваний файл є .NET-програмою, обфускованою за допомогою ConfuserEx, що здійснює зава
+Mentions:
+1. "AgentTesla" (Software)
+     1. Agent Tesla [aliases: Agent Tesla]
+     2. Adobe Flash Player [aliases: Adobe Flash Player]
+     3. FileZilla [aliases: FileZilla]
+     4. FTPGetter [aliases: FTPGetter]
+     5. Internet Explorer [aliases: Internet Explorer]
+     6. CentBrowser [aliases: CentBrowser]
+     7. NEW ENTITY
+2. "ConfuserEx" (Software)
+     1. ckZ89.ExE [aliases: ckZ89.ExE]
+     2. CocCoc Browser [aliases: CocCoc Browser]
+     3. Coowon Browser [aliases: Coowon Browser]
+     4. rfusclient.exe [aliases: rfusclient.exe]
+     5. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     6. Microsoft Edge [aliases: Microsoft Edge]
+     7. NEW ENTITY
+3. "MCMDiction.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. loader.exe [aliases: loader.exe]
+     5. installer.exe [aliases: installer.exe]
+     6. baseupd.exe [aliases: baseupd.exe]
+     7. NEW ENTITY
+4. "sgegkseg23mjl.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. cmd.exe [aliases: cmd.exe]
+     4. loader.exe [aliases: loader.exe]
+     5. installer.exe [aliases: installer.exe]
+     6. baseupd.exe [aliases: baseupd.exe]
+     7. NEW ENTITY
+5. "rundll32.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. cmd.exe [aliases: cmd.exe]
+     4. baseupd.exe [aliases: baseupd.exe]
+     5. loader.exe [aliases: loader.exe]
+     6. rutserv.exe [aliases: rutserv.exe]
+     7. NEW ENTITY
+
+=== RESPONSE (13.8s, in 988 / out 730 tok, stop) ===
+

@@ -1,0 +1,593 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Agent Tesla (шкідливе програмне забезпечення)"
+Source Excerpt:
+"""
+<p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Agent Tesla" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+2. "RegAsm.exe" (Software); ladder: (none; use g0); candidates: cmd.exe [g0] (aliases: cmd.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); spi.exe [g0] (aliases: spi.exe); powershell.exe [g0] (aliases: powershell.exe); major.exe [g0] (aliases: major.exe)
+3. "vaultcli.dll" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); cmd.exe [g0] (aliases: cmd.exe); spi.exe [g0] (aliases: spi.exe); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+4. "WinSCP" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Misha [g0] (aliases: Misha); powershell.exe [g0] (aliases: powershell.exe)
+5. "Google Chrome" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+6. "Mozilla Firefox" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); ChakraCore [g0] (aliases: ChakraCore); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+7. "Microsoft Outlook" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Microsoft Edge [g0] (aliases: Microsoft Edge); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+8. "IceDragon" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); ChakraCore [g0] (aliases: ChakraCore); Petya [g0] (aliases: Petya)
+9. "Yandex Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+10. "Iridium Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Smokeloader [g0] (aliases: Smokeloader)
+11. "Epic Privacy Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+12. "Chromium Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Smokeloader [g0] (aliases: Smokeloader)
+13. "7Star Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+14. "Torch Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader)
+15. "ChromePlus Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); ChakraCore [g0] (aliases: ChakraCore)
+16. "Kometa Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+17. "Amigo Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); major.exe [g0] (aliases: major.exe)
+18. "Brave Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+19. "CentBrowser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader)
+20. "Liebao Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+21. "Elements Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer); Smokeloader [g0] (aliases: Smokeloader)
+22. "Vivaldi Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore)
+23. "Citrio Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+24. "360Chrome Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); ChakraCore [g0] (aliases: ChakraCore)
+25. "Uran Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore)
+26. "Chedot Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+27. "Orbitum Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+28. "Sputnik Browser" (Software); ladder: (none; use g0); candidates: spi.exe [g0] (aliases: spi.exe); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+29. "Comodo Dragon Browser" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+30. "CocCoc Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer)
+31. "QIP Surf Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer)
+32. "Coowon Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer)
+33. "Opera Browser" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Smokeloader [g0] (aliases: Smokeloader)
+34. "Thunderbird" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+35. "Claws Mail" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+36. "Postbox Credential" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); powershell.exe [g0] (aliases: powershell.exe)
+37. "Foxmail" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Smokeloader [g0] (aliases: Smokeloader)
+38. "Opera Mail" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Petya [g0] (aliases: Petya)
+39. "Pocomail" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); powershell.exe [g0] (aliases: powershell.exe); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+40. "Becky!" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Petya [g0] (aliases: Petya); CVE-2017-0199 [g0] (aliases: CVE-2017-0199, CVE-2018-8174, CVE-2018-8120, CVE-2018-0854, CVE-2018-0958, CVE-2018-8124, CVE-2018-8127, CVE-2018-8129)
+41. "OpenVPN" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Petya [g0] (aliases: Petya); Internet Explorer [g0] (aliases: Internet Explorer)
+42. "FileZilla" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Misha [g0] (aliases: Misha); Petya [g0] (aliases: Petya)
+43. "Paltalk" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Petya [g0] (aliases: Petya); ChakraCore [g0] (aliases: ChakraCore); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+44. "jDownloader" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer)
+45. "SmartFTP" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); major.exe [g0] (aliases: major.exe); Smokeloader [g0] (aliases: Smokeloader); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+46. "FTP Commander" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); cmd.exe [g0] (aliases: cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+47. "WS_FTP" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+48. "FTPGetter" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Smokeloader [g0] (aliases: Smokeloader); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+49. "Trillian" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); Misha [g0] (aliases: Misha); powershell.exe [g0] (aliases: powershell.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (113.7s, in 11447 / out 4958 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Agent Tesla",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Malware described as a keylogger, stealer, and RAT.",
+      "reasoning": "The source defines Agent Tesla as malware, but no candidate entity matches this specific software."
+    },
+    {
+      "index": 2,
+      "mention": "RegAsm.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between RegAsm.exe and any candidate entities."
+    },
+    {
+      "index": 3,
+      "mention": "vaultcli.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between vaultcli.dll and any candidate entities."
+    },
+    {
+      "index": 4,
+      "mention": "WinSCP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between WinSCP and any candidate entities."
+    },
+    {
+      "index": 5,
+      "mention": "Google Chrome",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between Google Chrome and any candidate entities."
+    },
+    {
+      "index": 6,
+      "mention": "Mozilla Firefox",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between Mozilla Firefox and any candidate entities."
+    },
+    {
+      "index": 7,
+      "mention": "Microsoft Outlook",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between Microsoft Outlook and any candidate entities."
+    },
+    {
+      "index": 8,
+      "mention": "IceDragon",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between IceDragon and any candidate entities."
+    },
+    {
+      "index": 9,
+      "mention": "Yandex Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Yandex Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 10,
+      "mention": "Iridium Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Iridium Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 11,
+      "mention": "Epic Privacy Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Epic Privacy Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 12,
+      "mention": "Chromium Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "ChakraCore",
+      "parentCandidate": "ChakraCore",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Chromium Browser is a browser, and ChakraCore is listed as an alias."
+    },
+    {
+      "index": 13,
+      "mention": "7Star Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "7Star Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 14,
+      "mention": "Torch Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Torch Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 15,
+      "mention": "ChromePlus Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "ChakraCore",
+      "parentCandidate": "ChakraCore",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "ChromePlus Browser is a browser, and ChakraCore is listed as an alias."
+    },
+    {
+      "index": 16,
+      "mention": "Kometa Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Kometa Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 17,
+      "mention": "Amigo Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "major.exe",
+      "parentCandidate": "major.exe",
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Amigo Browser is a browser, and major.exe is listed as an alias."
+    },
+    {
+      "index": 18,
+      "mention": "Brave Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Brave Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 19,
+      "mention": "CentBrowser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "CentBrowser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 20,
+      "mention": "Liebao Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Liebao Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 21,
+      "mention": "Elements Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Elements Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 22,
+      "mention": "Vivaldi Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Vivaldi Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 23,
+      "mention": "Citrio Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Citrio Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 24,
+      "mention": "360Chrome Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "360Chrome Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 25,
+      "mention": "Uran Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Uran Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 26,
+      "mention": "Chedot Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Chedot Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 27,
+      "mention": "Orbitum Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Orbitum Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 28,
+      "mention": "Sputnik Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Sputnik Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 29,
+      "mention": "Comodo Dragon Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Comodo Dragon Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 30,
+      "mention": "CocCoc Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "CocCoc Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 31,
+      "mention": "QIP Surf Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "QIP Surf Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 32,
+      "mention": "Coowon Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Coowon Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 33,
+      "mention": "Opera Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Opera Browser is a browser, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 34,
+      "mention": "Thunderbird",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Thunderbird is an email client, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 35,
+      "mention": "Claws Mail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between Claws Mail and any candidate entities."
+    },
+    {
+      "index": 36,
+      "mention": "Postbox Credential",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship is established between Postbox Credential and any candidate entities."
+    },
+    {
+      "index": 37,
+      "mention": "Foxmail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Foxmail is an email client, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 38,
+      "mention": "Opera Mail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "Internet Explorer",
+      "parentCandidate": "Internet Explorer",
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "Opera Mail is an email client, and Internet Explorer is listed as an alias."
+    },
+    {
+      "index": 39,
+      "mention": "Pocomail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": "powershell.exe",
+      "parentCandidate": "powershell.exe",
+      "edgeKind": "unknown",
+      "reason": "No direct hierarchical relationship established."
+    }
+

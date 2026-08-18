@@ -1,0 +1,23 @@
+{
+  "runId": "software-baseline-k4-strictrepair-8702270d433d",
+  "seq": 3,
+  "timestamp": "2026-08-18T05:10:03.736Z",
+  "operator": "repair-judge-retry",
+  "docId": 6277285,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Review every listed pair. Identity repair must be conservative.\n\nComponent 1 of 3 · signal: union-blocker 0.90\n  A. CCleaner.rar (Software)\n     aliases: []  · minted d6277285\n     gloss: (none)\n     evidence: d6277285 \"CCleaner.rar\"\n  B. CCleaner.zip (Software)\n     aliases: []  · minted d6277285\n     gloss: (none)\n     evidence: d6277285 \"CCleaner.zip\"\n  pairs to adjudicate: A–B (union-blocker 0.90)\n\nComponent 2 of 3 · signal: coherence\n  A. MS Office (Software)\n     aliases: [Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016, Microsoft Office Services and Web Apps, .NET Framework, VBScript, IceDragon, QuasarRAT]  · minted d20\n     gloss: (none)\n     evidence: d6277063 \"QuasarRAT\"\n     evidence: d3028 \"IceDragon\"\n     evidence: d2724 \"Microsoft Office\"\n  coherence check: A — does every listed alias belong to this entity?\n\nComponent 3 of 3 · signal: union-blocker 0.91\n  A. Електронний план евакуації.exe (Software)\n     aliases: []  · minted d6277285\n     gloss: (none)\n     evidence: d6277285 \"Електронний план евакуації.exe\"\n  B. Електронний план евакуації.rar (Software)\n     aliases: []  · minted d6277285\n     gloss: (none)\n     evidence: d6277285 \"Електронний план евакуації.rar\"\n  pairs to adjudicate: A–B (union-blocker 0.91)\n\nUse `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.\n\nFor each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.\n\nReturn only JSON:\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\"full name\",\"full name\"],\"confidence\":\"high\",\"evidence\":\"brief deciding evidence\"}]}]}\n\nFields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:\"coarsens-to\"|\"part-of\"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.\n",
+  "text": "Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.",
+  "response": "```json\n{\"reviews\":[\n  {\"component\":1,\"ops\":[{\"op\":\"merge\",\"pair\":[\"CCleaner.rar\",\"CCleaner.zip\"],\"confidence\":\"high\",\"evidence\":\"d6277285 \\\"CCleaner.rar\\\"\"}]}\n]}\n```",
+  "usage": {
+    "inputTokens": 825,
+    "outputTokens": 904
+  },
+  "latencyMs": 16965,
+  "finishReason": "stop",
+  "outcome": {
+    "ok": false,
+    "detail": "no repair op survived validation"
+  }
+}

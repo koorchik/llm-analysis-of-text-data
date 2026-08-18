@@ -1,0 +1,91 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Масштабна фішингова атака на державні установи України 19.01.2021"
+Source Excerpt:
+"""
+<p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Російська Федерація" (Country); ladder: (none; use g0); candidates: Росія [rung unknown] (aliases: Росія); Russian Federation [g0] (aliases: Russian Federation); Індія [rung unknown] (aliases: Індія); Естонія [rung unknown] (aliases: Естонія); Ukraine [g0] (aliases: Ukraine); США [rung unknown] (aliases: США); USA [g0] (aliases: USA)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (25.2s, in 1230 / out 631 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Російська Федерація",
+      "category": "Country",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source text establishes a link between the mention and any of the candidate entities."
+    }
+  ]
+}

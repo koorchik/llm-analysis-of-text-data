@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k8-norepair-759bc2e17a14",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:01:31.687Z",
+  "operator": "listwise-select",
+  "docId": 6276824,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"\"Заборгованість Київстар\", \"Запит СБУ\": нова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8338)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 21.12.2023 зафіксовано масове розповсюдження електронних листів з тематикою \"Заборгованості за договором Київстар\" та вкладенням у вигляді архіву \"Заборгованість абонента.zip\".</p><p>Зазначений ZIP-архів містить розділений на 2 частини RAR-архів \"Заборгованість абонента.rar\", в якому знаходиться однойменний архів захищений паролем. В останньому знаходиться документ з макросом \"Заборгованість абонента.doc\".&nbsp;</p><p>У разі активації код макросу за допомогою оглядача фай\nMentions:\n1. \"SmartAssembly .NET\" (Software)\n     1. HarvesterX [aliases: HarvesterX, SmartAssembly]\n     2. .NET Framework [aliases: .NET Framework]\n     3. GammaSteel.NET [aliases: GammaSteel.NET]\n     4. SmartFTP [aliases: SmartFTP]\n     5. 7Star Browser [aliases: 7Star Browser, stage2.ps1]\n     6. Smokeloader [aliases: Smokeloader]\n     7. Brave Browser [aliases: Brave Browser]\n     8. installer.exe [aliases: installer.exe, stage1.ps1, rundll32.exe]\n     9. NEW ENTITY\n2. \"wsuscr.exe\" (Software)\n     1. rutserv.exe [aliases: rutserv.exe, loader.exe, MCMDiction.exe]\n     2. wscript.exe [aliases: wscript.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe, b.exe]\n     4. cmd.exe [aliases: cmd.exe, baseupd.exe]\n     5. rfusclient.exe [aliases: rfusclient.exe]\n     6. installer.exe [aliases: installer.exe, stage1.ps1, rundll32.exe]\n     7. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe)]\n     8. mshta.exe [aliases: mshta.exe]\n     9. NEW ENTITY",
+  "response": "{\"choices\":[1,1]}",
+  "usage": {
+    "inputTokens": 705,
+    "outputTokens": 1695
+  },
+  "latencyMs": 33059,
+  "finishReason": "stop"
+}

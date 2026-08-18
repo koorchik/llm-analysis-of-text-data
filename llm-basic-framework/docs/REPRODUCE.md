@@ -24,9 +24,9 @@ Each baseline arm carries `run-card.json`, `results.json`, `decisions.jsonl`, `r
 `schema.json`, `run-view.html`, all 204 `artifacts/` and `extractions/`, and the full
 `console-output.txt` of the run that produced them.
 
-**Run directories are gitignored** so an untracked run dir cannot dirty the tree and change the
-runId being computed. The two baselines were force-added as a deliberate one-off; the ignore rule
-is untouched, so anything you run next stays ignored. Do not "fix" this.
+**Run directories are Git-visible.** Inspect and stage experiment artifacts selectively. Because
+untracked files contribute to the dirty-diff hash, use a clean worktree for reportable runs and do
+not create unrelated artifacts between bootstrap and resume invocations.
 
 ## 2. Setup
 
@@ -87,15 +87,15 @@ containing colons works. Listing one model three times gives the N=3 ensemble.
 
 Then score and view:
 ```bash
-RUNDIR=../storage/cert.gov.ua/processed/experiments/<runId>
+RUNDIR=../storage/cert.gov.ua/processed/experiments/<YYYY-MM-DD-HHmm>-<runId>
 npm run evaluate -- --gold gold/gold.json --split test --run "$RUNDIR" --json "$RUNDIR/results.json"
 npm run replay   -- --in "$RUNDIR/decisions.jsonl" --verify
 npm run view     -- --run "$RUNDIR" --run <otherRunDir> --out compare.html   # switchable arms
 node bin/run-stats.js "$RUNDIR"                                              # call histogram
 ```
 
-Write `results.json` **into the run directory**, not the repo root — the run dir is gitignored, so
-the tree stays clean.
+Write `results.json` **into the run directory**, not the repo root, so each result stays with its
+run card and artifacts.
 
 ## 5. You will NOT get the same runId — and that is fine
 

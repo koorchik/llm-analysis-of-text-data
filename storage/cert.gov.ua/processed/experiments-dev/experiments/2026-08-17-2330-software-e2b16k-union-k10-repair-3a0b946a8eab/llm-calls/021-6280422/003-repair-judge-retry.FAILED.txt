@@ -1,0 +1,340 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 2 · signal: defer(link-judge, d2724)
+  A. Adobe Flash Player (Software)
+     aliases: []  · minted d2724
+     gloss: "Software application, no explicit link found in candidates."
+     evidence: d2724 "Adobe Flash Player"
+  B. Agent Tesla (Software)
+     aliases: [AgentTesla]  · minted d3028
+     gloss: "Mentioned in the source title."
+     evidence: d1563322 "AgentTesla"
+     evidence: d861292 "AgentTesla"
+     evidence: d3028 "Agent Tesla"
+  C. Amigo Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Amigo Browser"
+  D. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  E. Foxmail (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Foxmail"
+  F. GammaSteel.NET (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.NET"
+  G. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls, Microsoft Office 2007, Office 2007, Windows 7, Windows Vista, Microsoft Office 2010, Office 2010, Microsoft Office Services and Web Apps, Microsoft Office 2013, Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin, Microsoft Office 2016, Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+  H. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon, b.exe, TRYxaEbX]  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "TRYxaEbX"
+     evidence: d619229 "Cobalt Strike Beacon"
+  I. Opera Browser (Software)
+     aliases: [TRYxaEbX.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+     evidence: d3028 "Opera Browser"
+  J. PGMB New Order 18-2077.xlsx (Software)
+     aliases: [CVE-2018-8124, CVE-2018-8127]  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d2724 "CVE-2018-8124"
+     evidence: d2724 "CVE-2018-8127"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  K. Paltalk (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Paltalk"
+  L. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  M. SmartFTP (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "SmartFTP"
+  pairs to adjudicate: D–G (defer(link-judge, d2724)); D–J (defer(link-judge, d2724)); D–L (defer(link-judge, d2724)); A–F (defer(link-judge, d1229152)); B–F (defer(link-judge, d1229152)); C–F (defer(link-judge, d1229152)); E–F (defer(link-judge, d1229152)); F–G (defer(link-judge, d1229152)); F–H (defer(link-judge, d1229152)); F–I (defer(link-judge, d1229152)); F–K (defer(link-judge, d1229152)); F–M (defer(link-judge, d1229152))
+
+Component 2 of 2 · signal: defer(link-judge, d1229152)
+  A. GammaLoad.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaLoad.PS1"
+  B. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  C. jDownloader (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "jDownloader"
+  D. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe]  · minted d24
+     gloss: (none)
+     evidence: d1229152 "PowerShell (powershell.exe)"
+     evidence: d1229152 "wscript.exe"
+     evidence: d1229152 "mshta.exe"
+  E. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  F. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  G. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  pairs to adjudicate: A–B (defer(link-judge, d1229152)); A–C (defer(link-judge, d1229152)); A–D (defer(link-judge, d1229152)); A–E (defer(link-judge, d1229152)); A–F (defer(link-judge, d1229152)); A–G (defer(link-judge, d1229152))
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (40.9s, in 2805 / out 2062 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "distinct",
+          "distinct": [
+            "Adobe Flash Player",
+            "Agent Tesla",
+            "Amigo Browser",
+            "CVE-2018-8136",
+            "Foxmail",
+            "GammaSteel.NET",
+            "MS Excel",
+            "Meterpreter",
+            "Opera Browser",
+            "PGMB New Order 18-2077.xlsx",
+            "Paltalk",
+            "Petya",
+            "SmartFTP"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these disparate software/file entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "CVE-2018-8136",
+            "PGMB New Order 18-2077.xlsx"
+          ],
+          "confidence": "low",
+          "evidence": "The evidence links CVE-2018-8136 to the Excel file and the Petya entity, but no identity merge is supported."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "CVE-2018-8136",
+            "Petya"
+          ],
+          "confidence": "low",
+          "evidence": "The evidence links CVE-2018-8136 to the Petya entity, but no identity merge is supported."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Adobe Flash Player",
+            "GammaSteel.NET"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Agent Tesla",
+            "GammaSteel.NET"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Amigo Browser",
+            "GammaSteel.NET"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Foxmail",
+            "GammaSteel.NET"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaSteel.NET",
+            "MS Excel"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Meterpreter",
+            "GammaSteel.NET"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaSteel.NET",
+            "Opera Browser"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaSteel.NET",
+            "Paltalk"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaSteel.NET",
+            "SmartFTP"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        }
+      ]
+    },
+    {
+      "component": 2,
+      "ops": [
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "TRYxaEbX_2.ps1"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "jDownloader"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "major.exe"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "stage1.ps1"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "stage2.ps1"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "GammaLoad.PS1",
+            "z.ps1"
+          ],
+          "confidence": "low",
+          "evidence": "No evidence provided is sufficient to merge these entities."
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (FAILED) ===
+no repair op survived validation

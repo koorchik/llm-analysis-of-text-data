@@ -1,0 +1,65 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження 05.07.2022 електронних листів з темою "Спеціалізованої прокуратури увійськовій та оборонній сфері. Інформація щодо наявності вакансій та їх укомплектування" та вкладенням у вигляді XLS-документу "Інформація щодо наявності вакансій та їх укомплектування.xls".</p><p>Документ містить макрос, активація якого призведе до створення на комп'ютері та запуску файлу "write.exe".</p><p>Згаданий файл виконує роль дропера, забезпечуючи створення
+Mentions:
+1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software)
+     1. spi.exe [aliases: spi.exe, Електронний запит.exe, УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk]
+     2. До оплати від 11.12.18.lzh [aliases: До оплати від 11.12.18.lzh]
+     3. .NET Framework [aliases: .NET Framework, Remote Utilities - Host]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+2. "write.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. spi.exe [aliases: spi.exe, Електронний запит.exe, УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk]
+     4. cmd.exe [aliases: cmd.exe]
+     5. NEW ENTITY
+3. "TRYxaEbX" (Software)
+     1. Trillian [aliases: Trillian]
+     2. .NET Framework [aliases: .NET Framework, Remote Utilities - Host]
+     3. Thunderbird [aliases: Thunderbird]
+     4. b.exe [aliases: b.exe]
+     5. NEW ENTITY
+4. "TRYxaEbX.ps1" (Software)
+     1. z.ps1 [aliases: z.ps1]
+     2. Brave Browser [aliases: Brave Browser]
+     3. rutserv.exe [aliases: rutserv.exe]
+     4. 360Chrome Browser [aliases: 360Chrome Browser]
+     5. NEW ENTITY
+5. "TRYxaEbX_2.ps1" (Software)
+     1. z.ps1 [aliases: z.ps1]
+     2. UkrScanner.exe (SFX) [aliases: UkrScanner.exe (SFX)]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. Brave Browser [aliases: Brave Browser]
+     5. NEW ENTITY
+6. "shellcode.x86 (Cobalt Strike Beacon)" (Software)
+     1. scan.exe (CredoMap_v2) [aliases: scan.exe (CredoMap_v2)]
+     2. .NET Framework [aliases: .NET Framework, Remote Utilities - Host]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+7. "shellcode.x64 (Cobalt Strike Beacon)" (Software)
+     1. scan.exe (CredoMap_v2) [aliases: scan.exe (CredoMap_v2)]
+     2. .NET Framework [aliases: .NET Framework, Remote Utilities - Host]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. Chedot Browser [aliases: Chedot Browser]
+     5. NEW ENTITY
+8. "Cobalt Strike Beacon" (Software)
+     1. ChakraCore [aliases: ChakraCore]
+     2. Coowon Browser [aliases: Coowon Browser]
+     3. Trillian [aliases: Trillian]
+     4. IceDragon [aliases: IceDragon]
+     5. NEW ENTITY
+
+=== RESPONSE (13.6s, in 1199 / out 710 tok, stop) ===
+```json
+{"choices":[1,2,3,4,5,6,7,8]}
+```

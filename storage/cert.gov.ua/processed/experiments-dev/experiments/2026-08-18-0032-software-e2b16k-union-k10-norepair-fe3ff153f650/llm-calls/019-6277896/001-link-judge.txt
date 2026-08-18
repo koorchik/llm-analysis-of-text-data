@@ -1,0 +1,156 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "АНОНС: Практичний семінар для кіберфахівців"
+Source Excerpt:
+"""
+<p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "SRP" (Software); ladder: (none; use g0); candidates: SmartFTP [rung unknown] (aliases: SmartFTP); WinSCP [g0] (aliases: WinSCP); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); WS_FTP [rung unknown] (aliases: WS_FTP); Remcos [g0] (aliases: Remcos, RemcosRAT); HarvesterX [g0] (aliases: HarvesterX); z.ps1 [g0] (aliases: z.ps1); QuasarRAT [g0] (aliases: QuasarRAT); ConfuserEx [rung unknown] (aliases: ConfuserEx); wsuscr.exe [g0] (aliases: wsuscr.exe)
+2. "AppLocker" (Software); ladder: (none; use g0); candidates: jDownloader [rung unknown] (aliases: jDownloader); FTPGetter [rung unknown] (aliases: FTPGetter); Opera Browser [g0] (aliases: Opera Browser); Uran Browser [g0] (aliases: Uran Browser); 7Star Browser [g0] (aliases: 7Star Browser); Smokeloader [g0] (aliases: Smokeloader); Amigo Browser [g0] (aliases: Amigo Browser); Brave Browser [g0] (aliases: Brave Browser); CentBrowser [g0] (aliases: CentBrowser); Kometa Browser [g0] (aliases: Kometa Browser)
+3. "YARA" (Software); ladder: (none; use g0); candidates: Yandex Browser [g0] (aliases: Yandex Browser); QuasarRAT [g0] (aliases: QuasarRAT); TRYxaEbX [rung unknown] (aliases: TRYxaEbX); CCleaner.rar [g0] (aliases: CCleaner.rar); SmartFTP [rung unknown] (aliases: SmartFTP); HarvesterX [g0] (aliases: HarvesterX); Remcos [g0] (aliases: Remcos, RemcosRAT); Opera Mail [rung unknown] (aliases: Opera Mail); IceDragon [g0] (aliases: IceDragon); CCleaner.exe [g0] (aliases: CCleaner.exe)
+4. "Mikrotik" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps, Microsoft Outlook); Microsoft Edge [g0] (aliases: Microsoft Edge); Microsoft Windows [g0] (aliases: Microsoft Windows); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Meterpreter [g0] (aliases: Meterpreter); Sputnik Browser [g0] (aliases: Sputnik Browser); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013)
+5. "pfSense" (Software); ladder: (none; use g0); candidates: powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); rfusclient.exe [g0] (aliases: rfusclient.exe); ConfuserEx [rung unknown] (aliases: ConfuserEx); rutserv.exe [g0] (aliases: rutserv.exe); CCleaner.exe [g0] (aliases: CCleaner.exe); Brave Browser [g0] (aliases: Brave Browser); Opera Browser [g0] (aliases: Opera Browser); FTP Commander [rung unknown] (aliases: FTP Commander); Petya [g0] (aliases: Petya); b.exe [g0] (aliases: b.exe)
+6. "SIEM" (Software); ladder: (none; use g0); candidates: powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); spi.exe [g0] (aliases: spi.exe); ConfuserEx [rung unknown] (aliases: ConfuserEx); HarvesterX [g0] (aliases: HarvesterX); MISP [g0] (aliases: MISP); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); VBScript [g0] (aliases: VBScript); SmartAssembly [g0] (aliases: SmartAssembly); FileZilla [rung unknown] (aliases: FileZilla); MS Office [rung unknown] (aliases: MS Office)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (32.3s, in 2169 / out 1660 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "SRP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between SRP and any candidate."
+    },
+    {
+      "index": 2,
+      "mention": "AppLocker",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between AppLocker and any candidate."
+    },
+    {
+      "index": 3,
+      "mention": "YARA",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between YARA and any candidate."
+    },
+    {
+      "index": 4,
+      "mention": "Mikrotik",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between Mikrotik and any candidate."
+    },
+    {
+      "index": 5,
+      "mention": "pfSense",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between pfSense and any candidate."
+    },
+    {
+      "index": 6,
+      "mention": "SIEM",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes a link between SIEM and any candidate."
+    }
+  ]
+}

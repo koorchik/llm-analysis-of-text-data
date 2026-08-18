@@ -1,0 +1,105 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental knowledge base.
+
+Your task is to resolve entity mentions from an incoming document against candidate entities in the registry.
+
+### INPUT CONTEXT
+Document Title: "Масова кібератака UAC-0050 з використанням RemcosRAT/MeduzaStealer у відношенні України та Польщі (CERT-UA#8218)"
+Document Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA вживаються організаційно-технічні заходи із запобігання, виявлення та реагування на кіберінциденти і кібератаки.</p><p>Так, 07.12.2023 виявлено факт масового розповсюдження електронних листів з темою "судових претензій" і "заборгованості" та додатками у вигляді вкладених RAR-архівів, захищених паролем.</p><p>У випадку відкриття такого архіву та запуску виконуваних файлів ЕОМ може бути уражена програмами RemcosRAT (ідентифікатор ліцензії: 3DBAF89B8E287E6A5221436A08EAA6B8,
+"""
+
+### GRANULARITY LEVELS (g0–g3 REFERENCE)
+- g0 (Specimen / Specific Leaf): The most specific instance (e.g. exact build/version, specific unit, subdomain).
+- g1 (Unit / Primary Entity): The core identified entity (e.g. major product release, agency, domain).
+- g2 (Family / Parent Body): The enclosing product family, ministry, or parent group.
+- g3 (Origin / Vendor / Sector): The high-level provider, vendor umbrella, or broad domain.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Malaysia" (Country); candidates: Росія [g2] (aliases: Росія, Russian Federation, Russia, Tajikistan); Естонія [g0] (aliases: Естонія)
+2. "Poland" (Country); candidates: Росія [g2] (aliases: Росія, Russian Federation, Russia, Tajikistan); Польща [g2] (aliases: Польща); Індія [rung unknown] (aliases: Індія)
+(Each candidate shows its canonical name, current granularity rung [g0-g3], and known aliases.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or unambiguous context co-reference (e.g. "MS Office" -> "Microsoft Office" [both g2]).
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the mention represents a narrower/sub-entity of a candidate (e.g. mention "Office 2010 SP2" [g0] vs candidate "Microsoft Office" [g2]; or mention "Unit 74455" [g0] vs candidate "GRU" [g1]):
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name (e.g. "Microsoft Office")
+     - Set edgeKind:
+       - "coarsens-to" (if the fact's subject is preserved, just blurred: version -> product)
+       - "part-of" (if the attribution widens: sub-unit -> parent agency)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If evidence in the snippet is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is caught by an automated repair review within one document of appearing — minting is the recoverable error.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - For every "mint" or "defer", write gloss: one factual sentence fragment describing what the entity IS, from the document evidence (role, type, salient attributes; e.g. "Russian state-sponsored group targeting energy sector").
+   - The gloss must NOT restate or paraphrase the name itself — it is used to find duplicates whose names share nothing (e.g. "Fancy Bear" vs "APT28"), so it must carry name-independent evidence.
+   - Do not speculate beyond the document. If the document says nothing beyond the name, describe the immediate context of use (e.g. "domain used in phishing infrastructure, June 2026").
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<1-line name-independent description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (18.9s, in 1406 / out 860 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Malaysia",
+      "category": "Country",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "No specific context found for Malaysia in the document.",
+      "reasoning": "The document excerpt does not mention Malaysia, so no link can be established."
+    },
+    {
+      "index": 2,
+      "mention": "Poland",
+      "category": "Country",
+      "mentionRung": "g2",
+      "verdict": "link",
+      "target": "Польща",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The document title explicitly mentions Poland in relation to Ukraine, establishing a direct link to the candidate 'Польща'."
+    }
+  ]
+}

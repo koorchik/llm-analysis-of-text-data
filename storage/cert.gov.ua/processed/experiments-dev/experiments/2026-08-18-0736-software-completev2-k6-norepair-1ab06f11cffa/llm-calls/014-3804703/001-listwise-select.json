@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:43:39.690Z",
+  "operator": "listwise-select",
+  "docId": 3804703,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"Кібератака UAC-0050 у відношенні державних органів України із застосуванням програми для віддаленого контролю та спостереження Remcos (CERT-UA#5926)\" — evidence: <p><strong>Загальна інформація</strong></p><p><br></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано масове розповсюдження електронних листів, начебто, від АТ \"Укртелеком\", з темою \"Судова претензія за Вашим особовим рахунком # 7192206443063763 от: 06.02.2023\" та додатком у вигляді RAR-архіву \"судовий лист, інформація щодо заборгування.rar\".</p><p>Архів містить текстовий документ \"Ваш персональний код доступу -254507.txt\" та ще один RAR-архів \"судовий лист, інформація щодо заборгування. pdf.rar\", захищений паролем. В другому архіві знаходиться вико\nMentions:\n1. \"Remcos\" (Software)\n     1. Remote Utilities [aliases: Remote Utilities]\n     2. RegAsm.exe [aliases: RegAsm.exe]\n     3. Brave Browser [aliases: Brave Browser]\n     4. 360Chrome Browser [aliases: 360Chrome Browser]\n     5. 7Star Browser [aliases: 7Star Browser]\n     6. CentBrowser [aliases: CentBrowser]\n     7. NEW ENTITY\n2. \"RemoteUtilities\" (Software)\n     1. Remote Utilities [aliases: Remote Utilities]\n     2. Remote Utilities - Host [aliases: Remote Utilities - Host]\n     3. FTPGetter [aliases: FTPGetter]\n     4. Meterpreter [aliases: Meterpreter]\n     5. Agent Tesla [aliases: Agent Tesla]\n     6. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]\n     7. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 667,
+    "outputTokens": 738
+  },
+  "latencyMs": 13960,
+  "finishReason": "stop"
+}

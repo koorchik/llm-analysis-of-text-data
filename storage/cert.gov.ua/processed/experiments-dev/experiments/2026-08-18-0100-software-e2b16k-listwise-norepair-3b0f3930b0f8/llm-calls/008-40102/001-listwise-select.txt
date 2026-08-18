@@ -1,0 +1,57 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)" — evidence: <p><strong>Загальна інформація</strong></p><p><span style="color: rgb(36, 36, 36);">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Кібератака", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву "UkrScanner.rar".</span></p><p><span style="color: rgb(36, 36, 36);">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр
+Mentions:
+1. "CredoMap_v2" (Software)
+     1. Chedot Browser [aliases: Chedot Browser]
+     2. Pocomail [aliases: Pocomail]
+     3. CVE-2018-8120 [aliases: CVE-2018-8120]
+     4. CVE-2018-8124 [aliases: CVE-2018-8124]
+     5. NEW ENTITY
+2. "UkrScanner.rar" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. loader.exe [aliases: loader.exe]
+     3. Uran Browser [aliases: Uran Browser]
+     4. 7Star Browser [aliases: 7Star Browser]
+     5. NEW ENTITY
+3. "UkrScanner.exe (SFX)" (Software)
+     1. b.exe [aliases: b.exe]
+     2. installer.exe [aliases: installer.exe]
+     3. loader.exe [aliases: loader.exe]
+     4. RegAsm.exe [aliases: RegAsm.exe]
+     5. NEW ENTITY
+4. "scan.exe (CredoMap_v2)" (Software)
+     1. b.exe [aliases: b.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. installer.exe [aliases: installer.exe]
+     5. NEW ENTITY
+5. "SQLite.Interop.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. Meterpreter [aliases: Meterpreter]
+     3. FTPGetter [aliases: FTPGetter]
+     4. Agent Tesla [aliases: Agent Tesla]
+     5. NEW ENTITY
+6. "MISP" (Software)
+     1. Misha [aliases: Misha]
+     2. MS Office [aliases: MS Office, Microsoft Windows]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. Microsoft Outlook [aliases: Microsoft Outlook]
+     5. NEW ENTITY
+
+=== RESPONSE (17.7s, in 997 / out 1011 tok, stop) ===
+{ "choices": [ { "mention": "CredoMap_v2", "category": "Software", "choice": 5 }, { "mention": "UkrScanner.rar", "category": "Software", "choice": 5 }, { "mention": "UkrScanner.exe (SFX)", "category": "Software", "choice": 5 }, { "mention": "scan.exe (CredoMap_v2)", "category": "Software", "choice": 5 }, { "mention": "SQLite.Interop.dll", "category": "Software", "choice": 5 }, { "mention": "MISP", "category": "Software", "choice": 5 } ] }

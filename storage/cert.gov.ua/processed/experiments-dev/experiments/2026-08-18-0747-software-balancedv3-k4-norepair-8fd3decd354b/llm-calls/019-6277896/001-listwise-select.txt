@@ -1,0 +1,84 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Mentions:
+1. "SRP" (Software)
+     1. SmartFTP [aliases: SmartFTP]
+     2. WinSCP [aliases: WinSCP]
+     3. MISP [aliases: MISP]
+     4. Remote Utilities [aliases: Remote Utilities, Remcos, RemoteUtilities, RemcosRAT, QuasarRAT, plan_dsns.gov.ua.rar]
+     5. NEW ENTITY
+2. "AppLocker" (Software)
+     1. jDownloader [aliases: jDownloader]
+     2. FTPGetter [aliases: FTPGetter]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Uran Browser [aliases: Uran Browser]
+     5. NEW ENTITY
+3. "YARA" (Software)
+     1. Yandex Browser [aliases: Yandex Browser]
+     2. CCleaner.rar [aliases: CCleaner.rar]
+     3. Remote Utilities [aliases: Remote Utilities, Remcos, RemoteUtilities, RemcosRAT, QuasarRAT, plan_dsns.gov.ua.rar]
+     4. ChakraCore [aliases: ChakraCore]
+     5. NEW ENTITY
+4. "Mikrotik" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows, Microsoft Office Services and Web Apps]
+     2. Microsoft Edge [aliases: Microsoft Edge]
+     3. Microsoft Outlook [aliases: Microsoft Outlook]
+     4. Misha [aliases: Misha]
+     5. NEW ENTITY
+5. "pfSense" (Software)
+     1. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]
+     2. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]
+     3. rfusclient.exe [aliases: rfusclient.exe]
+     4. CCleaner.exe [aliases: CCleaner.exe]
+     5. NEW ENTITY
+6. "SIEM" (Software)
+     1. MISP [aliases: MISP]
+     2. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]
+     3. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]
+     4. spi.exe [aliases: spi.exe, write.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (13.8s, in 975 / out 723 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "SRP",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "AppLocker",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "YARA",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "Mikrotik",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "pfSense",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "SIEM",
+    "category": "NEW ENTITY",
+    "choice": 5
+  }
+]}
+```

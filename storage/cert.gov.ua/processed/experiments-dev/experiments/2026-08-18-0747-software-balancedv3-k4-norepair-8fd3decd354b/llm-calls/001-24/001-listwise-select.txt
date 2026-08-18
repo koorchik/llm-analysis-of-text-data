@@ -1,0 +1,65 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "УВАГА! Спостерігається масова розсилка фішингових листів, які використовують вразливість CVE-2017-11882" — evidence: <p>Дана вразливість надає можливість виконання віддаленого коду, коли програмне забезпечення MS Equation не обробляє належним чином об'єкти в пам'яті. Зловмисник може виконувати довільний код з правами поточного користувача. Якщо користувач виконав вхід у систему з правами адміністратора, зловмисник може взяти під контроль систему та вчиняти наступні дії:</p><ul><li>встановлювати програми;</li><li>переглядати, змінювати або видаляти дані;</li><li>створювати нові облікові записи з правами адміністратора.</li></ul><p>Після експлуатації вразливості CVE-2017-11882 на цільову систему завантажується
+Mentions:
+1. "CVE-2017-11882" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+2. "major.exe" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+3. "PGMB New Order 18-2077.xlsx" (Software)
+     1. MS Word [aliases: MS Word]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+4. "Microsoft Equation Editor" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. MS Office [aliases: MS Office]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+5. "Microsoft Office 2016" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+6. "Microsoft Office 2013" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+7. "Microsoft Office 2010" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+8. "Microsoft Office 2007" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+
+=== RESPONSE (22.1s, in 986 / out 1156 tok, stop) ===
+```json
+{"choices":[{"mention":"CVE-2017-11882","category":"Software","choice":5},{"mention":"major.exe","category":"Software","choice":5},{"mention":"PGMB New Order 18-2077.xlsx","category":"Software","choice":5},{"mention":"Microsoft Equation Editor","category":"Software","choice":3},{"mention":"Microsoft Office 2016","category":"Software","choice":1},{"mention":"Microsoft Office 2013","category":"Software","choice":1},{"mention":"Microsoft Office 2010","category":"Software","choice":1},{"mention":"Microsoft Office 2007","category":"Software","choice":1}]}
+```

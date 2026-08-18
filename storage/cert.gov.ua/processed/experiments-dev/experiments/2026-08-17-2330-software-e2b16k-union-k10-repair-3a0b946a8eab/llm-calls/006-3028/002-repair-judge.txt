@@ -1,0 +1,286 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 1 · signal: defer(link-judge, d2724) + union-blocker 0.92 + coherence
+  A. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  B. CVE-2018-0854 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-0854"
+  C. CVE-2018-0958 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-0958"
+  D. CVE-2018-8120 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8120"
+  E. CVE-2018-8124 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8124"
+  F. CVE-2018-8127 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8127"
+  G. CVE-2018-8129 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+  H. CVE-2018-8132 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8132"
+  I. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  J. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  K. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  L. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  M. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  N. MS Excel (Software)
+     aliases: [Microsoft Equation Editor]  · minted d20
+     gloss: (none)
+     evidence: d24 "Microsoft Equation Editor"
+     evidence: d20 "MS Excel"
+  O. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  P. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  Q. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework]  · minted d24
+     gloss: (none)
+     evidence: d2724 ".NET Framework"
+     evidence: d2660 "Office 2013"
+     evidence: d24 "Microsoft Office 2013"
+  R. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2660 "Office 2016"
+     evidence: d24 "Microsoft Office 2016"
+  S. PGMB New Order 18-2077.xlsx (Software)
+     aliases: []  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  T. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  U. Windows Server 2012 (Software)
+     aliases: []  · minted d2660
+     gloss: "Operating system version that is contextually related to Microsoft Office versions."
+     evidence: d2660 "Windows Server 2012"
+  V. ckZ89.ExE (Software)
+     aliases: []  · minted d2707
+     gloss: (none)
+     evidence: d2707 "ckZ89.ExE"
+  W. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe]  · minted d24
+     gloss: (none)
+     evidence: d2707 "cmd.exe"
+     evidence: d2707 "powershell.exe"
+     evidence: d24 "major.exe"
+  X. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  Y. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: B–O (defer(link-judge, d2724)); B–P (defer(link-judge, d2724)); B–Q (defer(link-judge, d2724)); B–R (defer(link-judge, d2724)); B–S (defer(link-judge, d2724)); B–V (defer(link-judge, d2724)); B–X (defer(link-judge, d2724)); B–Y (defer(link-judge, d2724)); A–C (defer(link-judge, d2724)); C–N (defer(link-judge, d2724)); C–O (defer(link-judge, d2724)); C–P (defer(link-judge, d2724)); C–Q (defer(link-judge, d2724)); C–R (defer(link-judge, d2724)); C–S (defer(link-judge, d2724)); C–V (defer(link-judge, d2724)); C–X (defer(link-judge, d2724)); C–Y (defer(link-judge, d2724)); A–D (defer(link-judge, d2724)); D–E (union-blocker 0.92); D–F (union-blocker 0.92); D–G (union-blocker 0.92); D–L (union-blocker 0.92); D–O (defer(link-judge, d2724)); D–P (defer(link-judge, d2724)); D–Q (defer(link-judge, d2724)); D–R (defer(link-judge, d2724)); D–S (defer(link-judge, d2724)); D–U (defer(link-judge, d2724)); D–V (defer(link-judge, d2724)); D–X (defer(link-judge, d2724)); D–Y (defer(link-judge, d2724)); A–E (defer(link-judge, d2724)); E–F (union-blocker 0.92); E–G (union-blocker 0.92); E–I (union-blocker 0.92); E–O (defer(link-judge, d2724)); E–P (defer(link-judge, d2724)); E–Q (defer(link-judge, d2724)); E–R (defer(link-judge, d2724)); E–S (defer(link-judge, d2724)); E–U (defer(link-judge, d2724)); E–V (defer(link-judge, d2724)); E–X (defer(link-judge, d2724)); E–Y (defer(link-judge, d2724)); A–F (defer(link-judge, d2724)); F–G (union-blocker 0.92); F–O (defer(link-judge, d2724)); F–P (defer(link-judge, d2724)); F–Q (defer(link-judge, d2724)); F–R (defer(link-judge, d2724)); F–S (defer(link-judge, d2724)); F–U (defer(link-judge, d2724)); F–V (defer(link-judge, d2724)); F–X (defer(link-judge, d2724)); F–Y (defer(link-judge, d2724)); A–G (defer(link-judge, d2724)); G–O (defer(link-judge, d2724)); G–P (defer(link-judge, d2724)); G–Q (defer(link-judge, d2724)); G–R (defer(link-judge, d2724)); G–U (defer(link-judge, d2724)); G–V (defer(link-judge, d2724)); G–W (defer(link-judge, d2724)); G–X (defer(link-judge, d2724)); G–Y (defer(link-judge, d2724)); A–H (defer(link-judge, d2724)); H–I (union-blocker 0.92); H–J (union-blocker 0.92); H–O (defer(link-judge, d2724)); H–P (defer(link-judge, d2724)); H–Q (defer(link-judge, d2724)); H–R (defer(link-judge, d2724)); H–T (defer(link-judge, d2724)); H–U (defer(link-judge, d2724)); H–V (defer(link-judge, d2724)); H–X (defer(link-judge, d2724)); H–Y (defer(link-judge, d2724)); A–I (defer(link-judge, d2724)); I–J (union-blocker 0.92); I–N (defer(link-judge, d2724)); I–P (defer(link-judge, d2724)); I–Q (defer(link-judge, d2724)); I–R (defer(link-judge, d2724)); I–S (defer(link-judge, d2724)); I–T (defer(link-judge, d2724)); I–V (defer(link-judge, d2724)); I–X (defer(link-judge, d2724)); I–Y (defer(link-judge, d2724)); A–J (defer(link-judge, d2724)); J–N (defer(link-judge, d2724)); J–P (defer(link-judge, d2724)); J–Q (defer(link-judge, d2724)); J–R (defer(link-judge, d2724)); J–S (defer(link-judge, d2724)); J–T (defer(link-judge, d2724)); J–V (defer(link-judge, d2724)); J–X (defer(link-judge, d2724)); J–Y (defer(link-judge, d2724)); A–K (defer(link-judge, d2724)); K–N (defer(link-judge, d2724)); K–P (defer(link-judge, d2724)); K–Q (defer(link-judge, d2724)); K–R (defer(link-judge, d2724)); K–T (defer(link-judge, d2724)); K–V (defer(link-judge, d2724)); K–W (defer(link-judge, d2724)); K–X (defer(link-judge, d2724)); K–Y (defer(link-judge, d2724)); A–L (defer(link-judge, d2724)); L–O (defer(link-judge, d2724)); L–P (defer(link-judge, d2724)); L–Q (defer(link-judge, d2724)); L–R (defer(link-judge, d2724)); L–S (defer(link-judge, d2724)); L–T (defer(link-judge, d2724)); L–V (defer(link-judge, d2724)); L–X (defer(link-judge, d2724)); L–Y (defer(link-judge, d2724)); A–M (defer(link-judge, d2724)); E–M (union-blocker 0.92); I–M (union-blocker 0.92); L–M (union-blocker 0.92); M–N (defer(link-judge, d2724)); M–O (defer(link-judge, d2724)); M–P (defer(link-judge, d2724)); M–Q (defer(link-judge, d2724)); M–R (defer(link-judge, d2724)); M–S (defer(link-judge, d2724)); M–V (defer(link-judge, d2724)); M–X (defer(link-judge, d2724)); M–Y (defer(link-judge, d2724))
+  coherence check: R — does every listed alias belong to this entity?
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (30.4s, in 4832 / out 1480 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "merge",
+          "from": "CVE-2018-0854",
+          "into": "CVE-2018-8120",
+          "confidence": "low",
+          "evidence": "The pairs to adjudicate explicitly mark D–E (union-blocker 0.92), suggesting a potential relationship between these software entities, but no direct evidence forces a merge."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2017-11882",
+            "CVE-2018-0854"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-0958",
+            "CVE-2018-8124"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8127",
+            "CVE-2018-8129"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "CVE-2018-8134"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8136",
+            "CVE-2018-8141"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "CVE-2018-8174"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Microsoft Office Services and Web Apps"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            ".NET Framework"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows Host Compute Service Shim"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "PGMB New Order 18-2077.xlsx",
+            "Microsoft Office 2016"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Petya",
+            "Windows Server 2012"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "ckZ89.ExE",
+            "cmd.exe"
+          ]
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Рахунки за выполненные работы от 11.12.2018.js",
+            "До оплати рах.ф. 74 - 2018р.js"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+10 op(s) accepted

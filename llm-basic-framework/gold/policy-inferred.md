@@ -20,8 +20,8 @@ Stated by anthropic/claude-opus-5 while applying 68 human exemplars (2026-08-04)
 - A distinct bundled component or front-end shipped as part of a larger named tool is a part, not an alias → rung:part-of toward the component.
 - Two clearly separate products in the same family/vocabulary (sibling tools, sibling modules) → different, not same.
 - Where a report explicitly equates a family label with the vendor/product string it drops on disk or in the registry, treat as alias → same.
-- HackerGroup identifiers that co-occur as parenthetical equivalences in CERT-UA text (APT28 = UAC-0001 = UAC-0028) are aliases of one group => same.
-- A UAC-code with a parenthetical common name (e.g. 'UAC-0028 (APT28)') is a typographic alias, not a finer granularity => same as the bare code or bare name.
+- Different UAC identifiers remain distinct activity clusters even when CERT-UA associates both with the same actor (for example, UAC-0001 and UAC-0028 under APT28).
+- A UAC code with a parenthetical actor name is the same identity as its bare code, while the broader actor-to-UAC relationship is part-of rather than identity.
 - Different UAC codes that both resolve to the same named group are treated as aliases of one entity, not distinct referents.
 - Distinct named groups with no alias evidence (e.g. Turla vs APT28) would be different; only alias-linked codes merge.
 - Government-Body names for one named centre are 'same' across abbreviations, expansions, and differing scope qualifiers (ІТС / ЗСУ / Держспецзв'язку) as long as the head noun and referent coincide.

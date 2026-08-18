@@ -1,0 +1,390 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Microsoft випустила оновлення, які усувають велику кількість вразливостей."
+Source Excerpt:
+"""
+<p>Microsoft випустила оновлення, які усувають велику кількість вразливостей, серед яких присутні вразливості нульового дня (zero-day vulnerabilities), які вже експлуатуються хакерськими угрупуваннями.</p><p><a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Internet Explorer" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Office [g0] (aliases: Microsoft Office); Microsoft Windows [g0] (aliases: Microsoft Windows)
+2. "Microsoft Edge" (Software); ladder: (none; use g0); candidates: Microsoft Office [g0] (aliases: Microsoft Office); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Office [rung unknown] (aliases: MS Office); major.exe [g0] (aliases: major.exe, cmd.exe)
+3. "Microsoft Office Services and Web Apps" (Software); ladder: (none; use g0); candidates: Microsoft Office [g0] (aliases: Microsoft Office); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Office [rung unknown] (aliases: MS Office); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Server 2008 [g0] (aliases: Windows Server 2008)
+4. "ChakraCore" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); major.exe [g0] (aliases: major.exe, cmd.exe); Microsoft Office [g0] (aliases: Microsoft Office); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Smokeloader [g0] (aliases: Smokeloader)
+5. "Adobe Flash Player" (Software); ladder: (none; use g0); candidates: Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+6. ".NET Framework" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Petya [g0] (aliases: Petya); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); major.exe [g0] (aliases: major.exe, cmd.exe); Windows Server 2008 [g0] (aliases: Windows Server 2008)
+7. "Microsoft Exchange Server" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office [g0] (aliases: Microsoft Office); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+8. "Windows Host Compute Service Shim" (Software); ladder: (none; use g0); candidates: Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office [g0] (aliases: Microsoft Office); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+9. "VBScript" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS Office [rung unknown] (aliases: MS Office); Microsoft Office [g0] (aliases: Microsoft Office); Misha [g0] (aliases: Misha); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); major.exe [g0] (aliases: major.exe, cmd.exe)
+10. "Win32k" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Office [rung unknown] (aliases: MS Office)
+11. "CVE-2018-8174" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Petya [g0] (aliases: Petya); Microsoft Windows [g0] (aliases: Microsoft Windows)
+12. "Double Kill" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office [g0] (aliases: Microsoft Office); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Office [rung unknown] (aliases: MS Office); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016)
+13. "CVE-2018-8120" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Petya [g0] (aliases: Petya)
+14. "CVE-2018-0854" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Petya [g0] (aliases: Petya)
+15. "CVE-2018-0958" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Petya [g0] (aliases: Petya); Windows Server 2008 [g0] (aliases: Windows Server 2008)
+16. "CVE-2018-8124" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+17. "CVE-2018-8127" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+18. "CVE-2018-8129" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Windows Server 2012 [g0] (aliases: Windows Server 2012); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Petya [g0] (aliases: Petya)
+19. "CVE-2018-8132" (Software); ladder: (none; use g0); candidates: CVE-2017-11882 [g0] (aliases: CVE-2017-11882); CVE-2017-0199 [g0] (aliases: CVE-2017-0199); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+20. "CVE-2018-8134" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Petya [g0] (aliases: Petya); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Windows [g0] (aliases: Microsoft Windows); major.exe [g0] (aliases: major.exe, cmd.exe)
+21. "CVE-2018-8136" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Windows [g0] (aliases: Microsoft Windows)
+22. "CVE-2018-8141" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Petya [g0] (aliases: Petya); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); major.exe [g0] (aliases: major.exe, cmd.exe)
+23. "CVE-2018-8170" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Petya [g0] (aliases: Petya); ckZ89.ExE [g0] (aliases: ckZ89.ExE); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+24. "CVE-2018-8897" (Software); ladder: (none; use g0); candidates: CVE-2017-0199 [g0] (aliases: CVE-2017-0199); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Petya [g0] (aliases: Petya); Microsoft Windows [g0] (aliases: Microsoft Windows)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (90.1s, in 8638 / out 4098 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Internet Explorer",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Internet Explorer is a software application.",
+      "reasoning": "Internet Explorer is not found among the provided candidate records."
+    },
+    {
+      "index": 2,
+      "mention": "Microsoft Edge",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Microsoft Edge is a software application.",
+      "reasoning": "Microsoft Edge is not found among the provided candidate records."
+    },
+    {
+      "index": 3,
+      "mention": "Microsoft Office Services and Web Apps",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "Microsoft Office",
+      "parentCandidate": null,
+      "edgeKind": "coarsens-to",
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the general Microsoft Office entity."
+    },
+    {
+      "index": 4,
+      "mention": "ChakraCore",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "ChakraCore is a software entity.",
+      "reasoning": "ChakraCore is not found among the provided candidate records."
+    },
+    {
+      "index": 5,
+      "mention": "Adobe Flash Player",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Adobe Flash Player is a software application.",
+      "reasoning": "Adobe Flash Player is not found among the provided candidate records."
+    },
+    {
+      "index": 6,
+      "mention": ".NET Framework",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": ".NET Framework is a software component.",
+      "reasoning": ".NET Framework is not found among the provided candidate records."
+    },
+    {
+      "index": 7,
+      "mention": "Microsoft Exchange Server",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Microsoft Exchange Server is a software entity.",
+      "reasoning": "Microsoft Exchange Server is not found among the provided candidate records."
+    },
+    {
+      "index": 8,
+      "mention": "Windows Host Compute Service Shim",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Windows Host Compute Service Shim is a software entity.",
+      "reasoning": "Windows Host Compute Service Shim is not found among the provided candidate records."
+    },
+    {
+      "index": 9,
+      "mention": "VBScript",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "VBScript is a scripting language.",
+      "reasoning": "VBScript is not found among the provided candidate records."
+    },
+    {
+      "index": 10,
+      "mention": "Win32k",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Win32k is a software component.",
+      "reasoning": "Win32k is not found among the provided candidate records."
+    },
+    {
+      "index": 11,
+      "mention": "CVE-2018-8174",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8174 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8174 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 12,
+      "mention": "Double Kill",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Double Kill is a software entity.",
+      "reasoning": "Double Kill is not found among the provided candidate records."
+    },
+    {
+      "index": 13,
+      "mention": "CVE-2018-8120",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8120 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8120 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 14,
+      "mention": "CVE-2018-0854",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-0854 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-0854 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 15,
+      "mention": "CVE-2018-0958",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-0958 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-0958 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 16,
+      "mention": "CVE-2018-8124",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8124 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8124 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 17,
+      "mention": "CVE-2018-8127",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8127 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8127 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 18,
+      "mention": "CVE-2018-8129",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8129 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8129 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 19,
+      "mention": "CVE-2018-8132",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-11882",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8132 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8132 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 20,
+      "mention": "CVE-2018-8134",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-11882",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8134 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8134 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 21,
+      "mention": "CVE-2018-8136",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-11882",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8136 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8136 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 22,
+      "mention": "CVE-2018-8141",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-11882",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8141 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8141 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 23,
+      "mention": "CVE-2018-8170",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8170 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8170 is not directly linked to any specific software or version in the candidates."
+    },
+    {
+      "index": 24,
+      "mention": "CVE-2018-8897",
+      "category": "Identifier",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-0199",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "CVE-2018-8897 is a Common Vulnerabilities and Exposures identifier.",
+      "reasoning": "CVE-2018-8897 is not directly linked to any specific software or version in the candidates."
+    }
+  ]
+}

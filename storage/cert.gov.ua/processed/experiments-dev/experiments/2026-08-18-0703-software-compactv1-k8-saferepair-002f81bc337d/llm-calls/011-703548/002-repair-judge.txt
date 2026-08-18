@@ -1,0 +1,62 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 4 · signal: coherence
+  A. 360Chrome Browser (Software)
+     aliases: [TRYxaEbX.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+     evidence: d3028 "360Chrome Browser"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 2 of 4 · signal: coherence
+  A. Chedot Browser (Software)
+     aliases: [CredoMap_v2, TRYxaEbX_2.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+     evidence: d40102 "CredoMap_v2"
+     evidence: d3028 "Chedot Browser"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 3 of 4 · signal: union-blocker 0.92
+  A. shellcode.x64.bin (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+  B. shellcode.x86.bin (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "shellcode.x86.bin"
+  pairs to adjudicate: A–B (union-blocker 0.92)
+
+Component 4 of 4 · signal: union-blocker 0.92
+  A. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  B. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  pairs to adjudicate: A–B (union-blocker 0.92)
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (15.1s, in 853 / out 754 tok, stop) ===
+```json
+{"reviews":[{"component":1,"ops":[{"op":"keep","entity":"360Chrome Browser","confidence":"high","evidence":"TRYxaEbX.ps1 is an alias"}]},{"component":2,"ops":[{"op":"keep","entity":"Chedot Browser","confidence":"high","evidence":"CredoMap_v2 and TRYxaEbX_2.ps1 are listed as evidence"}]},{"component":3,"ops":[{"op":"distinct","pair":["shellcode.x64.bin","shellcode.x86.bin","confidence":"high","evidence":"Different file names indicating different architectures"}]},{"component":4,"ops":[{"op":"distinct","pair":["stage1.ps1","stage2.ps1","confidence":"high","evidence":"Different file names"}]}]}
+```
+
+=== OUTCOME (ok) ===
+4 op(s) accepted

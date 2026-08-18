@@ -1,0 +1,39 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "Масове розповсюдження шкідливої програми AgentTesla (CERT-UA#5252)" — evidence: <p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 30 і 31 серпня 2022 року зафіксовано масові розсилки електронних листів з темами "Технічне креслення" ("Technisches Zeichnen") серед українських, австрійських та німецьких організацій.</p><p> У вкладенні до електронного листа знаходиться IMG-файл (наприклад, "Технічне креслення.img"), що містить одноіменний CHM-файл, відкриття якого призведе до виконання JavaScript-коду, який, в свою чергу, забезпечить завантаження та виконання файлу node.txt за допомогою PowerShell.</p><p> Згаданий файл містить PowerShell-код, як
+Mentions:
+1. "PowerShell" (Software)
+     1. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe)]
+     2. powershell.exe [aliases: powershell.exe]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. Pocomail [aliases: Pocomail]
+     5. NEW ENTITY
+
+=== RESPONSE (11.1s, in 490 / out 585 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "PowerShell",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "PowerShell (powershell.exe)",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "powershell.exe",
+    "category": "Software",
+    "choice": 1
+  }
+]}
+```

@@ -1,4 +1,4 @@
-import { resolveRunDir, runDateStamp, stripRunDate } from './runDirName';
+import { resolveRunDir, runStartStamp, stripRunDate } from './runDirName';
 import assert from 'node:assert/strict';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -19,6 +19,13 @@ describe('stripRunDate', () => {
     assert.equal(stripRunDate('2026-08-06-psi-link-gemma-e4b-union-934e13d70482'), 'psi-link-gemma-e4b-union-934e13d70482');
   });
 
+  it('removes a YYYY-MM-DD-HHmm prefix', () => {
+    assert.equal(
+      stripRunDate('2026-08-06-1345-psi-link-gemma-e4b-union-934e13d70482'),
+      'psi-link-gemma-e4b-union-934e13d70482'
+    );
+  });
+
   it('leaves undated (legacy) names alone', () => {
     assert.equal(stripRunDate('psi-link-default-4ee484f372fc'), 'psi-link-default-4ee484f372fc');
   });
@@ -30,10 +37,10 @@ describe('stripRunDate', () => {
   });
 });
 
-describe('runDateStamp', () => {
-  it('formats local Y/M/D with zero padding', () => {
-    assert.equal(runDateStamp(new Date(2026, 7, 6, 13, 45)), '2026-08-06');
-    assert.equal(runDateStamp(new Date(2026, 0, 2, 0, 5)), '2026-01-02');
+describe('runStartStamp', () => {
+  it('formats local date and time with zero padding', () => {
+    assert.equal(runStartStamp(new Date(2026, 7, 6, 13, 45)), '2026-08-06-1345');
+    assert.equal(runStartStamp(new Date(2026, 0, 2, 0, 5)), '2026-01-02-0005');
   });
 });
 
@@ -44,7 +51,7 @@ describe('resolveRunDir', () => {
     const dir = scratchDir('new');
     assert.equal(
       resolveRunDir(dir, runId, new Date(2026, 7, 17)),
-      path.join(dir, `2026-08-17-${runId}`)
+      path.join(dir, `2026-08-17-0000-${runId}`)
     );
   });
 
@@ -60,6 +67,15 @@ describe('resolveRunDir', () => {
     );
   });
 
+  it('reuses an existing timestamped directory for the same runId', () => {
+    const dir = scratchDir('timestamp-resume');
+    fs.mkdirSync(path.join(dir, `2026-08-04-1327-${runId}`), { recursive: true });
+    assert.equal(
+      resolveRunDir(dir, runId, new Date(2026, 7, 17, 10, 30)),
+      path.join(dir, `2026-08-04-1327-${runId}`)
+    );
+  });
+
   it('reuses an undated legacy directory', () => {
     const dir = scratchDir('legacy');
     fs.mkdirSync(path.join(dir, runId), { recursive: true });
@@ -71,7 +87,7 @@ describe('resolveRunDir', () => {
     fs.mkdirSync(path.join(dir, `2026-08-04-${runId}-extra`), { recursive: true });
     assert.equal(
       resolveRunDir(dir, runId, new Date(2026, 7, 17)),
-      path.join(dir, `2026-08-17-${runId}`)
+      path.join(dir, `2026-08-17-0000-${runId}`)
     );
   });
 });

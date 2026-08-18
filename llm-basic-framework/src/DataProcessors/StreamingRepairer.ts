@@ -1,4 +1,8 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
+import { acronymAnalyzer } from '../Normalization/analyzers/acronym';
+import { confusableSkeletonAnalyzer } from '../Normalization/analyzers/confusableSkeleton';
+import { extractIdentifiers } from '../Normalization/analyzers/identifierRegex';
+import { transliterateAnalyzer } from '../Normalization/analyzers/transliterate';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import {
   EntityRegistry,
@@ -47,6 +51,10 @@ interface Params {
    * without touching this class; defaults to the shared `prompts/` directory.
    */
   prompts?: PromptProvider;
+  /** Prompt id for repair prompt-sensitivity arms; defaults to the pinned baseline. */
+  promptId?: string;
+  /** Precision-first identity mode: only code-verifiable merges may mutate the flat partition. */
+  strictIdentity?: boolean;
   /** Defaults to T6's conservative built-ins — see `parseThresholds` for why they default HIGH. */
   thresholds?: SuspectThresholds;
   /** 8000 — fits the 8k local window that the deferred consolidator's 22.6k prompt overflowed. */
@@ -188,6 +196,8 @@ export class StreamingRepairer {
   #decisionLog: DecisionLog;
   #glossIndex: GlossIndex;
   #prompts: PromptProvider;
+  #promptId: string;
+  #strictIdentity: boolean;
   #suspects: SuspectGenerator;
   #tokenCap: number;
   #onRegistryChange?: (event: RegistryChange) => void;
@@ -206,6 +216,9 @@ export class StreamingRepairer {
     this.#decisionLog = params.decisionLog;
     this.#glossIndex = params.glossIndex;
     this.#prompts = params.prompts ?? prompts;
+    this.#promptId = params.promptId ?? 'repair-judge';
+    this.#prompts.get(this.#promptId); // fail before the first document on an unknown variant
+    this.#strictIdentity = params.strictIdentity ?? false;
     this.#tokenCap = params.tokenCap ?? 8000;
     this.#onRegistryChange = params.onRegistryChange;
 
@@ -284,7 +297,27 @@ export class StreamingRepairer {
         if (refKey(pair.a) === refKey(pair.b)) coherenceByRef.set(refKey(pair.a), pair);
       }
 
-      const components = buildComponents(gathered);
+      const autoApplied = new Set<string>();
+      const actionable = this.#strictIdentity
+        ? gathered.filter((pair) => {
+            const key = suspectPairKey(pair.a, pair.b);
+            if (refKey(pair.a) === refKey(pair.b)) {
+              autoApplied.add(key); // coherence cannot improve the flat identity partition
+              return false;
+            }
+            if (this.#hasDeterministicIdentityEvidence(pair.a, pair.b)) return true;
+            this.#adjudicateDistinct(
+              pair.a,
+              pair.b,
+              docId,
+              SuspectGenerator.signature(this.#entityRegistry, pair.a, pair.b)
+            );
+            autoApplied.add(key);
+            return false;
+          })
+        : gathered;
+
+      const components = buildComponents(actionable);
       const evidence = await this.#gatherEvidence(components);
       const renderBlock = (component: SuspectComponent) => this.#renderComponent(component, 1, 1, evidence);
       const { due, spillover } = capComponents(components, renderBlock, this.#tokenCap);
@@ -300,7 +333,30 @@ export class StreamingRepairer {
       }
 
       let accepted: AcceptedOp[] = [];
-      if (due.length > 0) {
+      if (this.#strictIdentity) {
+        accepted = due.flatMap((component, componentIndex) =>
+          component.pairs.map((pair) => ({
+            component: componentIndex,
+            a: pair.a,
+            b: pair.b,
+            verdict: {
+              op: 'merge' as const,
+              from: pair.a.canonical,
+              into: pair.b.canonical,
+              pair: [],
+              finer: '',
+              coarser: '',
+              edgeKind: '',
+              alias: '',
+              outOf: '',
+              to: '',
+              entity: '',
+              confidence: 'high' as const,
+              evidence: 'Code-verified naming equivalence',
+            },
+          }))
+        );
+      } else if (due.length > 0) {
         const outcome = await this.#adjudicate(due, evidence, docId, coherenceByRef);
         accepted = outcome.accepted;
         if (outcome.unresolved.length > 0) {
@@ -317,6 +373,7 @@ export class StreamingRepairer {
       // ---- Phase B: mutate + save --------------------------------------------------------------
 
       const applied = await this.#apply(accepted, due, docId, coherenceByRef);
+      for (const key of autoApplied) applied.applied.add(key);
       spilled.push(...applied.rejected);
       if (applied.rejected.length > 0) {
         await this.#decisionLog.log({
@@ -527,7 +584,7 @@ export class StreamingRepairer {
   }
 
   async #send(components: string, docId: number, kind: 'repair-judge' | 'repair-judge-retry'): Promise<string> {
-    const instructions = this.#prompts.render('repair-judge', { components });
+    const instructions = this.#prompts.render(this.#promptId, { components });
     // One timestamp, two consumers (the console line and the decision log) — and no process-global
     // console-timer label to collide on when a document is re-processed. See `processDoc`.
     const started = Date.now();
@@ -859,7 +916,11 @@ export class StreamingRepairer {
           // Mint-over-merge asymmetry at repair time (design note): a merge the judge cannot ground
           // in quoted evidence is applied as `distinct` with the retained-suspect sentinel, so it
           // re-fires the moment either member gains new evidence.
-          if (verdict.confidence === 'low') {
+          const identityEvidence = this.#hasDeterministicIdentityEvidence(a, b!);
+          if (
+            verdict.confidence !== 'high' ||
+            (this.#strictIdentity && !identityEvidence)
+          ) {
             this.#adjudicateDistinct(a, b!, docId, '');
             await this.#logDistinct(a, b!, docId, verdict);
             applied.add(suspectPairKey(a, b!));
@@ -943,6 +1004,12 @@ export class StreamingRepairer {
         }
 
         case 'renamed': {
+          if (this.#strictIdentity) {
+            this.#adjudicateDistinct(a, b!, docId, '');
+            await this.#logDistinct(a, b!, docId, verdict);
+            applied.add(suspectPairKey(a, b!));
+            break;
+          }
           if (a.category !== b!.category) {
             await spill(op, 'cross-category-rename');
             break;
@@ -979,6 +1046,10 @@ export class StreamingRepairer {
         }
 
         case 'split': {
+          if (this.#strictIdentity) {
+            applied.add(suspectPairKey(a, a));
+            break;
+          }
           const result = this.#entityRegistry.split(a.category, a.canonical, [verdict.alias], {
             docId,
             evidence: verdict.evidence || null,
@@ -1005,6 +1076,10 @@ export class StreamingRepairer {
         }
 
         case 'move': {
+          if (this.#strictIdentity) {
+            applied.add(suspectPairKey(a, a));
+            break;
+          }
           if (!this.#entityRegistry.moveAlias(a, b!, verdict.alias, { docId, evidence: verdict.evidence || null })) {
             await spill(op, 'move-refused');
             break;
@@ -1081,6 +1156,35 @@ export class StreamingRepairer {
     ]);
     if (summary.survivors.length === 0) return undefined;
     return summary.survivors[0];
+  }
+
+  /** A model may propose a merge, but only deterministic naming evidence authorizes mutation. */
+  #hasDeterministicIdentityEvidence(a: EntityRef, b: EntityRef): boolean {
+    // Canonicals only. Phase-1 aliases are model decisions and may already be polluted; using them
+    // as authorization lets one bad link bootstrap a second destructive merge.
+    const left = [a.canonical];
+    const right = [b.canonical];
+
+    for (const x of left) {
+      for (const y of right) {
+        const xIds = extractIdentifiers(x);
+        const yIds = extractIdentifiers(y);
+        if (xIds.length > 0 && yIds.length > 0) {
+          const shared = xIds.some((one) =>
+            yIds.some((two) => one.label === two.label && one.key === two.key)
+          );
+          if (shared) return true;
+          continue;
+        }
+
+        if (foldName(x) === foldName(y)) return true;
+        if (a.category === 'Country' && countryKey(x) !== undefined && countryKey(x) === countryKey(y)) return true;
+        if (sharesAnalyzerKey(x, y, transliterateAnalyzer.keys.bind(transliterateAnalyzer))) return true;
+        if (sharesAnalyzerKey(x, y, confusableSkeletonAnalyzer.keys.bind(confusableSkeletonAnalyzer))) return true;
+        if (sharesAnalyzerKey(x, y, acronymAnalyzer.keys.bind(acronymAnalyzer))) return true;
+      }
+    }
+    return false;
   }
 
   #adjudicateDistinct(a: EntityRef, b: EntityRef, docId: number, signature: string): void {
@@ -1169,6 +1273,33 @@ const CONFIDENCE_SCORE: Record<string, number> = { high: 1, medium: 0.5, low: 0 
 function refKey(ref: EntityRef): string {
   return JSON.stringify([ref.category, ref.canonical]);
 }
+
+function foldName(value: string): string {
+  return value.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+function sharesAnalyzerKey(
+  a: string,
+  b: string,
+  keys: (value: string, ctx: { category: string }) => string[]
+): boolean {
+  const left = new Set(keys(a, { category: '' }));
+  return keys(b, { category: '' }).some((key) => left.has(key));
+}
+
+const COUNTRY_KEYS: Record<string, string> = {
+  india: 'india', індія: 'india',
+  russia: 'russia', росія: 'russia', 'russian federation': 'russia', 'російська федерація': 'russia',
+  usa: 'usa', сша: 'usa', 'united states': 'usa', 'united states of america': 'usa',
+  ukraine: 'ukraine', україна: 'ukraine',
+  poland: 'poland', польща: 'poland',
+  kyrgyzstan: 'kyrgyzstan', 'киргизька республіка': 'kyrgyzstan',
+};
+
+function countryKey(value: string): string | undefined {
+  return COUNTRY_KEYS[foldName(value)];
+}
+
 
 /**
  * The suspect an op settles: its unordered pair for merge/distinct/rung/renamed, its single entity

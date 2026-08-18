@@ -1,0 +1,19 @@
+{
+  "runId": "software-balancedv3-k4-norepair-8fd3decd354b",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:53:55.808Z",
+  "operator": "listwise-select",
+  "docId": 6276824,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.\n\nLink direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:\n{\"choices\":[{\"mention\":\"<mention>\",\"category\":\"<category>\",\"choice\":1}]}\n",
+  "text": "Source: \"\"Заборгованість Київстар\", \"Запит СБУ\": нова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8338)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 21.12.2023 зафіксовано масове розповсюдження електронних листів з тематикою \"Заборгованості за договором Київстар\" та вкладенням у вигляді архіву \"Заборгованість абонента.zip\".</p><p>Зазначений ZIP-архів містить розділений на 2 частини RAR-архів \"Заборгованість абонента.rar\", в якому знаходиться однойменний архів захищений паролем. В останньому знаходиться документ з макросом \"Заборгованість абонента.doc\".&nbsp;</p><p>У разі активації код макросу за допомогою оглядача фай\nMentions:\n1. \"SmartAssembly .NET\" (Software)\n     1. SmartAssembly [aliases: SmartAssembly]\n     2. .NET Framework [aliases: .NET Framework]\n     3. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]\n     4. SmartFTP [aliases: SmartFTP]\n     5. NEW ENTITY\n2. \"wsuscr.exe\" (Software)\n     1. wscript.exe [aliases: wscript.exe]\n     2. b.exe [aliases: b.exe, baseupd.exe]\n     3. rutserv.exe [aliases: rutserv.exe]\n     4. loader.exe [aliases: loader.exe, sgegkseg23mjl.exe]\n     5. NEW ENTITY",
+  "response": "```json\n{\"choices\": [\n  {\n    \"mention\": \"SmartAssembly .NET\",\n    \"category\": \"Software\",\n    \"choice\": \"NEW ENTITY\"\n  },\n  {\n    \"mention\": \"wsuscr.exe\",\n    \"category\": \"Software\",\n    \"choice\": \"NEW ENTITY\"\n  }\n]}\n```",
+  "usage": {
+    "inputTokens": 614,
+    "outputTokens": 597
+  },
+  "latencyMs": 11252,
+  "finishReason": "stop"
+}

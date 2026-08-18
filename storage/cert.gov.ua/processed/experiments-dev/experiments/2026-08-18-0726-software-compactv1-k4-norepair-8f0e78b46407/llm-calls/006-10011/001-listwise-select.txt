@@ -1,0 +1,63 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Mentions:
+1. "Remote Utilities" (Software)
+     1. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps]
+     2. Agent Tesla [aliases: Agent Tesla]
+     3. FTPGetter [aliases: FTPGetter]
+     4. Trillian [aliases: Trillian]
+     5. NEW ENTITY
+2. "Remote Utilities - Host" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+3. "Електронний запит.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. major.exe [aliases: major.exe]
+     5. NEW ENTITY
+4. "installer.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+5. "host_news_mod_mod.msi" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. .NET Framework [aliases: .NET Framework]
+     3. MS Word [aliases: MS Word]
+     4. Postbox Credential [aliases: Postbox Credential]
+     5. NEW ENTITY
+6. "rutserv.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+7. "rfusclient.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+8. "killself.bat" (Software)
+     1. Trillian [aliases: Trillian]
+     2. Mozilla Firefox [aliases: Mozilla Firefox]
+     3. FileZilla [aliases: FileZilla]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (30.1s, in 1029 / out 1556 tok, stop) ===
+{"choices":[1,2,3,4,5,6,7,8]}

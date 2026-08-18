@@ -1,0 +1,221 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "SPECTR" (Software); ladder: (none; use g0); candidates: spi.exe [g0] (aliases: spi.exe); AppLocker [g0] (aliases: AppLocker); HarvesterX [g0] (aliases: HarvesterX); SIEM [g0] (aliases: SIEM); Opera Browser [g0] (aliases: Opera Browser); FTPGetter [rung unknown] (aliases: FTPGetter); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Petya [g0] (aliases: Petya); OpenVPN [rung unknown] (aliases: OpenVPN); Meterpreter [g0] (aliases: Meterpreter)
+2. "FIRMACHAGENT" (Software); ladder: (none; use g0); candidates: Mozilla Firefox [g0] (aliases: Mozilla Firefox); Foxmail [g0] (aliases: Foxmail); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); TRYxaEbX [rung unknown] (aliases: TRYxaEbX); Remcos [g0] (aliases: Remcos, RemcosRAT); major.exe [g0] (aliases: major.exe, cmd.exe); Postbox Credential [g0] (aliases: Postbox Credential); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); IceDragon [g0] (aliases: IceDragon); GammaSteel.NET [g0] (aliases: GammaSteel.NET)
+3. "IDCLIPNET_x86.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [g0] (aliases: vaultcli.dll); shellcode.x86.bin [g0] (aliases: shellcode.x86.bin); shellcode.x86 (Cobalt Strike Beacon) [rung unknown] (aliases: shellcode.x86 (Cobalt Strike Beacon)); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); rfusclient.exe [g0] (aliases: rfusclient.exe); CCleaner.exe [g0] (aliases: CCleaner.exe); Double Kill [g0] (aliases: Double Kill); CCleaner.zip [g0] (aliases: CCleaner.zip); Internet Explorer [g0] (aliases: Internet Explorer)
+4. "chrome_updater.dll" (Software); ladder: (none; use g0); candidates: Google Chrome [g0] (aliases: Google Chrome); vaultcli.dll [g0] (aliases: vaultcli.dll); Chromium Browser [g0] (aliases: Chromium Browser); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); CCleaner.exe [g0] (aliases: CCleaner.exe); CCleaner.zip [g0] (aliases: CCleaner.zip); baseupd.exe [g0] (aliases: baseupd.exe); loader.exe [g0] (aliases: loader.exe, GammaLoad.PS1); ChromePlus Browser [g0] (aliases: ChromePlus Browser); 360Chrome Browser [g0] (aliases: 360Chrome Browser)
+5. "Browser.dll" (Software); ladder: (none; use g0); candidates: Brave Browser [g0] (aliases: Brave Browser); Chedot Browser [g0] (aliases: Chedot Browser); Chromium Browser [g0] (aliases: Chromium Browser); Opera Browser [g0] (aliases: Opera Browser); Iridium Browser [g0] (aliases: Iridium Browser); Torch Browser [g0] (aliases: Torch Browser); Sputnik Browser [g0] (aliases: Sputnik Browser); Orbitum Browser [g0] (aliases: Orbitum Browser); 7Star Browser [g0] (aliases: 7Star Browser); Amigo Browser [g0] (aliases: Amigo Browser)
+6. "Files.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [g0] (aliases: vaultcli.dll); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); FileZilla [rung unknown] (aliases: FileZilla); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); rfusclient.exe [g0] (aliases: rfusclient.exe); Double Kill [g0] (aliases: Double Kill); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); installer.exe [g0] (aliases: installer.exe); CCleaner.exe [g0] (aliases: CCleaner.exe); CCleaner.rar [g0] (aliases: CCleaner.rar)
+7. "Screen.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [g0] (aliases: vaultcli.dll); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); scandoc.exe [g0] (aliases: scandoc.exe); Postbox Credential [g0] (aliases: Postbox Credential); rfusclient.exe [g0] (aliases: rfusclient.exe); Double Kill [g0] (aliases: Double Kill); scan.exe (CredoMap_v2) [g0] (aliases: scan.exe (CredoMap_v2)); installer.exe [g0] (aliases: installer.exe); wsuscr.exe [g0] (aliases: wsuscr.exe)
+8. "Social.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [g0] (aliases: vaultcli.dll); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); spi.exe [g0] (aliases: spi.exe); Double Kill [g0] (aliases: Double Kill); loader.exe [g0] (aliases: loader.exe, GammaLoad.PS1); install.msi [g0] (aliases: install.msi); installer.exe [g0] (aliases: installer.exe); Postbox Credential [g0] (aliases: Postbox Credential); rfusclient.exe [g0] (aliases: rfusclient.exe)
+9. "USB.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [g0] (aliases: vaultcli.dll); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); wsuscr.exe [g0] (aliases: wsuscr.exe); Double Kill [g0] (aliases: Double Kill); b.exe [g0] (aliases: b.exe); rutserv.exe [g0] (aliases: rutserv.exe); FileZilla [rung unknown] (aliases: FileZilla); rfusclient.exe [g0] (aliases: rfusclient.exe); Adobe Flash Player [g0] (aliases: Adobe Flash Player)
+10. "JavaScript" (Software); ladder: (none; use g0); candidates: powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell); Brave Browser [g0] (aliases: Brave Browser); VBScript [g0] (aliases: VBScript); AutoIt [rung unknown] (aliases: AutoIt); WinSCP [g0] (aliases: WinSCP); CCleaner.zip [g0] (aliases: CCleaner.zip); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); QuasarRAT [g0] (aliases: QuasarRAT); SRP [g0] (aliases: SRP); GammaSteel.NET [g0] (aliases: GammaSteel.NET)
+11. "Software Restriction Policies (SRP)" (Software); ladder: (none; use g0); candidates: SRP [g0] (aliases: SRP); Remote Utilities [g0] (aliases: Remote Utilities); RemoteUtilities [g0] (aliases: RemoteUtilities); Remote Utilities - Host [g0] (aliases: Remote Utilities - Host); Cobalt Strike Beacon [rung unknown] (aliases: Cobalt Strike Beacon); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps, Microsoft Outlook); UkrScanner.exe (SFX) [g0] (aliases: UkrScanner.exe (SFX)); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); powershell.exe [g0] (aliases: powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe, PowerShell)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (56.6s, in 3307 / out 2878 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "SPECTR",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between SPECTR and any candidate entities."
+    },
+    {
+      "index": 2,
+      "mention": "FIRMACHAGENT",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "FIRMACHAGENT is mentioned in the source but does not directly alias any provided candidates."
+    },
+    {
+      "index": 3,
+      "mention": "IDCLIPNET_x86.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 4,
+      "mention": "chrome_updater.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 5,
+      "mention": "Browser.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate browsers."
+    },
+    {
+      "index": 6,
+      "mention": "Files.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 7,
+      "mention": "Screen.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 8,
+      "mention": "Social.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 9,
+      "mention": "USB.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No link can be established between this DLL and any candidate files."
+    },
+    {
+      "index": 10,
+      "mention": "JavaScript",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "powershell.exe",
+      "parentCandidate": null,
+      "edgeKind": "coarsens-to",
+      "gloss": "The source excerpt mentions JavaScript code which is related to the PowerShell script executed.",
+      "reasoning": "The context strongly links JavaScript execution to the use of PowerShell scripting."
+    },
+    {
+      "index": 11,
+      "mention": "Software Restriction Policies (SRP)",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "SRP",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention is an exact match for the candidate Software Restriction Policies (SRP)."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Кібератака UAC-0050 у відношенні державних органів України із застосуванням програми для віддаленого контролю та спостереження Remcos (CERT-UA#5926)" — evidence: <p><strong>Загальна інформація</strong></p><p><br></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано масове розповсюдження електронних листів, начебто, від АТ "Укртелеком", з темою "Судова претензія за Вашим особовим рахунком # 7192206443063763 от: 06.02.2023" та додатком у вигляді RAR-архіву "судовий лист, інформація щодо заборгування.rar".</p><p>Архів містить текстовий документ "Ваш персональний код доступу -254507.txt" та ще один RAR-архів "судовий лист, інформація щодо заборгування. pdf.rar", захищений паролем. В другому архіві знаходиться вико
+Mentions:
+1. "Remcos" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. Brave Browser [aliases: Brave Browser]
+     4. 360Chrome Browser [aliases: 360Chrome Browser]
+     5. 7Star Browser [aliases: 7Star Browser]
+     6. CentBrowser [aliases: CentBrowser]
+     7. NEW ENTITY
+2. "RemoteUtilities" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     3. FTPGetter [aliases: FTPGetter]
+     4. Meterpreter [aliases: Meterpreter]
+     5. Agent Tesla [aliases: Agent Tesla]
+     6. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]
+     7. NEW ENTITY
+
+=== RESPONSE (14.0s, in 667 / out 738 tok, stop) ===
+

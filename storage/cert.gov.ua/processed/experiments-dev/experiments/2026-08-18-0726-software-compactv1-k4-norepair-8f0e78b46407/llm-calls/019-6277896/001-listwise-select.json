@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k4-norepair-8f0e78b46407",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:33:41.245Z",
+  "operator": "listwise-select",
+  "docId": 6277896,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"АНОНС: Практичний семінар для кіберфахівців\" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз\nMentions:\n1. \"SRP\" (Software)\n     1. SmartFTP [aliases: SmartFTP]\n     2. WinSCP [aliases: WinSCP]\n     3. MISP [aliases: MISP]\n     4. WS_FTP [aliases: WS_FTP]\n     5. NEW ENTITY\n2. \"AppLocker\" (Software)\n     1. jDownloader [aliases: jDownloader]\n     2. FTPGetter [aliases: FTPGetter]\n     3. Opera Browser [aliases: Opera Browser]\n     4. Uran Browser [aliases: Uran Browser]\n     5. NEW ENTITY\n3. \"YARA\" (Software)\n     1. Yandex Browser [aliases: Yandex Browser]\n     2. QuasarRAT [aliases: QuasarRAT]\n     3. Thunderbird [aliases: Thunderbird, TRYxaEbX]\n     4. HarvesterX [aliases: HarvesterX]\n     5. NEW ENTITY\n4. \"Mikrotik\" (Software)\n     1. Microsoft Edge [aliases: Microsoft Edge]\n     2. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps, Remote Utilities]\n     3. Microsoft Outlook [aliases: Microsoft Outlook]\n     4. Microsoft Windows [aliases: Microsoft Windows]\n     5. NEW ENTITY\n5. \"pfSense\" (Software)\n     1. powershell.exe [aliases: powershell.exe, installer.exe, PowerShell (powershell.exe), PowerShell, install.msi]\n     2. rfusclient.exe [aliases: rfusclient.exe]\n     3. rutserv.exe [aliases: rutserv.exe]\n     4. Brave Browser [aliases: Brave Browser]\n     5. NEW ENTITY\n6. \"SIEM\" (Software)\n     1. MISP [aliases: MISP]\n     2. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx]\n     3. powershell.exe [aliases: powershell.exe, installer.exe, PowerShell (powershell.exe), PowerShell, install.msi]\n     4. HarvesterX [aliases: HarvesterX]\n     5. NEW ENTITY",
+  "response": "{}",
+  "usage": {
+    "inputTokens": 802,
+    "outputTokens": 1070
+  },
+  "latencyMs": 20221,
+  "finishReason": "stop"
+}

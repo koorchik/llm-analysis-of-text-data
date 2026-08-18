@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:44:16.339Z",
+  "operator": "listwise-select",
+  "docId": 6277063,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 09.01.2024 та 11.01.2024 зафіксовано масове розповсюдження електронних листів з тематикою \"Запитів\".</p><p>Так, 09.01.2024 відбулася розсилка листів з темами \"Запит судових документів\" та \"Запит\", з вкладенням у вигляді RAR-архіву \"Запит.rar\", в якому знаходиться одноіменний ZIP-архів. Останній містить у собі захищений багатотомний RAR-архів та TXT-файл з паролем від нього.</p><p>У першому випадку, в згаданому архіві містився виконуваний файл \"Запит документів.pdf.exe\", щ\nMentions:\n1. \"QuasarRAT\" (Software)\n     1. RemcosRAT [aliases: RemcosRAT]\n     2. killself.bat [aliases: killself.bat]\n     3. QIP Surf Browser [aliases: QIP Surf Browser]\n     4. ChakraCore [aliases: ChakraCore]\n     5. Thunderbird [aliases: Thunderbird]\n     6. Meterpreter [aliases: Meterpreter]\n     7. NEW ENTITY\n2. \"AutoIt\" (Software)\n     1. Remote Utilities [aliases: Remote Utilities]\n     2. RemoteUtilities [aliases: RemoteUtilities]\n     3. MS Office [aliases: MS Office]\n     4. SmartFTP [aliases: SmartFTP]\n     5. VBScript [aliases: VBScript]\n     6. AgentTesla [aliases: AgentTesla]\n     7. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 637,
+    "outputTokens": 341
+  },
+  "latencyMs": 6622,
+  "finishReason": "stop"
+}

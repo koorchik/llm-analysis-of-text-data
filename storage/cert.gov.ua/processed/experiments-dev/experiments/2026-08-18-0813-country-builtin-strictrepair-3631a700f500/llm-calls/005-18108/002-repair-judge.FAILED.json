@@ -1,0 +1,23 @@
+{
+  "runId": "country-builtin-strictrepair-3631a700f500",
+  "seq": 2,
+  "timestamp": "2026-08-18T05:16:04.496Z",
+  "operator": "repair-judge",
+  "docId": 18108,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Review every listed pair. Identity repair must be conservative.\n\nComponent 1 of 1 · signal: union-blocker 0.95\n  A. Russian Federation (Country)\n     aliases: [Російська Федерація, Russia]  · minted d4475\n     gloss: (none)\n     evidence: d10702 \"Russia\"\n     evidence: d10011 \"Російська Федерація\"\n     evidence: d4475 \"Russian Federation\"\n  B. Росія (Country)\n     aliases: []  · minted d2681\n     gloss: (none)\n     evidence: d18108 \"Росія\"\n     evidence: d2681 \"Росія\"\n  pairs to adjudicate: A–B (union-blocker 0.95)\n\nUse `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.\n\nFor each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.\n\nReturn only JSON:\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\"full name\",\"full name\"],\"confidence\":\"high\",\"evidence\":\"brief deciding evidence\"}]}]}\n\nFields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:\"coarsens-to\"|\"part-of\"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.\n",
+  "text": "Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.",
+  "response": "```json\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"merge\",\"pair\":[\"Russian Federation\",\"Росія\"],\"confidence\":\"high\",\"evidence\":\"d10702 \\\"Russia\\\", d10011 \\\"Російська Федерація\\\", d18108 \\\"Росія\\\", d2681 \\\"Росія\\\"}]}]}\n```",
+  "usage": {
+    "inputTokens": 494,
+    "outputTokens": 485
+  },
+  "latencyMs": 9185,
+  "finishReason": "stop",
+  "outcome": {
+    "ok": false,
+    "detail": "no repair op survived validation"
+  }
+}

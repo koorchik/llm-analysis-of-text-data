@@ -1,0 +1,85 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Mentions:
+1. "GammaLoad.PS1" (Software)
+     1. stage1.ps1 [aliases: stage1.ps1]
+     2. z.ps1 [aliases: z.ps1]
+     3. stage2.ps1 [aliases: stage2.ps1]
+     4. 360Chrome Browser [aliases: 360Chrome Browser, TRYxaEbX.ps1]
+     5. Chedot Browser [aliases: Chedot Browser, CredoMap_v2, TRYxaEbX_2.ps1]
+     6. Smokeloader [aliases: Smokeloader]
+     7. loader.exe [aliases: loader.exe, UkrScanner.rar, UkrScanner.exe (SFX)]
+     8. jDownloader [aliases: jDownloader]
+     9. NEW ENTITY
+2. "GammaSteel.PS1" (Software)
+     1. stage1.ps1 [aliases: stage1.ps1]
+     2. z.ps1 [aliases: z.ps1]
+     3. 360Chrome Browser [aliases: 360Chrome Browser, TRYxaEbX.ps1]
+     4. stage2.ps1 [aliases: stage2.ps1]
+     5. Chedot Browser [aliases: Chedot Browser, CredoMap_v2, TRYxaEbX_2.ps1]
+     6. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     7. powershell.exe [aliases: powershell.exe, shellcode.x86 (Cobalt Strike Beacon), shellcode.x64 (Cobalt Strike Beacon)]
+     8. SmartFTP [aliases: SmartFTP, MISP]
+     9. NEW ENTITY
+3. "GammaSteel.NET" (Software)
+     1. .NET Framework [aliases: .NET Framework]
+     2. Internet Explorer [aliases: Internet Explorer]
+     3. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     4. MS Excel [aliases: MS Excel, Microsoft Office 2016, CVE-2017-0199]
+     5. 360Chrome Browser [aliases: 360Chrome Browser, TRYxaEbX.ps1]
+     6. Adobe Flash Player [aliases: Adobe Flash Player]
+     7. Amigo Browser [aliases: Amigo Browser]
+     8. Meterpreter [aliases: Meterpreter]
+     9. NEW ENTITY
+4. "HarvesterX" (Software)
+     1. FTPGetter [aliases: FTPGetter]
+     2. Meterpreter [aliases: Meterpreter]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. ckZ89.ExE [aliases: ckZ89.ExE, ConfuserEx]
+     5. Thunderbird [aliases: Thunderbird, TRYxaEbX]
+     6. 7Star Browser [aliases: 7Star Browser]
+     7. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll]
+     8. Brave Browser [aliases: Brave Browser]
+     9. NEW ENTITY
+5. "PowerShell (powershell.exe)" (Software)
+     1. powershell.exe [aliases: powershell.exe, shellcode.x86 (Cobalt Strike Beacon), shellcode.x64 (Cobalt Strike Beacon)]
+     2. b.exe [aliases: b.exe]
+     3. cmd.exe [aliases: cmd.exe]
+     4. baseupd.exe [aliases: baseupd.exe, sgegkseg23mjl.exe]
+     5. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll]
+     6. spi.exe [aliases: spi.exe, write.exe]
+     7. rutserv.exe [aliases: rutserv.exe, rundll32.exe]
+     8. rfusclient.exe [aliases: rfusclient.exe]
+     9. NEW ENTITY
+6. "wscript.exe" (Software)
+     1. spi.exe [aliases: spi.exe, write.exe]
+     2. rfusclient.exe [aliases: rfusclient.exe]
+     3. b.exe [aliases: b.exe]
+     4. RegAsm.exe [aliases: RegAsm.exe, MCMDiction.exe]
+     5. cmd.exe [aliases: cmd.exe]
+     6. baseupd.exe [aliases: baseupd.exe, sgegkseg23mjl.exe]
+     7. rutserv.exe [aliases: rutserv.exe, rundll32.exe]
+     8. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll]
+     9. NEW ENTITY
+7. "mshta.exe" (Software)
+     1. spi.exe [aliases: spi.exe, write.exe]
+     2. b.exe [aliases: b.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe, MCMDiction.exe]
+     4. cmd.exe [aliases: cmd.exe]
+     5. baseupd.exe [aliases: baseupd.exe, sgegkseg23mjl.exe]
+     6. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll]
+     7. rutserv.exe [aliases: rutserv.exe, rundll32.exe]
+     8. rfusclient.exe [aliases: rfusclient.exe]
+     9. NEW ENTITY
+
+=== RESPONSE (15.1s, in 1667 / out 741 tok, stop) ===
+{"choices":[1]}

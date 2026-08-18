@@ -1,0 +1,127 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Нові спроби використання вразливості 2017 року Microsoft Office" — evidence: <p>Всі памʼятають масові атаки шифрувальників Petya та Misha у 2017 для поширення яких використовувалася вразливість для віддаленого виконання коду, а саме CVE-2017-0199.</p><p>При отриманні листів з посиланнями на ресурс для завантаження Microsoft Word документу або ж просто з прикріпленим документом (наприклад з розширенням .rtf, .docx) потрібно бути особливо пильними, оскільки документ з розширенням .rtf може містити вбудований ole-обʼєкт, а документ з розширенням .docx - посилання на інший файл. Зазначимо, що ole-обʼєкт може завантажити і виконати сторонню Microsoft Windows програму, в том
+Mentions:
+1. "Petya" (Software)
+     1. MS PowerPoint [aliases: MS PowerPoint]
+     2. MS Excel [aliases: MS Excel]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. CVE-2017-11882 [aliases: CVE-2017-11882]
+     5. MS Office [aliases: MS Office]
+     6. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     7. NEW ENTITY
+2. "Misha" (Software)
+     1. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     2. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     3. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     4. MS Word [aliases: MS Word]
+     5. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+3. "CVE-2017-0199" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     5. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     6. MS Office [aliases: MS Office]
+     7. NEW ENTITY
+4. "Microsoft Word" (Software)
+     1. MS Word [aliases: MS Word]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     4. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     5. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     6. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     7. NEW ENTITY
+5. "Microsoft Office" (Software)
+     1. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     2. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. MS Office [aliases: MS Office]
+     5. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     6. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     7. NEW ENTITY
+6. "Microsoft Windows" (Software)
+     1. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     2. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     5. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     6. MS Office [aliases: MS Office]
+     7. NEW ENTITY
+7. "Office 2007" (Software)
+     1. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     5. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+8. "Office 2013" (Software)
+     1. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     4. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     5. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+9. "Office 2010" (Software)
+     1. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     5. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+10. "Office 2016" (Software)
+     1. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     5. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+11. "Windows 7" (Software)
+     1. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     4. MS Excel [aliases: MS Excel]
+     5. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     6. MS Word [aliases: MS Word]
+     7. NEW ENTITY
+12. "Windows Vista" (Software)
+     1. MS PowerPoint [aliases: MS PowerPoint]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. MS Excel [aliases: MS Excel]
+     4. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     5. MS Office [aliases: MS Office]
+     6. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     7. NEW ENTITY
+13. "Windows Server 2008" (Software)
+     1. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     2. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+14. "Windows Server 2012" (Software)
+     1. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     2. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     3. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     4. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     5. MS Excel [aliases: MS Excel]
+     6. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     7. NEW ENTITY
+
+=== RESPONSE (19.5s, in 2287 / out 997 tok, stop) ===
+

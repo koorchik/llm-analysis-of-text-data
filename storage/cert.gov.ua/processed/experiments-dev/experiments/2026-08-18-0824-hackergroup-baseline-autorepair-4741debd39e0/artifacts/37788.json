@@ -1,0 +1,26 @@
+{
+  "entities": [
+    {
+      "name": "UAC-0028",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "UAC-0028"
+    },
+    {
+      "name": "APT28",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28",
+      "matchedVia": "APT28"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "16.03.2022",
+    "id": 37788,
+    "title": "Фішингова кампанія з використанням тематики сервісу UKR.NET та QR-кодів (CERT-UA#4193)",
+    "llmProcessingTimeSeconds": 61.285
+  }
+}

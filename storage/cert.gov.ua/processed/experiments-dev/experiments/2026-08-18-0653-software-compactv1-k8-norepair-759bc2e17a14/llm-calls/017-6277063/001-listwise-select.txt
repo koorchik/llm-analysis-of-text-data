@@ -1,0 +1,35 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 09.01.2024 та 11.01.2024 зафіксовано масове розповсюдження електронних листів з тематикою "Запитів".</p><p>Так, 09.01.2024 відбулася розсилка листів з темами "Запит судових документів" та "Запит", з вкладенням у вигляді RAR-архіву "Запит.rar", в якому знаходиться одноіменний ZIP-архів. Останній містить у собі захищений багатотомний RAR-архів та TXT-файл з паролем від нього.</p><p>У першому випадку, в згаданому архіві містився виконуваний файл "Запит документів.pdf.exe", щ
+Mentions:
+1. "QuasarRAT" (Software)
+     1. Remcos [aliases: Remcos, RemcosRAT]
+     2. killself.bat [aliases: killself.bat, shellcode.x86.bin]
+     3. QIP Surf Browser [aliases: QIP Surf Browser]
+     4. CocCoc Browser [aliases: CocCoc Browser, Cobalt Strike Beacon, ConfuserEx]
+     5. ChakraCore [aliases: ChakraCore]
+     6. Thunderbird [aliases: Thunderbird]
+     7. HarvesterX [aliases: HarvesterX, SmartAssembly, SmartAssembly .NET]
+     8. FTPGetter [aliases: FTPGetter, Meterpreter]
+     9. NEW ENTITY
+2. "AutoIt" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. RemoteUtilities [aliases: RemoteUtilities]
+     3. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office]
+     4. SmartFTP [aliases: SmartFTP]
+     5. VBScript [aliases: VBScript]
+     6. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     7. HarvesterX [aliases: HarvesterX, SmartAssembly, SmartAssembly .NET]
+     8. vaultcli.dll [aliases: vaultcli.dll]
+     9. NEW ENTITY
+
+=== RESPONSE (20.2s, in 689 / out 1028 tok, stop) ===
+{"choices":[1,2,2]}

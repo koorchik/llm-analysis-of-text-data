@@ -1,0 +1,104 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 09.01.2024 та 11.01.2024 зафіксовано масове розповсюдження електронних листів з тематикою "Запитів".</p><p>Так, 09.01.2024 відбулася розсилка листів з темами "Запит судових документів" та "Запит", з вкладенням у вигляді RAR-архіву "Запит.rar", в якому знаходиться одноіменний ZIP-архів. Останній містить у собі захищений багатотомний RAR-архів та TXT-файл з паролем від нього.</p><p>У першому випадку, в згаданому архіві містився виконуваний файл "Запит документів.pdf.exe", щ
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "QuasarRAT" (Software); ladder: (none; use g0); candidates: Remcos [g0] (aliases: Remcos, RemcosRAT); killself.bat [g0] (aliases: killself.bat); QIP Surf Browser [g0] (aliases: QIP Surf Browser); Thunderbird [g0] (aliases: Thunderbird); Meterpreter [g0] (aliases: Meterpreter); Adobe Flash Player [g0] (aliases: Adobe Flash Player); UkrScanner.rar [g0] (aliases: UkrScanner.rar); VBScript [g0] (aliases: VBScript); rutserv.exe [g0] (aliases: rutserv.exe); Misha [g0] (aliases: Misha)
+2. "AutoIt" (Software); ladder: (none; use g0); candidates: Remote Utilities [g0] (aliases: Remote Utilities); RemoteUtilities [g0] (aliases: RemoteUtilities); Paltalk [rung unknown] (aliases: Paltalk); MS Office [rung unknown] (aliases: MS Office); SmartFTP [rung unknown] (aliases: SmartFTP); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Agent Tesla [g0] (aliases: Agent Tesla, AgentTesla); HarvesterX [g0] (aliases: HarvesterX); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); vaultcli.dll [g0] (aliases: vaultcli.dll)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (19.7s, in 1483 / out 1029 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "QuasarRAT",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "QuasarRAT is mentioned in the source but does not match any provided candidate records."
+    },
+    {
+      "index": 2,
+      "mention": "RemoteUtilities",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "RemoteUtilities",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "RemoteUtilities directly matches the candidate RemoteUtilities."
+    }
+  ]
+}

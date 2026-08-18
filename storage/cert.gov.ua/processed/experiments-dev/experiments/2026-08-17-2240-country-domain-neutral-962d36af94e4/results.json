@@ -1,0 +1,129 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 23,
+    "members": 31,
+    "byStratum": {
+      "b": 1,
+      "c": 5,
+      "a": 17
+    },
+    "bySplit": {
+      "test": 23
+    },
+    "clustersWithEvidence": 0,
+    "edges": 0,
+    "nilLabels": 134
+  },
+  "results": [
+    {
+      "condition": "country-domain-neutral",
+      "runIds": [
+        "country-domain-neutral-962d36af94e4"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "b": {
+          "stratum": "b",
+          "pairs": 1,
+          "truePositives": 1,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "c": {
+          "stratum": "c",
+          "pairs": 66,
+          "truePositives": 8,
+          "falsePositives": 0,
+          "falseNegatives": 2,
+          "trueNegatives": 56,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.8,
+          "f1": 0.888888888888889
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 136,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 21,
+          "skipped": 115,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 203,
+          "truePositives": 9,
+          "falsePositives": 0,
+          "falseNegatives": 2,
+          "trueNegatives": 77,
+          "skipped": 115,
+          "precision": 1,
+          "recall": 0.8181818181818182,
+          "f1": 0.9
+        }
+      },
+      "nil": {
+        "truePositives": 10,
+        "falsePositives": 7,
+        "falseNegatives": 0,
+        "trueNegatives": 4,
+        "deferred": 0,
+        "deferredOnNil": 0,
+        "observations": 21,
+        "deferralRate": 0,
+        "precision": 0.5882352941176471,
+        "recall": 1,
+        "f1": 0.7407407407407407
+      },
+      "cluster": {
+        "universeSize": 21,
+        "predictedClusters": 15,
+        "goldClusters": 13,
+        "macro": {
+          "precision": 1,
+          "recall": 0.8461538461538461,
+          "f1": 0.9166666666666666
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 0.9047619047619048,
+          "f1": 0.9500000000000001
+        },
+        "pairwise": {
+          "precision": 1,
+          "recall": 0.8181818181818182,
+          "f1": 0.9
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 0.9047619047619048,
+          "f1": 0.9500000000000001
+        },
+        "ari": 0.8950524737631185
+      },
+      "cost": {
+        "calls": 21,
+        "inputTokens": 23437,
+        "outputTokens": 17821,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 343808
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Масштабна фішингова атака на державні установи України 19.01.2021"
+Source Excerpt:
+"""
+<p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Remote Utilities" (Software); ladder: (none; use g0); candidates: FTPGetter [rung unknown] (aliases: FTPGetter); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Trillian [rung unknown] (aliases: Trillian); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps, Microsoft Outlook); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Agent Tesla [g0] (aliases: Agent Tesla); Amigo Browser [g0] (aliases: Amigo Browser); Brave Browser [g0] (aliases: Brave Browser)
+2. "Remote Utilities - Host" (Software); ladder: (none; use g0); candidates: Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps, Microsoft Outlook); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Agent Tesla [g0] (aliases: Agent Tesla); .NET Framework [g0] (aliases: .NET Framework); Mozilla Firefox [g0] (aliases: Mozilla Firefox); Google Chrome [g0] (aliases: Google Chrome); FTPGetter [rung unknown] (aliases: FTPGetter); Iridium Browser [g0] (aliases: Iridium Browser); ChromePlus Browser [g0] (aliases: ChromePlus Browser)
+3. "Електронний запит.exe" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); spi.exe [g0] (aliases: spi.exe); powershell.exe [g0] (aliases: powershell.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); 360Chrome Browser [g0] (aliases: 360Chrome Browser); 7Star Browser [g0] (aliases: 7Star Browser); FTP Commander [rung unknown] (aliases: FTP Commander)
+4. "installer.exe" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Internet Explorer [g0] (aliases: Internet Explorer); 7Star Browser [g0] (aliases: 7Star Browser); Paltalk [rung unknown] (aliases: Paltalk); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); FTPGetter [rung unknown] (aliases: FTPGetter)
+5. "host_news_mod_mod.msi" (Software); ladder: (none; use g0); candidates: Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Postbox Credential [g0] (aliases: Postbox Credential); powershell.exe [g0] (aliases: powershell.exe); Google Chrome [g0] (aliases: Google Chrome); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); .NET Framework [g0] (aliases: .NET Framework); 7Star Browser [g0] (aliases: 7Star Browser); Smokeloader [g0] (aliases: Smokeloader)
+6. "rutserv.exe" (Software); ladder: (none; use g0); candidates: RegAsm.exe [g0] (aliases: RegAsm.exe); major.exe [g0] (aliases: major.exe, cmd.exe); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps, Microsoft Outlook)
+7. "rfusclient.exe" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); vaultcli.dll [g0] (aliases: vaultcli.dll); FTPGetter [rung unknown] (aliases: FTPGetter); FileZilla [rung unknown] (aliases: FileZilla); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+8. "killself.bat" (Software); ladder: (none; use g0); candidates: Trillian [rung unknown] (aliases: Trillian); FileZilla [rung unknown] (aliases: FileZilla); Mozilla Firefox [g0] (aliases: Mozilla Firefox); powershell.exe [g0] (aliases: powershell.exe); vaultcli.dll [g0] (aliases: vaultcli.dll); WinSCP [g0] (aliases: WinSCP); RegAsm.exe [g0] (aliases: RegAsm.exe); IceDragon [g0] (aliases: IceDragon); MS Office [rung unknown] (aliases: MS Office); Paltalk [rung unknown] (aliases: Paltalk)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (36.7s, in 2821 / out 1864 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Remote Utilities",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'Remote Utilities' among the candidates."
+    },
+    {
+      "index": 2,
+      "mention": "Remote Utilities - Host",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'Remote Utilities - Host' among the candidates."
+    },
+    {
+      "index": 3,
+      "mention": "Електронний запит.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'Електронний запит.exe' among the candidates."
+    },
+    {
+      "index": 4,
+      "mention": "installer.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'installer.exe' among the candidates."
+    },
+    {
+      "index": 5,
+      "mention": "host_news_mod_mod.msi",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'host_news_mod_mod.msi' among the candidates."
+    },
+    {
+      "index": 6,
+      "mention": "rutserv.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'rutserv.exe' among the candidates."
+    },
+    {
+      "index": 7,
+      "mention": "rfusclient.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'rfusclient.exe' among the candidates."
+    },
+    {
+      "index": 8,
+      "mention": "killself.bat",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No source evidence establishes a link for 'killself.bat' among the candidates."
+    }
+  ]
+}

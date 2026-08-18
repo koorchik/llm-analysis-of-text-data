@@ -1,0 +1,98 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 3 · signal: union-blocker 0.92
+  A. CVE-2018-8120 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8120"
+  B. CVE-2018-8124 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8124"
+  C. CVE-2018-8127 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8127"
+  D. CVE-2018-8129 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8129"
+  E. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8170"
+  F. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8174"
+  pairs to adjudicate: A–B (union-blocker 0.92); A–C (union-blocker 0.92); A–D (union-blocker 0.92); A–E (union-blocker 0.92); B–F (union-blocker 0.92)
+
+Component 2 of 3 · signal: union-blocker 0.92
+  A. CVE-2018-8132 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8132"
+  B. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8134"
+  C. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: (none)
+     evidence: d2724 "CVE-2018-8136"
+  pairs to adjudicate: A–B (union-blocker 0.92); A–C (union-blocker 0.92)
+
+Component 3 of 3 · signal: coherence
+  A. MS Excel (Software)
+     aliases: [PGMB New Order 18-2077.xlsx]  · minted d20
+     gloss: (none)
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+     evidence: d20 "MS Excel"
+  coherence check: A — does every listed alias belong to this entity?
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (24.6s, in 1112 / out 1283 tok, stop) ===
+```json
+{"reviews":[
+  {"component":1,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8120","CVE-2018-8124"],"confidence":"high","evidence":"CVE-2018-8120 and CVE-2018-8124 are distinct software vulnerabilities."}
+  ]},
+  {"component":1,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8120","CVE-2018-8127"],"confidence":"high","evidence":"CVE-2018-8120 and CVE-2018-8127 are distinct software vulnerabilities."}
+  ]},
+  {"component":1,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8120","CVE-2018-8129"],"confidence":"high","evidence":"CVE-2018-8120 and CVE-2018-8129 are distinct software vulnerabilities."}
+  ]},
+  {"component":1,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8120","CVE-2018-8170"],"confidence":"high","evidence":"CVE-2018-8120 and CVE-2018-8170 are distinct software vulnerabilities."}
+  ]},
+  {"component":1,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8124","CVE-2018-8174"],"confidence":"high","evidence":"CVE-2018-8124 and CVE-2018-8174 are distinct software vulnerabilities."}
+  ]},
+  {"component":2,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8132","CVE-2018-8134"],"confidence":"high","evidence":"CVE-2018-8132 and CVE-2018-8134 are distinct software vulnerabilities."}
+  ]},
+  {"component":2,"ops":[
+    {"op":"distinct","pair":["CVE-2018-8132","CVE-2018-8136"],"confidence":"high","evidence":"CVE-2018-8132 and CVE-2018-8136 are distinct software vulnerabilities."}
+  ]},
+  {"component":3,"ops":[
+    {"op":"keep","entity":"MS Excel"}
+  ]}
+]}
+```
+
+=== OUTCOME (ok) ===
+8 op(s) accepted

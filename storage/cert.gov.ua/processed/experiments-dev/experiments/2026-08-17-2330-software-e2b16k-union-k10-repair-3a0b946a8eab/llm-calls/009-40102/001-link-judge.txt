@@ -1,0 +1,156 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p><span style="color: rgb(36, 36, 36);">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Кібератака", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву "UkrScanner.rar".</span></p><p><span style="color: rgb(36, 36, 36);">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "CredoMap_v2" (Software); ladder: (none; use g0); candidates: Chedot Browser [rung unknown] (aliases: Chedot Browser); Pocomail [rung unknown] (aliases: Pocomail); CVE-2018-8120 [g0] (aliases: CVE-2018-8120); CVE-2018-8124 [g0] (aliases: CVE-2018-8124); FTP Commander [rung unknown] (aliases: FTP Commander); CVE-2018-8127 [g0] (aliases: CVE-2018-8127); CVE-2018-8129 [g0] (aliases: CVE-2018-8129); CVE-2017-11882 [g0] (aliases: CVE-2017-11882, CVE-2017-0199); CVE-2018-8132 [g0] (aliases: CVE-2018-8132); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista)
+2. "UkrScanner.rar" (Software); ladder: (none; use g0); candidates: installer.exe [g0] (aliases: installer.exe); loader.exe [g0] (aliases: loader.exe); Uran Browser [rung unknown] (aliases: Uran Browser); 7Star Browser [rung unknown] (aliases: 7Star Browser); RegAsm.exe [rung unknown] (aliases: RegAsm.exe); rfusclient.exe [g0] (aliases: rfusclient.exe); Torch Browser [rung unknown] (aliases: Torch Browser); major.exe [g0] (aliases: major.exe, cmd.exe, powershell.exe); rutserv.exe [g0] (aliases: rutserv.exe); Windows Server 2008 [g0] (aliases: Windows Server 2008, Microsoft Exchange Server)
+3. "UkrScanner.exe (SFX)" (Software); ladder: (none; use g0); candidates: installer.exe [g0] (aliases: installer.exe); loader.exe [g0] (aliases: loader.exe); RegAsm.exe [rung unknown] (aliases: RegAsm.exe); major.exe [g0] (aliases: major.exe, cmd.exe, powershell.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); spi.exe [g0] (aliases: spi.exe); rfusclient.exe [g0] (aliases: rfusclient.exe); rutserv.exe [g0] (aliases: rutserv.exe); Електронний запит.exe [g0] (aliases: Електронний запит.exe); b.exe [g0] (aliases: b.exe)
+4. "scan.exe (CredoMap_v2)" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe, powershell.exe); RegAsm.exe [rung unknown] (aliases: RegAsm.exe); b.exe [g0] (aliases: b.exe); installer.exe [g0] (aliases: installer.exe); loader.exe [g0] (aliases: loader.exe); rfusclient.exe [g0] (aliases: rfusclient.exe); spi.exe [g0] (aliases: spi.exe); rutserv.exe [g0] (aliases: rutserv.exe); Електронний запит.exe [g0] (aliases: Електронний запит.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE)
+5. "SQLite.Interop.dll" (Software); ladder: (none; use g0); candidates: vaultcli.dll [rung unknown] (aliases: vaultcli.dll); Meterpreter [g0] (aliases: Meterpreter); FTPGetter [rung unknown] (aliases: FTPGetter); Agent Tesla [g0] (aliases: Agent Tesla); Thunderbird [rung unknown] (aliases: Thunderbird); installer.exe [g0] (aliases: installer.exe); loader.exe [g0] (aliases: loader.exe); spi.exe [g0] (aliases: spi.exe); FileZilla [rung unknown] (aliases: FileZilla); rfusclient.exe [g0] (aliases: rfusclient.exe)
+6. "MISP" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Outlook [rung unknown] (aliases: Microsoft Outlook); Misha [g0] (aliases: Misha); WinSCP [rung unknown] (aliases: WinSCP); MS Office [rung unknown] (aliases: MS Office, Microsoft Office, VBScript); SmartFTP [rung unknown] (aliases: SmartFTP); Microsoft Windows [g0] (aliases: Microsoft Windows, Microsoft Edge, Win32k); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Amigo Browser [rung unknown] (aliases: Amigo Browser); Meterpreter [g0] (aliases: Meterpreter)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (29.8s, in 2353 / out 1533 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "CredoMap_v2",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "A malicious program mentioned in the context of an APT28 cyberattack.",
+      "reasoning": "The mention refers to a specific malicious program, but no corresponding entity is found in the candidate list."
+    },
+    {
+      "index": 2,
+      "mention": "UkrScanner.rar",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "An archive file containing the malicious program.",
+      "reasoning": "The mention refers to a file mentioned in the source, but no corresponding entity is found in the candidate list."
+    },
+    {
+      "index": 3,
+      "mention": "UkrScanner.exe (SFX)",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "An SFX file identical to CredoMap_v2.",
+      "reasoning": "The mention refers to an SFX file, but no corresponding entity is found in the candidate list."
+    },
+    {
+      "index": 4,
+      "mention": "scan.exe (CredoMap_v2)",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "An executable related to CredoMap_v2.",
+      "reasoning": "The mention refers to an executable, but no corresponding entity is found in the candidate list."
+    },
+    {
+      "index": 5,
+      "mention": "SQLite.Interop.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The entity is mentioned but has no relation to any provided candidates."
+    },
+    {
+      "index": 6,
+      "mention": "MISP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The entity is mentioned but has no relation to any provided candidates."
+    }
+  ]
+}

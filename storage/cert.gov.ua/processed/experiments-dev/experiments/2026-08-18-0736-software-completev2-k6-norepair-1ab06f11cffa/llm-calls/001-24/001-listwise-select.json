@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:37:35.779Z",
+  "operator": "listwise-select",
+  "docId": 24,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"УВАГА! Спостерігається масова розсилка фішингових листів, які використовують вразливість CVE-2017-11882\" — evidence: <p>Дана вразливість надає можливість виконання віддаленого коду, коли програмне забезпечення MS Equation не обробляє належним чином об'єкти в пам'яті. Зловмисник може виконувати довільний код з правами поточного користувача. Якщо користувач виконав вхід у систему з правами адміністратора, зловмисник може взяти під контроль систему та вчиняти наступні дії:</p><ul><li>встановлювати програми;</li><li>переглядати, змінювати або видаляти дані;</li><li>створювати нові облікові записи з правами адміністратора.</li></ul><p>Після експлуатації вразливості CVE-2017-11882 на цільову систему завантажується\nMentions:\n1. \"CVE-2017-11882\" (Software)\n     1. MS Excel [aliases: MS Excel]\n     2. MS Office [aliases: MS Office]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n2. \"major.exe\" (Software)\n     1. MS Office [aliases: MS Office]\n     2. MS Excel [aliases: MS Excel]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n3. \"PGMB New Order 18-2077.xlsx\" (Software)\n     1. MS Word [aliases: MS Word]\n     2. MS Excel [aliases: MS Excel]\n     3. MS Office [aliases: MS Office]\n     4. MS PowerPoint [aliases: MS PowerPoint]\n     5. NEW ENTITY\n4. \"Microsoft Equation Editor\" (Software)\n     1. MS Excel [aliases: MS Excel]\n     2. MS PowerPoint [aliases: MS PowerPoint]\n     3. MS Office [aliases: MS Office]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n5. \"Microsoft Office 2016\" (Software)\n     1. MS Office [aliases: MS Office]\n     2. MS Excel [aliases: MS Excel]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n6. \"Microsoft Office 2013\" (Software)\n     1. MS Office [aliases: MS Office]\n     2. MS Excel [aliases: MS Excel]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n7. \"Microsoft Office 2010\" (Software)\n     1. MS Office [aliases: MS Office]\n     2. MS Excel [aliases: MS Excel]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY\n8. \"Microsoft Office 2007\" (Software)\n     1. MS Office [aliases: MS Office]\n     2. MS Excel [aliases: MS Excel]\n     3. MS PowerPoint [aliases: MS PowerPoint]\n     4. MS Word [aliases: MS Word]\n     5. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 973,
+    "outputTokens": 761
+  },
+  "latencyMs": 14776,
+  "finishReason": "stop"
+}

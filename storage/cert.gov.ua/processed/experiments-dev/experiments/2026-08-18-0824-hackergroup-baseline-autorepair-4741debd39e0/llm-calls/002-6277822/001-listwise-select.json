@@ -1,0 +1,19 @@
+{
+  "runId": "hackergroup-baseline-autorepair-4741debd39e0",
+  "seq": 1,
+  "timestamp": "2026-08-18T05:26:11.905Z",
+  "operator": "listwise-select",
+  "docId": 6277822,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "You are an entity-resolution judge for an incremental entity registry.\n\nFor each mention below you are given a numbered list of options. Exactly one option is always \"NEW ENTITY\" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.\n\nOnly choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose \"NEW ENTITY\" because duplicates are repairable later and wrong merges are not.\n\nSource context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.\n\nDo not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.\n\nOutput a single raw JSON object, no markdown fences, no commentary:\n{ \"choices\": [ { \"mention\": \"<mention>\", \"category\": \"<category>\", \"choice\": <option number> } ] }\n",
+  "text": "Source: \"Щодо обстановки в сфері кібер на 23-24 лютого 2024 року\" — evidence: <p>Ураховуючи численні запити щодо можливості здійснення кібератак 23-24 лютого 2024 року, з огляду на події 23.02.2022 та 23.02.2023, інформуємо про таке.</p><p>У період січень-лютий 2024 року Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA, серед іншого, вжито заходів з недопущення реалізації зловмисного задуму, який полягав у проведенні деструктивного впливу, у відношенні трьох українських організацій урядового та енергетичного сектору.</p><p>Протягом згаданого періоду, за фактами деструктивних кібератак, проведено комп'ютерно-технічні дослідження в інформаційн\nMentions:\n1. \"UAC-0028 (APT28)\" (HackerGroup)\n     1. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     2. UAC-0028 [aliases: UAC-0028]\n     3. NEW ENTITY\n2. \"UAC-0003 (Turla)\" (HackerGroup)\n     1. UAC-0028 [aliases: UAC-0028]\n     2. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     3. NEW ENTITY\n3. \"UAC-0050\" (HackerGroup)\n     1. UAC-0028 [aliases: UAC-0028]\n     2. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     3. NEW ENTITY\n4. \"DaVinci Group\" (HackerGroup)\n     1. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     2. UAC-0028 [aliases: UAC-0028]\n     3. NEW ENTITY\n5. \"UAC-0010\" (HackerGroup)\n     1. UAC-0028 [aliases: UAC-0028]\n     2. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     3. NEW ENTITY\n6. \"Sandworm\" (HackerGroup)\n     1. APT28 [aliases: APT28, APT28 (UAC-0028)]\n     2. UAC-0028 [aliases: UAC-0028]\n     3. NEW ENTITY",
+  "response": "{ \"choices\": [ { \"mention\": \"UAC-0028 (APT28)\", \"category\": \"APT28\", \"choice\": 2 }, { \"mention\": \"UAC-0003 (Turla)\", \"category\": \"NEW ENTITY\", \"choice\": 3 }, { \"mention\": \"UAC-0050\", \"category\": \"NEW ENTITY\", \"choice\": 3 }, { \"mention\": \"DaVinci Group\", \"category\": \"NEW ENTITY\", \"choice\": 3 }, { \"mention\": \"UAC-0010\", \"category\": \"NEW ENTITY\", \"choice\": 3 }, { \"mention\": \"Sandworm\", \"category\": \"NEW ENTITY\", \"choice\": 3 } ] }",
+  "usage": {
+    "inputTokens": 924,
+    "outputTokens": 1541
+  },
+  "latencyMs": 29003,
+  "finishReason": "stop"
+}

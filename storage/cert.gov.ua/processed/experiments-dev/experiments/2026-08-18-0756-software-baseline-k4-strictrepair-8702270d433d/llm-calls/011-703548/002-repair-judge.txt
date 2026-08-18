@@ -1,0 +1,56 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 3 · signal: coherence
+  A. MS Excel (Software)
+     aliases: [PGMB New Order 18-2077.xlsx, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: (none)
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+     evidence: d20 "MS Excel"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 2 of 3 · signal: union-blocker 0.92
+  A. shellcode.x64 (Cobalt Strike Beacon) (Software)
+     aliases: [shellcode.x64.bin]  · minted d619229
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+  B. shellcode.x86 (Cobalt Strike Beacon) (Software)
+     aliases: [shellcode.x86.bin]  · minted d619229
+     gloss: (none)
+     evidence: d703548 "shellcode.x86.bin"
+     evidence: d619229 "shellcode.x86 (Cobalt Strike Beacon)"
+  pairs to adjudicate: A–B (union-blocker 0.92)
+
+Component 3 of 3 · signal: union-blocker 0.92
+  A. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  B. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  pairs to adjudicate: A–B (union-blocker 0.92)
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (13.3s, in 852 / out 691 tok, stop) ===
+```json
+{"reviews":[{"component":1,"ops":[{"op":"keep","entity":"MS Excel","confidence":"high","evidence":"d703548 \"Гуманітарна катастрофа України з 24 лютого 2022 року.xls\""}]},{"component":2,"ops":[{"op":"distinct","pair":["shellcode.x64 (Cobalt Strike Beacon)","shellcode.x86 (Cobalt Strike Beacon)","confidence":"high","evidence":"d703548 \"shellcode.x64.bin\", d703548 \"shellcode.x86.bin\""}]},{"component":3,"ops":[{"op":"distinct","pair":["stage1.ps1","stage2.ps1","confidence":"high","evidence":"d703548 \"stage1.ps1\", d703548 \"stage2.ps1\"}]}]}
+```
+
+=== OUTCOME (ok) ===
+3 op(s) accepted

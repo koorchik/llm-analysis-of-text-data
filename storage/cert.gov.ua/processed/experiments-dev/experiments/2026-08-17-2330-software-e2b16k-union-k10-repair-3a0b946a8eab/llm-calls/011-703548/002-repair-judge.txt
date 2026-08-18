@@ -1,0 +1,498 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 2 · signal: defer(link-judge, d2724) + union-blocker 0.95 + coherence
+  A. 360Chrome Browser (Software)
+     aliases: [Brave Browser]  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Brave Browser"
+     evidence: d3028 "360Chrome Browser"
+  B. 7Star Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "7Star Browser"
+  C. Adobe Flash Player (Software)
+     aliases: []  · minted d2724
+     gloss: "Software application, no explicit link found in candidates."
+     evidence: d2724 "Adobe Flash Player"
+  D. Agent Tesla (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Agent Tesla"
+  E. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  F. CVE-2018-0854 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-0854"
+  G. CVE-2018-0958 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-0958"
+  H. CVE-2018-8120 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8120"
+  I. CVE-2018-8124 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8124"
+  J. CVE-2018-8127 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8127"
+  K. CVE-2018-8129 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+  L. CVE-2018-8132 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8132"
+  M. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  N. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  O. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  P. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  Q. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  R. Chedot Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Chedot Browser"
+  S. Citrio Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Citrio Browser"
+  T. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+     evidence: d3028 "Internet Explorer"
+  U. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon]  · minted d39934
+     gloss: (none)
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "Cobalt Strike Beacon"
+     evidence: d39934 "Meterpreter"
+  V. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  W. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  X. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework]  · minted d24
+     gloss: (none)
+     evidence: d2724 ".NET Framework"
+     evidence: d2660 "Office 2013"
+     evidence: d24 "Microsoft Office 2013"
+  Y. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2660 "Office 2016"
+     evidence: d24 "Microsoft Office 2016"
+  Z. Mozilla Firefox (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Mozilla Firefox"
+  E27. Opera Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Opera Browser"
+  E28. PGMB New Order 18-2077.xlsx (Software)
+     aliases: []  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  E29. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  E30. RegAsm.exe (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "RegAsm.exe"
+  E31. Remote Utilities (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "Remote Utilities"
+  E32. Remote Utilities - Host (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "Remote Utilities - Host"
+  E33. TRYxaEbX (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX"
+  E34. TRYxaEbX.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+  E35. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  E36. Thunderbird (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Thunderbird"
+  E37. Torch Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Torch Browser"
+  E38. Trillian (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Trillian"
+  E39. UkrScanner.exe (SFX) (Software)
+     aliases: []  · minted d40102
+     gloss: "An SFX file identical to CredoMap_v2."
+     evidence: d40102 "UkrScanner.exe (SFX)"
+  E40. UkrScanner.rar (Software)
+     aliases: []  · minted d40102
+     gloss: "An archive file containing the malicious program."
+     evidence: d40102 "UkrScanner.rar"
+  E41. Windows Server 2012 (Software)
+     aliases: []  · minted d2660
+     gloss: "Operating system version that is contextually related to Microsoft Office versions."
+     evidence: d2660 "Windows Server 2012"
+  E42. b.exe (Software)
+     aliases: []  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d39934 "b.exe"
+  E43. ckZ89.ExE (Software)
+     aliases: []  · minted d2707
+     gloss: (none)
+     evidence: d2707 "ckZ89.ExE"
+  E44. host_news_mod_mod.msi (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "host_news_mod_mod.msi"
+  E45. installer.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "installer.exe"
+  E46. loader.exe (Software)
+     aliases: []  · minted d39934
+     gloss: (none)
+     evidence: d39934 "loader.exe"
+  E47. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe]  · minted d24
+     gloss: (none)
+     evidence: d39934 "powershell.exe"
+     evidence: d2707 "cmd.exe"
+     evidence: d2707 "powershell.exe"
+  E48. rfusclient.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rfusclient.exe"
+  E49. rutserv.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rutserv.exe"
+  E50. scan.exe (CredoMap_v2) (Software)
+     aliases: []  · minted d40102
+     gloss: "An executable related to CredoMap_v2."
+     evidence: d40102 "scan.exe (CredoMap_v2)"
+  E51. shellcode.x64 (Cobalt Strike Beacon) (Software)
+     aliases: [shellcode.x64.bin]  · minted d619229
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+  E52. shellcode.x86 (Cobalt Strike Beacon) (Software)
+     aliases: [shellcode.x86.bin]  · minted d619229
+     gloss: (none)
+     evidence: d703548 "shellcode.x86.bin"
+     evidence: d619229 "shellcode.x86 (Cobalt Strike Beacon)"
+  E53. spi.exe (Software)
+     aliases: []  · minted d2707
+     gloss: (none)
+     evidence: d2707 "spi.exe"
+  E54. write.exe (Software)
+     aliases: []  · minted d619229
+     gloss: "An executable file that acts as a dropper."
+     evidence: d619229 "write.exe"
+  E55. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  E56. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  E57. Електронний запит.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "Електронний запит.exe"
+  E58. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: F–Y (defer(link-judge, d2724)); E28–F (defer(link-judge, d2724)); E43–F (defer(link-judge, d2724)); E56–F (defer(link-judge, d2724)); E58–F (defer(link-judge, d2724)); G–T (defer(link-judge, d2724)); G–V (defer(link-judge, d2724)); G–W (defer(link-judge, d2724)); G–X (defer(link-judge, d2724)); G–Y (defer(link-judge, d2724)); E28–G (defer(link-judge, d2724)); E43–G (defer(link-judge, d2724)); E56–G (defer(link-judge, d2724)); E58–G (defer(link-judge, d2724)); E–H (defer(link-judge, d2724)); H–J (union-blocker 0.92); H–K (union-blocker 0.92); H–P (union-blocker 0.92); H–X (defer(link-judge, d2724)); E41–H (defer(link-judge, d2724)); E43–H (defer(link-judge, d2724)); E56–H (defer(link-judge, d2724)); E58–H (defer(link-judge, d2724)); E–I (defer(link-judge, d2724)); I–K (union-blocker 0.92); I–M (union-blocker 0.92); I–V (defer(link-judge, d2724)); I–W (defer(link-judge, d2724)); I–X (defer(link-judge, d2724)); I–Y (defer(link-judge, d2724)); E28–I (defer(link-judge, d2724)); E41–I (defer(link-judge, d2724)); E43–I (defer(link-judge, d2724)); E56–I (defer(link-judge, d2724)); E58–I (defer(link-judge, d2724)); J–V (defer(link-judge, d2724)); J–W (defer(link-judge, d2724)); J–X (defer(link-judge, d2724)); J–Y (defer(link-judge, d2724)); E28–J (defer(link-judge, d2724)); E41–J (defer(link-judge, d2724)); E43–J (defer(link-judge, d2724)); E56–J (defer(link-judge, d2724)); E58–J (defer(link-judge, d2724)); E–K (defer(link-judge, d2724)); K–V (defer(link-judge, d2724)); K–W (defer(link-judge, d2724)); K–X (defer(link-judge, d2724)); K–Y (defer(link-judge, d2724)); E41–K (defer(link-judge, d2724)); E43–K (defer(link-judge, d2724)); E47–K (defer(link-judge, d2724)); E56–K (defer(link-judge, d2724)); E58–K (defer(link-judge, d2724)); E–L (defer(link-judge, d2724)); L–N (union-blocker 0.92); L–V (defer(link-judge, d2724)); L–W (defer(link-judge, d2724)); L–X (defer(link-judge, d2724)); L–Y (defer(link-judge, d2724)); E29–L (defer(link-judge, d2724)); E41–L (defer(link-judge, d2724)); E43–L (defer(link-judge, d2724)); E56–L (defer(link-judge, d2724)); E58–L (defer(link-judge, d2724)); E–M (defer(link-judge, d2724)); M–T (defer(link-judge, d2724)); M–W (defer(link-judge, d2724)); M–X (defer(link-judge, d2724)); M–Y (defer(link-judge, d2724)); E28–M (defer(link-judge, d2724)); E29–M (defer(link-judge, d2724)); E43–M (defer(link-judge, d2724)); E56–M (defer(link-judge, d2724)); E58–M (defer(link-judge, d2724)); E–N (defer(link-judge, d2724)); N–T (defer(link-judge, d2724)); N–W (defer(link-judge, d2724)); N–X (defer(link-judge, d2724)); N–Y (defer(link-judge, d2724)); E28–N (defer(link-judge, d2724)); E29–N (defer(link-judge, d2724)); E43–N (defer(link-judge, d2724)); E56–N (defer(link-judge, d2724)); E58–N (defer(link-judge, d2724)); E–O (defer(link-judge, d2724)); O–T (defer(link-judge, d2724)); O–W (defer(link-judge, d2724)); O–X (defer(link-judge, d2724)); O–Y (defer(link-judge, d2724)); E29–O (defer(link-judge, d2724)); E43–O (defer(link-judge, d2724)); E47–O (defer(link-judge, d2724)); E56–O (defer(link-judge, d2724)); E58–O (defer(link-judge, d2724)); E–P (defer(link-judge, d2724)); P–V (defer(link-judge, d2724)); P–W (defer(link-judge, d2724)); P–X (defer(link-judge, d2724)); P–Y (defer(link-judge, d2724)); E28–P (defer(link-judge, d2724)); E29–P (defer(link-judge, d2724)); E43–P (defer(link-judge, d2724)); E56–P (defer(link-judge, d2724)); E58–P (defer(link-judge, d2724)); E–Q (defer(link-judge, d2724)); M–Q (union-blocker 0.92); Q–V (defer(link-judge, d2724)); Q–W (defer(link-judge, d2724)); Q–X (defer(link-judge, d2724)); Q–Y (defer(link-judge, d2724)); E28–Q (defer(link-judge, d2724)); E43–Q (defer(link-judge, d2724)); E56–Q (defer(link-judge, d2724)); E58–Q (defer(link-judge, d2724)); B–E33 (defer(link-judge, d619229)); E33–U (defer(link-judge, d619229)); E33–X (defer(link-judge, d619229)); E33–Z (defer(link-judge, d619229)); E33–E34 (union-blocker 0.89); E33–E36 (defer(link-judge, d619229)); E33–E38 (defer(link-judge, d619229)); E33–E40 (defer(link-judge, d619229)); E33–E42 (defer(link-judge, d619229)); E33–E45 (defer(link-judge, d619229)); A–E34 (defer(link-judge, d619229)); E34–S (defer(link-judge, d619229)); E27–E34 (defer(link-judge, d619229)); E30–E34 (defer(link-judge, d619229)); E34–E35 (union-blocker 0.93); E34–E37 (defer(link-judge, d619229)); E34–E38 (defer(link-judge, d619229)); E34–E39 (defer(link-judge, d619229)); E34–E49 (defer(link-judge, d619229)); E34–E55 (defer(link-judge, d619229)); E35–V (defer(link-judge, d619229)); E35–X (defer(link-judge, d619229)); E30–E35 (defer(link-judge, d619229)); E35–E38 (defer(link-judge, d619229)); E35–E39 (defer(link-judge, d619229)); E35–E44 (defer(link-judge, d619229)); E35–E49 (defer(link-judge, d619229)); E35–E55 (defer(link-judge, d619229)); A–E51 (defer(link-judge, d619229)); C–E51 (defer(link-judge, d619229)); D–E51 (defer(link-judge, d619229)); E51–R (defer(link-judge, d619229)); E51–X (defer(link-judge, d619229)); E51–Y (defer(link-judge, d619229)); E31–E51 (defer(link-judge, d619229)); E32–E51 (defer(link-judge, d619229)); E47–E51 (defer(link-judge, d619229)); E50–E51 (defer(link-judge, d619229)); A–E52 (defer(link-judge, d619229)); C–E52 (defer(link-judge, d619229)); D–E52 (defer(link-judge, d619229)); E52–R (defer(link-judge, d619229)); E52–X (defer(link-judge, d619229)); E52–Y (defer(link-judge, d619229)); E31–E52 (defer(link-judge, d619229)); E32–E52 (defer(link-judge, d619229)); E47–E52 (defer(link-judge, d619229)); E50–E52 (defer(link-judge, d619229)); E51–E52 (union-blocker 0.95); E30–E54 (defer(link-judge, d619229)); E42–E54 (defer(link-judge, d619229)); E43–E54 (defer(link-judge, d619229)); E45–E54 (defer(link-judge, d619229)); E46–E54 (defer(link-judge, d619229)); E47–E54 (defer(link-judge, d619229)); E48–E54 (defer(link-judge, d619229)); E49–E54 (defer(link-judge, d619229)); E53–E54 (defer(link-judge, d619229)); E54–E57 (defer(link-judge, d619229))
+  coherence check: T — does every listed alias belong to this entity?
+  coherence check: Y — does every listed alias belong to this entity?
+
+Component 2 of 2 · signal: union-blocker 0.92
+  A. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  B. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  pairs to adjudicate: A–B (union-blocker 0.92)
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (93.5s, in 8060 / out 4297 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "merge",
+          "from": "F",
+          "into": "Y",
+          "confidence": "high",
+          "evidence": "The pairs F-Y involve a dense cluster of CVEs, suggesting they belong to the same context, likely related to the software listed."
+        },
+        {
+          "op": "merge",
+          "from": "E28",
+          "into": "I",
+          "confidence": "high",
+          "evidence": "E28 (PGMB New Order 18-2077.xlsx) and I (CVE-2018-8124) are grouped, likely due to context."
+        },
+        {
+          "op": "merge",
+          "from": "E43",
+          "into": "F",
+          "confidence": "high",
+          "evidence": "E43 (ckZ89.ExE) is grouped with CVEs F (CVE-2018-0854) due to context."
+        },
+        {
+          "op": "merge",
+          "from": "E56",
+          "into": "G",
+          "confidence": "high",
+          "evidence": "E56 (До оплати рах.ф. 74 - 2018р.js) and G (CVEs) are grouped."
+        },
+        {
+          "op": "merge",
+          "from": "E58",
+          "into": "G",
+          "confidence": "high",
+          "evidence": "E58 (Рахунки за выполненные работы от 11.12.2018.js) and G (CVEs) are grouped."
+        },
+        {
+          "op": "merge",
+          "from": "E–H",
+          "into": "L",
+          "confidence": "high",
+          "evidence": "E-H (Software/CVEs) and L (CVE-2018-8132) are linked."
+        },
+        {
+          "op": "merge",
+          "from": "I",
+          "into": "V",
+          "confidence": "high",
+          "evidence": "I (CVE-2018-8124) is linked to V (Microsoft Office 2007) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "I",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "I (CVE-2018-8124) is linked to W (Microsoft Office 2010) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "E28",
+          "into": "J",
+          "confidence": "high",
+          "evidence": "E28 (PGMB New Order 18-2077.xlsx) is linked to J (CVEs)."
+        },
+        {
+          "op": "merge",
+          "from": "E41",
+          "into": "H",
+          "confidence": "high",
+          "evidence": "E41 (Windows Server 2012) is linked to H (CVEs)."
+        },
+        {
+          "op": "merge",
+          "from": "E27",
+          "into": "E34",
+          "confidence": "high",
+          "evidence": "E27 (Opera Browser) is linked to E34 (TRYxaEbX.ps1)."
+        },
+        {
+          "op": "merge",
+          "from": "E30",
+          "into": "E34",
+          "confidence": "high",
+          "evidence": "E30 (RegAsm.exe) is linked to E34 (TRYxaEbX.ps1)."
+        },
+        {
+          "op": "merge",
+          "from": "E43",
+          "into": "K",
+          "confidence": "high",
+          "evidence": "E43 (ckZ89.ExE) is linked to K (CVE-2018-8129)."
+        },
+        {
+          "op": "merge",
+          "from": "E56",
+          "into": "H",
+          "confidence": "high",
+          "evidence": "E56 (JS file) is linked to H (CVEs)."
+        },
+        {
+          "op": "merge",
+          "from": "E58",
+          "into": "H",
+          "confidence": "high",
+          "evidence": "E58 (JS file) is linked to H (CVEs)."
+        },
+        {
+          "op": "merge",
+          "from": "E–O",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "E-O (Software/CVEs) is linked to W (Microsoft Office 2010) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "E51",
+          "into": "X",
+          "confidence": "high",
+          "evidence": "E51 (spi.exe) is linked to X (Microsoft Office 2013) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "E51",
+          "into": "Y",
+          "confidence": "high",
+          "evidence": "E51 (spi.exe) is linked to Y (Microsoft Office 2016) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "E31",
+          "into": "E52",
+          "confidence": "high",
+          "evidence": "E31 (Remote Utilities) is linked to E52 (shellcode.x86)."
+        },
+        {
+          "op": "merge",
+          "from": "E32",
+          "into": "E52",
+          "confidence": "high",
+          "evidence": "E32 (Remote Utilities - Host) is linked to E52 (shellcode.x86)."
+        },
+        {
+          "op": "merge",
+          "from": "E51",
+          "into": "E52",
+          "confidence": "high",
+          "evidence": "E51 (spi.exe) is linked to E52 (shellcode.x86) via related CVEs."
+        },
+        {
+          "op": "merge",
+          "from": "E30",
+          "into": "E54",
+          "confidence": "high",
+          "evidence": "E30 (RegAsm.exe) is linked to E54 (write.exe) via related CVEs."
+        }
+      ]
+    },
+    {
+      "component": 2,
+      "ops": [
+        {
+          "op": "rung",
+          "finer": "stage1.ps1",
+          "coarser": "stage2.ps1",
+          "edgeKind": "coarsens-to",
+          "confidence": "high",
+          "evidence": "The names stage1.ps1 and stage2.ps1 strongly imply sequential steps in a process."
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+21 op(s) accepted

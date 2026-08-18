@@ -1,0 +1,679 @@
+{
+  "version": 4,
+  "canonicalPolicy": "first-seen",
+  "categories": {
+    "Country": {
+      "Естонія": {
+        "aliases": [
+          {
+            "surface": "Естонія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        }
+      },
+      "Індія": {
+        "aliases": [
+          {
+            "surface": "Індія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "India",
+            "docId": 4697016,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The source explicitly mentions 'Індії', which links directly to the candidate 'Індія'.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        }
+      },
+      "США": {
+        "aliases": [
+          {
+            "surface": "США",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        }
+      },
+      "Росія": {
+        "aliases": [
+          {
+            "surface": "Росія",
+            "docId": 2681,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 2681,
+          "date": "06.12.2019"
+        }
+      },
+      "USA": {
+        "aliases": [
+          {
+            "surface": "USA",
+            "docId": 2720,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 2720,
+          "date": "23.05.2018"
+        },
+        "rung": "g0"
+      },
+      "Ukraine": {
+        "aliases": [
+          {
+            "surface": "Ukraine",
+            "docId": 2720,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Україна",
+            "docId": 18108,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention directly corresponds to the candidate entity Ukraine.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 2720,
+          "date": "23.05.2018"
+        },
+        "rung": "g0"
+      },
+      "Russian Federation": {
+        "aliases": [
+          {
+            "surface": "Russian Federation",
+            "docId": 4475,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Російська Федерація",
+            "docId": 10011,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention is directly linked to the candidate 'Russian Federation' as it is the same geopolitical entity.",
+            "addedBy": null
+          },
+          {
+            "surface": "Russia",
+            "docId": 10702,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention is linked to the Russian Federation based on the context referencing the 'уряд РФ'.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 3
+        },
+        "firstSeen": {
+          "doc": 4475,
+          "date": "22.10.2020"
+        },
+        "rung": "g0"
+      },
+      "China": {
+        "aliases": [
+          {
+            "surface": "China",
+            "docId": 375404,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "The mention refers to the country referenced in the source title regarding cyberattacks, but no specific identity link to the candidates is established.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 375404,
+          "date": "22.06.2022"
+        },
+        "rung": "g0"
+      },
+      "Польща": {
+        "aliases": [
+          {
+            "surface": "Польща",
+            "docId": 3761023,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Poland",
+            "docId": 6276652,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention 'Poland' is linked to the candidate 'Польща' based on the context of the source document.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 2
+        },
+        "firstSeen": {
+          "doc": 3761023,
+          "date": "01.02.2023"
+        },
+        "rung": "g0"
+      },
+      "Tajikistan": {
+        "aliases": [
+          {
+            "surface": "Tajikistan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g0"
+      },
+      "Mongolia": {
+        "aliases": [
+          {
+            "surface": "Mongolia",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g0"
+      },
+      "Kazakhstan": {
+        "aliases": [
+          {
+            "surface": "Kazakhstan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g0"
+      },
+      "Kyrgyzstan": {
+        "aliases": [
+          {
+            "surface": "Kyrgyzstan",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g0"
+      },
+      "Israel": {
+        "aliases": [
+          {
+            "surface": "Israel",
+            "docId": 4697016,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 4697016,
+          "date": "22.05.2023"
+        },
+        "rung": "g0"
+      },
+      "Malaysia": {
+        "aliases": [
+          {
+            "surface": "Malaysia",
+            "docId": 6276652,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6276652,
+          "date": "07.12.2023"
+        },
+        "rung": "g0"
+      },
+      "Вірменія": {
+        "aliases": [
+          {
+            "surface": "Вірменія",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        },
+        "rung": "g0"
+      },
+      "Киргизька Республіка": {
+        "aliases": [
+          {
+            "surface": "Киргизька Республіка",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Country": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        },
+        "rung": "g0"
+      }
+    }
+  },
+  "granularityEdges": {},
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Індія"
+        },
+        "signature": "c582170e9bc0029727e97d7710d27269b4f48f6e3058f1922653e6b2694432fe",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "fad1fb6b8c35855ee7a8848cca950f1b98150c375565aba25c846506e25d8ffe",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Естонія"
+        },
+        "signature": "a27eb6ac1a908f101db3e6ef5daa269edbd42b0b58fbc7db14fee04c49ddc738",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Індія"
+        },
+        "signature": "d88900faaa9a4defa5c33783bd002b9182d3a91423af2c35f743afc4f020c642",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "e0a3fb4b5369baf1650900fb592d96abdd78b460a93632b7058a5f2a7d584b19",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Естонія"
+        },
+        "signature": "c44c97ad4617ece32cb1ab317c46c194a40c470568fce761757fb9c95b1eb730",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "США"
+        },
+        "signature": "8d393be29e24804eaa389e64c73491fa476a17b869cfc12e1ab246e7d38ad073",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "США"
+        },
+        "signature": "1d085135b87184dfaa60f6ca8e482c67a95e54d41d2a0acf85ced3c017968512",
+        "verdict": "distinct",
+        "docId": 2720
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "signature": "2fba6656884b593cb7a841b1ac170f28e834d9755f514fc4cd819fbc64425c68",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "signature": "e402192f87cc8596a04d9a49535085adeef93ea76644c713b3aa693a20c81089",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Індія"
+        },
+        "signature": "9b0980e28bdc5fb0d91adcec63f9fc8ee3e143896f329ed2e0dd1ab96700d238",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Естонія"
+        },
+        "signature": "298fbd00d9eb974cd0e0ccfe892e8a2c31be5bea00c683e83b78538f24b5915d",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "США"
+        },
+        "signature": "a9051c4d56cad3cf582a1da0889085fe10c31b99235f8dd4fed3660453d7437d",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "1ec8f5f588749577a4315a8f0f6f939f80a140058cda8ae3e92d78167f8dbac5",
+        "verdict": "distinct",
+        "docId": 4475
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Ukraine"
+        },
+        "signature": "d0ab8f4ab78bf3613b909f743eb632b7e72e486f3ef574dbb56155e5b88956fd",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "signature": "942d880a31759c72eac902adb4f0597ffe28b7ff54e70da1345eda9f4e79b551",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "USA"
+        },
+        "signature": "ff3eec710d884d18034bca0d3b57f38489b049fccb0271be1c69ac697c4398b9",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Індія"
+        },
+        "signature": "27078c308eca38ad433c0d889c719deea51cc4a88e9eb6cf4952a43cc6f54557",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "a0c3ce0a6a820f7e70a2bb87468a545631f9bc4e3a4c5fa170b6e9788801ef66",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "США"
+        },
+        "signature": "982d179fd55164ff46051a825b8dab01f7def3148d2f3f280945d952d8f1d185",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "China"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Естонія"
+        },
+        "signature": "7b91b8478dbed2a05b90b3a26e7b606e700f70790197569b88db3d050b1c57bb",
+        "verdict": "distinct",
+        "docId": 375404
+      },
+      {
+        "a": {
+          "category": "Country",
+          "canonical": "Russian Federation"
+        },
+        "b": {
+          "category": "Country",
+          "canonical": "Росія"
+        },
+        "signature": "658f750386397652da111426d3ae2f1cfdd57d1fa178b3e0d8c78217241b84d7",
+        "verdict": "distinct",
+        "docId": 3761023
+      }
+    ],
+    "spillover": [],
+    "repairedThrough": 6280129
+  }
+}

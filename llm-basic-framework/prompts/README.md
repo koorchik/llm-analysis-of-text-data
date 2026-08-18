@@ -32,6 +32,9 @@ For an experiment arm that needs different text (E8 judge swap, prompt-sensitivi
 prefer a *new* prompt id and a `PromptProvider` injected via the processor's `prompts` param — that
 keeps the baseline text pinned and the comparison honest.
 
+Listwise variants are selected with `LISTWISE_PROMPT_ID`; `LISTWISE_K` controls how many candidates
+that judge sees. Both values are recorded in the decision strategy config and folded into `runId`.
+
 ## Provenance
 
 The ten prompts here were lifted mechanically: a script read the exact characters of each template
@@ -53,7 +56,12 @@ truth and have been generalized for domain-neutral entity matching.
 | `type-judge` | `StreamingExtractor` — emergent-schema category/relation decisions | — |
 | `ladder` | `LadderDiscovery` — per-category granularity-ladder bootstrap (g0–g3, ensemble) | `CATEGORY`, `DEFINITION`, `EXAMPLES` |
 | `link-judge` | `StreamingNormalizer` — domain-neutral link / mint / defer verdict with rung + parent edge | `docTitle`, `docSnippet`, `mentionsBatch` |
+| `listwise-select` | `ListwiseMintCandidateDecision` — baseline numbered choice with explicit NEW ENTITY | — |
+| `listwise-select-compact-v1` | `ListwiseMintCandidateDecision` — compact positional-array prompt variant | — |
+| `listwise-select-complete-v2` | `ListwiseMintCandidateDecision` — complete named-choice prompt variant | — |
+| `listwise-select-balanced-v3` | `ListwiseMintCandidateDecision` — balanced abbreviation/version examples | — |
 | `repair-judge` | `StreamingRepairer` — suspect-component adjudication (merge/distinct/rung/renamed/split/move/keep) | `components` |
+| `repair-judge-compact-v1` | `StreamingRepairer` — conservative compact repair variant | `components` |
 | `pair-rule` | Reserved legacy prompt — role-based graph inference, not used by entity normalization | `knownRelationTypes` |
 | `consolidate-merge` | `RegistryConsolidator` — **harness-only**: RQ3 order-robustness batch-reference arm, no longer in the main pipeline | `subject` |
 | `country-normalize` | `CountryNameNormalizer` | `countryCodes` |

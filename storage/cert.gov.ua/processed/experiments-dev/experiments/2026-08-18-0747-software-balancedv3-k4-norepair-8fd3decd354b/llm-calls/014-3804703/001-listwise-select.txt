@@ -1,0 +1,40 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "Кібератака UAC-0050 у відношенні державних органів України із застосуванням програми для віддаленого контролю та спостереження Remcos (CERT-UA#5926)" — evidence: <p><strong>Загальна інформація</strong></p><p><br></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано масове розповсюдження електронних листів, начебто, від АТ "Укртелеком", з темою "Судова претензія за Вашим особовим рахунком # 7192206443063763 от: 06.02.2023" та додатком у вигляді RAR-архіву "судовий лист, інформація щодо заборгування.rar".</p><p>Архів містить текстовий документ "Ваш персональний код доступу -254507.txt" та ще один RAR-архів "судовий лист, інформація щодо заборгування. pdf.rar", захищений паролем. В другому архіві знаходиться вико
+Mentions:
+1. "Remcos" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. Brave Browser [aliases: Brave Browser]
+     4. CentBrowser [aliases: CentBrowser]
+     5. NEW ENTITY
+2. "RemoteUtilities" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     3. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows, Microsoft Office Services and Web Apps]
+     4. FTPGetter [aliases: FTPGetter]
+     5. NEW ENTITY
+
+=== RESPONSE (16.0s, in 670 / out 806 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "Remcos",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "RemoteUtilities",
+    "category": "Software",
+    "choice": 1
+  }
+]}
+```

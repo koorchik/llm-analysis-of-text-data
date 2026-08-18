@@ -1,0 +1,116 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 17,
+    "members": 22,
+    "byStratum": {
+      "c": 1,
+      "a": 16
+    },
+    "bySplit": {
+      "dev": 17
+    },
+    "clustersWithEvidence": 0,
+    "edges": 0,
+    "nilLabels": 29
+  },
+  "results": [
+    {
+      "condition": "hackergroup-e2b16k-listwise-norepair",
+      "runIds": [
+        "hackergroup-e2b16k-listwise-norepair-2e4438a4c39e"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "c": {
+          "stratum": "c",
+          "pairs": 15,
+          "truePositives": 2,
+          "falsePositives": 0,
+          "falseNegatives": 13,
+          "trueNegatives": 0,
+          "skipped": 0,
+          "precision": 1,
+          "recall": 0.13333333333333333,
+          "f1": 0.23529411764705882
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 120,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 0,
+          "skipped": 120,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 135,
+          "truePositives": 2,
+          "falsePositives": 0,
+          "falseNegatives": 13,
+          "trueNegatives": 0,
+          "skipped": 120,
+          "precision": 1,
+          "recall": 0.13333333333333333,
+          "f1": 0.23529411764705882
+        }
+      },
+      "nil": {
+        "truePositives": 3,
+        "falsePositives": 2,
+        "falseNegatives": 0,
+        "trueNegatives": 2,
+        "deferred": 0,
+        "deferredOnNil": 0,
+        "observations": 7,
+        "deferralRate": 0,
+        "precision": 0.6,
+        "recall": 1,
+        "f1": 0.7499999999999999
+      },
+      "cluster": {
+        "universeSize": 7,
+        "predictedClusters": 5,
+        "goldClusters": 2,
+        "macro": {
+          "precision": 1,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 0.42857142857142855,
+          "f1": 0.6
+        },
+        "pairwise": {
+          "precision": 1,
+          "recall": 0.13333333333333333,
+          "f1": 0.23529411764705882
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 0.3809523809523809,
+          "f1": 0.5517241379310344
+        },
+        "ari": 0.0808080808080808
+      },
+      "cost": {
+        "calls": 15,
+        "inputTokens": 3008,
+        "outputTokens": 3409,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 62507
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "runId": "software-compactv1-k8-saferepair-002f81bc337d",
+  "seq": 3,
+  "timestamp": "2026-08-18T04:20:01.603Z",
+  "operator": "repair-judge-retry",
+  "docId": 6277285,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Review every listed pair. Identity repair must be conservative.\n\nComponent 1 of 1 · signal: union-blocker 0.91 + coherence\n  A. .NET Framework (Software)\n     aliases: [Електронний план евакуації.rar]  · minted d2724\n     gloss: (none)\n     evidence: d6277285 \"Електронний план евакуації.rar\"\n     evidence: d2724 \".NET Framework\"\n  B. spi.exe (Software)\n     aliases: [write.exe, Електронний план евакуації.exe]  · minted d2707\n     gloss: (none)\n     evidence: d6277285 \"Електронний план евакуації.exe\"\n     evidence: d619229 \"write.exe\"\n     evidence: d2707 \"spi.exe\"\n  pairs to adjudicate: A–B (union-blocker 0.91)\n  coherence check: A — does every listed alias belong to this entity?\n\nUse `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.\n\nFor each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.\n\nReturn only JSON:\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\"full name\",\"full name\"],\"confidence\":\"high\",\"evidence\":\"brief deciding evidence\"}]}]}\n\nFields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:\"coarsens-to\"|\"part-of\"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.\n",
+  "text": "Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.",
+  "response": "```json\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\".NET Framework\",\"spi.exe\"],\"confidence\":\"high\",\"evidence\":\"Different entities identified despite shared context of associated files.\"}]}]}\n```",
+  "usage": {
+    "inputTokens": 558,
+    "outputTokens": 546
+  },
+  "latencyMs": 11107,
+  "finishReason": "stop",
+  "outcome": {
+    "ok": true,
+    "detail": "1 op(s) accepted"
+  }
+}

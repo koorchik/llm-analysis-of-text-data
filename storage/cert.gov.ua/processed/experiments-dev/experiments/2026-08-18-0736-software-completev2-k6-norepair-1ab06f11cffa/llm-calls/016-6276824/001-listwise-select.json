@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:44:09.692Z",
+  "operator": "listwise-select",
+  "docId": 6276824,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"\"Заборгованість Київстар\", \"Запит СБУ\": нова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8338)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 21.12.2023 зафіксовано масове розповсюдження електронних листів з тематикою \"Заборгованості за договором Київстар\" та вкладенням у вигляді архіву \"Заборгованість абонента.zip\".</p><p>Зазначений ZIP-архів містить розділений на 2 частини RAR-архів \"Заборгованість абонента.rar\", в якому знаходиться однойменний архів захищений паролем. В останньому знаходиться документ з макросом \"Заборгованість абонента.doc\".&nbsp;</p><p>У разі активації код макросу за допомогою оглядача фай\nMentions:\n1. \"SmartAssembly .NET\" (Software)\n     1. SmartAssembly [aliases: SmartAssembly]\n     2. .NET Framework [aliases: .NET Framework]\n     3. GammaSteel.NET [aliases: GammaSteel.NET]\n     4. SmartFTP [aliases: SmartFTP]\n     5. Smokeloader [aliases: Smokeloader]\n     6. Brave Browser [aliases: Brave Browser]\n     7. NEW ENTITY\n2. \"wsuscr.exe\" (Software)\n     1. wscript.exe [aliases: wscript.exe]\n     2. b.exe [aliases: b.exe]\n     3. rutserv.exe [aliases: rutserv.exe]\n     4. RegAsm.exe [aliases: RegAsm.exe]\n     5. installer.exe [aliases: installer.exe]\n     6. cmd.exe [aliases: cmd.exe]\n     7. NEW ENTITY",
+  "response": "{\"choices\":[{\"mention\":\"SmartAssembly .NET\",\"category\":\"Software\",\"choice\":7},{\"mention\":\"wsuscr.exe\",\"category\":\"Software\",\"choice\":7}]}",
+  "usage": {
+    "inputTokens": 631,
+    "outputTokens": 651
+  },
+  "latencyMs": 12312,
+  "finishReason": "stop"
+}

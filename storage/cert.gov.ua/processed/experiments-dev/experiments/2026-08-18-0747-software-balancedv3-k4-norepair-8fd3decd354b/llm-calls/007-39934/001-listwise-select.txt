@@ -1,0 +1,73 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Указ Президента України No 576/22 про безпрецедентні заходи безпеки" та вкладенням у вигляді ISO-файлу "Указ Президента України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає Po
+Mentions:
+1. "Meterpreter" (Software)
+     1. FTPGetter [aliases: FTPGetter]
+     2. Internet Explorer [aliases: Internet Explorer, Agent Tesla]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Kometa Browser [aliases: Kometa Browser]
+     5. NEW ENTITY
+2. "z.ps1" (Software)
+     1. ckZ89.ExE [aliases: ckZ89.ExE]
+     2. WinSCP [aliases: WinSCP]
+     3. FileZilla [aliases: FileZilla]
+     4. spi.exe [aliases: spi.exe]
+     5. NEW ENTITY
+3. "b.exe" (Software)
+     1. cmd.exe [aliases: cmd.exe]
+     2. spi.exe [aliases: spi.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. installer.exe [aliases: installer.exe]
+     5. NEW ENTITY
+4. "loader.exe" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. rutserv.exe [aliases: rutserv.exe]
+     4. major.exe [aliases: major.exe]
+     5. NEW ENTITY
+5. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software)
+     1. Office 2013 [aliases: Office 2013, До оплати від 11.12.18.lzh]
+     2. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     3. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     4. .NET Framework [aliases: .NET Framework]
+     5. NEW ENTITY
+
+=== RESPONSE (22.3s, in 941 / out 1173 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "Meterpreter",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "z.ps1",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "b.exe",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "loader.exe",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk",
+    "category": "Software",
+    "choice": 5
+  }
+]}
+```

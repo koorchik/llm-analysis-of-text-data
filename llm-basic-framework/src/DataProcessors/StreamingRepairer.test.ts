@@ -121,6 +121,7 @@ interface SetupOptions {
   glossIndex?: GlossIndex;
   thresholds?: SuspectThresholds;
   tokenCap?: number;
+  strictIdentity?: boolean;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -144,6 +145,7 @@ async function setup(options: SetupOptions = {}) {
     blocker: options.blockerGenerator ?? fakeBlocker(options.blocker ?? {}),
     thresholds: options.thresholds ?? thresholds(),
     tokenCap: options.tokenCap,
+    strictIdentity: options.strictIdentity,
     onRegistryChange: (event) => changes.push(event),
   });
 
@@ -447,6 +449,94 @@ test('low-confidence merge degrades to distinct with an empty signature, and the
   entityRegistry.link('HackerGroup', 'Voodoo Bear', 'VooDoo', { docId: 3 });
   await repairer.processDoc('3.json', 3);
   assert.equal(llm.calls(), 2, 'the retained suspect was re-adjudicated');
+});
+
+test('medium-confidence merge also degrades to retained distinct and cannot mutate identity', async () => {
+  const { entityRegistry, repairer } = await twoHackerGroups({
+    replies: [
+      review([{ op: 'merge', from: 'Voodoo Bear', into: 'Sandworm', confidence: 'medium', evidence: 'used together' }]),
+    ],
+  });
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.ok(entityRegistry.records('HackerGroup')['Voodoo Bear']);
+  assert.ok(entityRegistry.records('HackerGroup')['Sandworm']);
+  assert.equal(entityRegistry.repairState().adjudicated[0].verdict, 'distinct');
+  assert.equal(entityRegistry.repairState().adjudicated[0].signature, '');
+});
+
+test('high-confidence contextual merge without naming evidence cannot mutate identity', async () => {
+  const { entityRegistry, repairer } = await setup({
+    strictIdentity: true,
+    replies: [
+      review([{ op: 'merge', from: 'CVE-2017-11882', into: 'MS Office', confidence: 'high', evidence: 'the CVE relates to Office' }]),
+    ],
+    blockerGenerator: fakeBlockerByMention({
+      'CVE-2017-11882': [{ canonical: 'MS Office', category: 'Software', sim: 0.98 }],
+    }),
+  });
+  entityRegistry.mint('Software', 'MS Office', { doc: 1, date: '01.01.2024' });
+  entityRegistry.mint('Software', 'CVE-2017-11882', { doc: 2, date: '02.01.2024' });
+  await entityRegistry.save();
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.ok(entityRegistry.records('Software')['MS Office']);
+  assert.ok(entityRegistry.records('Software')['CVE-2017-11882']);
+});
+
+test('strict identity mode rejects a semantic alias without deterministic naming evidence', async () => {
+  const { entityRegistry, repairer } = await twoHackerGroups({
+    strictIdentity: true,
+    replies: [
+      review([{ op: 'merge', from: 'Voodoo Bear', into: 'Sandworm', confidence: 'high', evidence: 'also tracked as' }]),
+    ],
+  });
+
+  await repairer.processDoc('2.json', 2);
+
+  assert.ok(entityRegistry.records('HackerGroup')['Voodoo Bear']);
+  assert.ok(entityRegistry.records('HackerGroup')['Sandworm']);
+  assert.equal(repairer.callsForDoc(2), 0, 'non-verifiable identity never reaches the judge');
+});
+
+test('strict identity mode auto-merges deterministic aliases without a judge call', async () => {
+  const context = await setup({
+    strictIdentity: true,
+    replies: [
+      review([{ op: 'merge', from: 'Microsoft Office', into: 'MS Office', confidence: 'high', evidence: 'standard abbreviation' }]),
+    ],
+    blockerGenerator: fakeBlockerByMention({
+      'Microsoft Office': [{ canonical: 'MS Office', category: 'Software', sim: 0.99 }],
+    }),
+  });
+  context.entityRegistry.mint('Software', 'MS Office', { doc: 1, date: '01.01.2024' });
+  context.entityRegistry.mint('Software', 'Microsoft Office', { doc: 2, date: '02.01.2024' });
+  await context.entityRegistry.save();
+
+  await context.repairer.processDoc('2.json', 2);
+
+  assert.equal(context.repairer.callsForDoc(2), 0);
+  assert.equal(Object.keys(context.entityRegistry.records('Software')).length, 1);
+});
+
+test('strict identity mode never uses a polluted alias to authorize another merge', async () => {
+  const context = await setup({
+    strictIdentity: true,
+    blockerGenerator: fakeBlockerByMention({
+      'UAC-0028': [{ canonical: 'APT28', category: 'HackerGroup', sim: 1 }],
+    }),
+  });
+  context.entityRegistry.mint('HackerGroup', 'APT28', { doc: 1, date: '01.01.2024' });
+  context.entityRegistry.link('HackerGroup', 'APT28', 'APT28 (UAC-0028)', { docId: 1 });
+  context.entityRegistry.mint('HackerGroup', 'UAC-0028', { doc: 2, date: '02.01.2024' });
+  await context.entityRegistry.save();
+
+  await context.repairer.processDoc('2.json', 2);
+
+  assert.ok(context.entityRegistry.records('HackerGroup')['APT28']);
+  assert.ok(context.entityRegistry.records('HackerGroup')['UAC-0028']);
 });
 
 test('distinct with a real signature suppresses an identical re-probe', async () => {

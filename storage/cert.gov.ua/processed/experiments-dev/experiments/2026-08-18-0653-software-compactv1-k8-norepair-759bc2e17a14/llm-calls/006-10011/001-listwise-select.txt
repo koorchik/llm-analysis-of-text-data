@@ -1,0 +1,97 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Mentions:
+1. "Remote Utilities" (Software)
+     1. Agent Tesla [aliases: Agent Tesla]
+     2. FTPGetter [aliases: FTPGetter]
+     3. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office]
+     4. Trillian [aliases: Trillian]
+     5. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     6. Microsoft Office Services and Web Apps [aliases: Microsoft Office Services and Web Apps]
+     7. Amigo Browser [aliases: Amigo Browser]
+     8. Brave Browser [aliases: Brave Browser]
+     9. NEW ENTITY
+2. "Remote Utilities - Host" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Microsoft Office Services and Web Apps [aliases: Microsoft Office Services and Web Apps]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. Agent Tesla [aliases: Agent Tesla]
+     6. Mozilla Firefox [aliases: Mozilla Firefox]
+     7. Internet Explorer [aliases: Internet Explorer]
+     8. ChromePlus Browser [aliases: ChromePlus Browser]
+     9. NEW ENTITY
+3. "Електронний запит.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. major.exe [aliases: major.exe]
+     5. powershell.exe [aliases: powershell.exe]
+     6. ckZ89.ExE [aliases: ckZ89.ExE]
+     7. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     8. .NET Framework [aliases: .NET Framework]
+     9. NEW ENTITY
+4. "installer.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. major.exe [aliases: major.exe]
+     6. ckZ89.ExE [aliases: ckZ89.ExE]
+     7. Internet Explorer [aliases: Internet Explorer]
+     8. 7Star Browser [aliases: 7Star Browser]
+     9. NEW ENTITY
+5. "host_news_mod_mod.msi" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. MS Excel [aliases: MS Excel, PGMB New Order 18-2077.xlsx, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     3. .NET Framework [aliases: .NET Framework]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. Postbox Credential [aliases: Postbox Credential]
+     6. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office]
+     7. powershell.exe [aliases: powershell.exe]
+     8. 7Star Browser [aliases: 7Star Browser]
+     9. NEW ENTITY
+6. "rutserv.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. major.exe [aliases: major.exe]
+     6. ckZ89.ExE [aliases: ckZ89.ExE]
+     7. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     8. Windows Server 2008 [aliases: Windows Server 2008]
+     9. NEW ENTITY
+7. "rfusclient.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. ckZ89.ExE [aliases: ckZ89.ExE]
+     6. major.exe [aliases: major.exe]
+     7. vaultcli.dll [aliases: vaultcli.dll]
+     8. VBScript [aliases: VBScript]
+     9. NEW ENTITY
+8. "killself.bat" (Software)
+     1. Trillian [aliases: Trillian]
+     2. Mozilla Firefox [aliases: Mozilla Firefox]
+     3. FileZilla [aliases: FileZilla]
+     4. powershell.exe [aliases: powershell.exe]
+     5. vaultcli.dll [aliases: vaultcli.dll]
+     6. VBScript [aliases: VBScript]
+     7. WinSCP [aliases: WinSCP]
+     8. RegAsm.exe [aliases: RegAsm.exe]
+     9. NEW ENTITY
+
+=== RESPONSE (40.6s, in 1621 / out 2060 tok, stop) ===
+```json
+{"choices":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72]}
+```

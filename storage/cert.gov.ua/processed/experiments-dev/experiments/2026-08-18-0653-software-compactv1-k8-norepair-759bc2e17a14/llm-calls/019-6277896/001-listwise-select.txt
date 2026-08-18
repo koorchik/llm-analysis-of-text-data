@@ -1,0 +1,77 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Mentions:
+1. "SRP" (Software)
+     1. SmartFTP [aliases: SmartFTP]
+     2. WinSCP [aliases: WinSCP, z.ps1]
+     3. MISP [aliases: MISP]
+     4. WS_FTP [aliases: WS_FTP]
+     5. 7Star Browser [aliases: 7Star Browser, stage2.ps1]
+     6. Remcos [aliases: Remcos, RemcosRAT]
+     7. HarvesterX [aliases: HarvesterX, SmartAssembly, SmartAssembly .NET]
+     8. CocCoc Browser [aliases: CocCoc Browser, Cobalt Strike Beacon, ConfuserEx, CCleaner.rar]
+     9. NEW ENTITY
+2. "AppLocker" (Software)
+     1. FTPGetter [aliases: FTPGetter, Meterpreter]
+     2. jDownloader [aliases: jDownloader]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Uran Browser [aliases: Uran Browser]
+     5. Smokeloader [aliases: Smokeloader]
+     6. Amigo Browser [aliases: Amigo Browser]
+     7. Brave Browser [aliases: Brave Browser]
+     8. CentBrowser [aliases: CentBrowser]
+     9. NEW ENTITY
+3. "YARA" (Software)
+     1. Yandex Browser [aliases: Yandex Browser]
+     2. QuasarRAT [aliases: QuasarRAT]
+     3. HarvesterX [aliases: HarvesterX, SmartAssembly, SmartAssembly .NET]
+     4. Trillian [aliases: Trillian, TRYxaEbX]
+     5. Opera Mail [aliases: Opera Mail]
+     6. Remcos [aliases: Remcos, RemcosRAT]
+     7. UkrScanner.rar [aliases: UkrScanner.rar]
+     8. Misha [aliases: Misha]
+     9. NEW ENTITY
+4. "Mikrotik" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Microsoft Outlook [aliases: Microsoft Outlook]
+     3. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. Misha [aliases: Misha]
+     6. MISP [aliases: MISP]
+     7. MS Word [aliases: MS Word, Microsoft Word]
+     8. Sputnik Browser [aliases: Sputnik Browser]
+     9. NEW ENTITY
+5. "pfSense" (Software)
+     1. PowerShell [aliases: PowerShell]
+     2. rfusclient.exe [aliases: rfusclient.exe]
+     3. powershell.exe [aliases: powershell.exe, shellcode.x64.bin]
+     4. rutserv.exe [aliases: rutserv.exe, loader.exe, MCMDiction.exe, wsuscr.exe]
+     5. Brave Browser [aliases: Brave Browser]
+     6. FTPGetter [aliases: FTPGetter, Meterpreter]
+     7. Opera Browser [aliases: Opera Browser]
+     8. FTP Commander [aliases: FTP Commander]
+     9. NEW ENTITY
+6. "SIEM" (Software)
+     1. MISP [aliases: MISP]
+     2. 7Star Browser [aliases: 7Star Browser, stage2.ps1]
+     3. HarvesterX [aliases: HarvesterX, SmartAssembly, SmartAssembly .NET]
+     4. PowerShell [aliases: PowerShell]
+     5. installer.exe [aliases: installer.exe, stage1.ps1, rundll32.exe, install.msi, CCleaner.zip, Електронний план евакуації.exe]
+     6. CocCoc Browser [aliases: CocCoc Browser, Cobalt Strike Beacon, ConfuserEx, CCleaner.rar]
+     7. spi.exe [aliases: spi.exe]
+     8. wscript.exe [aliases: wscript.exe]
+     9. NEW ENTITY
+
+=== RESPONSE (11.2s, in 1218 / out 578 tok, stop) ===
+```json
+{"choices":[9,9,9]}
+```

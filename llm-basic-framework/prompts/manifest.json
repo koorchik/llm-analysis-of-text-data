@@ -126,6 +126,33 @@
   "variables": [],
   "bytes": 1124
  },
+ "listwise-select-compact-v1": {
+  "file": "prompts/listwise-select-compact-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-18 prompt-optimization arm: compact positional output, explicit completeness, and identity-bearing identifier/version guards.",
+  "sha256": "89ba001e11718c6d85f16dcab983cf605509e8690bbccb2718dfeea8866c362f",
+  "variables": [],
+  "bytes": 512
+ },
+ "listwise-select-complete-v2": {
+  "file": "prompts/listwise-select-complete-v2.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-18 prompt-optimization arm: baseline named choices with explicit completeness, abbreviation guidance, and identifier/version guards.",
+  "sha256": "f62e7505d7ac2c510faba6dedeecf6a82f0e8d512dcc1ad99f2ee72d2c0d84fc",
+  "variables": [],
+  "bytes": 793
+ },
+ "listwise-select-balanced-v3": {
+  "file": "prompts/listwise-select-balanced-v3.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-18 prompt-optimization arm: balanced positive abbreviation and negative version examples while preserving named complete choices.",
+  "sha256": "6a57a768e9dde69e70acc19b986a2c669f5580337b7c84fbbe98ef31f6d1ed6d",
+  "variables": [],
+  "bytes": 790
+ },
  "normalize-country": {
   "file": "prompts/normalize-country.md",
   "extractedFrom": "src/Normalizer/Normalizer.ts",
@@ -183,6 +210,20 @@
    }
   ],
   "bytes": 3714
+ },
+ "repair-judge-compact-v1": {
+  "file": "prompts/repair-judge-compact-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/DataProcessors/StreamingRepairer.ts",
+  "note": "2026-08-18 prompt-optimization arm: compact schema, complete pair coverage, forbidden signal-as-op labels, and high-confidence explicit-identity merges only.",
+  "sha256": "511fda3ab0d08a8ed895602a33bea56d3d99bab60877f76b7bb571892333e088",
+  "variables": [
+   {
+    "placeholder": "components",
+    "source": "numbered suspect-component blocks"
+   }
+  ],
+  "bytes": 1200
  },
  "type-judge": {
   "file": "prompts/type-judge.md",

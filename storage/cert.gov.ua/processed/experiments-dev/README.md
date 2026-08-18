@@ -7,8 +7,9 @@ subset corpus. Keeping it separate means the published-arm tree (`../experiments
 what the paper cites, while iteration runs still survive across sessions and reboots so you can
 compare one iteration against the next.
 
-The contents are gitignored (this README is the exception) — they are scratch, and a full
-iteration session can accumulate hundreds of megabytes of LLM transcripts.
+The contents are visible to Git so selected experiment artifacts can be reviewed deliberately. A
+full iteration session can accumulate hundreds of megabytes of LLM transcripts, so inspect and
+stage runs selectively.
 
 ## Layout
 
@@ -16,8 +17,9 @@ Same dating scheme as the published tree, so `ls` reads chronologically:
 
 ```
 experiments-dev/
-  2026-08-17-fastloop-software-<runId>/
-  2026-08-17-fastloop-software-<otherRunId>/   # after an algorithm edit — new runId, new directory
+  experiments/
+    2026-08-17-1423-fastloop-software-<runId>/
+    2026-08-17-1538-fastloop-software-<otherRunId>/
 ```
 
 Every algorithm edit changes the `runId` (the dirty-diff hash feeds it), so each iteration lands in

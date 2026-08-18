@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k4-norepair-8f0e78b46407",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:31:19.753Z",
+  "operator": "listwise-select",
+  "docId": 861292,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"Кібератака на державні організації України з використанням теми ОК \"Південь\" та шкідливої програми AgentTesla (CERT-UA#4987)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA виявлено файл \"Доповідь_050722_4.ppt\", що містить зображення-мініатюру, на якій згадєуться оперативне командування \"Південь\".&nbsp;</p><p>У випадку відкриття документу та активації макросу останній забезпечить створення файлів \"gksg023ig.lnk\" та \"sgegkseg23mjl.exe\", а також виконання LNK-файлу за допомогою rundll32.exe, що, в свою чергу, призведе до запуску згаданого EXE-файлу.</p><p>Виконуваний файл є .NET-програмою, обфускованою за допомогою ConfuserEx, що здійснює зава\nMentions:\n1. \"AgentTesla\" (Software)\n     1. Agent Tesla [aliases: Agent Tesla]\n     2. Adobe Flash Player [aliases: Adobe Flash Player]\n     3. FileZilla [aliases: FileZilla]\n     4. FTPGetter [aliases: FTPGetter]\n     5. NEW ENTITY\n2. \"ConfuserEx\" (Software)\n     1. ckZ89.ExE [aliases: ckZ89.ExE]\n     2. CocCoc Browser [aliases: CocCoc Browser]\n     3. Coowon Browser [aliases: Coowon Browser]\n     4. rfusclient.exe [aliases: rfusclient.exe]\n     5. NEW ENTITY\n3. \"MCMDiction.exe\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. RegAsm.exe [aliases: RegAsm.exe, write.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. powershell.exe [aliases: powershell.exe, installer.exe]\n     5. NEW ENTITY\n4. \"sgegkseg23mjl.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe, write.exe]\n     2. b.exe [aliases: b.exe]\n     3. powershell.exe [aliases: powershell.exe, installer.exe]\n     4. cmd.exe [aliases: cmd.exe]\n     5. NEW ENTITY\n5. \"rundll32.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe, write.exe]\n     2. b.exe [aliases: b.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. powershell.exe [aliases: powershell.exe, installer.exe]\n     5. NEW ENTITY",
+  "response": "{\"choices\":[1,2,3,4,5]}",
+  "usage": {
+    "inputTokens": 816,
+    "outputTokens": 959
+  },
+  "latencyMs": 18904,
+  "finishReason": "stop"
+}

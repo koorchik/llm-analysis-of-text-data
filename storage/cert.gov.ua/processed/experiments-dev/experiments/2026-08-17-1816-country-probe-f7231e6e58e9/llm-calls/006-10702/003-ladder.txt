@@ -1,0 +1,301 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You derive the GRANULARITY LADDER for one entity category in a knowledge-graph
+pipeline. The ladder says how an entity of this category can be named more
+coarsely: the same thing with detail dropped, or the wider thing that contains
+it. It is a hierarchy over entities only — no facts, no relations.
+
+## Input
+
+category:    <name>
+definition:  <one-line definition from the schema>
+examples:    <8-20 real surface forms of this category, as they appear in the corpus>
+
+The category may be one you have never seen. Derive the ladder from the
+definition and the examples, not from memory of some other schema.
+
+## What a rung is
+
+g0 is the entity exactly as observed, with every discriminating detail intact.
+Each higher rung (g1, g2, g3) names either the same referent with detail
+dropped, or the wider whole that contains it.
+
+A candidate rung is admitted only if it passes ALL THREE gates:
+
+GATE 1 — SAME CATEGORY. The coarser node must itself be a member of this
+category. If the coarser thing belongs to a different category, it is NOT a
+rung. Reject it (and record it under "rejected").
+
+GATE 2 — PROJECTION SOUNDNESS. This gate judges the entities themselves — what
+they denote and how they contain each other. Do NOT reason through shared
+facts ("both were targeted by X", "attributed to Y"): what an entity did or
+suffered belongs to the graph's assertional layer, and this ladder is entity
+matching only. The coarser node passes if EITHER holds — and it must keep a
+named anchor: a thing (the GRU), or a group defined by one (microsoft:*,
+anchored to Microsoft). A bare kind ("a unit", "a product") or the category
+itself is never a rung:
+
+  a) same referent, wider net — everything the finer name denotes, the coarser
+     name also denotes, with detail dropped;
+  b) proper part — the finer referent sits inside the coarser one.
+
+Decide between (a) and (b) with the FACT-REWRITE TEST, and record it in the
+rung's "foldTest": take a plausible corpus sentence about the finer entity and
+rewrite it with the coarser name.
+
+  - The rewrite is the SAME CLAIM stated less precisely -> case (a),
+    set "preserving": true.
+  - The rewrite is a claim about a DIFFERENT THING -> case (b),
+    set "preserving": false.
+  - The rewrite is neither -> not a rung at all; reject it.
+
+  "Office 2010 SP2 was exploited" -> "Office 2010 was exploited"
+      same claim, service pack blurred            => preserving: true
+  "Unit 74455 ran the operation"  -> "the GRU ran the operation"
+      now says the whole agency did it            => preserving: false
+  "certifiedauth.in was seized"   -> "Domain was seized"
+      not a claim about the world                 => not a rung (the category itself)
+
+Tiebreak when the rewrite feels arguable — ask what the coarser node IS. A
+COLLECTION of things like the finer one (a product family, microsoft:*, a
+sector) folds as "one of them": preserving: true. A THING IN ITS OWN RIGHT
+that the finer one belongs to (an agency, a ministry, a parent company) makes
+the rewrite change its subject: preserving: false. When still uncertain,
+answer preserving: false — a lost fold is safe, a silent subject change is
+not.
+
+GATE 3 — NODE ECONOMY. One coarsening, one rung. An anchored group (a star
+node like microsoft:*) is admitted ONLY when a pinned reference table computes
+membership from the entity's own name or facets — that is what makes it
+grouped-by. If membership takes world knowledge, the same coarsening is
+already the part-of rung to the anchor itself: "a GRU unit" and "the GRU"
+retain exactly the same information (belongs to the GRU), and the agency is a
+real referent that reports name, while the star node is synthetic. Emit the
+container, never both.
+
+  passes: Microsoft Office -> microsoft:*        (CPE vendor component computes membership)
+  fails:  GRU Unit 74455   -> gru:* "a GRU unit" (no table knows Unit 26165 is GRU; this
+                                                  coarsening is spelled part-of -> GRU)
+
+## The moves (descriptive) and the flags (load-bearing)
+
+Every admitted rung records the move that produced it — as DESCRIPTION, not as
+a decision. Downstream behaviour is decided by two flags, and only one of them
+is yours to set:
+
+- "preserving" — YOURS, per rung, from the fact-rewrite test in gate 2. It
+  decides whether folding this rung keeps a fact's subject (same thing,
+  blurrier name) or widens it (a different, containing thing). When uncertain,
+  answer false — the fold stays off, which is the safe failure.
+- deterministic — NOT yours. Code sets it by BINDING: it replays your g0
+  example through wired reference tables (CPE, the Public Suffix List,
+  ISO 3166, …); a rung that binds to no table is treated as defeasible no
+  matter which move you named. So do NOT cite standards in your output — your
+  job is the honest description, not the citation.
+
+| move            | what it drops                                   | example                              |
+|-----------------|-------------------------------------------------|--------------------------------------|
+| drop-qualifier  | a version / release / edition / config facet    | Office 2010 -> Microsoft Office      |
+| grouped-by      | membership in a set fixed by producer/controller| Microsoft Office -> microsoft:*      |
+| part-of         | a proper part -> the whole containing it        | Cyber Command -> Ministry of Defence |
+| kind-of         | a specific kind -> the broader kind             | electricity distribution -> energy   |
+
+The moves usually pair with the flag (drop-qualifier and grouped-by rungs are
+usually preserving; part-of rungs are widening) — but NOT always: a kind-of
+rung is often preserving ("electricity distribution was attacked" IS an
+energy-sector attack) even though no table computes it. Answer the flag from
+the fact-rewrite test, never from the move name. The single worst error here
+is claiming "preserving": true for a rung whose fold changes who a fact is
+about — downstream code folds preserving rungs silently once a table confirms
+them.
+
+## Hard rules
+
+- NEVER emit the category itself as a rung. "Domain" is not a coarser domain.
+- NEVER cross into another category. A vendor rung of Software means "any product
+  by that vendor" (still Software), NOT the company (Organization).
+- Widening never precedes blurring. Once a rung is "preserving": false, no
+  later rung may be "preserving": true — a blur above a subject change would
+  blur a different thing. If a ladder seems to need that, the widening rung
+  below it is probably not a rung.
+- Aliases are NOT rungs. "MS Office" = "Microsoft Office" is the same rung.
+- Renames are NOT rungs. "Twitter" -> "X" is one referent over time.
+- DO NOT pad. Many categories have no ladder at all: identifiers whose digits ARE
+  their identity (CVE-2024-1234, UAC-0002) are depth 1 — emit g0 only. A short
+  honest ladder beats an invented one.
+- Maximum 4 rungs (g0-g3). If the category seems to need more, emit your best 4
+  and say so in "notes".
+- If a rung is genuinely contested among sources (rival vendors disagree whether
+  one group contains another), still emit it, but set "disputed": true.
+
+## Output
+
+Return ONLY this JSON.
+
+{
+  "category": "<name>",
+  "ladder": [
+    { "g": 0, "alias": "<short noun>", "example": "<from the input examples>" },
+    { "g": 1, "alias": "<short noun>", "move": "<one of the four>",
+      "example": "<coarser form of the g0 example>",
+      "preserving": "<true|false — from the fact-rewrite test>",
+      "foldTest": "<one line: '<sentence about the finer>' -> '<rewrite with the coarser>': same claim, less precise | a claim about a different thing>",
+      "disputed": false }
+  ],
+  "rejected": [
+    { "candidate": "<coarser thing you considered>", "gate": "1|2|3",
+      "reason": "<why it is not a rung, and where it belongs instead>" }
+  ],
+  "notes": "<anything the schema should know: missing standards, depth pressure>"
+}
+
+Rung aliases are local to this category. Where a standard supplies the words,
+use them verbatim. Where none does, pick a plain noun — no one will compare it
+across categories, the "g" index does that.
+
+The "example" of every rung must be a name the corpus could actually mention —
+draw it from the input examples wherever one already sits at that rung. This
+ladder feeds an entity-matching graph that holds full mentioned names, so a
+rung whose example you had to invent will match nothing; reconsider it. Star
+groups (microsoft:*) are the one exception: they are computed fold targets,
+never matched against text.
+
+## Examples
+
+INPUT  category: Software
+       definition: A named software product, family or vendor line
+       examples: Microsoft Office 2010 SP2, MS Office, Office 2013,
+                 Exchange Server 2019, Microsoft Exchange
+
+{
+  "category": "Software",
+  "ladder": [
+    { "g": 0, "alias": "build", "example": "Microsoft Office 2010 SP2" },
+    { "g": 1, "alias": "version", "move": "drop-qualifier",
+      "example": "Microsoft Office 2010",
+      "preserving": true,
+      "foldTest": "'Office 2010 SP2 was exploited' -> 'Office 2010 was exploited': same claim, less precise — service pack blurred",
+      "disputed": false },
+    { "g": 2, "alias": "product", "move": "drop-qualifier",
+      "example": "Microsoft Office",
+      "preserving": true,
+      "foldTest": "'Office 2010 was exploited' -> 'Microsoft Office was exploited': same claim, less precise — version blurred",
+      "disputed": false },
+    { "g": 3, "alias": "vendor", "move": "grouped-by",
+      "example": "microsoft:* (any Microsoft product)",
+      "preserving": true,
+      "foldTest": "'Microsoft Office was targeted' -> 'a Microsoft product was targeted': same claim, wider net — the family is a collection of products, not a thing that acts",
+      "disputed": false }
+  ],
+  "rejected": [
+    { "candidate": "Microsoft, the company", "gate": "1",
+      "reason": "Organization, not Software. The vendor rung microsoft:* denotes Microsoft's products, never the company itself — the company is a different referent, not a wider name for Office. Belongs on the assertional layer as published-by." }
+  ],
+  "notes": "CPE covers this category fully; all rungs deterministic."
+}
+
+INPUT  category: Government Body
+       definition: A state agency, ministry, or subordinate unit
+       examples: GRU Unit 74455, GRU, Ministry of Defence, CERT-UA, SSSCIP
+
+{
+  "category": "Government Body",
+  "ladder": [
+    { "g": 0, "alias": "unit", "example": "GRU Unit 74455" },
+    { "g": 1, "alias": "agency", "move": "part-of",
+      "example": "GRU",
+      "preserving": false,
+      "foldTest": "'Unit 74455 ran the operation' -> 'the GRU ran the operation': a claim about a different thing — the agency is a whole the unit belongs to, not a blurrier name for it",
+      "disputed": false },
+    { "g": 2, "alias": "ministry", "move": "part-of",
+      "example": "Ministry of Defence",
+      "preserving": false,
+      "foldTest": "'the GRU ran the operation' -> 'the Ministry of Defence ran the operation': a claim about a different thing — the ministry contains the agency",
+      "disputed": false }
+  ],
+  "rejected": [
+    { "candidate": "gru:* (any GRU unit)", "gate": "3",
+      "reason": "Anchored to the GRU, but no reference table computes unit membership — Unit 26165 carries no GRU in its name. This coarsening is already the g1 part-of rung; a star node would duplicate it, and no report names 'a GRU unit' as an entity." }
+  ],
+  "notes": "Every rung is defeasible; no reference table gives named rungs, only containment edges (Wikidata P749 where available). Default lambda for this category should be g0."
+}
+
+INPUT  category: Vulnerability
+       definition: A disclosed software vulnerability identifier
+       examples: CVE-2024-1234, CVE-2023-44487, CVE-2021-44228
+
+{
+  "category": "Vulnerability",
+  "ladder": [ { "g": 0, "alias": "identifier", "example": "CVE-2024-1234" } ],
+  "rejected": [
+    { "candidate": "CVE year (CVE-2024-*)", "gate": "2",
+      "reason": "CVE-2024-* is not a wider name for this vulnerability — the year is part of the identifier, not a facet, so there is no family of which CVE-2024-1234 is a kind or a part." },
+    { "candidate": "the affected product", "gate": "1",
+      "reason": "Software, not Vulnerability. Belongs on the assertional layer as affects." }
+  ],
+  "notes": "Designator category — digits are identity. Depth 1 is correct."
+}
+
+INPUT  category: Industry Sector
+       definition: An economic sector or industry in which a victim or target operates
+       examples: electricity distribution, energy sector, healthcare,
+                 regional water utilities, banking
+
+{
+  "category": "Industry Sector",
+  "ladder": [
+    { "g": 0, "alias": "subsector", "example": "electricity distribution" },
+    { "g": 1, "alias": "sector", "move": "kind-of",
+      "example": "energy",
+      "preserving": true,
+      "foldTest": "'electricity distribution was attacked' -> 'the energy sector was attacked': same claim, less precise — a narrower kind blurred into its sector",
+      "disputed": true }
+  ],
+  "rejected": [
+    { "candidate": "critical infrastructure", "gate": "1",
+      "reason": "A jurisdiction-relative regulatory designation over sectors (CISA lists 16, EU NIS2 draws the line differently), not itself an economic sector. Belongs on the assertional layer as designated-critical-in." }
+  ],
+  "notes": "g1 is preserving but disputed: the fold keeps the claim (a subsector attack IS a sector attack), yet NACE rolls electricity distribution into 'electricity, gas, steam' while GICS files it under 'utilities' — rival classifiers name different parents. Unless a classifier is pinned in the pipeline, the rung will not bind and stays defeasible; default lambda should be g0."
+}
+
+## Now derive the ladder
+
+category:    Country
+definition:  (no definition recorded — derive from the examples)
+examples:    Естонія, Індія, США, USA, Росія, Russian Federation, Ukraine, Російська Федерація
+
+--- text ---
+Derive the ladder for category "Country".
+
+=== RESPONSE (26.1s, in 3702 / out 1190 tok, stop) ===
+```json
+{
+  "category": "Country",
+  "ladder": [
+    { "g": 0, "alias": "specific name", "example": "Естонія" },
+    { "g": 1, "alias": "common name", "move": "drop-qualifier",
+      "example": "Индія",
+      "preserving": true,
+      "foldTest": "'Естонія is a country' -> 'Индія is a country': same claim, less precise — specific name blurred into a common name",
+      "disputed": false },
+    { "g": 2, "alias": "iso code", "move": "grouped-by",
+      "example": "USA",
+      "preserving": true,
+      "foldTest": "'Индія is a country' -> 'USA is a country': same claim, wider net — a specific country is a member of the set of recognized countries",
+      "disputed": false },
+    { "g": 3, "alias": "state", "move": "part-of",
+      "example": "Росія",
+      "preserving": false,
+      "foldTest": "'USA is a country' -> 'Росія is a country': a claim about a different thing — the country is a specific entity, not a part of a broader political structure unless specified",
+      "disputed": false }
+  ],
+  "rejected": [
+    {
+      "candidate": "Russian Federation",
+      "gate": "1",
+      "reason": "This is a specific name, not a coarser category. It belongs on the g0 layer, as it is a fully qualified entity of the category, not a wider concept."
+    }
+  ],
+  "notes": "The ladder primarily reflects the linguistic diversity of the examples. g0 captures the highly specific observed entities. g1 abstracts to common names, and g2 abstracts to standard identifiers (like ISO codes) which serve as anchors. g3 represents the broadest conceptual grouping, acknowledging that all examples are members of the set of recognized states. The specific nature of the Russian examples (e.g., 'Російська Федерація' vs 'Росія') suggests that a purely linguistic ladder is context-dependent, but this structure maximizes the hierarchy based on the input set."
+}
+```

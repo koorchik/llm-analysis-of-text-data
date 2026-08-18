@@ -1,0 +1,1122 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 1 · signal: defer(link-judge, d2724) + union-blocker 0.92 + coherence
+  A. 7Star Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "7Star Browser"
+  B. Adobe Flash Player (Software)
+     aliases: []  · minted d2724
+     gloss: "Software application, no explicit link found in candidates."
+     evidence: d2724 "Adobe Flash Player"
+  C. Agent Tesla (Software)
+     aliases: [AgentTesla]  · minted d3028
+     gloss: "Mentioned in the source title."
+     evidence: d861292 "AgentTesla"
+     evidence: d3028 "Agent Tesla"
+  D. Amigo Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Amigo Browser"
+  E. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  F. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  G. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  H. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  I. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  J. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  K. Foxmail (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Foxmail"
+  L. GammaLoad.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaLoad.PS1"
+  M. GammaSteel.NET (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.NET"
+  N. GammaSteel.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.PS1"
+  O. MISP (Software)
+     aliases: []  · minted d40102
+     gloss: (none)
+     evidence: d40102 "MISP"
+  P. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+     evidence: d3028 "Internet Explorer"
+  Q. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon]  · minted d39934
+     gloss: (none)
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "Cobalt Strike Beacon"
+     evidence: d39934 "Meterpreter"
+  R. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  S. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  T. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]  · minted d24
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+     evidence: d2724 ".NET Framework"
+  U. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]  · minted d24
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2724 "CVE-2018-0854"
+     evidence: d2660 "Office 2016"
+  V. Opera Browser (Software)
+     aliases: [TRYxaEbX.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+     evidence: d3028 "Opera Browser"
+  W. PGMB New Order 18-2077.xlsx (Software)
+     aliases: [CVE-2018-8124, CVE-2018-8127]  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d2724 "CVE-2018-8124"
+     evidence: d2724 "CVE-2018-8127"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  X. Paltalk (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Paltalk"
+  Y. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  Z. RegAsm.exe (Software)
+     aliases: [write.exe]  · minted d3028
+     gloss: "An executable file that acts as a dropper."
+     evidence: d619229 "write.exe"
+     evidence: d3028 "RegAsm.exe"
+  E27. SmartFTP (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "SmartFTP"
+  E28. Smokeloader (Software)
+     aliases: []  · minted d2707
+     gloss: "The source describes Smokeloader as a piece of software that distributes malicious files."
+     evidence: d2707 "Smokeloader"
+  E29. TRYxaEbX (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX"
+  E30. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  E31. Thunderbird (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Thunderbird"
+  E32. Trillian (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Trillian"
+  E33. UkrScanner.exe (SFX) (Software)
+     aliases: []  · minted d40102
+     gloss: "An SFX file identical to CredoMap_v2."
+     evidence: d40102 "UkrScanner.exe (SFX)"
+  E34. UkrScanner.rar (Software)
+     aliases: []  · minted d40102
+     gloss: "An archive file containing the malicious program."
+     evidence: d40102 "UkrScanner.rar"
+  E35. b.exe (Software)
+     aliases: []  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d39934 "b.exe"
+  E36. ckZ89.ExE (Software)
+     aliases: [CVE-2018-8129]  · minted d2707
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+     evidence: d2707 "ckZ89.ExE"
+  E37. host_news_mod_mod.msi (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "host_news_mod_mod.msi"
+  E38. installer.exe (Software)
+     aliases: [sgegkseg23mjl.exe]  · minted d10011
+     gloss: (none)
+     evidence: d861292 "sgegkseg23mjl.exe"
+     evidence: d10011 "installer.exe"
+  E39. jDownloader (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "jDownloader"
+  E40. loader.exe (Software)
+     aliases: [rundll32.exe]  · minted d39934
+     gloss: (none)
+     evidence: d861292 "rundll32.exe"
+     evidence: d39934 "loader.exe"
+  E41. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe]  · minted d24
+     gloss: (none)
+     evidence: d1229152 "PowerShell (powershell.exe)"
+     evidence: d1229152 "wscript.exe"
+     evidence: d1229152 "mshta.exe"
+  E42. rutserv.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rutserv.exe"
+  E43. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  E44. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  E45. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  E46. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: [CVE-2018-0958]  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2724 "CVE-2018-0958"
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  E47. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: E–F (defer(link-judge, d2724)); F–S (defer(link-judge, d2724)); F–T (defer(link-judge, d2724)); F–U (defer(link-judge, d2724)); F–W (defer(link-judge, d2724)); F–Y (defer(link-judge, d2724)); E36–F (defer(link-judge, d2724)); E46–F (defer(link-judge, d2724)); E47–F (defer(link-judge, d2724)); E–G (defer(link-judge, d2724)); G–P (defer(link-judge, d2724)); G–S (defer(link-judge, d2724)); G–T (defer(link-judge, d2724)); G–U (defer(link-judge, d2724)); G–W (defer(link-judge, d2724)); G–Y (defer(link-judge, d2724)); E36–G (defer(link-judge, d2724)); E46–G (defer(link-judge, d2724)); E47–G (defer(link-judge, d2724)); E–H (defer(link-judge, d2724)); H–S (defer(link-judge, d2724)); H–T (defer(link-judge, d2724)); H–U (defer(link-judge, d2724)); H–Y (defer(link-judge, d2724)); E36–H (defer(link-judge, d2724)); E41–H (defer(link-judge, d2724)); E46–H (defer(link-judge, d2724)); E47–H (defer(link-judge, d2724)); E–I (defer(link-judge, d2724)); I–R (defer(link-judge, d2724)); I–S (defer(link-judge, d2724)); I–T (defer(link-judge, d2724)); I–U (defer(link-judge, d2724)); I–W (defer(link-judge, d2724)); E36–I (defer(link-judge, d2724)); E46–I (defer(link-judge, d2724)); E47–I (defer(link-judge, d2724)); E–J (defer(link-judge, d2724)); F–J (union-blocker 0.92); J–R (defer(link-judge, d2724)); J–S (defer(link-judge, d2724)); J–T (defer(link-judge, d2724)); J–U (defer(link-judge, d2724)); J–W (defer(link-judge, d2724)); E36–J (defer(link-judge, d2724)); E46–J (defer(link-judge, d2724)); E47–J (defer(link-judge, d2724)); L–V (defer(link-judge, d1229152)); E27–L (defer(link-judge, d1229152)); E28–L (defer(link-judge, d1229152)); E30–L (defer(link-judge, d1229152)); E39–L (defer(link-judge, d1229152)); E40–L (defer(link-judge, d1229152)); E41–L (defer(link-judge, d1229152)); E43–L (defer(link-judge, d1229152)); E44–L (defer(link-judge, d1229152)); E45–L (defer(link-judge, d1229152)); B–M (defer(link-judge, d1229152)); C–M (defer(link-judge, d1229152)); D–M (defer(link-judge, d1229152)); K–M (defer(link-judge, d1229152)); M–P (defer(link-judge, d1229152)); M–Q (defer(link-judge, d1229152)); M–T (defer(link-judge, d1229152)); M–V (defer(link-judge, d1229152)); M–X (defer(link-judge, d1229152)); E27–M (defer(link-judge, d1229152)); C–N (defer(link-judge, d1229152)); N–O (defer(link-judge, d1229152)); N–V (defer(link-judge, d1229152)); E27–N (defer(link-judge, d1229152)); E30–N (defer(link-judge, d1229152)); E38–N (defer(link-judge, d1229152)); E41–N (defer(link-judge, d1229152)); E43–N (defer(link-judge, d1229152)); E44–N (defer(link-judge, d1229152)); E45–N (defer(link-judge, d1229152)); A–E29 (defer(link-judge, d619229)); E29–Q (defer(link-judge, d619229)); E29–T (defer(link-judge, d619229)); E29–E31 (defer(link-judge, d619229)); E29–E32 (defer(link-judge, d619229)); E29–E34 (defer(link-judge, d619229)); E29–E35 (defer(link-judge, d619229)); E29–E38 (defer(link-judge, d619229)); E30–R (defer(link-judge, d619229)); E30–T (defer(link-judge, d619229)); E30–Z (defer(link-judge, d619229)); E30–E32 (defer(link-judge, d619229)); E30–E33 (defer(link-judge, d619229)); E30–E37 (defer(link-judge, d619229)); E30–E42 (defer(link-judge, d619229)); E30–E45 (defer(link-judge, d619229))
+  coherence check: P — does every listed alias belong to this entity?
+  coherence check: U — does every listed alias belong to this entity?
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (155.4s, in 6018 / out 7257 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "defer",
+          "from": "CVE-2017-11882",
+          "into": "Adobe Flash Player",
+          "confidence": "low",
+          "evidence": "The relationship is deferred based on link-judge d2724."
+        },
+        {
+          "op": "union-blocker",
+          "from": "union-blocker",
+          "into": "Agent Tesla",
+          "confidence": "low",
+          "evidence": "The relationship is blocked based on union-blocker 0.92."
+        },
+        {
+          "op": "coherence",
+          "from": "coherence",
+          "into": "All entities in Component 1",
+          "confidence": "high",
+          "evidence": "All aliases listed for each entity appear to belong to the entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "7Star Browser",
+            "Adobe Flash Player"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "7Star Browser",
+            "Agent Tesla"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "Amigo Browser"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "CVE-2018-8170"
+          ],
+          "confidence": "high",
+          "evidence": "These are distinct vulnerability identifiers."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "CVE-2018-8141"
+          ],
+          "confidence": "high",
+          "evidence": "These are distinct vulnerability identifiers."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "CVE-2018-8174"
+          ],
+          "confidence": "high",
+          "evidence": "These are distinct vulnerability identifiers."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Foxmail"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "GammaLoad.PS1"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "Meterpreter"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "Cobalt Strike Beacon"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "Microsoft Office 2007"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "Microsoft Office 2010"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "Microsoft Office 2013"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "PGMB New Order 18-2077.xlsx"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "Petya"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Microsoft Office 2007"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Microsoft Office 2010"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Microsoft Office 2013"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "GammaLoad.PS1"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Microsoft Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Microsoft Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Microsoft Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows Host Compute Service Shim"
+          ],
+          "confidence": "high",
+          "evidence": "The alias is a specific system component, not the software itself."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "CVE-2018-0854"
+          ],
+          "confidence": "high",
+          "evidence": "The CVE is a vulnerability, not the software."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            ".NET Framework"
+          ],
+          "confidence": "medium",
+          "evidence": "The .NET Framework is a component, not the entire Office suite."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "CVE-2018-0854"
+          ],
+          "confidence": "high",
+          "evidence": "The CVE is a vulnerability, not the software."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Microsoft Office Services and Web Apps"
+          ],
+          "confidence": "high",
+          "evidence": "The latter is an alias for MS Office 2010, not Office 2016."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Paltalk",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "medium",
+          "evidence": "No direct link established."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Microsoft Office Services and Web Apps"
+          ],
+          "confidence": "high",
+          "evidence": "The latter is an alias for MS Office 2010, not Office 2016."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Microsoft Office Services and Web Apps"
+          ],
+          "confidence": "high",
+          "evidence": "The latter is an alias for MS Office 2010, not Office 2016."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "They are distinct versions of Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "Identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Windows 7"
+          ],
+          "confidence": "high",
+          "evidence": "Windows 7 is an operating system, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Microsoft Office Services and Web Apps"
+          ],
+          "confidence": "high",
+          "evidence": "The latter is an alias for MS Office 2010, not Office 2016."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2007",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2010",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2013",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Microsoft Office 2016",
+            "Internet Explorer"
+          ],
+          "confidence": "medium",
+          "evidence": "Internet Explorer is a browser, not MS Office."
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+27 op(s) accepted

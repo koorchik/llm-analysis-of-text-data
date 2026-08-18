@@ -1,0 +1,260 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Нові спроби використання вразливості 2017 року Microsoft Office"
+Source Excerpt:
+"""
+<p>Всі памʼятають масові атаки шифрувальників Petya та Misha у 2017 для поширення яких використовувалася вразливість для віддаленого виконання коду, а саме CVE-2017-0199.</p><p>При отриманні листів з посиланнями на ресурс для завантаження Microsoft Word документу або ж просто з прикріпленим документом (наприклад з розширенням .rtf, .docx) потрібно бути особливо пильними, оскільки документ з розширенням .rtf може містити вбудований ole-обʼєкт, а документ з розширенням .docx - посилання на інший файл. Зазначимо, що ole-обʼєкт може завантажити і виконати сторонню Microsoft Windows програму, в том
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Petya" (Software); ladder: (none; use g0); candidates: MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx)
+2. "Misha" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Word [rung unknown] (aliases: MS Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); major.exe [g0] (aliases: major.exe)
+3. "CVE-2017-0199" (Software); ladder: (none; use g0); candidates: CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+4. "Microsoft Word" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx)
+5. "Microsoft Office" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Word [rung unknown] (aliases: MS Word); major.exe [g0] (aliases: major.exe)
+6. "Microsoft Windows" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); CVE-2017-11882 [g0] (aliases: CVE-2017-11882)
+7. "Office 2007" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+8. "Office 2013" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+9. "Office 2010" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS PowerPoint [rung unknown] (aliases: MS PowerPoint)
+10. "Office 2016" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Word [rung unknown] (aliases: MS Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx)
+11. "Windows 7" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); CVE-2017-11882 [g0] (aliases: CVE-2017-11882); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx)
+12. "Windows Vista" (Software); ladder: (none; use g0); candidates: MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Word [rung unknown] (aliases: MS Word); CVE-2017-11882 [g0] (aliases: CVE-2017-11882)
+13. "Windows Server 2008" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Word [rung unknown] (aliases: MS Word)
+14. "Windows Server 2012" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Word [rung unknown] (aliases: MS Word)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (46.4s, in 3099 / out 2317 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Petya",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Name-independent source description for mint/defer, else null",
+      "reasoning": "No explicit link is established between 'Petya' and any specific software candidate."
+    },
+    {
+      "index": 2,
+      "mention": "Misha",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Name-independent source description for mint/defer, else null",
+      "reasoning": "No explicit link is established between 'Misha' and any specific software candidate."
+    },
+    {
+      "index": 3,
+      "mention": "CVE-2017-0199",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": "CVE-2017-11882",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The mention is not directly linked to any candidate, although it is related to other CVEs listed."
+    },
+    {
+      "index": 4,
+      "mention": "Microsoft Word",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Word",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate MS Word."
+    },
+    {
+      "index": 5,
+      "mention": "Microsoft Office",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate MS Office."
+    },
+    {
+      "index": 6,
+      "mention": "Microsoft Windows",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Microsoft Windows is the OS context in which MS Office operations occur."
+    },
+    {
+      "index": 7,
+      "mention": "Office 2007",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Office 2007 is a specific version of the MS Office suite."
+    },
+    {
+      "index": 8,
+      "mention": "Office 2013",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Office 2013 is a specific version of the MS Office suite."
+    },
+    {
+      "index": 9,
+      "mention": "Office 2010",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Office 2010 is a specific version of the MS Office suite."
+    },
+    {
+      "index": 10,
+      "mention": "Office 2016",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Office 2016 is a specific version of the MS Office suite."
+    },
+    {
+      "index": 11,
+      "mention": "Windows 7",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Windows 7 is an operating system context where Office software operates."
+    },
+    {
+      "index": 12,
+      "mention": "Windows Vista",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Windows Vista is an operating system context where Office software operates."
+    },
+    {
+      "index": 13,
+      "mention": "Windows Server 2008",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Windows Server 2008 is an operating system context where MS Office operates."
+    },
+    {
+      "index": 14,
+      "mention": "Windows Server 2012",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "MS Office",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "Windows Server 2012 is an operating system context where MS Office operates."
+    }
+  ]
+}

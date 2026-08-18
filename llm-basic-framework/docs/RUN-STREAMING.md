@@ -139,11 +139,9 @@ Two facts the pre-seed depends on, both verified against the code:
   metadata`); the frozen files carry only `entities + metadata`, and the normalizer iterates
   `extraction.relations` unguarded — a bare `cp` therefore CRASHES on document 1, after paying
   for its link-judge call. The copy must inject `relations: []` (step 2 below does).
-- **runId stability**: the run directory must not dirty the git tree, or the second invocation
-  computes a *different* runId and re-extracts everything at full cost. The repo's `.gitignore`
-  now covers `storage/cert.gov.ua/processed/experiments/` — verify with
-  `git check-ignore ../storage/cert.gov.ua/processed/experiments/x && echo ok` before starting,
-  and keep the tree otherwise committed.
+- **runId stability**: experiment directories are Git-visible. Creating or pre-seeding a run can
+  therefore change the dirty-diff hash before a second bootstrap invocation. Compute the run path
+  once and pre-seed it before changing tracked state, or use a clean worktree for reportable runs.
 
 ```bash
 # 1. Start the run; note the "RUN <runId> → <runDir>" line; once the first
@@ -271,8 +269,8 @@ mismatch.
   the record is unambiguous.
 - No `DECISIONS_LOG=1` → the run cannot be NIL/mint-scored or replayed (merge metrics still work
   from `registry.json`).
-- The runId folds in a dirty-diff hash; untracked files inside the repo count as dirty. Run dirs
-  are gitignored for exactly this reason — do not write other artifacts into the repo mid-run.
+- The runId folds in a dirty-diff hash; untracked files inside the repo count as dirty. Run dirs are
+  Git-visible, so use a clean worktree and do not create unrelated artifacts mid-run.
 - `npx ts-node` can resolve a wrong version — use `npm run …` scripts or `./node_modules/.bin/ts-node`.
 - `gpt-5` and `text-embedding-3-large` input are unpriced in `config/model-prices.json` — a
   `$0.00 (+N unpriced calls)` total means *unpriced*, not free. Anthropic models are priced.

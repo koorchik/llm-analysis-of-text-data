@@ -1,0 +1,476 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 2 · signal: defer(link-judge, d2724) + union-blocker 0.92 + coherence
+  A. 7Star Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "7Star Browser"
+  B. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  C. CVE-2018-8132 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8132"
+  D. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  E. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  F. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  G. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  H. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  I. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+     evidence: d3028 "Internet Explorer"
+  J. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon]  · minted d39934
+     gloss: (none)
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "Cobalt Strike Beacon"
+     evidence: d39934 "Meterpreter"
+  K. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  L. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  M. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]  · minted d24
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+     evidence: d2724 ".NET Framework"
+  N. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]  · minted d24
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2724 "CVE-2018-0854"
+     evidence: d2660 "Office 2016"
+  O. Mozilla Firefox (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Mozilla Firefox"
+  P. PGMB New Order 18-2077.xlsx (Software)
+     aliases: [CVE-2018-8124, CVE-2018-8127]  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d2724 "CVE-2018-8124"
+     evidence: d2724 "CVE-2018-8127"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  Q. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  R. RegAsm.exe (Software)
+     aliases: [write.exe]  · minted d3028
+     gloss: "An executable file that acts as a dropper."
+     evidence: d619229 "write.exe"
+     evidence: d3028 "RegAsm.exe"
+  S. TRYxaEbX (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX"
+  T. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  U. Thunderbird (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Thunderbird"
+  V. Trillian (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Trillian"
+  W. UkrScanner.exe (SFX) (Software)
+     aliases: []  · minted d40102
+     gloss: "An SFX file identical to CredoMap_v2."
+     evidence: d40102 "UkrScanner.exe (SFX)"
+  X. UkrScanner.rar (Software)
+     aliases: []  · minted d40102
+     gloss: "An archive file containing the malicious program."
+     evidence: d40102 "UkrScanner.rar"
+  Y. Windows Server 2012 (Software)
+     aliases: [CVE-2018-8120]  · minted d2660
+     gloss: "Operating system version that is contextually related to Microsoft Office versions."
+     evidence: d2724 "CVE-2018-8120"
+     evidence: d2660 "Windows Server 2012"
+  Z. b.exe (Software)
+     aliases: []  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d39934 "b.exe"
+  E27. ckZ89.ExE (Software)
+     aliases: [CVE-2018-8129]  · minted d2707
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+     evidence: d2707 "ckZ89.ExE"
+  E28. host_news_mod_mod.msi (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "host_news_mod_mod.msi"
+  E29. installer.exe (Software)
+     aliases: [sgegkseg23mjl.exe]  · minted d10011
+     gloss: (none)
+     evidence: d861292 "sgegkseg23mjl.exe"
+     evidence: d10011 "installer.exe"
+  E30. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe]  · minted d24
+     gloss: (none)
+     evidence: d39934 "powershell.exe"
+     evidence: d2707 "cmd.exe"
+     evidence: d2707 "powershell.exe"
+  E31. rutserv.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rutserv.exe"
+  E32. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  E33. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: [CVE-2018-0958]  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2724 "CVE-2018-0958"
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  E34. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: B–C (defer(link-judge, d2724)); C–E (union-blocker 0.92); C–K (defer(link-judge, d2724)); C–L (defer(link-judge, d2724)); C–M (defer(link-judge, d2724)); C–N (defer(link-judge, d2724)); C–Q (defer(link-judge, d2724)); C–Y (defer(link-judge, d2724)); C–E27 (defer(link-judge, d2724)); C–E33 (defer(link-judge, d2724)); C–E34 (defer(link-judge, d2724)); B–D (defer(link-judge, d2724)); D–I (defer(link-judge, d2724)); D–L (defer(link-judge, d2724)); D–M (defer(link-judge, d2724)); D–N (defer(link-judge, d2724)); D–P (defer(link-judge, d2724)); D–Q (defer(link-judge, d2724)); D–E27 (defer(link-judge, d2724)); D–E33 (defer(link-judge, d2724)); D–E34 (defer(link-judge, d2724)); B–E (defer(link-judge, d2724)); E–I (defer(link-judge, d2724)); E–L (defer(link-judge, d2724)); E–M (defer(link-judge, d2724)); E–N (defer(link-judge, d2724)); E–P (defer(link-judge, d2724)); E–Q (defer(link-judge, d2724)); E–E27 (defer(link-judge, d2724)); E–E33 (defer(link-judge, d2724)); E–E34 (defer(link-judge, d2724)); B–F (defer(link-judge, d2724)); F–I (defer(link-judge, d2724)); F–L (defer(link-judge, d2724)); F–M (defer(link-judge, d2724)); F–N (defer(link-judge, d2724)); F–Q (defer(link-judge, d2724)); E27–F (defer(link-judge, d2724)); E30–F (defer(link-judge, d2724)); E33–F (defer(link-judge, d2724)); E34–F (defer(link-judge, d2724)); B–G (defer(link-judge, d2724)); G–K (defer(link-judge, d2724)); G–L (defer(link-judge, d2724)); G–M (defer(link-judge, d2724)); G–N (defer(link-judge, d2724)); G–P (defer(link-judge, d2724)); G–Q (defer(link-judge, d2724)); E27–G (defer(link-judge, d2724)); E33–G (defer(link-judge, d2724)); E34–G (defer(link-judge, d2724)); B–H (defer(link-judge, d2724)); D–H (union-blocker 0.92); H–K (defer(link-judge, d2724)); H–L (defer(link-judge, d2724)); H–M (defer(link-judge, d2724)); H–N (defer(link-judge, d2724)); H–P (defer(link-judge, d2724)); E27–H (defer(link-judge, d2724)); E33–H (defer(link-judge, d2724)); E34–H (defer(link-judge, d2724)); A–S (defer(link-judge, d619229)); J–S (defer(link-judge, d619229)); M–S (defer(link-judge, d619229)); O–S (defer(link-judge, d619229)); S–U (defer(link-judge, d619229)); S–V (defer(link-judge, d619229)); S–X (defer(link-judge, d619229)); S–Z (defer(link-judge, d619229)); E29–S (defer(link-judge, d619229)); K–T (defer(link-judge, d619229)); M–T (defer(link-judge, d619229)); R–T (defer(link-judge, d619229)); T–V (defer(link-judge, d619229)); T–W (defer(link-judge, d619229)); E28–T (defer(link-judge, d619229)); E31–T (defer(link-judge, d619229)); E32–T (defer(link-judge, d619229))
+  coherence check: I — does every listed alias belong to this entity?
+  coherence check: N — does every listed alias belong to this entity?
+
+Component 2 of 2 · signal: union-blocker 0.99
+  A. Agent Tesla (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Agent Tesla"
+  B. AgentTesla (Software)
+     aliases: []  · minted d861292
+     gloss: "Mentioned in the source title."
+     evidence: d861292 "AgentTesla"
+  pairs to adjudicate: A–B (union-blocker 0.99)
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (110.7s, in 5056 / out 5245 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2017-11882",
+            "CVE-2018-8132"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between these two distinct vulnerability identifiers."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "CVE-2018-8136"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between these two distinct vulnerability identifiers."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "MS Office 2007"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "MS Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "MS Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "MS Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8132",
+            "Petya"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the malware name."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "MS Excel"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "MS Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "MS Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8134",
+            "MS Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "MS Excel"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "MS Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "MS Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8141",
+            "MS Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "MS Office 2007"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "MS Office 2010"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "MS Office 2013"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "MS Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the software application."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8170",
+            "Petya"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the malware name."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8129",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "These are identical."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8124",
+            "PGMB New Order 18-2077.xlsx"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the file."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8127",
+            "PGMB New Order 18-2077.xlsx"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the file."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8129",
+            "ckZ89.ExE"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence suggests identity between the vulnerability and the executable."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8129",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "These are identical."
+        }
+      ]
+    },
+    {
+      "component": 2,
+      "ops": [
+        {
+          "op": "merge",
+          "from": "Agent Tesla",
+          "into": "AgentTesla",
+          "confidence": "high",
+          "evidence": "Agent Tesla and AgentTesla are highly likely to refer to the same entity based on context."
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+7 op(s) accepted

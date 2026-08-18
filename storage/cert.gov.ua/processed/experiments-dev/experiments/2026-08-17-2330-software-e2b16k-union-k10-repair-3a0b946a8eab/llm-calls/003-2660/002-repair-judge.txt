@@ -1,0 +1,198 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 2 · signal: defer(link-judge, d24) + union-blocker 0.95
+  A. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  B. MS Excel (Software)
+     aliases: [Microsoft Equation Editor]  · minted d20
+     gloss: (none)
+     evidence: d24 "Microsoft Equation Editor"
+     evidence: d20 "MS Excel"
+  C. MS Office (Software)
+     aliases: []  · minted d20
+     gloss: (none)
+     evidence: d26 "MS Office"
+     evidence: d20 "MS Office"
+  D. MS PowerPoint (Software)
+     aliases: []  · minted d20
+     gloss: (none)
+     evidence: d20 "MS PowerPoint"
+  E. MS Word (Software)
+     aliases: [Microsoft Word]  · minted d20
+     gloss: (none)
+     evidence: d2660 "Microsoft Word"
+     evidence: d20 "MS Word"
+  F. Microsoft Office (Software)
+     aliases: []  · minted d2660
+     gloss: "General reference to Microsoft Office, which has multiple version candidates."
+     evidence: d2660 "Microsoft Office"
+  G. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+     evidence: d2660 "Windows Vista"
+  H. Microsoft Office 2010 (Software)
+     aliases: [Office 2010]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  I. Microsoft Office 2013 (Software)
+     aliases: [Office 2013]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2013"
+     evidence: d24 "Microsoft Office 2013"
+  J. Microsoft Office 2016 (Software)
+     aliases: [Office 2016]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2016"
+     evidence: d24 "Microsoft Office 2016"
+  pairs to adjudicate: A–B (defer(link-judge, d24)); A–C (defer(link-judge, d24)); A–D (defer(link-judge, d24)); A–E (defer(link-judge, d24)); C–F (union-blocker 0.94); F–H (union-blocker 0.91); F–I (union-blocker 0.91); F–J (union-blocker 0.91); G–H (union-blocker 0.90); G–I (union-blocker 0.90); H–I (union-blocker 0.95); G–J (union-blocker 0.90); H–J (union-blocker 0.95); I–J (union-blocker 0.95)
+
+Component 2 of 2 · signal: union-blocker 0.89
+  A. Windows Server 2008 (Software)
+     aliases: []  · minted d2660
+     gloss: "Operating system version that is contextually related to Microsoft Office versions."
+     evidence: d2660 "Windows Server 2008"
+  B. Windows Server 2012 (Software)
+     aliases: []  · minted d2660
+     gloss: "Operating system version that is contextually related to Microsoft Office versions."
+     evidence: d2660 "Windows Server 2012"
+  pairs to adjudicate: A–B (union-blocker 0.89)
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (30.0s, in 1957 / out 1560 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "distinct",
+          "distinct": [
+            "CVE-2017-11882",
+            "MS Excel",
+            "MS Office",
+            "MS PowerPoint",
+            "MS Word"
+          ],
+          "confidence": "medium",
+          "evidence": "Evidence indicates that the vulnerability (A) is distinct from the applications (B, C, D, E)."
+        },
+        {
+          "op": "rung",
+          "finer": "Microsoft Office 2007",
+          "coarser": "Microsoft Office",
+          "edgeKind": "coarsens-to",
+          "confidence": "high",
+          "evidence": "Microsoft Office 2007 is a specific version of the general Microsoft Office."
+        },
+        {
+          "op": "rung",
+          "finer": "Microsoft Office 2010",
+          "coarser": "Microsoft Office",
+          "edgeKind": "coarsens-to",
+          "confidence": "high",
+          "evidence": "Microsoft Office 2010 is a specific version of the general Microsoft Office."
+        },
+        {
+          "op": "rung",
+          "finer": "Microsoft Office 2013",
+          "coarser": "Microsoft Office",
+          "edgeKind": "coarsens-to",
+          "confidence": "high",
+          "evidence": "Microsoft Office 2013 is a specific version of the general Microsoft Office."
+        },
+        {
+          "op": "rung",
+          "finer": "Microsoft Office 2016",
+          "coarser": "Microsoft Office",
+          "edgeKind": "coarsens-to",
+          "confidence": "high",
+          "evidence": "Microsoft Office 2016 is a specific version of the general Microsoft Office."
+        },
+        {
+          "op": "distinct",
+          "distinct": [
+            "Microsoft Office",
+            "Microsoft Office 2007",
+            "Microsoft Office 2010",
+            "Microsoft Office 2013",
+            "Microsoft Office 2016"
+          ],
+          "confidence": "high",
+          "evidence": "These versions are distinct entities representing different software releases."
+        }
+      ]
+    },
+    {
+      "component": 2,
+      "ops": [
+        {
+          "op": "distinct",
+          "distinct": [
+            "Windows Server 2008",
+            "Windows Server 2012"
+          ],
+          "confidence": "high",
+          "evidence": "The entities represent two distinct, separate operating system versions."
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+4 op(s) accepted

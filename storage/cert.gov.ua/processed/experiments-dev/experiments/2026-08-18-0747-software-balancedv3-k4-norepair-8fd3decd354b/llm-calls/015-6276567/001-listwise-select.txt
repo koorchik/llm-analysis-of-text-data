@@ -1,0 +1,35 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: ""Повістка до суду": чергова цільова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8150)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 30.11.2023 зафіксовано масове розповсюдження електронних листів з тематикою "Повістки до суду" та вкладенням у вигляді файлу "Господарський суд Одеської області Повістка до суду.rar".</p><p>Зазначений RAR-архів містить захищений паролем файл "Повістка до суду.rar", в якому знаходиться документ з макросом "Повістка до суду.doc".&nbsp;</p><p>У разі активації код макросу за допомогою оглядача файлів (explorer.exe) з використанням протоколу SMB здійснить завантаження на ЕОМ т
+Mentions:
+1. "RemcosRAT" (Software)
+     1. Remote Utilities [aliases: Remote Utilities, Remcos, RemoteUtilities]
+     2. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     3. Meterpreter [aliases: Meterpreter]
+     4. FTP Commander [aliases: FTP Commander]
+     5. NEW ENTITY
+2. "scandoc.exe" (Software)
+     1. cmd.exe [aliases: cmd.exe]
+     2. loader.exe [aliases: loader.exe, sgegkseg23mjl.exe]
+     3. b.exe [aliases: b.exe, baseupd.exe]
+     4. MCMDiction.exe [aliases: MCMDiction.exe]
+     5. NEW ENTITY
+3. "SmartAssembly" (Software)
+     1. SmartFTP [aliases: SmartFTP]
+     2. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]
+     3. Internet Explorer [aliases: Internet Explorer, Agent Tesla, AgentTesla]
+     4. MS Excel [aliases: MS Excel, Smokeloader]
+     5. NEW ENTITY
+
+=== RESPONSE (14.1s, in 699 / out 741 tok, stop) ===
+```json
+{"choices":[{"mention":"RemcosRAT", "category":"Software", "choice":1}]}
+```

@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:41:06.879Z",
+  "operator": "listwise-select",
+  "docId": 40102,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)\" — evidence: <p><strong>Загальна інформація</strong></p><p><span style=\"color: rgb(36, 36, 36);\">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою \"Кібератака\", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву \"UkrScanner.rar\".</span></p><p><span style=\"color: rgb(36, 36, 36);\">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр\nMentions:\n1. \"CredoMap_v2\" (Software)\n     1. Chedot Browser [aliases: Chedot Browser]\n     2. Pocomail [aliases: Pocomail]\n     3. CVE-2018-8120 [aliases: CVE-2018-8120]\n     4. CVE-2018-8124 [aliases: CVE-2018-8124]\n     5. CVE-2018-8127 [aliases: CVE-2018-8127]\n     6. Microsoft Edge [aliases: Microsoft Edge]\n     7. NEW ENTITY\n2. \"UkrScanner.rar\" (Software)\n     1. installer.exe [aliases: installer.exe]\n     2. loader.exe [aliases: loader.exe]\n     3. Uran Browser [aliases: Uran Browser]\n     4. 7Star Browser [aliases: 7Star Browser]\n     5. RegAsm.exe [aliases: RegAsm.exe]\n     6. rfusclient.exe [aliases: rfusclient.exe]\n     7. NEW ENTITY\n3. \"UkrScanner.exe (SFX)\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. installer.exe [aliases: installer.exe]\n     3. loader.exe [aliases: loader.exe]\n     4. RegAsm.exe [aliases: RegAsm.exe]\n     5. cmd.exe [aliases: cmd.exe]\n     6. major.exe [aliases: major.exe]\n     7. NEW ENTITY\n4. \"scan.exe (CredoMap_v2)\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. installer.exe [aliases: installer.exe]\n     5. loader.exe [aliases: loader.exe]\n     6. powershell.exe [aliases: powershell.exe]\n     7. NEW ENTITY\n5. \"SQLite.Interop.dll\" (Software)\n     1. vaultcli.dll [aliases: vaultcli.dll]\n     2. Meterpreter [aliases: Meterpreter]\n     3. FTPGetter [aliases: FTPGetter]\n     4. Agent Tesla [aliases: Agent Tesla]\n     5. installer.exe [aliases: installer.exe]\n     6. loader.exe [aliases: loader.exe]\n     7. NEW ENTITY\n6. \"MISP\" (Software)\n     1. Misha [aliases: Misha]\n     2. Microsoft Edge [aliases: Microsoft Edge]\n     3. Microsoft Office [aliases: Microsoft Office]\n     4. Microsoft Windows [aliases: Microsoft Windows]\n     5. Microsoft Outlook [aliases: Microsoft Outlook]\n     6. WinSCP [aliases: WinSCP]\n     7. NEW ENTITY",
+  "response": "\n",
+  "usage": {
+    "inputTokens": 1112,
+    "outputTokens": 1290
+  },
+  "latencyMs": 24435,
+  "finishReason": "stop"
+}

@@ -1,0 +1,127 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Mentions:
+1. "SPECTR" (Software)
+     1. spi.exe [aliases: spi.exe, write.exe, Електронний план евакуації.exe, SIEM]
+     2. SmartFTP [aliases: SmartFTP, MISP, SRP]
+     3. HarvesterX [aliases: HarvesterX]
+     4. MS PowerPoint [aliases: MS PowerPoint, Petya, Microsoft Windows, Mikrotik]
+     5. Opera Browser [aliases: Opera Browser]
+     6. ChakraCore [aliases: ChakraCore]
+     7. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     8. FTPGetter [aliases: FTPGetter, AppLocker]
+     9. NEW ENTITY
+2. "FIRMACHAGENT" (Software)
+     1. Mozilla Firefox [aliases: Mozilla Firefox]
+     2. Foxmail [aliases: Foxmail]
+     3. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     4. MS Office [aliases: MS Office, PGMB New Order 18-2077.xlsx, Microsoft Office 2007, Microsoft Word, CVE-2017-11882, Office 2007, MS Word, Microsoft Equation Editor, Misha, Microsoft Office, Інформація щодо наявності вакансій та їх укомплектування.xls]
+     5. Thunderbird [aliases: Thunderbird, TRYxaEbX]
+     6. Remcos [aliases: Remcos, RemcosRAT]
+     7. Postbox Credential [aliases: Postbox Credential]
+     8. MS PowerPoint [aliases: MS PowerPoint, Petya, Microsoft Windows, Mikrotik]
+     9. NEW ENTITY
+3. "IDCLIPNET_x86.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     3. shellcode.x86.bin [aliases: shellcode.x86.bin]
+     4. powershell.exe [aliases: powershell.exe, shellcode.x86 (Cobalt Strike Beacon), shellcode.x64 (Cobalt Strike Beacon)]
+     5. rfusclient.exe [aliases: rfusclient.exe]
+     6. Internet Explorer [aliases: Internet Explorer]
+     7. wscript.exe [aliases: wscript.exe]
+     8. CocCoc Browser [aliases: CocCoc Browser, CCleaner.zip]
+     9. NEW ENTITY
+4. "chrome_updater.dll" (Software)
+     1. Google Chrome [aliases: Google Chrome]
+     2. vaultcli.dll [aliases: vaultcli.dll]
+     3. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     4. Chromium Browser [aliases: Chromium Browser]
+     5. b.exe [aliases: b.exe, CCleaner.exe]
+     6. loader.exe [aliases: loader.exe, UkrScanner.rar, UkrScanner.exe (SFX)]
+     7. baseupd.exe [aliases: baseupd.exe, sgegkseg23mjl.exe]
+     8. ChromePlus Browser [aliases: ChromePlus Browser]
+     9. NEW ENTITY
+5. "Browser.dll" (Software)
+     1. Brave Browser [aliases: Brave Browser, pfSense]
+     2. Chromium Browser [aliases: Chromium Browser]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Iridium Browser [aliases: Iridium Browser]
+     5. Torch Browser [aliases: Torch Browser]
+     6. Sputnik Browser [aliases: Sputnik Browser]
+     7. Orbitum Browser [aliases: Orbitum Browser]
+     8. 7Star Browser [aliases: 7Star Browser]
+     9. NEW ENTITY
+6. "Files.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     3. FileZilla [aliases: FileZilla, CCleaner.rar, YARA]
+     4. PowerShell [aliases: PowerShell]
+     5. Double Kill [aliases: Double Kill]
+     6. rfusclient.exe [aliases: rfusclient.exe]
+     7. powershell.exe [aliases: powershell.exe, shellcode.x86 (Cobalt Strike Beacon), shellcode.x64 (Cobalt Strike Beacon)]
+     8. MS Office [aliases: MS Office, PGMB New Order 18-2077.xlsx, Microsoft Office 2007, Microsoft Word, CVE-2017-11882, Office 2007, MS Word, Microsoft Equation Editor, Misha, Microsoft Office, Інформація щодо наявності вакансій та їх укомплектування.xls]
+     9. NEW ENTITY
+7. "Screen.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     3. wscript.exe [aliases: wscript.exe]
+     4. scandoc.exe [aliases: scandoc.exe]
+     5. Postbox Credential [aliases: Postbox Credential]
+     6. rfusclient.exe [aliases: rfusclient.exe]
+     7. PowerShell [aliases: PowerShell]
+     8. b.exe [aliases: b.exe, CCleaner.exe]
+     9. NEW ENTITY
+8. "Social.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     3. PowerShell [aliases: PowerShell]
+     4. spi.exe [aliases: spi.exe, write.exe, Електронний план евакуації.exe, SIEM]
+     5. Double Kill [aliases: Double Kill]
+     6. wscript.exe [aliases: wscript.exe]
+     7. Postbox Credential [aliases: Postbox Credential]
+     8. rfusclient.exe [aliases: rfusclient.exe]
+     9. NEW ENTITY
+9. "USB.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. installer.exe [aliases: installer.exe, scan.exe (CredoMap_v2), SQLite.Interop.dll, install.msi]
+     3. rutserv.exe [aliases: rutserv.exe, rundll32.exe, wsuscr.exe]
+     4. Double Kill [aliases: Double Kill]
+     5. b.exe [aliases: b.exe, CCleaner.exe]
+     6. FileZilla [aliases: FileZilla, CCleaner.rar, YARA]
+     7. rfusclient.exe [aliases: rfusclient.exe]
+     8. loader.exe [aliases: loader.exe, UkrScanner.rar, UkrScanner.exe (SFX)]
+     9. NEW ENTITY
+10. "JavaScript" (Software)
+     1. VBScript [aliases: VBScript]
+     2. wscript.exe [aliases: wscript.exe]
+     3. Brave Browser [aliases: Brave Browser, pfSense]
+     4. WinSCP [aliases: WinSCP]
+     5. .NET Framework [aliases: .NET Framework, Електронний план евакуації.rar]
+     6. Windows Vista [aliases: Windows Vista]
+     7. QuasarRAT [aliases: QuasarRAT]
+     8. Remote Utilities [aliases: Remote Utilities, RemoteUtilities, AutoIt]
+     9. NEW ENTITY
+11. "Software Restriction Policies (SRP)" (Software)
+     1. SmartFTP [aliases: SmartFTP, MISP, SRP]
+     2. Remote Utilities [aliases: Remote Utilities, RemoteUtilities, AutoIt]
+     3. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     4. Cobalt Strike Beacon [aliases: Cobalt Strike Beacon]
+     5. Microsoft Office Services and Web Apps [aliases: Microsoft Office Services and Web Apps]
+     6. MS Office [aliases: MS Office, PGMB New Order 18-2077.xlsx, Microsoft Office 2007, Microsoft Word, CVE-2017-11882, Office 2007, MS Word, Microsoft Equation Editor, Misha, Microsoft Office, Інформація щодо наявності вакансій та їх укомплектування.xls]
+     7. Brave Browser [aliases: Brave Browser, pfSense]
+     8. Microsoft Office 2010 [aliases: Microsoft Office 2010]
+     9. NEW ENTITY
+
+=== RESPONSE (29.4s, in 2455 / out 1485 tok, stop) ===
+```json
+{"choices":[1,2,3,4,5,6,7,8,9,10,11]}
+```

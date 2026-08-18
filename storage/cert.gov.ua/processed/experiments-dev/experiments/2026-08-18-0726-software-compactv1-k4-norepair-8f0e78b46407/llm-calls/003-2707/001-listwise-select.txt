@@ -1,0 +1,71 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.
+
+Identity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.
+
+Return only compact JSON with exactly one integer per mention, in input order:
+{"choices":[5,1,3]}
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: <p>Сьогодні, 13.12.2018, зафіксована масова розсилка листів з шкідливим вкладенням, який не детектується популярними в України антивірусними засобами. Вкладення з розширенням.lzh (архів), який містить в собі 2 файли, один з яких є підробленим, або раніше викраденим документом формату xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використовується
+Mentions:
+1. "Smokeloader" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. MS Word [aliases: MS Word]
+     4. MS Office [aliases: MS Office]
+     5. NEW ENTITY
+2. "spi.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+3. "ckZ89.ExE" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. Microsoft Office [aliases: Microsoft Office]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     5. NEW ENTITY
+4. "До оплати від 11.12.18.lzh" (Software)
+     1. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. Office 2013 [aliases: Office 2013]
+     5. NEW ENTITY
+5. "Рахунки и новые списки.lzh" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office [aliases: Microsoft Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+6. "Рахунки за выполненные работы от 11.12.2018.js" (Software)
+     1. Windows Server 2012 [aliases: Windows Server 2012]
+     2. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     3. CVE-2017-11882 [aliases: CVE-2017-11882]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     5. NEW ENTITY
+7. "До оплати рах.ф. 74 - 2018р.js" (Software)
+     1. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     2. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     3. Office 2013 [aliases: Office 2013]
+     4. Office 2016 [aliases: Office 2016]
+     5. NEW ENTITY
+8. "cmd.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. Microsoft Office [aliases: Microsoft Office]
+     5. NEW ENTITY
+9. "powershell.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+
+=== RESPONSE (33.5s, in 1180 / out 1732 tok, stop) ===
+```json
+{"choices":[1,5,6,7]}
+```

@@ -1,0 +1,23 @@
+{
+  "runId": "software-compactv1-k8-saferepair-002f81bc337d",
+  "seq": 3,
+  "timestamp": "2026-08-18T04:17:14.458Z",
+  "operator": "repair-judge-retry",
+  "docId": 6276567,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Review every listed pair. Identity repair must be conservative.\n\nComponent 1 of 1 · signal: union-blocker 1.00\n  A. PowerShell (Software)\n     aliases: []  · minted d1563322\n     gloss: (none)\n     evidence: d1563322 \"PowerShell\"\n  B. PowerShell (powershell.exe) (Software)\n     aliases: []  · minted d1229152\n     gloss: (none)\n     evidence: d1229152 \"PowerShell (powershell.exe)\"\n  C. powershell.exe (Software)\n     aliases: [shellcode.x86 (Cobalt Strike Beacon), shellcode.x64 (Cobalt Strike Beacon)]  · minted d2707\n     gloss: (none)\n     evidence: d619229 \"shellcode.x86 (Cobalt Strike Beacon)\"\n     evidence: d619229 \"shellcode.x64 (Cobalt Strike Beacon)\"\n     evidence: d39934 \"powershell.exe\"\n  pairs to adjudicate: A–B (union-blocker 0.89); B–C (union-blocker 1.00)\n\nUse `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.\n\nFor each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.\n\nReturn only JSON:\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\"full name\",\"full name\"],\"confidence\":\"high\",\"evidence\":\"brief deciding evidence\"}]}]}\n\nFields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:\"coarsens-to\"|\"part-of\"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.\n",
+  "text": "Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.",
+  "response": "```json\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"merge\",\"pair\":[\"PowerShell (Software)\",\"PowerShell (powershell.exe) (Software)\"],\"confidence\":\"high\",\"evidence\":\"union-blocker 0.89\"},{\"op\":\"merge\",\"pair\":[\"PowerShell (powershell.exe) (Software)\",\"powershell.exe (Software)\"],\"confidence\":\"high\",\"evidence\":\"union-blocker 1.00\"}]}]}\n```",
+  "usage": {
+    "inputTokens": 596,
+    "outputTokens": 766
+  },
+  "latencyMs": 14602,
+  "finishReason": "stop",
+  "outcome": {
+    "ok": false,
+    "detail": "no repair op survived validation"
+  }
+}

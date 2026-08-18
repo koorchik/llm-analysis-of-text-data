@@ -1,0 +1,19 @@
+{
+  "runId": "software-balancedv3-k4-norepair-8fd3decd354b",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:52:40.929Z",
+  "operator": "listwise-select",
+  "docId": 861292,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.\n\nLink direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:\n{\"choices\":[{\"mention\":\"<mention>\",\"category\":\"<category>\",\"choice\":1}]}\n",
+  "text": "Source: \"Кібератака на державні організації України з використанням теми ОК \"Південь\" та шкідливої програми AgentTesla (CERT-UA#4987)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA виявлено файл \"Доповідь_050722_4.ppt\", що містить зображення-мініатюру, на якій згадєуться оперативне командування \"Південь\".&nbsp;</p><p>У випадку відкриття документу та активації макросу останній забезпечить створення файлів \"gksg023ig.lnk\" та \"sgegkseg23mjl.exe\", а також виконання LNK-файлу за допомогою rundll32.exe, що, в свою чергу, призведе до запуску згаданого EXE-файлу.</p><p>Виконуваний файл є .NET-програмою, обфускованою за допомогою ConfuserEx, що здійснює зава\nMentions:\n1. \"AgentTesla\" (Software)\n     1. Internet Explorer [aliases: Internet Explorer, Agent Tesla]\n     2. Adobe Flash Player [aliases: Adobe Flash Player]\n     3. FileZilla [aliases: FileZilla]\n     4. FTPGetter [aliases: FTPGetter]\n     5. NEW ENTITY\n2. \"ConfuserEx\" (Software)\n     1. ckZ89.ExE [aliases: ckZ89.ExE]\n     2. CocCoc Browser [aliases: CocCoc Browser]\n     3. Coowon Browser [aliases: Coowon Browser]\n     4. rfusclient.exe [aliases: rfusclient.exe]\n     5. NEW ENTITY\n3. \"MCMDiction.exe\" (Software)\n     1. b.exe [aliases: b.exe, baseupd.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. loader.exe [aliases: loader.exe]\n     5. NEW ENTITY\n4. \"sgegkseg23mjl.exe\" (Software)\n     1. b.exe [aliases: b.exe, baseupd.exe]\n     2. RegAsm.exe [aliases: RegAsm.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. loader.exe [aliases: loader.exe]\n     5. NEW ENTITY\n5. \"rundll32.exe\" (Software)\n     1. b.exe [aliases: b.exe, baseupd.exe]\n     2. RegAsm.exe [aliases: RegAsm.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. loader.exe [aliases: loader.exe]\n     5. NEW ENTITY",
+  "response": "```json\n{\"choices\": [\n  {\n    \"mention\": \"AgentTesla\",\n    \"category\": \"Software\",\n    \"choice\": 1\n  },\n  {\n    \"mention\": \"ConfuserEx\",\n    \"category\": \"Software\",\n    \"choice\": 2\n  },\n  {\n    \"mention\": \"MCMDiction.exe\",\n    \"category\": \"Software\",\n    \"choice\": 5\n  },\n  {\n    \"mention\": \"sgegkseg23mjl.exe\",\n    \"category\": \"Software\",\n    \"choice\": 4\n  },\n  {\n    \"mention\": \"rundll32.exe\",\n    \"category\": \"Software\",\n    \"choice\": 5\n  }\n]}\n```",
+  "usage": {
+    "inputTokens": 874,
+    "outputTokens": 826
+  },
+  "latencyMs": 15828,
+  "finishReason": "stop"
+}

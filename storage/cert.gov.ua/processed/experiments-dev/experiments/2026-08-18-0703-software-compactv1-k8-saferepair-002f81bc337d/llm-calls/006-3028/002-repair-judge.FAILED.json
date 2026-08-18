@@ -1,0 +1,23 @@
+{
+  "runId": "software-compactv1-k8-saferepair-002f81bc337d",
+  "seq": 2,
+  "timestamp": "2026-08-18T04:09:59.012Z",
+  "operator": "repair-judge",
+  "docId": 3028,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Review every listed pair. Identity repair must be conservative.\n\nComponent 1 of 1 · signal: coherence\n  A. MS Office (Software)\n     aliases: [PGMB New Order 18-2077.xlsx, Microsoft Office 2007, Microsoft Word, CVE-2017-11882, Office 2007, MS Word, Microsoft Equation Editor, Misha, Microsoft Office]  · minted d20\n     gloss: (none)\n     evidence: d2724 \"Microsoft Office\"\n     evidence: d2660 \"Misha\"\n     evidence: d2660 \"Microsoft Word\"\n  coherence check: A — does every listed alias belong to this entity?\n\nUse `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.\n\nFor each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.\n\nReturn only JSON:\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"distinct\",\"pair\":[\"full name\",\"full name\"],\"confidence\":\"high\",\"evidence\":\"brief deciding evidence\"}]}]}\n\nFields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:\"coarsens-to\"|\"part-of\"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.\n",
+  "text": "Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.",
+  "response": "```json\n{\"reviews\":[{\"component\":1,\"ops\":[{\"op\":\"merge\",\"pair\":[\"Microsoft Office\",\"MS Office\"],\"confidence\":\"high\",\"evidence\":\"d2724 \\\"Microsoft Office\\\"\"},{\"op\":\"merge\",\"pair\":[\"Microsoft Office 2007\",\"Office 2007\"],\"confidence\":\"high\",\"evidence\":\"d2660 \\\"Microsoft Office\\\"\"},{\"op\":\"merge\",\"pair\":[\"Microsoft Word\",\"MS Word\"],\"confidence\":\"high\",\"evidence\":\"d2660 \\\"Microsoft Word\\\"\"},{\"op\":\"distinct\",\"pair\":[\"PGMB New Order 18-2077.xlsx\",\"Microsoft Office\"],\"confidence\":\"medium\",\"evidence\":\"d2724 \\\"Microsoft Office\\\"\"}]}]}\n```",
+  "usage": {
+    "inputTokens": 471,
+    "outputTokens": 776
+  },
+  "latencyMs": 14768,
+  "finishReason": "stop",
+  "outcome": {
+    "ok": false,
+    "detail": "no repair op survived validation"
+  }
+}

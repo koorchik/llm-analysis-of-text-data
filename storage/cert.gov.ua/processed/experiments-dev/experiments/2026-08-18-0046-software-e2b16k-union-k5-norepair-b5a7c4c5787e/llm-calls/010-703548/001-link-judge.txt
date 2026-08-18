@@ -1,0 +1,169 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Атака групи UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4941)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано факт масового розповсюдження електронних листів з темою "Об'єднаний офіційний звіт про гуманітарну ситуацію. Україна" та вкладенням у вигляді XLS-документу "Гуманітарна катастрофа України з 24 лютого 2022 року.xls". При цьому електронні листи розсилаються зі скомпрометованих електронних адрес державних органів України.</p><p>Згаданий документ містить макрос, активація якого призведе до запуску файлу "baseupd.exe", виконання якого призведе до ураження комп'ютер
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software); ladder: (none; use g0); candidates: Електронний запит.exe [g0] (aliases: Електронний запит.exe, УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk); Інформація щодо наявності вакансій та їх укомплектування.xls [g0] (aliases: Інформація щодо наявності вакансій та їх укомплектування.xls); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); До оплати рах.ф. 74 - 2018р.js [g0] (aliases: До оплати рах.ф. 74 - 2018р.js)
+2. "baseupd.exe" (Software); ladder: (none; use g0); candidates: b.exe [g0] (aliases: b.exe); cmd.exe [g0] (aliases: cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); spi.exe [g0] (aliases: spi.exe); loader.exe [g0] (aliases: loader.exe)
+3. "oYUuQbXu" (Software); ladder: (none; use g0); candidates: Coowon Browser [g0] (aliases: Coowon Browser); TRYxaEbX [g0] (aliases: TRYxaEbX); TRYxaEbX.ps1 [g0] (aliases: TRYxaEbX.ps1); Orbitum Browser [g0] (aliases: Orbitum Browser); Thunderbird [g0] (aliases: Thunderbird)
+4. "stage1.ps1" (Software); ladder: (none; use g0); candidates: TRYxaEbX.ps1 [g0] (aliases: TRYxaEbX.ps1); z.ps1 [g0] (aliases: z.ps1); TRYxaEbX_2.ps1 [g0] (aliases: TRYxaEbX_2.ps1); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); installer.exe [g0] (aliases: installer.exe)
+5. "stage2.ps1" (Software); ladder: (none; use g0); candidates: z.ps1 [g0] (aliases: z.ps1); TRYxaEbX.ps1 [g0] (aliases: TRYxaEbX.ps1); TRYxaEbX_2.ps1 [g0] (aliases: TRYxaEbX_2.ps1); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); installer.exe [g0] (aliases: installer.exe)
+6. "shellcode.x86.bin" (Software); ladder: (none; use g0); candidates: shellcode.x86 (Cobalt Strike Beacon) [g0] (aliases: shellcode.x86 (Cobalt Strike Beacon)); shellcode.x64 (Cobalt Strike Beacon) [g0] (aliases: shellcode.x64 (Cobalt Strike Beacon)); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); loader.exe [g0] (aliases: loader.exe); ChakraCore [g0] (aliases: ChakraCore)
+7. "shellcode.x64.bin" (Software); ladder: (none; use g0); candidates: shellcode.x64 (Cobalt Strike Beacon) [g0] (aliases: shellcode.x64 (Cobalt Strike Beacon)); shellcode.x86 (Cobalt Strike Beacon) [g0] (aliases: shellcode.x86 (Cobalt Strike Beacon)); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); loader.exe [g0] (aliases: loader.exe); ChakraCore [g0] (aliases: ChakraCore)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (36.5s, in 2586 / out 1827 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "File mentioned in the source text related to the humanitarian situation.",
+      "reasoning": "The file is mentioned in the source but does not have an explicit alias or unambiguous reference to any candidate."
+    },
+    {
+      "index": 2,
+      "mention": "baseupd.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The executable is mentioned in the source but does not have an explicit alias or unambiguous reference to any candidate."
+    },
+    {
+      "index": 3,
+      "mention": "oYUuQbXu",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "This string has no discernible link to any candidate entity."
+    },
+    {
+      "index": 4,
+      "mention": "stage1.ps1",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "TRYxaEbX.ps1",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate TRYxaEbX.ps1."
+    },
+    {
+      "index": 5,
+      "mention": "stage2.ps1",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "z.ps1",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate z.ps1."
+    },
+    {
+      "index": 6,
+      "mention": "shellcode.x86.bin",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "shellcode.x86 (Cobalt Strike Beacon)",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate shellcode.x86 (Cobalt Strike Beacon)."
+    },
+    {
+      "index": 7,
+      "mention": "shellcode.x64.bin",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "shellcode.x64 (Cobalt Strike Beacon)",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention is directly linked to the candidate shellcode.x64 (Cobalt Strike Beacon)."
+    }
+  ]
+}

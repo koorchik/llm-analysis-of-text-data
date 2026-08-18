@@ -1,0 +1,23 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Масове розповсюдження шкідливої програми AgentTesla (CERT-UA#5252)" — evidence: <p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 30 і 31 серпня 2022 року зафіксовано масові розсилки електронних листів з темами "Технічне креслення" ("Technisches Zeichnen") серед українських, австрійських та німецьких організацій.</p><p> У вкладенні до електронного листа знаходиться IMG-файл (наприклад, "Технічне креслення.img"), що містить одноіменний CHM-файл, відкриття якого призведе до виконання JavaScript-коду, який, в свою чергу, забезпечить завантаження та виконання файлу node.txt за допомогою PowerShell.</p><p> Згаданий файл містить PowerShell-код, як
+Mentions:
+1. "PowerShell" (Software)
+     1. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe)]
+     2. powershell.exe [aliases: powershell.exe]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. Pocomail [aliases: Pocomail]
+     5. Double Kill [aliases: Double Kill]
+     6. Meterpreter [aliases: Meterpreter]
+     7. NEW ENTITY
+
+=== RESPONSE (9.5s, in 501 / out 502 tok, stop) ===
+{"choices":[{"mention":"PowerShell", "category":"Software", "choice":1}]}

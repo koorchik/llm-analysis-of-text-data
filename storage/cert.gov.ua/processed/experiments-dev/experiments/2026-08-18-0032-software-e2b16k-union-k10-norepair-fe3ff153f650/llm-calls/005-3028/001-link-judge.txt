@@ -1,0 +1,567 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Agent Tesla (шкідливе програмне забезпечення)"
+Source Excerpt:
+"""
+<p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Agent Tesla" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Double Kill [g0] (aliases: Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); .NET Framework [g0] (aliases: .NET Framework); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); powershell.exe [g0] (aliases: powershell.exe); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013)
+2. "RegAsm.exe" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE); spi.exe [g0] (aliases: spi.exe); powershell.exe [g0] (aliases: powershell.exe); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Internet Explorer [g0] (aliases: Internet Explorer); .NET Framework [g0] (aliases: .NET Framework); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server)
+3. "vaultcli.dll" (Software); ladder: (none; use g0); candidates: Double Kill [g0] (aliases: Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); spi.exe [g0] (aliases: spi.exe); VBScript [g0] (aliases: VBScript); major.exe [g0] (aliases: major.exe, cmd.exe); powershell.exe [g0] (aliases: powershell.exe); Microsoft Windows [g0] (aliases: Microsoft Windows); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013)
+4. "WinSCP" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Win32k [g0] (aliases: Win32k); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); VBScript [g0] (aliases: VBScript); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe)
+5. "Google Chrome" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); Double Kill [g0] (aliases: Double Kill); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Office [rung unknown] (aliases: MS Office); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010)
+6. "Mozilla Firefox" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Double Kill [g0] (aliases: Double Kill); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); major.exe [g0] (aliases: major.exe, cmd.exe); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016)
+7. "Microsoft Outlook" (Software); ladder: (none; use g0); candidates: Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Edge [g0] (aliases: Microsoft Edge); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server)
+8. "IceDragon" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); .NET Framework [g0] (aliases: .NET Framework); major.exe [g0] (aliases: major.exe, cmd.exe); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server)
+9. "Yandex Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+10. "Iridium Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2012 [g0] (aliases: Windows Server 2012); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim)
+11. "Epic Privacy Browser" (Software); ladder: (none; use g0); candidates: Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Windows [g0] (aliases: Microsoft Windows); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Edge [g0] (aliases: Microsoft Edge); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); .NET Framework [g0] (aliases: .NET Framework)
+12. "Chromium Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Microsoft Windows [g0] (aliases: Microsoft Windows); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Smokeloader [g0] (aliases: Smokeloader); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); MS Office [rung unknown] (aliases: MS Office)
+13. "7Star Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Office [rung unknown] (aliases: MS Office); major.exe [g0] (aliases: major.exe, cmd.exe)
+14. "Torch Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); powershell.exe [g0] (aliases: powershell.exe); ChakraCore [g0] (aliases: ChakraCore); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Windows [g0] (aliases: Microsoft Windows)
+15. "ChromePlus Browser" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Internet Explorer [g0] (aliases: Internet Explorer); .NET Framework [g0] (aliases: .NET Framework); Smokeloader [g0] (aliases: Smokeloader); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Office [rung unknown] (aliases: MS Office)
+16. "Kometa Browser" (Software); ladder: (none; use g0); candidates: Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Adobe Flash Player [g0] (aliases: Adobe Flash Player); .NET Framework [g0] (aliases: .NET Framework); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); major.exe [g0] (aliases: major.exe, cmd.exe); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Office [rung unknown] (aliases: MS Office); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+17. "Amigo Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2012 [g0] (aliases: Windows Server 2012); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); MS Office [rung unknown] (aliases: MS Office)
+18. "Brave Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); ChakraCore [g0] (aliases: ChakraCore); MS Office [rung unknown] (aliases: MS Office)
+19. "CentBrowser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); .NET Framework [g0] (aliases: .NET Framework); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim)
+20. "Liebao Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); major.exe [g0] (aliases: major.exe, cmd.exe); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim)
+21. "Elements Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); .NET Framework [g0] (aliases: .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Office [rung unknown] (aliases: MS Office); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe)
+22. "Vivaldi Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Server 2012 [g0] (aliases: Windows Server 2012); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim)
+23. "Citrio Browser" (Software); ladder: (none; use g0); candidates: Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010)
+24. "360Chrome Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); ChakraCore [g0] (aliases: ChakraCore); Microsoft Edge [g0] (aliases: Microsoft Edge); MS Office [rung unknown] (aliases: MS Office)
+25. "Uran Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2008 [g0] (aliases: Windows Server 2008); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Windows Server 2012 [g0] (aliases: Windows Server 2012); major.exe [g0] (aliases: major.exe, cmd.exe); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows)
+26. "Chedot Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); ChakraCore [g0] (aliases: ChakraCore); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2012 [g0] (aliases: Windows Server 2012); .NET Framework [g0] (aliases: .NET Framework); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+27. "Orbitum Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Microsoft Windows [g0] (aliases: Microsoft Windows); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Smokeloader [g0] (aliases: Smokeloader)
+28. "Sputnik Browser" (Software); ladder: (none; use g0); candidates: spi.exe [g0] (aliases: spi.exe); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); MS Office [rung unknown] (aliases: MS Office)
+29. "Comodo Dragon Browser" (Software); ladder: (none; use g0); candidates: MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); .NET Framework [g0] (aliases: .NET Framework); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); major.exe [g0] (aliases: major.exe, cmd.exe); Microsoft Windows [g0] (aliases: Microsoft Windows)
+30. "CocCoc Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2008 [g0] (aliases: Windows Server 2008); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Microsoft Windows [g0] (aliases: Microsoft Windows); major.exe [g0] (aliases: major.exe, cmd.exe); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+31. "QIP Surf Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Smokeloader [g0] (aliases: Smokeloader); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Windows [g0] (aliases: Microsoft Windows); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim)
+32. "Coowon Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Internet Explorer [g0] (aliases: Internet Explorer); Windows Server 2012 [g0] (aliases: Windows Server 2012); Windows Server 2008 [g0] (aliases: Windows Server 2008); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps)
+33. "Opera Browser" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Microsoft Windows [g0] (aliases: Microsoft Windows); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh)
+34. "Thunderbird" (Software); ladder: (none; use g0); candidates: MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Double Kill [g0] (aliases: Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Windows Server 2008 [g0] (aliases: Windows Server 2008); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); .NET Framework [g0] (aliases: .NET Framework)
+35. "Claws Mail" (Software); ladder: (none; use g0); candidates: Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); ChakraCore [g0] (aliases: ChakraCore); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Double Kill [g0] (aliases: Double Kill)
+36. "Postbox Credential" (Software); ladder: (none; use g0); candidates: MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); powershell.exe [g0] (aliases: powershell.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); .NET Framework [g0] (aliases: .NET Framework); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); VBScript [g0] (aliases: VBScript); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server)
+37. "Foxmail" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Double Kill [g0] (aliases: Double Kill); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); .NET Framework [g0] (aliases: .NET Framework); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Smokeloader [g0] (aliases: Smokeloader); powershell.exe [g0] (aliases: powershell.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); MS Office [rung unknown] (aliases: MS Office); major.exe [g0] (aliases: major.exe, cmd.exe)
+38. "Opera Mail" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); .NET Framework [g0] (aliases: .NET Framework); powershell.exe [g0] (aliases: powershell.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Double Kill [g0] (aliases: Double Kill); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012)
+39. "Pocomail" (Software); ladder: (none; use g0); candidates: MS PowerPoint [rung unknown] (aliases: MS PowerPoint); powershell.exe [g0] (aliases: powershell.exe); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); MS Office [rung unknown] (aliases: MS Office); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Smokeloader [g0] (aliases: Smokeloader); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js)
+40. "Becky!" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); ChakraCore [g0] (aliases: ChakraCore); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); VBScript [g0] (aliases: VBScript); Double Kill [g0] (aliases: Double Kill); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); CVE-2017-0199 [g0] (aliases: CVE-2017-0199); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016)
+41. "OpenVPN" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); Double Kill [g0] (aliases: Double Kill); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe)
+42. "FileZilla" (Software); ladder: (none; use g0); candidates: Double Kill [g0] (aliases: Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); Microsoft Office 2013 [g0] (aliases: Microsoft Office 2013, Office 2013); Microsoft Office 2016 [g0] (aliases: Microsoft Office 2016, Office 2016); powershell.exe [g0] (aliases: powershell.exe); spi.exe [g0] (aliases: spi.exe)
+43. "Paltalk" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); .NET Framework [g0] (aliases: .NET Framework); ChakraCore [g0] (aliases: ChakraCore); powershell.exe [g0] (aliases: powershell.exe); Double Kill [g0] (aliases: Double Kill); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); major.exe [g0] (aliases: major.exe, cmd.exe); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); Win32k [g0] (aliases: Win32k); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+44. "jDownloader" (Software); ladder: (none; use g0); candidates: Smokeloader [g0] (aliases: Smokeloader); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); Internet Explorer [g0] (aliases: Internet Explorer); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); .NET Framework [g0] (aliases: .NET Framework)
+45. "SmartFTP" (Software); ladder: (none; use g0); candidates: Smokeloader [g0] (aliases: Smokeloader); Adobe Flash Player [g0] (aliases: Adobe Flash Player); major.exe [g0] (aliases: major.exe, cmd.exe); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); ChakraCore [g0] (aliases: ChakraCore); Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010); spi.exe [g0] (aliases: spi.exe)
+46. "FTP Commander" (Software); ladder: (none; use g0); candidates: Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); Windows Host Compute Service Shim [g0] (aliases: Windows Host Compute Service Shim); Internet Explorer [g0] (aliases: Internet Explorer); PGMB New Order 18-2077.xlsx [g0] (aliases: PGMB New Order 18-2077.xlsx, До оплати від 11.12.18.lzh, Рахунки за выполненные работы от 11.12.2018.js, До оплати рах.ф. 74 - 2018р.js); Adobe Flash Player [g0] (aliases: Adobe Flash Player); .NET Framework [g0] (aliases: .NET Framework); Windows Server 2012 [g0] (aliases: Windows Server 2012); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Office [rung unknown] (aliases: MS Office)
+47. "WS_FTP" (Software); ladder: (none; use g0); candidates: Adobe Flash Player [g0] (aliases: Adobe Flash Player); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista); VBScript [g0] (aliases: VBScript); MS Office [rung unknown] (aliases: MS Office); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MS PowerPoint [rung unknown] (aliases: MS PowerPoint); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); powershell.exe [g0] (aliases: powershell.exe); Microsoft Office [g0] (aliases: Microsoft Office, Microsoft Office Services and Web Apps); Microsoft Office 2010 [g0] (aliases: Microsoft Office 2010, Office 2010)
+48. "FTPGetter" (Software); ladder: (none; use g0); candidates: Internet Explorer [g0] (aliases: Internet Explorer); Microsoft Exchange Server [g0] (aliases: Microsoft Exchange Server); .NET Framework [g0] (aliases: .NET Framework); Adobe Flash Player [g0] (aliases: Adobe Flash Player); Windows Server 2008 [g0] (aliases: Windows Server 2008); Windows Server 2012 [g0] (aliases: Windows Server 2012); Smokeloader [g0] (aliases: Smokeloader); major.exe [g0] (aliases: major.exe, cmd.exe); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); spi.exe [g0] (aliases: spi.exe)
+49. "Trillian" (Software); ladder: (none; use g0); candidates: Double Kill [g0] (aliases: Double Kill); Adobe Flash Player [g0] (aliases: Adobe Flash Player); powershell.exe [g0] (aliases: powershell.exe); .NET Framework [g0] (aliases: .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); spi.exe [g0] (aliases: spi.exe); Internet Explorer [g0] (aliases: Internet Explorer); VBScript [g0] (aliases: VBScript); MS Office [rung unknown] (aliases: MS Office); Microsoft Office 2007 [g0] (aliases: Microsoft Office 2007, Office 2007, Windows 7, Windows Vista)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (104.4s, in 11873 / out 4526 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Agent Tesla",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": "Malicious software (keylogger, stealer, and RAT)",
+      "reasoning": "The entity 'Agent Tesla' is defined in the source as malicious software, but no corresponding candidate exists."
+    },
+    {
+      "index": 2,
+      "mention": "RegAsm.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'RegAsm.exe' and the provided software candidates could be established."
+    },
+    {
+      "index": 3,
+      "mention": "vaultcli.dll",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'vaultcli.dll' and the provided software candidates could be established."
+    },
+    {
+      "index": 4,
+      "mention": "WinSCP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'WinSCP' and the provided software candidates could be established."
+    },
+    {
+      "index": 5,
+      "mention": "Google Chrome",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Google Chrome' and the provided software candidates could be established."
+    },
+    {
+      "index": 6,
+      "mention": "Mozilla Firefox",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Mozilla Firefox' and the provided software candidates could be established."
+    },
+    {
+      "index": 7,
+      "mention": "Microsoft Outlook",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "Microsoft Office",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "Microsoft Outlook is a component/application related to the broader Microsoft Office suite."
+    },
+    {
+      "index": 8,
+      "mention": "IceDragon",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'IceDragon' and the provided software candidates could be established."
+    },
+    {
+      "index": 9,
+      "mention": "Yandex Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Yandex Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 10,
+      "mention": "Iridium Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Iridium Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 11,
+      "mention": "Epic Privacy Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Epic Privacy Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 12,
+      "mention": "Chromium Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Chromium Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 13,
+      "mention": "7Star Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between '7Star Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 14,
+      "mention": "Torch Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Torch Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 15,
+      "mention": "ChromePlus Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'ChromePlus Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 16,
+      "mention": "Kometa Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Kometa Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 17,
+      "mention": "Amigo Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Amigo Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 18,
+      "mention": "Brave Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Brave Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 19,
+      "mention": "CentBrowser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'CentBrowser' and the provided software candidates could be established."
+    },
+    {
+      "index": 20,
+      "mention": "Liebao Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Liebao Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 21,
+      "mention": "Elements Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Elements Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 22,
+      "mention": "Vivaldi Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Vivaldi Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 23,
+      "mention": "Citrio Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Citrio Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 24,
+      "mention": "360Chrome Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between '360Chrome Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 25,
+      "mention": "Uran Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Uran Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 26,
+      "mention": "Chedot Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Chedot Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 27,
+      "mention": "Orbitum Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Orbitum Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 28,
+      "mention": "Sputnik Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Sputnik Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 29,
+      "mention": "Comodo Dragon Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Comodo Dragon Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 30,
+      "mention": "CocCoc Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'CocCoc Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 31,
+      "mention": "QIP Surf Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'QIP Surf Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 32,
+      "mention": "Coowon Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Coowon Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 33,
+      "mention": "Opera Browser",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Opera Browser' and the provided software candidates could be established."
+    },
+    {
+      "index": 34,
+      "mention": "Thunderbird",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Thunderbird' and the provided software candidates could be established."
+    },
+    {
+      "index": 35,
+      "mention": "Claws Mail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Claws Mail' and the provided software candidates could be established."
+    },
+    {
+      "index": 36,
+      "mention": "Postbox Credential",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No relationship between 'Postbox Credential' and the provided software candidates could be established."
+    },
+    {
+      "index": 37,
+      "mention": "Foxmail",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "reason": "No clear link found."
+    }

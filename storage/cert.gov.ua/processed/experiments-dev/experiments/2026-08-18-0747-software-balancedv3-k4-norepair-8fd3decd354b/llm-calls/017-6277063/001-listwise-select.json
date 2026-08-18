@@ -1,0 +1,19 @@
+{
+  "runId": "software-balancedv3-k4-norepair-8fd3decd354b",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:54:11.775Z",
+  "operator": "listwise-select",
+  "docId": 6277063,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.\n\nLink direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:\n{\"choices\":[{\"mention\":\"<mention>\",\"category\":\"<category>\",\"choice\":1}]}\n",
+  "text": "Source: \"RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 09.01.2024 та 11.01.2024 зафіксовано масове розповсюдження електронних листів з тематикою \"Запитів\".</p><p>Так, 09.01.2024 відбулася розсилка листів з темами \"Запит судових документів\" та \"Запит\", з вкладенням у вигляді RAR-архіву \"Запит.rar\", в якому знаходиться одноіменний ZIP-архів. Останній містить у собі захищений багатотомний RAR-архів та TXT-файл з паролем від нього.</p><p>У першому випадку, в згаданому архіві містився виконуваний файл \"Запит документів.pdf.exe\", щ\nMentions:\n1. \"QuasarRAT\" (Software)\n     1. Remote Utilities [aliases: Remote Utilities, Remcos, RemoteUtilities, RemcosRAT]\n     2. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]\n     3. ChakraCore [aliases: ChakraCore]\n     4. killself.bat [aliases: killself.bat]\n     5. NEW ENTITY\n2. \"AutoIt\" (Software)\n     1. CocCoc Browser [aliases: CocCoc Browser, ConfuserEx, GammaSteel.NET, HarvesterX]\n     2. Remote Utilities [aliases: Remote Utilities, Remcos, RemoteUtilities, RemcosRAT]\n     3. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows, Microsoft Office Services and Web Apps]\n     4. SmartFTP [aliases: SmartFTP]\n     5. NEW ENTITY",
+  "response": "```json\n{\"choices\":[{\"mention\":\"QuasarRAT\",\"category\":\"Software\",\"choice\":1},{\"mention\":\"RemoteUtilities\",\"category\":\"Software\",\"choice\":1},{\"mention\":\"RemcosRAT\",\"category\":\"Software\",\"choice\":1}]}\n```",
+  "usage": {
+    "inputTokens": 707,
+    "outputTokens": 811
+  },
+  "latencyMs": 15942,
+  "finishReason": "stop"
+}

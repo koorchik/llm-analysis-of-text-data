@@ -1,0 +1,1305 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 1 · signal: defer(link-judge, d2724) + coherence
+  A. 360Chrome Browser (Software)
+     aliases: [Brave Browser]  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Brave Browser"
+     evidence: d3028 "360Chrome Browser"
+  B. 7Star Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "7Star Browser"
+  C. Adobe Flash Player (Software)
+     aliases: []  · minted d2724
+     gloss: "Software application, no explicit link found in candidates."
+     evidence: d2724 "Adobe Flash Player"
+  D. Agent Tesla (Software)
+     aliases: [AgentTesla]  · minted d3028
+     gloss: "Mentioned in the source title."
+     evidence: d1563322 "AgentTesla"
+     evidence: d861292 "AgentTesla"
+     evidence: d3028 "Agent Tesla"
+  E. Amigo Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Amigo Browser"
+  F. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  G. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  H. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  I. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  J. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  K. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  L. CentBrowser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "CentBrowser"
+  M. CredoMap_v2 (Software)
+     aliases: []  · minted d40102
+     gloss: "A malicious program mentioned in the context of an APT28 cyberattack."
+     evidence: d40102 "CredoMap_v2"
+  N. FTPGetter (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "FTPGetter"
+  O. Foxmail (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Foxmail"
+  P. GammaLoad.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaLoad.PS1"
+  Q. GammaSteel.NET (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.NET"
+  R. GammaSteel.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.PS1"
+  S. Google Chrome (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Google Chrome"
+  T. HarvesterX (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "HarvesterX"
+  U. Iridium Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Iridium Browser"
+  V. MISP (Software)
+     aliases: []  · minted d40102
+     gloss: (none)
+     evidence: d40102 "MISP"
+  W. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+     evidence: d3028 "Internet Explorer"
+  X. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon]  · minted d39934
+     gloss: (none)
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "Cobalt Strike Beacon"
+     evidence: d39934 "Meterpreter"
+  Y. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  Z. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  E27. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]  · minted d24
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+     evidence: d2724 ".NET Framework"
+  E28. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]  · minted d24
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2724 "CVE-2018-0854"
+     evidence: d2660 "Office 2016"
+  E29. Microsoft Windows (Software)
+     aliases: [Microsoft Edge, Win32k]  · minted d2660
+     gloss: "General reference to Microsoft Windows, which has multiple OS candidates."
+     evidence: d2724 "Microsoft Edge"
+     evidence: d2724 "Microsoft Windows"
+     evidence: d2724 "Win32k"
+  E30. Opera Browser (Software)
+     aliases: [TRYxaEbX.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+     evidence: d3028 "Opera Browser"
+  E31. PGMB New Order 18-2077.xlsx (Software)
+     aliases: [CVE-2018-8124, CVE-2018-8127]  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d2724 "CVE-2018-8124"
+     evidence: d2724 "CVE-2018-8127"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  E32. Paltalk (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Paltalk"
+  E33. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  E34. RegAsm.exe (Software)
+     aliases: [write.exe]  · minted d3028
+     gloss: "An executable file that acts as a dropper."
+     evidence: d619229 "write.exe"
+     evidence: d3028 "RegAsm.exe"
+  E35. Remcos (Software)
+     aliases: [RemcosRAT]  · minted d3804703
+     gloss: (none)
+     evidence: d6276824 "RemcosRAT"
+     evidence: d6276567 "RemcosRAT"
+     evidence: d3804703 "Remcos"
+  E36. Remote Utilities (Software)
+     aliases: [shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin]  · minted d10011
+     gloss: (none)
+     evidence: d703548 "shellcode.x86.bin"
+     evidence: d619229 "shellcode.x86 (Cobalt Strike Beacon)"
+     evidence: d10011 "Remote Utilities"
+  E37. Remote Utilities - Host (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "Remote Utilities - Host"
+  E38. RemoteUtilities (Software)
+     aliases: []  · minted d3804703
+     gloss: (none)
+     evidence: d3804703 "RemoteUtilities"
+  E39. SmartAssembly (Software)
+     aliases: []  · minted d6276567
+     gloss: (none)
+     evidence: d6276567 "SmartAssembly"
+  E40. SmartAssembly .NET (Software)
+     aliases: []  · minted d6276824
+     gloss: (none)
+     evidence: d6276824 "SmartAssembly .NET"
+  E41. SmartFTP (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "SmartFTP"
+  E42. Smokeloader (Software)
+     aliases: []  · minted d2707
+     gloss: "The source describes Smokeloader as a piece of software that distributes malicious files."
+     evidence: d2707 "Smokeloader"
+  E43. TRYxaEbX (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX"
+  E44. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  E45. Thunderbird (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Thunderbird"
+  E46. Trillian (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Trillian"
+  E47. UkrScanner.exe (SFX) (Software)
+     aliases: []  · minted d40102
+     gloss: "An SFX file identical to CredoMap_v2."
+     evidence: d40102 "UkrScanner.exe (SFX)"
+  E48. UkrScanner.rar (Software)
+     aliases: []  · minted d40102
+     gloss: "An archive file containing the malicious program."
+     evidence: d40102 "UkrScanner.rar"
+  E49. b.exe (Software)
+     aliases: []  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d39934 "b.exe"
+  E50. ckZ89.ExE (Software)
+     aliases: [CVE-2018-8129]  · minted d2707
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+     evidence: d2707 "ckZ89.ExE"
+  E51. host_news_mod_mod.msi (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "host_news_mod_mod.msi"
+  E52. installer.exe (Software)
+     aliases: [sgegkseg23mjl.exe]  · minted d10011
+     gloss: (none)
+     evidence: d861292 "sgegkseg23mjl.exe"
+     evidence: d10011 "installer.exe"
+  E53. jDownloader (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "jDownloader"
+  E54. loader.exe (Software)
+     aliases: [rundll32.exe]  · minted d39934
+     gloss: (none)
+     evidence: d861292 "rundll32.exe"
+     evidence: d39934 "loader.exe"
+  E55. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe]  · minted d24
+     gloss: (none)
+     evidence: d1229152 "PowerShell (powershell.exe)"
+     evidence: d1229152 "wscript.exe"
+     evidence: d1229152 "mshta.exe"
+  E56. rfusclient.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rfusclient.exe"
+  E57. rutserv.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rutserv.exe"
+  E58. scandoc.exe (Software)
+     aliases: []  · minted d6276567
+     gloss: (none)
+     evidence: d6276567 "scandoc.exe"
+  E59. spi.exe (Software)
+     aliases: []  · minted d2707
+     gloss: (none)
+     evidence: d2707 "spi.exe"
+  E60. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  E61. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  E62. wsuscr.exe (Software)
+     aliases: []  · minted d6276824
+     gloss: (none)
+     evidence: d6276824 "wsuscr.exe"
+  E63. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  E64. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: [CVE-2018-0958]  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2724 "CVE-2018-0958"
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  E65. Електронний запит.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "Електронний запит.exe"
+  E66. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: G–Z (defer(link-judge, d2724)); E27–G (defer(link-judge, d2724)); E28–G (defer(link-judge, d2724)); E31–G (defer(link-judge, d2724)); E33–G (defer(link-judge, d2724)); E50–G (defer(link-judge, d2724)); E64–G (defer(link-judge, d2724)); E66–G (defer(link-judge, d2724)); F–H (defer(link-judge, d2724)); H–W (defer(link-judge, d2724)); H–Z (defer(link-judge, d2724)); E27–H (defer(link-judge, d2724)); E28–H (defer(link-judge, d2724)); E31–H (defer(link-judge, d2724)); E33–H (defer(link-judge, d2724)); E50–H (defer(link-judge, d2724)); E64–H (defer(link-judge, d2724)); E66–H (defer(link-judge, d2724)); F–I (defer(link-judge, d2724)); E50–I (defer(link-judge, d2724)); E55–I (defer(link-judge, d2724)); E64–I (defer(link-judge, d2724)); E66–I (defer(link-judge, d2724)); F–J (defer(link-judge, d2724)); E31–J (defer(link-judge, d2724)); E50–J (defer(link-judge, d2724)); E64–J (defer(link-judge, d2724)); E66–J (defer(link-judge, d2724)); F–K (defer(link-judge, d2724)); K–Y (defer(link-judge, d2724)); K–Z (defer(link-judge, d2724)); E27–K (defer(link-judge, d2724)); E31–K (defer(link-judge, d2724)); E50–K (defer(link-judge, d2724)); E64–K (defer(link-judge, d2724)); E66–K (defer(link-judge, d2724)); E30–P (defer(link-judge, d1229152)); E41–P (defer(link-judge, d1229152)); E42–P (defer(link-judge, d1229152)); E44–P (defer(link-judge, d1229152)); E53–P (defer(link-judge, d1229152)); E54–P (defer(link-judge, d1229152)); E55–P (defer(link-judge, d1229152)); E60–P (defer(link-judge, d1229152)); E61–P (defer(link-judge, d1229152)); E63–P (defer(link-judge, d1229152)); C–Q (defer(link-judge, d1229152)); D–Q (defer(link-judge, d1229152)); E–Q (defer(link-judge, d1229152)); O–Q (defer(link-judge, d1229152)); Q–W (defer(link-judge, d1229152)); Q–X (defer(link-judge, d1229152)); E27–Q (defer(link-judge, d1229152)); E30–Q (defer(link-judge, d1229152)); E32–Q (defer(link-judge, d1229152)); E41–Q (defer(link-judge, d1229152)); D–R (defer(link-judge, d1229152)); R–V (defer(link-judge, d1229152)); E30–R (defer(link-judge, d1229152)); E41–R (defer(link-judge, d1229152)); E44–R (defer(link-judge, d1229152)); E52–R (defer(link-judge, d1229152)); E55–R (defer(link-judge, d1229152)); E60–R (defer(link-judge, d1229152)); E61–R (defer(link-judge, d1229152)); E63–R (defer(link-judge, d1229152)); A–E35 (defer(link-judge, d3804703)); B–E35 (defer(link-judge, d3804703)); E35–L (defer(link-judge, d3804703)); E35–M (defer(link-judge, d3804703)); E35–S (defer(link-judge, d3804703)); E35–U (defer(link-judge, d3804703)); E30–E35 (defer(link-judge, d3804703)); E34–E35 (defer(link-judge, d3804703)); E35–E36 (defer(link-judge, d3804703)); E35–E37 (defer(link-judge, d3804703)); D–E38 (defer(link-judge, d3804703)); E38–L (defer(link-judge, d3804703)); E38–N (defer(link-judge, d3804703)); E38–W (defer(link-judge, d3804703)); E38–X (defer(link-judge, d3804703)); E29–E38 (defer(link-judge, d3804703)); E36–E38 (defer(link-judge, d3804703)); E37–E38 (defer(link-judge, d3804703)); E38–E42 (defer(link-judge, d3804703)); E38–E46 (defer(link-judge, d3804703)); A–E40 (defer(link-judge, d6276824)); B–E40 (defer(link-judge, d6276824)); E40–Q (defer(link-judge, d6276824)); E40–T (defer(link-judge, d6276824)); E40–W (defer(link-judge, d6276824)); E27–E40 (defer(link-judge, d6276824)); E39–E40 (defer(link-judge, d6276824)); E40–E41 (defer(link-judge, d6276824)); E40–E42 (defer(link-judge, d6276824)); E40–E55 (defer(link-judge, d6276824)); B–E43 (defer(link-judge, d619229)); E43–X (defer(link-judge, d619229)); E27–E43 (defer(link-judge, d619229)); E43–E45 (defer(link-judge, d619229)); E43–E46 (defer(link-judge, d619229)); E43–E48 (defer(link-judge, d619229)); E43–E49 (defer(link-judge, d619229)); E43–E52 (defer(link-judge, d619229)); E44–Y (defer(link-judge, d619229)); E27–E44 (defer(link-judge, d619229)); E34–E44 (defer(link-judge, d619229)); E44–E46 (defer(link-judge, d619229)); E44–E47 (defer(link-judge, d619229)); E44–E51 (defer(link-judge, d619229)); E44–E57 (defer(link-judge, d619229)); E44–E63 (defer(link-judge, d619229)); E34–E62 (defer(link-judge, d6276824)); E49–E62 (defer(link-judge, d6276824)); E52–E62 (defer(link-judge, d6276824)); E54–E62 (defer(link-judge, d6276824)); E55–E62 (defer(link-judge, d6276824)); E56–E62 (defer(link-judge, d6276824)); E57–E62 (defer(link-judge, d6276824)); E58–E62 (defer(link-judge, d6276824)); E59–E62 (defer(link-judge, d6276824)); E62–E65 (defer(link-judge, d6276824))
+  coherence check: W — does every listed alias belong to this entity?
+  coherence check: E28 — does every listed alias belong to this entity?
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (188.3s, in 7903 / out 8504 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "distinct",
+          "pair": [
+            "360Chrome Browser",
+            "7Star Browser"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence suggests these two browsers are the same entity."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "360Chrome Browser",
+            "Adobe Flash Player"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "360Chrome Browser",
+            "Agent Tesla"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "360Chrome Browser",
+            "Amigo Browser"
+          ],
+          "confidence": "medium",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "360Chrome Browser",
+            "CVE-2017-11882"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "7Star Browser",
+            "CVE-2017-11882"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Adobe Flash Player",
+            "CVE-2018-8134"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "CVE-2018-8141"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "CVE-2018-8170"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "CVE-2018-8174"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "CVE-2018-8170"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "Agent Tesla",
+            "CVE-2018-8174"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2017-11882",
+            "CVE-2018-8174"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8170"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8134"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CentBrowser",
+            "CVE-2018-8174"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8124"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8127"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-2018-8129"
+          ],
+          "confidence": "high",
+          "evidence": "No evidence links these two software entities."
+        },
+        {
+          "op": "distinct",
+          "pair": [
+            "CVE-2018-8174",
+            "CVE-8174"
+          ]
+        }
+
+=== OUTCOME (ok) ===
+14 op(s) accepted

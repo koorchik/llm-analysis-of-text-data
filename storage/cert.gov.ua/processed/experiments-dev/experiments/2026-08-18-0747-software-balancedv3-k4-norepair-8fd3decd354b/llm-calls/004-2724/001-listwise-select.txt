@@ -1,0 +1,282 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "Microsoft випустила оновлення, які усувають велику кількість вразливостей." — evidence: <p>Microsoft випустила оновлення, які усувають велику кількість вразливостей, серед яких присутні вразливості нульового дня (zero-day vulnerabilities), які вже експлуатуються хакерськими угрупуваннями.</p><p><a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</
+Mentions:
+1. "Internet Explorer" (Software)
+     1. MS Excel [aliases: MS Excel, Smokeloader]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+2. "Microsoft Edge" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     2. MS Word [aliases: MS Word, Microsoft Word]
+     3. MS Excel [aliases: MS Excel, Smokeloader]
+     4. Misha [aliases: Misha]
+     5. NEW ENTITY
+3. "Microsoft Office Services and Web Apps" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     2. MS Word [aliases: MS Word, Microsoft Word]
+     3. Office 2010 [aliases: Office 2010]
+     4. Office 2007 [aliases: Office 2007]
+     5. NEW ENTITY
+4. "ChakraCore" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     2. MS Word [aliases: MS Word, Microsoft Word]
+     3. MS Excel [aliases: MS Excel, Smokeloader]
+     4. ckZ89.ExE [aliases: ckZ89.ExE]
+     5. NEW ENTITY
+5. "Adobe Flash Player" (Software)
+     1. MS Excel [aliases: MS Excel, Smokeloader]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Misha [aliases: Misha]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+6. ".NET Framework" (Software)
+     1. MS Word [aliases: MS Word, Microsoft Word]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. MS Excel [aliases: MS Excel, Smokeloader]
+     4. Petya [aliases: Petya]
+     5. NEW ENTITY
+7. "Microsoft Exchange Server" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     2. Windows Server 2008 [aliases: Windows Server 2008]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. NEW ENTITY
+8. "Windows Host Compute Service Shim" (Software)
+     1. Windows Server 2012 [aliases: Windows Server 2012]
+     2. Windows Server 2008 [aliases: Windows Server 2008]
+     3. Windows Vista [aliases: Windows Vista]
+     4. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     5. NEW ENTITY
+9. "VBScript" (Software)
+     1. MS PowerPoint [aliases: MS PowerPoint]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+10. "Win32k" (Software)
+     1. Windows 7 [aliases: Windows 7]
+     2. Windows Vista [aliases: Windows Vista]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Windows Server 2008 [aliases: Windows Server 2008]
+     5. NEW ENTITY
+11. "CVE-2018-8174" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+12. "Double Kill" (Software)
+     1. MS Excel [aliases: MS Excel, Smokeloader]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Office 2013 [aliases: Office 2013, До оплати від 11.12.18.lzh]
+     4. Windows Server 2008 [aliases: Windows Server 2008]
+     5. NEW ENTITY
+13. "CVE-2018-8120" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+14. "CVE-2018-0854" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+15. "CVE-2018-0958" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+16. "CVE-2018-8124" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+17. "CVE-2018-8127" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+18. "CVE-2018-8129" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+19. "CVE-2018-8132" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Office 2013 [aliases: Office 2013, До оплати від 11.12.18.lzh]
+     5. NEW ENTITY
+20. "CVE-2018-8134" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Office 2013 [aliases: Office 2013, До оплати від 11.12.18.lzh]
+     5. NEW ENTITY
+21. "CVE-2018-8136" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Office 2013 [aliases: Office 2013, До оплати від 11.12.18.lzh]
+     5. NEW ENTITY
+22. "CVE-2018-8141" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+23. "CVE-2018-8170" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+24. "CVE-2018-8897" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+
+=== RESPONSE (49.9s, in 4713 / out 2396 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "Internet Explorer",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Microsoft Edge",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Microsoft Office Services and Web Apps",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "ChakraCore",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Adobe Flash Player",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": ".NET Framework",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Microsoft Exchange Server",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Windows Host Compute Service Shim",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "VBScript",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "Win32k",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "CVE-2018-8174",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "Double Kill",
+    "category": "Software",
+    "choice": 5
+  },
+  {
+    "mention": "CVE-2018-8120",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-0854",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-0958",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8124",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8127",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8129",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8132",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8134",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8136",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8141",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8170",
+    "category": "Software",
+    "choice": 1
+  },
+  {
+    "mention": "CVE-2018-8897",
+    "category": "Software",
+    "choice": 1
+  }
+]}
+```

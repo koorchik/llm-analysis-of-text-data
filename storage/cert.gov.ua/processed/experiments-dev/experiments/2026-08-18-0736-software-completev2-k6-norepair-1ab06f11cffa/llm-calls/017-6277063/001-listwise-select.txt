@@ -1,0 +1,31 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "RemcosRAT, QuasarRAT, RemoteUtilities на озброєнні UAC-0050 (CERT-UA#8453, CERT-UA#8494)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 09.01.2024 та 11.01.2024 зафіксовано масове розповсюдження електронних листів з тематикою "Запитів".</p><p>Так, 09.01.2024 відбулася розсилка листів з темами "Запит судових документів" та "Запит", з вкладенням у вигляді RAR-архіву "Запит.rar", в якому знаходиться одноіменний ZIP-архів. Останній містить у собі захищений багатотомний RAR-архів та TXT-файл з паролем від нього.</p><p>У першому випадку, в згаданому архіві містився виконуваний файл "Запит документів.pdf.exe", щ
+Mentions:
+1. "QuasarRAT" (Software)
+     1. RemcosRAT [aliases: RemcosRAT]
+     2. killself.bat [aliases: killself.bat]
+     3. QIP Surf Browser [aliases: QIP Surf Browser]
+     4. ChakraCore [aliases: ChakraCore]
+     5. Thunderbird [aliases: Thunderbird]
+     6. Meterpreter [aliases: Meterpreter]
+     7. NEW ENTITY
+2. "AutoIt" (Software)
+     1. Remote Utilities [aliases: Remote Utilities]
+     2. RemoteUtilities [aliases: RemoteUtilities]
+     3. MS Office [aliases: MS Office]
+     4. SmartFTP [aliases: SmartFTP]
+     5. VBScript [aliases: VBScript]
+     6. AgentTesla [aliases: AgentTesla]
+     7. NEW ENTITY
+
+=== RESPONSE (6.6s, in 637 / out 341 tok, stop) ===
+

@@ -1,0 +1,106 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge. For every mention, choose the numbered option naming the exact same entity, or choose NEW ENTITY.
+
+Link direct aliases, translations/transliterations, and standard abbreviations. Example: `MS Office` and `Microsoft Office` are the same. Do not link merely related entities, components, product families, or names with different identity-bearing identifiers or versions. Example: `Microsoft Office 2010` and `Microsoft Office 2013` are different. Category, role, behavior, context, and option order do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one object for every mention, in input order. Copy mention and category exactly; never omit an item. Output only JSON:
+{"choices":[{"mention":"<mention>","category":"<category>","choice":1}]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Mentions:
+1. "Remote Utilities" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows, Microsoft Office Services and Web Apps]
+     2. FTPGetter [aliases: FTPGetter]
+     3. Trillian [aliases: Trillian]
+     4. Chedot Browser [aliases: Chedot Browser]
+     5. NEW ENTITY
+2. "Remote Utilities - Host" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, CVE-2017-0199, Microsoft Office, Microsoft Windows, Microsoft Office Services and Web Apps]
+     3. .NET Framework [aliases: .NET Framework]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+3. "Електронний запит.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. major.exe [aliases: major.exe]
+     5. NEW ENTITY
+4. "installer.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+5. "host_news_mod_mod.msi" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. .NET Framework [aliases: .NET Framework]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Postbox Credential [aliases: Postbox Credential]
+     5. NEW ENTITY
+6. "rutserv.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+7. "rfusclient.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+8. "killself.bat" (Software)
+     1. Trillian [aliases: Trillian]
+     2. Mozilla Firefox [aliases: Mozilla Firefox]
+     3. FileZilla [aliases: FileZilla]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (26.1s, in 1209 / out 1372 tok, stop) ===
+```json
+{"choices": [
+  {
+    "mention": "Remote Utilities",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "Remote Utilities - Host",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "Електронний запит.exe",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "installer.exe",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "host_news_mod_mod.msi",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "rutserv.exe",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "rfusclient.exe",
+    "category": "NEW ENTITY",
+    "choice": 5
+  },
+  {
+    "mention": "killself.bat",
+    "category": "NEW ENTITY",
+    "choice": 5
+  }
+]}
+```

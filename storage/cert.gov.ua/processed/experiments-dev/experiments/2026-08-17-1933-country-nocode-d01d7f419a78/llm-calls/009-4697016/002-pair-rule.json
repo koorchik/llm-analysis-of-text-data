@@ -1,0 +1,19 @@
+{
+  "runId": "country-nocode-d01d7f419a78",
+  "seq": 2,
+  "timestamp": "2026-08-17T16:40:03.277Z",
+  "operator": "pair-rule",
+  "docId": 4697016,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "You maintain co-occurrence inference rules for a cyber-incident knowledge graph. When two entities with the type/role signatures below appear in the same incident report, what relationship — if any — does that co-occurrence imply BY DEFAULT? Answer conservatively: use null unless the signature itself implies a directed relationship. Symmetric signatures (both sides identical) usually imply null or a symmetric relation. Reuse a known relation type when one fits; otherwise propose a new one and include a one-line \"definition\".\n\nKnown relation types:\n  * `ATTACKER_TARGET`: The relationship between the country from which the attack originated and the country that was the target of the attack.\n\nOutput a single raw JSON object, no markdown fences, no commentary:\n{ \"rules\": [ { \"signature\": <number>, \"relation\": \"<type name or null>\", \"source\": \"<Category/Role>\", \"target\": \"<Category/Role>\", \"definition\": \"<only when proposing a new relation type>\" } ] }",
+  "text": "Signatures to rule on:\n1. Country/Attacker × Country/Attacker",
+  "response": "{ \"rules\": [ { \"signature\": 1, \"relation\": null, \"source\": \"Country/Attacker\", \"target\": \"Country/Attacker\" } ] }",
+  "usage": {
+    "inputTokens": 236,
+    "outputTokens": 360
+  },
+  "latencyMs": 7423,
+  "finishReason": "stop"
+}

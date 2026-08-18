@@ -1,0 +1,79 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження 05.07.2022 електронних листів з темою "Спеціалізованої прокуратури увійськовій та оборонній сфері. Інформація щодо наявності вакансій та їх укомплектування" та вкладенням у вигляді XLS-документу "Інформація щодо наявності вакансій та їх укомплектування.xls".</p><p>Документ містить макрос, активація якого призведе до створення на комп'ютері та запуску файлу "write.exe".</p><p>Згаданий файл виконує роль дропера, забезпечуючи створення
+Mentions:
+1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software)
+     1. Електронний запит.exe [aliases: Електронний запит.exe]
+     2. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk [aliases: УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk]
+     3. До оплати від 11.12.18.lzh [aliases: До оплати від 11.12.18.lzh]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     6. Рахунки и новые списки.lzh [aliases: Рахунки и новые списки.lzh]
+     7. NEW ENTITY
+2. "write.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. spi.exe [aliases: spi.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. cmd.exe [aliases: cmd.exe]
+     5. rutserv.exe [aliases: rutserv.exe]
+     6. installer.exe [aliases: installer.exe]
+     7. NEW ENTITY
+3. "TRYxaEbX" (Software)
+     1. Trillian [aliases: Trillian]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Thunderbird [aliases: Thunderbird]
+     4. b.exe [aliases: b.exe]
+     5. Mozilla Firefox [aliases: Mozilla Firefox]
+     6. Internet Explorer [aliases: Internet Explorer]
+     7. NEW ENTITY
+4. "TRYxaEbX.ps1" (Software)
+     1. z.ps1 [aliases: z.ps1]
+     2. Brave Browser [aliases: Brave Browser]
+     3. rutserv.exe [aliases: rutserv.exe]
+     4. 360Chrome Browser [aliases: 360Chrome Browser]
+     5. UkrScanner.rar [aliases: UkrScanner.rar]
+     6. Internet Explorer [aliases: Internet Explorer]
+     7. NEW ENTITY
+5. "TRYxaEbX_2.ps1" (Software)
+     1. z.ps1 [aliases: z.ps1]
+     2. UkrScanner.exe (SFX) [aliases: UkrScanner.exe (SFX)]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. Brave Browser [aliases: Brave Browser]
+     5. CredoMap_v2 [aliases: CredoMap_v2]
+     6. RegAsm.exe [aliases: RegAsm.exe]
+     7. NEW ENTITY
+6. "shellcode.x86 (Cobalt Strike Beacon)" (Software)
+     1. scan.exe (CredoMap_v2) [aliases: scan.exe (CredoMap_v2)]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     6. powershell.exe [aliases: powershell.exe]
+     7. NEW ENTITY
+7. "shellcode.x64 (Cobalt Strike Beacon)" (Software)
+     1. scan.exe (CredoMap_v2) [aliases: scan.exe (CredoMap_v2)]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. Chedot Browser [aliases: Chedot Browser]
+     5. Adobe Flash Player [aliases: Adobe Flash Player]
+     6. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     7. NEW ENTITY
+8. "Cobalt Strike Beacon" (Software)
+     1. ChakraCore [aliases: ChakraCore]
+     2. Coowon Browser [aliases: Coowon Browser]
+     3. Trillian [aliases: Trillian]
+     4. IceDragon [aliases: IceDragon]
+     5. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     6. Citrio Browser [aliases: Citrio Browser]
+     7. NEW ENTITY
+
+=== RESPONSE (22.4s, in 1493 / out 1171 tok, stop) ===
+

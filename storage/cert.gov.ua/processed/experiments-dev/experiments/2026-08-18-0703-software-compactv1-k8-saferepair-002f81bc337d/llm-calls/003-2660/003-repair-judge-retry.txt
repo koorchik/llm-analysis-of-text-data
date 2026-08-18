@@ -1,0 +1,124 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 3 · signal: union-blocker 1.00 + coherence
+  A. CVE-2017-11882 (Software)
+     aliases: [Office 2007]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2007"
+     evidence: d24 "CVE-2017-11882"
+  B. MS Excel (Software)
+     aliases: [Microsoft Office 2016, CVE-2017-0199]  · minted d20
+     gloss: (none)
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "Microsoft Office 2016"
+     evidence: d20 "MS Excel"
+  C. MS Office (Software)
+     aliases: [PGMB New Order 18-2077.xlsx, Microsoft Office 2007, Microsoft Word]  · minted d20
+     gloss: (none)
+     evidence: d2660 "Microsoft Word"
+     evidence: d26 "MS Office"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  D. MS Word (Software)
+     aliases: [Microsoft Equation Editor, Misha, Microsoft Office]  · minted d20
+     gloss: (none)
+     evidence: d2660 "Misha"
+     evidence: d2660 "Microsoft Office"
+     evidence: d24 "Microsoft Equation Editor"
+  pairs to adjudicate: A–C (union-blocker 0.98); A–B (union-blocker 0.95); C–D (union-blocker 1.00)
+  coherence check: A — does every listed alias belong to this entity?
+  coherence check: B — does every listed alias belong to this entity?
+  coherence check: C — does every listed alias belong to this entity?
+
+Component 2 of 3 · signal: union-blocker 0.97 + coherence
+  A. Microsoft Office 2010 (Software)
+     aliases: []  · minted d24
+     gloss: (none)
+     evidence: d24 "Microsoft Office 2010"
+  B. Office 2010 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Office 2010"
+  C. Office 2016 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Office 2016"
+  D. major.exe (Software)
+     aliases: [Office 2013]  · minted d24
+     gloss: (none)
+     evidence: d2660 "Office 2013"
+     evidence: d24 "major.exe"
+  pairs to adjudicate: A–B (union-blocker 0.97); B–C (union-blocker 0.91); B–D (union-blocker 0.91)
+  coherence check: D — does every listed alias belong to this entity?
+
+Component 3 of 3 · signal: union-blocker 0.89
+  A. Windows Server 2008 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Windows Server 2008"
+  B. Windows Server 2012 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Windows Server 2012"
+  pairs to adjudicate: A–B (union-blocker 0.89)
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (32.1s, in 1235 / out 1677 tok, stop) ===
+```json
+{"reviews":[
+  {
+    "component":1,
+    "ops":[
+      {
+        "op":"merge","from":"Microsoft Office 2007","into":"Microsoft Office"
+      },
+      {
+        "op":"merge","from":"Microsoft Office","into":"Microsoft Word"
+      },
+      {
+        "op":"distinct","pair":["Microsoft Office 2007","Microsoft Excel"],"confidence":"high","evidence":"d24 \"Microsoft Office 2016\", d20 \"MS Excel\""
+      },
+      {
+        "op":"distinct","pair":["Microsoft Office","Microsoft Word","PGMB New Order 18-2077.xlsx"],"confidence":"high","evidence":"d2660 \"Microsoft Word\", d2660 \"MS Office\", d24 \"PGMB New Order 18-2077.xlsx\""
+      }
+    ]
+  },
+  {
+    "component":2,
+    "ops":[
+      {
+        "op":"merge","from":"Microsoft Office 2010","into":"Office 2010"
+      },
+      {
+        "op":"distinct","pair":["Office 2010","Office 2016"],"confidence":"high","evidence":"d2660 \"Office 2010\", d2660 \"Office 2016\""
+      },
+      {
+        "op":"distinct","pair":["Office 2010","major.exe"],"confidence":"high","evidence":"d2660 \"Office 2013\", d24 \"major.exe\""
+      }
+    ]
+  },
+  {
+    "component":3,
+    "ops":[
+      {
+        "op":"distinct","pair":["Windows Server 2008","Windows Server 2012"],"confidence":"high","evidence":"d2660 \"Windows Server 2008\", d2660 \"Windows Server 2012\""
+      }
+    ]
+  }
+]}
+```
+
+=== OUTCOME (ok) ===
+4 op(s) accepted

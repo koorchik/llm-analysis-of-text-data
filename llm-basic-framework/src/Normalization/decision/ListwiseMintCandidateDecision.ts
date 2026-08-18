@@ -120,7 +120,21 @@ export class ListwiseMintCandidateDecision implements DecisionStrategy {
       });
 
       const parsed = extractAndParseJson(response.text);
-      const choices: Choice[] = Array.isArray(parsed?.choices) ? parsed!.choices : [];
+      const rawChoices: unknown[] = Array.isArray(parsed?.choices) ? parsed!.choices : [];
+
+      // Prompt variants may use a compact positional integer array. It avoids repeating every
+      // mention and category in the response, and exact length makes omissions unambiguous.
+      if (rawChoices.length === askable.length && rawChoices.every(Number.isInteger)) {
+        rawChoices.forEach((choice, position) => {
+          const { index } = askable[position];
+          decisions[index] = decisionForOption(choice as number, options.get(index)!);
+        });
+        return decisions;
+      }
+
+      const choices = rawChoices.filter(
+        (choice): choice is Choice => Boolean(choice) && typeof choice === 'object'
+      );
 
       // Key by category|mention, exactly as the caller does. Keying by mention alone loses a verdict
       // whenever one document carries the same surface under two categories — the bug this
@@ -144,21 +158,7 @@ export class ListwiseMintCandidateDecision implements DecisionStrategy {
           decisions[index] = mintOf('no usable choice returned');
           continue;
         }
-        const option = choice.choice;
-        if (option === shown.length + 1) {
-          decisions[index] = mintOf('judge chose NEW ENTITY');
-        } else if (option >= 1 && option <= shown.length) {
-          decisions[index] = {
-            kind: 'link',
-            target: shown[option - 1],
-            confidence: null,
-            reason: `judge chose option ${option} of ${shown.length + 1}`,
-          };
-        } else {
-          // Out of range means the answer is not interpretable, not that the model meant mint.
-          // Minting is the conservative fallback, but the reason has to say which happened.
-          decisions[index] = mintOf(`choice ${option} out of range 1..${shown.length + 1}`);
-        }
+        decisions[index] = decisionForOption(choice.choice, shown);
       }
 
       return decisions;
@@ -178,6 +178,26 @@ export class ListwiseMintCandidateDecision implements DecisionStrategy {
       });
     }
   }
+}
+
+function decisionForOption(option: number, shown: string[]): Decision {
+  if (option === shown.length + 1) {
+    return { kind: 'mint', target: null, confidence: null, reason: 'judge chose NEW ENTITY' };
+  }
+  if (option >= 1 && option <= shown.length) {
+    return {
+      kind: 'link',
+      target: shown[option - 1],
+      confidence: null,
+      reason: `judge chose option ${option} of ${shown.length + 1}`,
+    };
+  }
+  return {
+    kind: 'mint',
+    target: null,
+    confidence: null,
+    reason: `choice ${option} out of range 1..${shown.length + 1}`,
+  };
 }
 
 const keyOf = (category: string, mention: string) =>

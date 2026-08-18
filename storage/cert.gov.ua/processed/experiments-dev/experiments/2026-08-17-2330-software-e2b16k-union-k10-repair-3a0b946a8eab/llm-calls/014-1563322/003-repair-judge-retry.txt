@@ -1,0 +1,714 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-repair judge for an incremental knowledge base. You review small groups ("components") of registry entities that automated signals flagged as possibly duplicated or wrongly assembled, and you decide what — if anything — must change.
+
+### SUSPECT COMPONENTS
+Component 1 of 1 · signal: defer(link-judge, d2724) + union-blocker 0.88 + coherence
+  A. 7Star Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "7Star Browser"
+  B. Adobe Flash Player (Software)
+     aliases: []  · minted d2724
+     gloss: "Software application, no explicit link found in candidates."
+     evidence: d2724 "Adobe Flash Player"
+  C. Agent Tesla (Software)
+     aliases: [AgentTesla]  · minted d3028
+     gloss: "Mentioned in the source title."
+     evidence: d1563322 "AgentTesla"
+     evidence: d861292 "AgentTesla"
+     evidence: d3028 "Agent Tesla"
+  D. Amigo Browser (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Amigo Browser"
+  E. CVE-2017-11882 (Software)
+     aliases: [CVE-2017-0199]  · minted d24
+     gloss: "A specific vulnerability identifier"
+     evidence: d2660 "CVE-2017-0199"
+     evidence: d24 "CVE-2017-11882"
+  F. CVE-2018-8134 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8134"
+  G. CVE-2018-8136 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8136"
+  H. CVE-2018-8141 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8141"
+  I. CVE-2018-8170 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8170"
+  J. CVE-2018-8174 (Software)
+     aliases: []  · minted d2724
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8174"
+  K. Foxmail (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Foxmail"
+  L. GammaLoad.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaLoad.PS1"
+  M. GammaSteel.NET (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.NET"
+  N. GammaSteel.PS1 (Software)
+     aliases: []  · minted d1229152
+     gloss: (none)
+     evidence: d1229152 "GammaSteel.PS1"
+  O. MISP (Software)
+     aliases: []  · minted d40102
+     gloss: (none)
+     evidence: d40102 "MISP"
+  P. MS Excel (Software)
+     aliases: [Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls]  · minted d20
+     gloss: "Software application, no specific entity found in candidates."
+     evidence: d703548 "Гуманітарна катастрофа України з 24 лютого 2022 року.xls"
+     evidence: d619229 "Інформація щодо наявності вакансій та їх укомплектування.xls"
+     evidence: d3028 "Internet Explorer"
+  Q. Meterpreter (Software)
+     aliases: [Cobalt Strike Beacon]  · minted d39934
+     gloss: (none)
+     evidence: d703548 "Cobalt Strike Beacon"
+     evidence: d619229 "Cobalt Strike Beacon"
+     evidence: d39934 "Meterpreter"
+  R. Microsoft Office 2007 (Software)
+     aliases: [Office 2007, Windows 7, Windows Vista]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Windows 7"
+     evidence: d2660 "Office 2007"
+     evidence: d2660 "Windows 7"
+  S. Microsoft Office 2010 (Software)
+     aliases: [Office 2010, Microsoft Office Services and Web Apps]  · minted d24
+     gloss: (none)
+     evidence: d2724 "Microsoft Office Services and Web Apps"
+     evidence: d2660 "Office 2010"
+     evidence: d24 "Microsoft Office 2010"
+  T. Microsoft Office 2013 (Software)
+     aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]  · minted d24
+     gloss: (none)
+     evidence: d703548 "shellcode.x64.bin"
+     evidence: d619229 "shellcode.x64 (Cobalt Strike Beacon)"
+     evidence: d2724 ".NET Framework"
+  U. Microsoft Office 2016 (Software)
+     aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]  · minted d24
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "Windows Host Compute Service Shim"
+     evidence: d2724 "CVE-2018-0854"
+     evidence: d2660 "Office 2016"
+  V. Opera Browser (Software)
+     aliases: [TRYxaEbX.ps1]  · minted d3028
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX.ps1"
+     evidence: d3028 "Opera Browser"
+  W. PGMB New Order 18-2077.xlsx (Software)
+     aliases: [CVE-2018-8124, CVE-2018-8127]  · minted d24
+     gloss: "A specific Excel file"
+     evidence: d2724 "CVE-2018-8124"
+     evidence: d2724 "CVE-2018-8127"
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+  X. Paltalk (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Paltalk"
+  Y. Petya (Software)
+     aliases: []  · minted d2660
+     gloss: "Name mentioned in relation to malware attacks, but no specific software entity is identified."
+     evidence: d2660 "Petya"
+  Z. PowerShell (Software)
+     aliases: []  · minted d1563322
+     gloss: (none)
+     evidence: d1563322 "PowerShell"
+  E27. RegAsm.exe (Software)
+     aliases: [write.exe]  · minted d3028
+     gloss: "An executable file that acts as a dropper."
+     evidence: d619229 "write.exe"
+     evidence: d3028 "RegAsm.exe"
+  E28. SmartFTP (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "SmartFTP"
+  E29. Smokeloader (Software)
+     aliases: []  · minted d2707
+     gloss: "The source describes Smokeloader as a piece of software that distributes malicious files."
+     evidence: d2707 "Smokeloader"
+  E30. TRYxaEbX (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX"
+  E31. TRYxaEbX_2.ps1 (Software)
+     aliases: []  · minted d619229
+     gloss: (none)
+     evidence: d619229 "TRYxaEbX_2.ps1"
+  E32. Thunderbird (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Thunderbird"
+  E33. Trillian (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "Trillian"
+  E34. UkrScanner.exe (SFX) (Software)
+     aliases: []  · minted d40102
+     gloss: "An SFX file identical to CredoMap_v2."
+     evidence: d40102 "UkrScanner.exe (SFX)"
+  E35. UkrScanner.rar (Software)
+     aliases: []  · minted d40102
+     gloss: "An archive file containing the malicious program."
+     evidence: d40102 "UkrScanner.rar"
+  E36. b.exe (Software)
+     aliases: []  · minted d39934
+     gloss: "EXE-файл 'b.exe'"
+     evidence: d39934 "b.exe"
+  E37. ckZ89.ExE (Software)
+     aliases: [CVE-2018-8129]  · minted d2707
+     gloss: "A specific security vulnerability identifier."
+     evidence: d2724 "CVE-2018-8129"
+     evidence: d2707 "ckZ89.ExE"
+  E38. host_news_mod_mod.msi (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "host_news_mod_mod.msi"
+  E39. installer.exe (Software)
+     aliases: [sgegkseg23mjl.exe]  · minted d10011
+     gloss: (none)
+     evidence: d861292 "sgegkseg23mjl.exe"
+     evidence: d10011 "installer.exe"
+  E40. jDownloader (Software)
+     aliases: []  · minted d3028
+     gloss: (none)
+     evidence: d3028 "jDownloader"
+  E41. loader.exe (Software)
+     aliases: [rundll32.exe]  · minted d39934
+     gloss: (none)
+     evidence: d861292 "rundll32.exe"
+     evidence: d39934 "loader.exe"
+  E42. major.exe (Software)
+     aliases: [cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe]  · minted d24
+     gloss: (none)
+     evidence: d1229152 "PowerShell (powershell.exe)"
+     evidence: d1229152 "wscript.exe"
+     evidence: d1229152 "mshta.exe"
+  E43. rutserv.exe (Software)
+     aliases: []  · minted d10011
+     gloss: (none)
+     evidence: d10011 "rutserv.exe"
+  E44. stage1.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage1.ps1"
+  E45. stage2.ps1 (Software)
+     aliases: []  · minted d703548
+     gloss: (none)
+     evidence: d703548 "stage2.ps1"
+  E46. z.ps1 (Software)
+     aliases: []  · minted d39934
+     gloss: "PowerShell-скрипт 'z.ps1'"
+     evidence: d39934 "z.ps1"
+  E47. До оплати рах.ф. 74 - 2018р.js (Software)
+     aliases: [CVE-2018-0958]  · minted d2707
+     gloss: "A reference related to payment and a .js file."
+     evidence: d2724 "CVE-2018-0958"
+     evidence: d2707 "До оплати рах.ф. 74 - 2018р.js"
+  E48. Рахунки за выполненные работы от 11.12.2018.js (Software)
+     aliases: []  · minted d2707
+     gloss: "A reference related to payment date and a .js file."
+     evidence: d2707 "Рахунки за выполненные работы от 11.12.2018.js"
+  pairs to adjudicate: E–F (defer(link-judge, d2724)); F–S (defer(link-judge, d2724)); F–T (defer(link-judge, d2724)); F–U (defer(link-judge, d2724)); F–W (defer(link-judge, d2724)); F–Y (defer(link-judge, d2724)); E37–F (defer(link-judge, d2724)); E47–F (defer(link-judge, d2724)); E48–F (defer(link-judge, d2724)); E–G (defer(link-judge, d2724)); G–P (defer(link-judge, d2724)); G–S (defer(link-judge, d2724)); G–T (defer(link-judge, d2724)); G–U (defer(link-judge, d2724)); G–W (defer(link-judge, d2724)); G–Y (defer(link-judge, d2724)); E37–G (defer(link-judge, d2724)); E47–G (defer(link-judge, d2724)); E48–G (defer(link-judge, d2724)); E–H (defer(link-judge, d2724)); E37–H (defer(link-judge, d2724)); E42–H (defer(link-judge, d2724)); E47–H (defer(link-judge, d2724)); E48–H (defer(link-judge, d2724)); E–I (defer(link-judge, d2724)); I–W (defer(link-judge, d2724)); E37–I (defer(link-judge, d2724)); E47–I (defer(link-judge, d2724)); E48–I (defer(link-judge, d2724)); E–J (defer(link-judge, d2724)); J–R (defer(link-judge, d2724)); J–S (defer(link-judge, d2724)); J–T (defer(link-judge, d2724)); J–W (defer(link-judge, d2724)); E37–J (defer(link-judge, d2724)); E47–J (defer(link-judge, d2724)); E48–J (defer(link-judge, d2724)); L–V (defer(link-judge, d1229152)); E28–L (defer(link-judge, d1229152)); E29–L (defer(link-judge, d1229152)); E31–L (defer(link-judge, d1229152)); E40–L (defer(link-judge, d1229152)); E41–L (defer(link-judge, d1229152)); E42–L (defer(link-judge, d1229152)); E44–L (defer(link-judge, d1229152)); E45–L (defer(link-judge, d1229152)); E46–L (defer(link-judge, d1229152)); B–M (defer(link-judge, d1229152)); C–M (defer(link-judge, d1229152)); D–M (defer(link-judge, d1229152)); K–M (defer(link-judge, d1229152)); M–P (defer(link-judge, d1229152)); M–Q (defer(link-judge, d1229152)); M–T (defer(link-judge, d1229152)); M–V (defer(link-judge, d1229152)); M–X (defer(link-judge, d1229152)); E28–M (defer(link-judge, d1229152)); C–N (defer(link-judge, d1229152)); N–O (defer(link-judge, d1229152)); N–V (defer(link-judge, d1229152)); E28–N (defer(link-judge, d1229152)); E31–N (defer(link-judge, d1229152)); E39–N (defer(link-judge, d1229152)); E42–N (defer(link-judge, d1229152)); E44–N (defer(link-judge, d1229152)); E45–N (defer(link-judge, d1229152)); E46–N (defer(link-judge, d1229152)); E42–Z (union-blocker 0.88); A–E30 (defer(link-judge, d619229)); E30–Q (defer(link-judge, d619229)); E30–T (defer(link-judge, d619229)); E30–E32 (defer(link-judge, d619229)); E30–E33 (defer(link-judge, d619229)); E30–E35 (defer(link-judge, d619229)); E30–E36 (defer(link-judge, d619229)); E30–E39 (defer(link-judge, d619229)); E31–R (defer(link-judge, d619229)); E31–T (defer(link-judge, d619229)); E27–E31 (defer(link-judge, d619229)); E31–E33 (defer(link-judge, d619229)); E31–E34 (defer(link-judge, d619229)); E31–E38 (defer(link-judge, d619229)); E31–E43 (defer(link-judge, d619229)); E31–E46 (defer(link-judge, d619229))
+  coherence check: P — does every listed alias belong to this entity?
+  coherence check: U — does every listed alias belong to this entity?
+(Each component lists the triggering signals with scores, and per entity: canonical name, category, granularity rung, aliases, gloss, minting document, and evidence snippets quoted from source documents.)
+
+---
+
+### DECISION RULES
+
+1. **EVIDENCE-BOUNDED IDENTITY ONLY.** Two records are the same entity ("merge") ONLY if the supplied evidence implies identity: an explicit alias statement, a shared unambiguous identifier, a standard transliteration, or unambiguous co-reference. Shared category, role, attributes, behavior, relationships, co-occurrence, or graph adjacency are NEVER sufficient because related is not identical.
+
+2. **CHOOSE THE RIGHT RELATION, NOT JUST SAME/DIFFERENT.**
+   - "merge": same entity, same granularity (true duplicate).
+   - "rung": the same thing at different granularity (one is a version/unit/part of the other). Test: restate a fact about the finer entity using the coarser name — if it stays the same claim, only blurred, use edgeKind "coarsens-to"; if it becomes a claim about a different, wider actor, use "part-of". Never merge across granularity.
+   - "renamed": one entity succeeded the other under a new name (temporal succession language: "formerly known as", rebranding). Not a mere alias — record it as renamed.
+   - "distinct": none of the above is evidenced.
+
+3. **THE ASYMMETRY.** A wrong "merge" destroys identity and corrupts every graph built later; a wrong "distinct" merely leaves a repairable duplicate that will be re-flagged when new evidence arrives. If the evidence is thin, ambiguous, or merely suggestive: output "distinct". Set confidence honestly; a "merge" you cannot ground in quoted evidence must be "low" — and low-confidence merges are not applied.
+
+4. **COHERENCE COMPONENTS (single entity).** Decide whether every alias belongs. An alias whose meaning contradicts the entity's gloss or evidence gets "split" (alias belongs to no listed entity) or "move" (alias belongs to another listed entity). If everything belongs, output "keep".
+
+5. **CROSS-CATEGORY PAIRS ARE LEGAL.** Upstream extraction sometimes assigns different categories to the same real-world entity. If the evidence shows identity, merge — the category correction is handled outside this call.
+
+6. **COMPLETENESS.** Every suspect pair listed in a component must receive exactly one op ("merge", "distinct", "rung", or "renamed"). Do not skip pairs; do not invent entities not listed.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {"op": "merge" | "distinct" | "rung" | "renamed" | "split" | "move" | "keep",
+         ...op-specific fields as defined per op...,
+         "confidence": "high" | "medium" | "low",
+         "evidence": "<1 sentence quoting or pointing at the deciding evidence>"}
+      ]
+    }
+  ]
+}
+Every entity slot below takes the entity's FULL CANONICAL NAME, copied exactly as listed in the
+component. Never use the component's letter label (`A`, `B`, `C`) — those letters are only there to
+make the listing readable, and an op naming a letter instead of a name is rejected.
+
+Op-specific fields: merge{from,into} · distinct{pair:["<canonical name>","<canonical name>"]} · rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"} · renamed{from,to} · split{alias,outOf} · move{alias,from,to} · keep{entity}.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (128.2s, in 5943 / out 6079 tok, stop) ===
+{
+  "reviews": [
+    {
+      "component": 1,
+      "ops": [
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2007",
+          "into": "Windows 7",
+          "confidence": "high",
+          "evidence": "R aliases: [Office 2007, Windows 7, Windows Vista]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2007",
+          "into": "Windows Vista",
+          "confidence": "high",
+          "evidence": "R aliases: [Office 2007, Windows 7, Windows Vista]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2010",
+          "into": "Office 2010",
+          "confidence": "high",
+          "evidence": "S aliases: [Office 2010, Microsoft Office Services and Web Apps]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2010",
+          "into": "Microsoft Office Services and Web Apps",
+          "confidence": "high",
+          "evidence": "S aliases: [Office 2010, Microsoft Office Services and Web Apps]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2013",
+          "into": "Office 2013",
+          "confidence": "high",
+          "evidence": "T aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2013",
+          "into": ".NET Framework",
+          "confidence": "high",
+          "evidence": "T aliases: [Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2016",
+          "into": "Office 2016",
+          "confidence": "high",
+          "evidence": "U aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2016",
+          "into": "Windows Host Compute Service Shim",
+          "confidence": "high",
+          "evidence": "U aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]"
+        },
+        {
+          "op": "merge",
+          "from": "Microsoft Office 2016",
+          "into": "CVE-2018-0854",
+          "confidence": "high",
+          "evidence": "U aliases: [Office 2016, Windows Host Compute Service Shim, CVE-2018-0854]"
+        },
+        {
+          "op": "merge",
+          "from": "Agent Tesla",
+          "into": "AgentTesla",
+          "confidence": "high",
+          "evidence": "C aliases: [AgentTesla]"
+        },
+        {
+          "op": "merge",
+          "from": "Agent Tesla",
+          "into": "AgentTesla",
+          "confidence": "high",
+          "evidence": "C aliases: [AgentTesla]"
+        },
+        {
+          "op": "merge",
+          "from": "Agent Tesla",
+          "into": "Agent Tesla",
+          "confidence": "high",
+          "evidence": "C gloss: \"Mentioned in the source title.\""
+        },
+        {
+          "op": "merge",
+          "from": "Amigo Browser",
+          "into": "Amigo Browser",
+          "confidence": "high",
+          "evidence": "D gloss: (none)"
+        },
+        {
+          "op": "merge",
+          "from": "7Star Browser",
+          "into": "7Star Browser",
+          "confidence": "high",
+          "evidence": "A gloss: (none)"
+        },
+        {
+          "op": "merge",
+          "from": "Adobe Flash Player",
+          "into": "Adobe Flash Player",
+          "confidence": "high",
+          "evidence": "B gloss: \"Software application, no explicit link found in candidates.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2017-11882",
+          "into": "CVE-2017-0199",
+          "confidence": "high",
+          "evidence": "E aliases: [CVE-2017-0199]"
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8134",
+          "into": "CVE-2018-8134",
+          "confidence": "high",
+          "evidence": "F gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8134",
+          "into": "CVE-2018-8134",
+          "confidence": "high",
+          "evidence": "F gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8134",
+          "into": "CVE-2018-8134",
+          "confidence": "high",
+          "evidence": "F gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8136",
+          "into": "CVE-2018-8134",
+          "confidence": "low",
+          "evidence": "G gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8141",
+          "into": "CVE-2018-8141",
+          "confidence": "high",
+          "evidence": "H gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8170",
+          "into": "CVE-2018-8170",
+          "confidence": "high",
+          "evidence": "I gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8174",
+          "into": "CVE-2018-8174",
+          "confidence": "high",
+          "evidence": "J gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8174",
+          "into": "CVE-2018-8174",
+          "confidence": "high",
+          "evidence": "J gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8170",
+          "into": "CVE-2018-8170",
+          "confidence": "high",
+          "evidence": "I gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8174",
+          "into": "CVE-2018-8174",
+          "confidence": "high",
+          "evidence": "J gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8170",
+          "into": "CVE-2018-8170",
+          "confidence": "high",
+          "evidence": "I gloss: \"A specific security vulnerability identifier.\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "CVE-2018-8124",
+          "confidence": "high",
+          "evidence": "W aliases: [CVE-2018-8124, CVE-2018-8127]"
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "CVE-2018-8127",
+          "confidence": "high",
+          "evidence": "W aliases: [CVE-2018-8124, CVE-2018-8127]"
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d24 \"PGMB New Order 18-2077.xlsx\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"PGMB New Order 18-2077.xlsx\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d24 \"PGMB New Order 18-2077.xlsx\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d24 \"PGMB New Order 18-2077.xlsx\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8124",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8124\""
+        },
+        {
+          "op": "merge",
+          "from": "CVE-2018-8127",
+          "into": "W",
+          "confidence": "high",
+          "evidence": "W evidence: d2724 \"CVE-2018-8127\""
+        }
+      ]
+    }
+  ]
+}
+
+=== OUTCOME (ok) ===
+1 op(s) accepted

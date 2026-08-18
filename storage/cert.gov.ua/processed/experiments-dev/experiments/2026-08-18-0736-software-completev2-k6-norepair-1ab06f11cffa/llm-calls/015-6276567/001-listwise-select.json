@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:43:57.358Z",
+  "operator": "listwise-select",
+  "docId": 6276567,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"\"Повістка до суду\": чергова цільова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8150)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 30.11.2023 зафіксовано масове розповсюдження електронних листів з тематикою \"Повістки до суду\" та вкладенням у вигляді файлу \"Господарський суд Одеської області Повістка до суду.rar\".</p><p>Зазначений RAR-архів містить захищений паролем файл \"Повістка до суду.rar\", в якому знаходиться документ з макросом \"Повістка до суду.doc\".&nbsp;</p><p>У разі активації код макросу за допомогою оглядача файлів (explorer.exe) з використанням протоколу SMB здійснить завантаження на ЕОМ т\nMentions:\n1. \"RemcosRAT\" (Software)\n     1. Remcos [aliases: Remcos]\n     2. RemoteUtilities [aliases: RemoteUtilities]\n     3. Remote Utilities [aliases: Remote Utilities]\n     4. Remote Utilities - Host [aliases: Remote Utilities - Host]\n     5. Meterpreter [aliases: Meterpreter]\n     6. FTP Commander [aliases: FTP Commander]\n     7. NEW ENTITY\n2. \"scandoc.exe\" (Software)\n     1. cmd.exe [aliases: cmd.exe]\n     2. b.exe [aliases: b.exe]\n     3. loader.exe [aliases: loader.exe]\n     4. MCMDiction.exe [aliases: MCMDiction.exe]\n     5. baseupd.exe [aliases: baseupd.exe]\n     6. installer.exe [aliases: installer.exe]\n     7. NEW ENTITY\n3. \"SmartAssembly\" (Software)\n     1. SmartFTP [aliases: SmartFTP]\n     2. AgentTesla [aliases: AgentTesla]\n     3. Agent Tesla [aliases: Agent Tesla]\n     4. HarvesterX [aliases: HarvesterX]\n     5. GammaSteel.NET [aliases: GammaSteel.NET]\n     6. Paltalk [aliases: Paltalk]\n     7. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 724,
+    "outputTokens": 898
+  },
+  "latencyMs": 17634,
+  "finishReason": "stop"
+}

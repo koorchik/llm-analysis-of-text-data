@@ -1,0 +1,156 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "АНОНС: Практичний семінар для кіберфахівців"
+Source Excerpt:
+"""
+<p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "SRP" (Software); ladder: (none; use g0); candidates: SmartFTP [rung unknown] (aliases: SmartFTP); WinSCP [rung unknown] (aliases: WinSCP); MISP [g0] (aliases: MISP); WS_FTP [rung unknown] (aliases: WS_FTP); Remcos [g0] (aliases: Remcos, RemcosRAT); HarvesterX [g0] (aliases: HarvesterX); Remote Utilities [g0] (aliases: Remote Utilities, shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin, loader.exe, rundll32.exe, rfusclient.exe, rutserv.exe, Remote Utilities - Host, CCleaner.exe, CCleaner.rar, RemoteUtilities); wsuscr.exe [g0] (aliases: wsuscr.exe); MS Office [rung unknown] (aliases: MS Office, Microsoft Office, VBScript); MS Word [rung unknown] (aliases: MS Word, Microsoft Word)
+2. "AppLocker" (Software); ladder: (none; use g0); candidates: jDownloader [rung unknown] (aliases: jDownloader); FTPGetter [rung unknown] (aliases: FTPGetter); Opera Browser [rung unknown] (aliases: Opera Browser, TRYxaEbX.ps1); 360Chrome Browser [rung unknown] (aliases: 360Chrome Browser, Brave Browser, Google Chrome); Uran Browser [rung unknown] (aliases: Uran Browser); Smokeloader [g0] (aliases: Smokeloader); 7Star Browser [rung unknown] (aliases: 7Star Browser); Amigo Browser [rung unknown] (aliases: Amigo Browser); CentBrowser [rung unknown] (aliases: CentBrowser); Kometa Browser [rung unknown] (aliases: Kometa Browser)
+3. "YARA" (Software); ladder: (none; use g0); candidates: Yandex Browser [rung unknown] (aliases: Yandex Browser); Opera Browser [rung unknown] (aliases: Opera Browser, TRYxaEbX.ps1); Remote Utilities [g0] (aliases: Remote Utilities, shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin, loader.exe, rundll32.exe, rfusclient.exe, rutserv.exe, Remote Utilities - Host, CCleaner.exe, CCleaner.rar, RemoteUtilities); SmartFTP [rung unknown] (aliases: SmartFTP); Remcos [g0] (aliases: Remcos, RemcosRAT); HarvesterX [g0] (aliases: HarvesterX); IceDragon [rung unknown] (aliases: IceDragon); Opera Mail [rung unknown] (aliases: Opera Mail); CCleaner.zip [g0] (aliases: CCleaner.zip); Uran Browser [rung unknown] (aliases: Uran Browser)
+4. "Mikrotik" (Software); ladder: (none; use g0); candidates: Microsoft Outlook [rung unknown] (aliases: Microsoft Outlook); MS Word [rung unknown] (aliases: MS Word, Microsoft Word); MISP [g0] (aliases: MISP); AutoIt [g0] (aliases: AutoIt); MS Office [rung unknown] (aliases: MS Office, Microsoft Office, VBScript); Microsoft Windows [g0] (aliases: Microsoft Windows, Microsoft Edge, Win32k); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls, Microsoft Office 2007, Office 2007, Windows 7, Windows Vista, Microsoft Office 2010, Office 2010, Microsoft Office Services and Web Apps, Microsoft Office 2013, Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin, Microsoft Office 2016, Office 2016, Windows Host Compute Service Shim, CVE-2018-0854); Sputnik Browser [rung unknown] (aliases: Sputnik Browser); Amigo Browser [rung unknown] (aliases: Amigo Browser); Misha [g0] (aliases: Misha)
+5. "pfSense" (Software); ladder: (none; use g0); candidates: 360Chrome Browser [rung unknown] (aliases: 360Chrome Browser, Brave Browser, Google Chrome); PowerShell [g0] (aliases: PowerShell); Remote Utilities [g0] (aliases: Remote Utilities, shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin, loader.exe, rundll32.exe, rfusclient.exe, rutserv.exe, Remote Utilities - Host, CCleaner.exe, CCleaner.rar, RemoteUtilities); major.exe [g0] (aliases: major.exe, cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe); Opera Browser [rung unknown] (aliases: Opera Browser, TRYxaEbX.ps1); FTP Commander [rung unknown] (aliases: FTP Commander); installer.exe [g0] (aliases: installer.exe, sgegkseg23mjl.exe, install.msi); ChromePlus Browser [rung unknown] (aliases: ChromePlus Browser); ConfuserEx [g0] (aliases: ConfuserEx); Meterpreter [g0] (aliases: Meterpreter, Cobalt Strike Beacon, b.exe, TRYxaEbX)
+6. "SIEM" (Software); ladder: (none; use g0); candidates: MISP [g0] (aliases: MISP); spi.exe [g0] (aliases: spi.exe); major.exe [g0] (aliases: major.exe, cmd.exe, powershell.exe, PowerShell (powershell.exe), wscript.exe, mshta.exe); HarvesterX [g0] (aliases: HarvesterX); PowerShell [g0] (aliases: PowerShell); FileZilla [rung unknown] (aliases: FileZilla); Remote Utilities [g0] (aliases: Remote Utilities, shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin, loader.exe, rundll32.exe, rfusclient.exe, rutserv.exe, Remote Utilities - Host, CCleaner.exe, CCleaner.rar, RemoteUtilities); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Інформація щодо наявності вакансій та їх укомплектування.xls, Internet Explorer, Гуманітарна катастрофа України з 24 лютого 2022 року.xls, Microsoft Office 2007, Office 2007, Windows 7, Windows Vista, Microsoft Office 2010, Office 2010, Microsoft Office Services and Web Apps, Microsoft Office 2013, Office 2013, .NET Framework, shellcode.x64 (Cobalt Strike Beacon), shellcode.x64.bin, Microsoft Office 2016, Office 2016, Windows Host Compute Service Shim, CVE-2018-0854); MS Office [rung unknown] (aliases: MS Office, Microsoft Office, VBScript); SmartAssembly [g0] (aliases: SmartAssembly, SmartAssembly .NET)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (28.2s, in 2716 / out 1439 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "SRP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    },
+    {
+      "index": 2,
+      "mention": "AppLocker",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    },
+    {
+      "index": 3,
+      "mention": "YARA",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    },
+    {
+      "index": 4,
+      "mention": "Mikrotik",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    },
+    {
+      "index": 5,
+      "mention": "pfSense",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    },
+    {
+      "index": 6,
+      "mention": "SIEM",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No entity from the list is mentioned in the source evidence, so no linkage can be established."
+    }
+  ]
+}

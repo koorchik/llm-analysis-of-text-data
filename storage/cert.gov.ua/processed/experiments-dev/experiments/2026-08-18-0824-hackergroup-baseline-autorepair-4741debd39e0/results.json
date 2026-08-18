@@ -1,0 +1,103 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 17,
+    "members": 20,
+    "byStratum": {
+      "a": 17
+    },
+    "bySplit": {
+      "dev": 17
+    },
+    "clustersWithEvidence": 0,
+    "edges": 1,
+    "nilLabels": 35
+  },
+  "results": [
+    {
+      "condition": "hackergroup-baseline-autorepair",
+      "runIds": [
+        "hackergroup-baseline-autorepair-4741debd39e0"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "a": {
+          "stratum": "a",
+          "pairs": 190,
+          "truePositives": 3,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 7,
+          "skipped": 180,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 190,
+          "truePositives": 3,
+          "falsePositives": 0,
+          "falseNegatives": 0,
+          "trueNegatives": 7,
+          "skipped": 180,
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        }
+      },
+      "nil": {
+        "truePositives": 2,
+        "falsePositives": 1,
+        "falseNegatives": 0,
+        "trueNegatives": 2,
+        "deferred": 0,
+        "deferredOnNil": 0,
+        "observations": 5,
+        "deferralRate": 0,
+        "precision": 0.6666666666666666,
+        "recall": 1,
+        "f1": 0.8
+      },
+      "cluster": {
+        "universeSize": 5,
+        "predictedClusters": 3,
+        "goldClusters": 3,
+        "macro": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "pairwise": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "ari": 1
+      },
+      "cost": {
+        "calls": 4,
+        "inputTokens": 2925,
+        "outputTokens": 3675,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 69723
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

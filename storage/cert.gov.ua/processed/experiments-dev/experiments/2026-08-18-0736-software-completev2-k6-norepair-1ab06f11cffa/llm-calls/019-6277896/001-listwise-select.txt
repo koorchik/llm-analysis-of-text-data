@@ -1,0 +1,63 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Mentions:
+1. "SRP" (Software)
+     1. SmartFTP [aliases: SmartFTP]
+     2. WinSCP [aliases: WinSCP]
+     3. MISP [aliases: MISP]
+     4. WS_FTP [aliases: WS_FTP]
+     5. RemcosRAT [aliases: RemcosRAT]
+     6. HarvesterX [aliases: HarvesterX]
+     7. NEW ENTITY
+2. "AppLocker" (Software)
+     1. jDownloader [aliases: jDownloader]
+     2. FTPGetter [aliases: FTPGetter]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Uran Browser [aliases: Uran Browser]
+     5. 7Star Browser [aliases: 7Star Browser]
+     6. Smokeloader [aliases: Smokeloader]
+     7. NEW ENTITY
+3. "YARA" (Software)
+     1. Yandex Browser [aliases: Yandex Browser]
+     2. QuasarRAT [aliases: QuasarRAT]
+     3. TRYxaEbX [aliases: TRYxaEbX]
+     4. CCleaner.rar [aliases: CCleaner.rar]
+     5. HarvesterX [aliases: HarvesterX]
+     6. RemcosRAT [aliases: RemcosRAT]
+     7. NEW ENTITY
+4. "Mikrotik" (Software)
+     1. Microsoft Office [aliases: Microsoft Office]
+     2. Microsoft Edge [aliases: Microsoft Edge]
+     3. Microsoft Outlook [aliases: Microsoft Outlook]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. Misha [aliases: Misha]
+     6. MISP [aliases: MISP]
+     7. NEW ENTITY
+5. "pfSense" (Software)
+     1. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]
+     2. rfusclient.exe [aliases: rfusclient.exe]
+     3. powershell.exe [aliases: powershell.exe]
+     4. rutserv.exe [aliases: rutserv.exe]
+     5. CCleaner.exe [aliases: CCleaner.exe]
+     6. Brave Browser [aliases: Brave Browser]
+     7. NEW ENTITY
+6. "SIEM" (Software)
+     1. MISP [aliases: MISP]
+     2. PowerShell (powershell.exe) [aliases: PowerShell (powershell.exe), PowerShell]
+     3. ConfuserEx [aliases: ConfuserEx]
+     4. HarvesterX [aliases: HarvesterX]
+     5. spi.exe [aliases: spi.exe]
+     6. wscript.exe [aliases: wscript.exe]
+     7. NEW ENTITY
+
+=== RESPONSE (12.0s, in 999 / out 621 tok, stop) ===
+{"choices":[{"mention":"SRP":null,"category":"Software","choice":7},{"mention":"AppLocker":null,"category":"Software","choice":7},{"mention":"YARA":null,"category":"Software","choice":7},{"mention":"Mikrotik":null,"category":"Software","choice":7},{"mention":"pfSense":null,"category":"Software","choice":7},{"mention":"SIEM":null,"category":"Software","choice":7}]}

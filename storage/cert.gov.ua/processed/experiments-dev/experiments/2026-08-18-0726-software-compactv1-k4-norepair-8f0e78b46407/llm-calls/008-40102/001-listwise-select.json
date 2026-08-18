@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k4-norepair-8f0e78b46407",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:30:24.105Z",
+  "operator": "listwise-select",
+  "docId": 40102,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)\" — evidence: <p><strong>Загальна інформація</strong></p><p><span style=\"color: rgb(36, 36, 36);\">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою \"Кібератака\", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву \"UkrScanner.rar\".</span></p><p><span style=\"color: rgb(36, 36, 36);\">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр\nMentions:\n1. \"CredoMap_v2\" (Software)\n     1. Chedot Browser [aliases: Chedot Browser]\n     2. Pocomail [aliases: Pocomail]\n     3. CVE-2018-8120 [aliases: CVE-2018-8120]\n     4. CVE-2018-8124 [aliases: CVE-2018-8124]\n     5. NEW ENTITY\n2. \"UkrScanner.rar\" (Software)\n     1. powershell.exe [aliases: powershell.exe, installer.exe]\n     2. loader.exe [aliases: loader.exe]\n     3. Uran Browser [aliases: Uran Browser]\n     4. 7Star Browser [aliases: 7Star Browser]\n     5. NEW ENTITY\n3. \"UkrScanner.exe (SFX)\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. powershell.exe [aliases: powershell.exe, installer.exe]\n     3. loader.exe [aliases: loader.exe]\n     4. RegAsm.exe [aliases: RegAsm.exe]\n     5. NEW ENTITY\n4. \"scan.exe (CredoMap_v2)\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. powershell.exe [aliases: powershell.exe, installer.exe]\n     5. NEW ENTITY\n5. \"SQLite.Interop.dll\" (Software)\n     1. vaultcli.dll [aliases: vaultcli.dll]\n     2. Meterpreter [aliases: Meterpreter]\n     3. .NET Framework [aliases: .NET Framework, Remote Utilities - Host]\n     4. FTPGetter [aliases: FTPGetter]\n     5. NEW ENTITY\n6. \"MISP\" (Software)\n     1. Misha [aliases: Misha]\n     2. Microsoft Edge [aliases: Microsoft Edge]\n     3. Microsoft Windows [aliases: Microsoft Windows]\n     4. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps, Remote Utilities]\n     5. NEW ENTITY",
+  "response": "```json\n{\"choices\":[5,5,5,5]}\n```",
+  "usage": {
+    "inputTokens": 905,
+    "outputTokens": 1144
+  },
+  "latencyMs": 22241,
+  "finishReason": "stop"
+}

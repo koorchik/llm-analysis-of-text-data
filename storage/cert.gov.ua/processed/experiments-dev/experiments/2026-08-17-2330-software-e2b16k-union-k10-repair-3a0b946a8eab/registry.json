@@ -1,0 +1,5745 @@
+{
+  "version": 4,
+  "canonicalPolicy": "first-seen",
+  "categories": {
+    "Software": {
+      "MS Office": {
+        "aliases": [
+          {
+            "surface": "MS Office",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office",
+            "docId": 2660,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Component 1 entity F gloss states it is a 'General reference to Microsoft Office, which has multiple version candidates,' strongly suggesting it merges with C.",
+            "confidence": 1
+          },
+          {
+            "surface": "VBScript",
+            "docId": 2724,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "VBScript is a scripting language used within Microsoft Office applications.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "General reference to Microsoft Office, which has multiple version candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS Word": {
+        "aliases": [
+          {
+            "surface": "MS Word",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Word",
+            "docId": 2660,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "Microsoft Word is explicitly mentioned and matches the candidate MS Word.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS Excel": {
+        "aliases": [
+          {
+            "surface": "MS Excel",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Equation Editor",
+            "docId": 24,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The source explicitly references the vulnerability related to MS Equation, which is functionally equivalent to MS Excel.",
+            "addedBy": null
+          },
+          {
+            "surface": "Інформація щодо наявності вакансій та їх укомплектування.xls",
+            "docId": 619229,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention refers to an XLS file, which strongly implies the use of MS Excel.",
+            "addedBy": null
+          },
+          {
+            "surface": "Internet Explorer",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "IE is historically linked to MS Office environment.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls",
+            "docId": 703548,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The file name strongly implies it is an Excel file, linking it to the MS Excel candidate.",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2007",
+            "docId": 24,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases link MS Excel to various files and Office versions, suggesting a relationship.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Office 2007",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Office 2007 is directly linked to Microsoft Office 2007.",
+            "addedBy": null
+          },
+          {
+            "surface": "Windows 7",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Windows 7 is linked to the context of Microsoft Office 2007.",
+            "addedBy": null
+          },
+          {
+            "surface": "Windows Vista",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Windows Vista is listed among the operating systems contextually related to the Office versions.",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2010",
+            "docId": 24,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases link MS Excel to various files and Office versions, suggesting a relationship.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Office 2010",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Office 2010 is directly linked to Microsoft Office 2010.",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office Services and Web Apps",
+            "docId": 2724,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Microsoft Office Services and Web Apps is related to the Office suite, and Microsoft Office 2010 is a listed candidate.",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2013",
+            "docId": 24,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases link MS Excel to various files and Office versions, suggesting a relationship.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Office 2013",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Office 2013 is directly linked to Microsoft Office 2013.",
+            "addedBy": null
+          },
+          {
+            "surface": ".NET Framework",
+            "docId": 2724,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "The .NET Framework is a core component often associated with Microsoft Office installations, and Microsoft Office 2013 is a candidate.",
+            "addedBy": null
+          },
+          {
+            "surface": "shellcode.x64 (Cobalt Strike Beacon)",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E51 (spi.exe) is linked to X (Microsoft Office 2013) via related CVEs.",
+            "confidence": 1
+          },
+          {
+            "surface": "shellcode.x64.bin",
+            "docId": 703548,
+            "decision": "merge",
+            "confidence": 1,
+            "evidence": "The mention is explicitly linked to the shellcode variant associated with Cobalt Strike Beacon.",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2016",
+            "docId": 24,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases link MS Excel to various files and Office versions, suggesting a relationship.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Office 2016",
+            "docId": 2660,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "Office 2016 is directly linked to Microsoft Office 2016.",
+            "addedBy": null
+          },
+          {
+            "surface": "Windows Host Compute Service Shim",
+            "docId": 2724,
+            "decision": "merge",
+            "confidence": 0.5,
+            "evidence": "This service shim is related to the underlying operating system and Microsoft Office installations, and Microsoft Office 2016 is a candidate.",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2018-0854",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "The pairs F-Y involve a dense cluster of CVEs, suggesting they belong to the same context, likely related to the software listed.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "Software application, no specific entity found in candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 21
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS PowerPoint": {
+        "aliases": [
+          {
+            "surface": "MS PowerPoint",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "CVE-2017-11882": {
+        "aliases": [
+          {
+            "surface": "CVE-2017-11882",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2017-0199",
+            "docId": 2660,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention is linked to the related CVE identifier in the candidates.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific vulnerability identifier",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        },
+        "rung": "g0"
+      },
+      "major.exe": {
+        "aliases": [
+          {
+            "surface": "major.exe",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "cmd.exe",
+            "docId": 2707,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "cmd.exe is a standard executable, linking it to major.exe as the most plausible executable counterpart.",
+            "addedBy": null
+          },
+          {
+            "surface": "powershell.exe",
+            "docId": 2707,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "powershell.exe is a shell often associated with cmd.exe execution environments.",
+            "addedBy": null
+          },
+          {
+            "surface": "PowerShell (powershell.exe)",
+            "docId": 1229152,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "powershell.exe is an alias for major.exe in this context.",
+            "addedBy": null
+          },
+          {
+            "surface": "wscript.exe",
+            "docId": 1229152,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "wscript.exe is contextually related to major.exe in this context.",
+            "addedBy": null
+          },
+          {
+            "surface": "mshta.exe",
+            "docId": 1229152,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "mshta.exe is contextually related to major.exe in this context.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 6
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        },
+        "rung": "g0"
+      },
+      "PGMB New Order 18-2077.xlsx": {
+        "aliases": [
+          {
+            "surface": "PGMB New Order 18-2077.xlsx",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2018-8124",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E28 (PGMB New Order 18-2077.xlsx) and I (CVE-2018-8124) are grouped, likely due to context.",
+            "confidence": 1
+          },
+          {
+            "surface": "CVE-2018-8127",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E28 (PGMB New Order 18-2077.xlsx) is linked to J (CVEs).",
+            "confidence": 1
+          }
+        ],
+        "gloss": "A specific Excel file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        },
+        "rung": "g0"
+      },
+      "Petya": {
+        "aliases": [
+          {
+            "surface": "Petya",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Name mentioned in relation to malware attacks, but no specific software entity is identified.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        },
+        "rung": "g0"
+      },
+      "Misha": {
+        "aliases": [
+          {
+            "surface": "Misha",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Name mentioned in relation to malware attacks but is not directly linked to a specific software entity.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        },
+        "rung": "g0"
+      },
+      "Microsoft Windows": {
+        "aliases": [
+          {
+            "surface": "Microsoft Windows",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Edge",
+            "docId": 2724,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "Microsoft Edge is typically associated with Microsoft Windows.",
+            "addedBy": null
+          },
+          {
+            "surface": "Win32k",
+            "docId": 2724,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "Win32k is a kernel component of Microsoft Windows.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "General reference to Microsoft Windows, which has multiple OS candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        },
+        "rung": "g0"
+      },
+      "Windows Server 2008": {
+        "aliases": [
+          {
+            "surface": "Windows Server 2008",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Exchange Server",
+            "docId": 2724,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "Microsoft Exchange Server is typically deployed on Windows Server environments, and Windows Server 2008 is a candidate.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Operating system version that is contextually related to Microsoft Office versions.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        },
+        "rung": "g0"
+      },
+      "Windows Server 2012": {
+        "aliases": [
+          {
+            "surface": "Windows Server 2012",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2018-8120",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E41 (Windows Server 2012) is linked to H (CVEs).",
+            "confidence": 1
+          }
+        ],
+        "gloss": "Operating system version that is contextually related to Microsoft Office versions.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        },
+        "rung": "g0"
+      },
+      "Smokeloader": {
+        "aliases": [
+          {
+            "surface": "Smokeloader",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "The source describes Smokeloader as a piece of software that distributes malicious files.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "spi.exe": {
+        "aliases": [
+          {
+            "surface": "spi.exe",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "ckZ89.ExE": {
+        "aliases": [
+          {
+            "surface": "ckZ89.ExE",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2018-8129",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E43 (ckZ89.ExE) is linked to K (CVE-2018-8129).",
+            "confidence": 1
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "До оплати від 11.12.18.lzh": {
+        "aliases": [
+          {
+            "surface": "До оплати від 11.12.18.lzh",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A reference related to payment date and a .lzh file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "Рахунки и новые списки.lzh": {
+        "aliases": [
+          {
+            "surface": "Рахунки и новые списки.lzh",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A reference related to accounts and lists involving a .lzh file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "Рахунки за выполненные работы от 11.12.2018.js": {
+        "aliases": [
+          {
+            "surface": "Рахунки за выполненные работы от 11.12.2018.js",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A reference related to payment date and a .js file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "До оплати рах.ф. 74 - 2018р.js": {
+        "aliases": [
+          {
+            "surface": "До оплати рах.ф. 74 - 2018р.js",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "CVE-2018-0958",
+            "docId": 2724,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E56 (До оплати рах.ф. 74 - 2018р.js) and G (CVEs) are grouped.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "A reference related to payment and a .js file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        },
+        "rung": "g0"
+      },
+      "ChakraCore": {
+        "aliases": [
+          {
+            "surface": "ChakraCore",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Software application, no explicit link found in candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "Adobe Flash Player": {
+        "aliases": [
+          {
+            "surface": "Adobe Flash Player",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Software application, no explicit link found in candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8174": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8174",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "Double Kill": {
+        "aliases": [
+          {
+            "surface": "Double Kill",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "No explicit identity linkage found in candidates.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8132": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8132",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8134": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8134",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8136": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8136",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8141": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8141",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8170": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8170",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A specific security vulnerability identifier.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        },
+        "rung": "g0"
+      },
+      "CVE-2018-8897": {
+        "aliases": [
+          {
+            "surface": "CVE-2018-8897",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Agent Tesla": {
+        "aliases": [
+          {
+            "surface": "Agent Tesla",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "AgentTesla",
+            "docId": 861292,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Agent Tesla and AgentTesla are highly likely to refer to the same entity based on context.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "Mentioned in the source title.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        },
+        "rung": "g0"
+      },
+      "RegAsm.exe": {
+        "aliases": [
+          {
+            "surface": "RegAsm.exe",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "write.exe",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E30 (RegAsm.exe) is linked to E54 (write.exe) via related CVEs.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "An executable file that acts as a dropper.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "vaultcli.dll": {
+        "aliases": [
+          {
+            "surface": "vaultcli.dll",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "WinSCP": {
+        "aliases": [
+          {
+            "surface": "WinSCP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Mozilla Firefox": {
+        "aliases": [
+          {
+            "surface": "Mozilla Firefox",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Microsoft Outlook": {
+        "aliases": [
+          {
+            "surface": "Microsoft Outlook",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "IceDragon": {
+        "aliases": [
+          {
+            "surface": "IceDragon",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Yandex Browser": {
+        "aliases": [
+          {
+            "surface": "Yandex Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Iridium Browser": {
+        "aliases": [
+          {
+            "surface": "Iridium Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Epic Privacy Browser": {
+        "aliases": [
+          {
+            "surface": "Epic Privacy Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Chromium Browser": {
+        "aliases": [
+          {
+            "surface": "Chromium Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "7Star Browser": {
+        "aliases": [
+          {
+            "surface": "7Star Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Torch Browser": {
+        "aliases": [
+          {
+            "surface": "Torch Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "ChromePlus Browser": {
+        "aliases": [
+          {
+            "surface": "ChromePlus Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Kometa Browser": {
+        "aliases": [
+          {
+            "surface": "Kometa Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Amigo Browser": {
+        "aliases": [
+          {
+            "surface": "Amigo Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "CentBrowser": {
+        "aliases": [
+          {
+            "surface": "CentBrowser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Liebao Browser": {
+        "aliases": [
+          {
+            "surface": "Liebao Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Elements Browser": {
+        "aliases": [
+          {
+            "surface": "Elements Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Vivaldi Browser": {
+        "aliases": [
+          {
+            "surface": "Vivaldi Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Citrio Browser": {
+        "aliases": [
+          {
+            "surface": "Citrio Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "360Chrome Browser": {
+        "aliases": [
+          {
+            "surface": "360Chrome Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Brave Browser",
+            "docId": 3028,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Both are modern web browsers and often share similar structural references in this context.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "Google Chrome",
+            "docId": 3028,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Evidence includes d3028 \"360Chrome Browser\" and d3028 \"Google Chrome\".",
+            "confidence": 1
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Uran Browser": {
+        "aliases": [
+          {
+            "surface": "Uran Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Chedot Browser": {
+        "aliases": [
+          {
+            "surface": "Chedot Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Orbitum Browser": {
+        "aliases": [
+          {
+            "surface": "Orbitum Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Sputnik Browser": {
+        "aliases": [
+          {
+            "surface": "Sputnik Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Comodo Dragon Browser": {
+        "aliases": [
+          {
+            "surface": "Comodo Dragon Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "CocCoc Browser": {
+        "aliases": [
+          {
+            "surface": "CocCoc Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "QIP Surf Browser": {
+        "aliases": [
+          {
+            "surface": "QIP Surf Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Coowon Browser": {
+        "aliases": [
+          {
+            "surface": "Coowon Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Opera Browser": {
+        "aliases": [
+          {
+            "surface": "Opera Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "TRYxaEbX.ps1",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E27 (Opera Browser) is linked to E34 (TRYxaEbX.ps1).",
+            "confidence": 1
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Thunderbird": {
+        "aliases": [
+          {
+            "surface": "Thunderbird",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Claws Mail": {
+        "aliases": [
+          {
+            "surface": "Claws Mail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Postbox Credential": {
+        "aliases": [
+          {
+            "surface": "Postbox Credential",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Foxmail": {
+        "aliases": [
+          {
+            "surface": "Foxmail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Opera Mail": {
+        "aliases": [
+          {
+            "surface": "Opera Mail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Pocomail": {
+        "aliases": [
+          {
+            "surface": "Pocomail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Becky!": {
+        "aliases": [
+          {
+            "surface": "Becky!",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "OpenVPN": {
+        "aliases": [
+          {
+            "surface": "OpenVPN",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FileZilla": {
+        "aliases": [
+          {
+            "surface": "FileZilla",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Paltalk": {
+        "aliases": [
+          {
+            "surface": "Paltalk",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "jDownloader": {
+        "aliases": [
+          {
+            "surface": "jDownloader",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "SmartFTP": {
+        "aliases": [
+          {
+            "surface": "SmartFTP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FTP Commander": {
+        "aliases": [
+          {
+            "surface": "FTP Commander",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "WS_FTP": {
+        "aliases": [
+          {
+            "surface": "WS_FTP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FTPGetter": {
+        "aliases": [
+          {
+            "surface": "FTPGetter",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Trillian": {
+        "aliases": [
+          {
+            "surface": "Trillian",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Remote Utilities": {
+        "aliases": [
+          {
+            "surface": "Remote Utilities",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "shellcode.x86 (Cobalt Strike Beacon)",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E31 (Remote Utilities) is linked to E52 (shellcode.x86).",
+            "confidence": 1
+          },
+          {
+            "surface": "shellcode.x86.bin",
+            "docId": 703548,
+            "decision": "merge",
+            "confidence": 1,
+            "evidence": "The mention is explicitly linked to the shellcode variant associated with Cobalt Strike Beacon.",
+            "addedBy": null
+          },
+          {
+            "surface": "loader.exe",
+            "docId": 39934,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases suggest equivalence (loader.exe is Remote Utilities).",
+            "confidence": 1
+          },
+          {
+            "surface": "rundll32.exe",
+            "docId": 861292,
+            "decision": "merge",
+            "confidence": 1,
+            "evidence": "This file is listed among the candidates and is explicitly mentioned in the source evidence as being used.",
+            "addedBy": null
+          },
+          {
+            "surface": "rfusclient.exe",
+            "docId": 10011,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "This entity is self-referential.",
+            "confidence": 1
+          },
+          {
+            "surface": "rutserv.exe",
+            "docId": 10011,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "This entity is self-referential.",
+            "confidence": 1
+          },
+          {
+            "surface": "Remote Utilities - Host",
+            "docId": 10011,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Implied relationship between the host and the utilities.",
+            "confidence": 1
+          },
+          {
+            "surface": "CCleaner.exe",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "CCleaner.exe is contextually linked to Remote Utilities.",
+            "addedBy": null
+          },
+          {
+            "surface": "CCleaner.rar",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "CCleaner.rar is contextually linked to Remote Utilities.",
+            "addedBy": null
+          },
+          {
+            "surface": "RemoteUtilities",
+            "docId": 3804703,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E27 and E28 are linked by the document d3804703, indicating they are co-dependent or identical entities.",
+            "confidence": 1
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 11
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g0"
+      },
+      "Електронний запит.exe": {
+        "aliases": [
+          {
+            "surface": "Електронний запит.exe",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Електронний план евакуації.rar",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "This file is directly linked to Електронний запит.exe as a potential payload.",
+            "addedBy": null
+          },
+          {
+            "surface": "Електронний план евакуації.exe",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "This file is directly linked to Електронний запит.exe as a potential payload.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g0"
+      },
+      "installer.exe": {
+        "aliases": [
+          {
+            "surface": "installer.exe",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "sgegkseg23mjl.exe",
+            "docId": 861292,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "This file is listed among the candidates and is explicitly mentioned in the source evidence as being created.",
+            "addedBy": null
+          },
+          {
+            "surface": "install.msi",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The text mentions the execution of the MSI installer, which links contextually to the installer candidates.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g0"
+      },
+      "host_news_mod_mod.msi": {
+        "aliases": [
+          {
+            "surface": "host_news_mod_mod.msi",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g0"
+      },
+      "killself.bat": {
+        "aliases": [
+          {
+            "surface": "killself.bat",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        },
+        "rung": "g0"
+      },
+      "Meterpreter": {
+        "aliases": [
+          {
+            "surface": "Meterpreter",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Cobalt Strike Beacon",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Both are post-exploitation tools often used in conjunction.",
+            "confidence": 0.5
+          },
+          {
+            "surface": "b.exe",
+            "docId": 39934,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases suggest equivalence (b.exe is Meterpreter).",
+            "confidence": 1
+          },
+          {
+            "surface": "TRYxaEbX",
+            "docId": 619229,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "E31 contains an alias (Cobalt Strike Beacon) that matches S's alias and is linked via d619229.",
+            "confidence": 1
+          }
+        ],
+        "gloss": "EXE-файл 'b.exe'",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 4
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        },
+        "rung": "g0"
+      },
+      "z.ps1": {
+        "aliases": [
+          {
+            "surface": "z.ps1",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "PowerShell-скрипт 'z.ps1'",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        },
+        "rung": "g0"
+      },
+      "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk": {
+        "aliases": [
+          {
+            "surface": "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "LNK-файл \"УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk\"",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        },
+        "rung": "g0"
+      },
+      "CredoMap_v2": {
+        "aliases": [
+          {
+            "surface": "CredoMap_v2",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "UkrScanner.exe (SFX)",
+            "docId": 40102,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "UkrScanner.exe (SFX) is identified as an SFX file identical to CredoMap_v2 via d40102.",
+            "confidence": 1
+          },
+          {
+            "surface": "UkrScanner.rar",
+            "docId": 40102,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "UkrScanner.rar is an archive file containing the malicious program (CredoMap_v2).",
+            "confidence": 1
+          },
+          {
+            "surface": "plan_dsns.gov.ua.rar",
+            "docId": 6277285,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "plan_dsns.gov.ua.rar is contextually linked to CredoMap_v2.",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A malicious program mentioned in the context of an APT28 cyberattack.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 4
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        },
+        "rung": "g0"
+      },
+      "scan.exe (CredoMap_v2)": {
+        "aliases": [
+          {
+            "surface": "scan.exe (CredoMap_v2)",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "An executable related to CredoMap_v2.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        },
+        "rung": "g0"
+      },
+      "SQLite.Interop.dll": {
+        "aliases": [
+          {
+            "surface": "SQLite.Interop.dll",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        },
+        "rung": "g0"
+      },
+      "MISP": {
+        "aliases": [
+          {
+            "surface": "MISP",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        },
+        "rung": "g0"
+      },
+      "TRYxaEbX_2.ps1": {
+        "aliases": [
+          {
+            "surface": "TRYxaEbX_2.ps1",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        },
+        "rung": "g0"
+      },
+      "baseupd.exe": {
+        "aliases": [
+          {
+            "surface": "baseupd.exe",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "An executable file executed via a macro.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        },
+        "rung": "g0"
+      },
+      "oYUuQbXu": {
+        "aliases": [
+          {
+            "surface": "oYUuQbXu",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        },
+        "rung": "g0"
+      },
+      "stage1.ps1": {
+        "aliases": [
+          {
+            "surface": "stage1.ps1",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        },
+        "rung": "g0"
+      },
+      "stage2.ps1": {
+        "aliases": [
+          {
+            "surface": "stage2.ps1",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        },
+        "rung": "g0"
+      },
+      "ConfuserEx": {
+        "aliases": [
+          {
+            "surface": "ConfuserEx",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A .NET program used to obfuscate the executable file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        },
+        "rung": "g0"
+      },
+      "MCMDiction.exe": {
+        "aliases": [
+          {
+            "surface": "MCMDiction.exe",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A file name mentioned, but no specific entity in candidates is directly named this file.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        },
+        "rung": "g0"
+      },
+      "GammaLoad.PS1": {
+        "aliases": [
+          {
+            "surface": "GammaLoad.PS1",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        },
+        "rung": "g0"
+      },
+      "GammaSteel.PS1": {
+        "aliases": [
+          {
+            "surface": "GammaSteel.PS1",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        },
+        "rung": "g0"
+      },
+      "GammaSteel.NET": {
+        "aliases": [
+          {
+            "surface": "GammaSteel.NET",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        },
+        "rung": "g0"
+      },
+      "HarvesterX": {
+        "aliases": [
+          {
+            "surface": "HarvesterX",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        },
+        "rung": "g0"
+      },
+      "PowerShell": {
+        "aliases": [
+          {
+            "surface": "PowerShell",
+            "docId": 1563322,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1563322,
+          "date": "31.08.2022"
+        },
+        "rung": "g0"
+      },
+      "Remcos": {
+        "aliases": [
+          {
+            "surface": "Remcos",
+            "docId": 3804703,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "RemcosRAT",
+            "docId": 6276567,
+            "decision": "link",
+            "confidence": null,
+            "evidence": "The mention directly references the Remcos RAT, which links to the candidate Remcos.",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 3804703,
+          "date": "06.02.2023"
+        },
+        "rung": "g0"
+      },
+      "scandoc.exe": {
+        "aliases": [
+          {
+            "surface": "scandoc.exe",
+            "docId": 6276567,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6276567,
+          "date": "30.11.2023"
+        },
+        "rung": "g0"
+      },
+      "SmartAssembly": {
+        "aliases": [
+          {
+            "surface": "SmartAssembly",
+            "docId": 6276567,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "SmartAssembly .NET",
+            "docId": 6276824,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Aliases link SmartAssembly to .NET.",
+            "confidence": 1
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 6276567,
+          "date": "30.11.2023"
+        },
+        "rung": "g0"
+      },
+      "wsuscr.exe": {
+        "aliases": [
+          {
+            "surface": "wsuscr.exe",
+            "docId": 6276824,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6276824,
+          "date": "21.12.2023"
+        },
+        "rung": "g0"
+      },
+      "QuasarRAT": {
+        "aliases": [
+          {
+            "surface": "QuasarRAT",
+            "docId": 6277063,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "Software mentioned in the source title.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277063,
+          "date": "11.01.2024"
+        },
+        "rung": "g0"
+      },
+      "AutoIt": {
+        "aliases": [
+          {
+            "surface": "AutoIt",
+            "docId": 6277063,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277063,
+          "date": "11.01.2024"
+        },
+        "rung": "g0"
+      },
+      "CCleaner.zip": {
+        "aliases": [
+          {
+            "surface": "CCleaner.zip",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "A ZIP file related to CCleaner, contextually linked to Remote Utilities.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        },
+        "rung": "g0"
+      },
+      "SRP": {
+        "aliases": [
+          {
+            "surface": "SRP",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "AppLocker": {
+        "aliases": [
+          {
+            "surface": "AppLocker",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "YARA": {
+        "aliases": [
+          {
+            "surface": "YARA",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "Mikrotik": {
+        "aliases": [
+          {
+            "surface": "Mikrotik",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "pfSense": {
+        "aliases": [
+          {
+            "surface": "pfSense",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "SIEM": {
+        "aliases": [
+          {
+            "surface": "SIEM",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        },
+        "rung": "g0"
+      },
+      "SPECTR": {
+        "aliases": [
+          {
+            "surface": "SPECTR",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "FIRMACHAGENT": {
+        "aliases": [
+          {
+            "surface": "FIRMACHAGENT",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "IDCLIPNET_x86.dll": {
+        "aliases": [
+          {
+            "surface": "IDCLIPNET_x86.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "chrome_updater.dll": {
+        "aliases": [
+          {
+            "surface": "chrome_updater.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "Browser.dll": {
+        "aliases": [
+          {
+            "surface": "Browser.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "Files.dll": {
+        "aliases": [
+          {
+            "surface": "Files.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "Screen.dll": {
+        "aliases": [
+          {
+            "surface": "Screen.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "Social.dll": {
+        "aliases": [
+          {
+            "surface": "Social.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "USB.dll": {
+        "aliases": [
+          {
+            "surface": "USB.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "JavaScript": {
+        "aliases": [
+          {
+            "surface": "JavaScript",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "JavaScript code was used to launch an obfuscated PowerShell script.",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      },
+      "Software Restriction Policies (SRP)": {
+        "aliases": [
+          {
+            "surface": "Software Restriction Policies (SRP)",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        },
+        "rung": "g0"
+      }
+    }
+  },
+  "granularityEdges": {
+    "Software": [
+      {
+        "from": "MS Excel",
+        "to": "MS Office",
+        "kind": "coarsens-to",
+        "docId": 2660,
+        "decision": "repairer",
+        "evidence": "Microsoft Office 2007 is a specific version of the general Microsoft Office.",
+        "addedBy": null
+      },
+      {
+        "from": "Windows Server 2012",
+        "to": "Windows Server 2008",
+        "kind": "coarsens-to",
+        "docId": 2707,
+        "decision": "repairer",
+        "evidence": "The entities are sequential operating system versions, indicating a version hierarchy.",
+        "addedBy": null
+      },
+      {
+        "from": "stage1.ps1",
+        "to": "stage2.ps1",
+        "kind": "coarsens-to",
+        "docId": 703548,
+        "decision": "repairer",
+        "evidence": "The names stage1.ps1 and stage2.ps1 strongly imply sequential steps in a process.",
+        "addedBy": null
+      }
+    ]
+  },
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2008"
+        },
+        "signature": "f9c313537c4a23a7025f4eaf2bd959407cc6e432ec8031a559d4e343ea44bcf8",
+        "verdict": "rung",
+        "docId": 2707
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "8043247959adba685e333c4ca86834cc75ffd597a836e9acb55841daa7c31748",
+        "verdict": "distinct",
+        "docId": 2707
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Office"
+        },
+        "signature": "be94ba5c3a9ef21877c5cf6580a613bfcb37f0ebda5eb264ceabf8499c976d2b",
+        "verdict": "distinct",
+        "docId": 2707
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS PowerPoint"
+        },
+        "signature": "fe2912b859f628f623f19ad86e5ccabb95e7746b1b8dec1ef140644eb1bf045b",
+        "verdict": "distinct",
+        "docId": 2707
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Word"
+        },
+        "signature": "261c0129a445ed459dcec5d3b9240c4f1249739da0649768c2db4bc964dd11c5",
+        "verdict": "distinct",
+        "docId": 2707
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "signature": "fca79e7b71374cb666888bb6a24550da09a0bf93f6015efd09f06f43f5453983",
+        "verdict": "distinct",
+        "docId": 2724
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signature": "094ed79e2bb714350351275ab6a4d14f5a97df3ef21d04eaa3c74b38c88e892a",
+        "verdict": "distinct",
+        "docId": 2724
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "614eeb516fcea812953e1d4ae71b71f2840cb3d42cf914b4e1020e7862a27c33",
+        "verdict": "distinct",
+        "docId": 3028
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "4037db8f93e6a43f30d80d70d9b3a93bd3ef75bc39796284ca3a306c62dd28ea",
+        "verdict": "distinct",
+        "docId": 3028
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "9f60897c9c0bc716321107424c6c983cac4b3752c360b71bd0fa8b52ecf340ab",
+        "verdict": "distinct",
+        "docId": 3028
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "signature": "fca79e7b71374cb666888bb6a24550da09a0bf93f6015efd09f06f43f5453983",
+        "verdict": "distinct",
+        "docId": 3028
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "signature": "0a5d828811865f6e437c849c923c7868b9a935baa6f5420b2dca4eee67882b9d",
+        "verdict": "distinct",
+        "docId": 3028
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "614eeb516fcea812953e1d4ae71b71f2840cb3d42cf914b4e1020e7862a27c33",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "4037db8f93e6a43f30d80d70d9b3a93bd3ef75bc39796284ca3a306c62dd28ea",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "9f60897c9c0bc716321107424c6c983cac4b3752c360b71bd0fa8b52ecf340ab",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "7d39b7add6163e359389dfd9bc99e6f20f73e9f7b6ba059c3f9c6558c1d2aae5",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "signature": "fca79e7b71374cb666888bb6a24550da09a0bf93f6015efd09f06f43f5453983",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signature": "094ed79e2bb714350351275ab6a4d14f5a97df3ef21d04eaa3c74b38c88e892a",
+        "verdict": "distinct",
+        "docId": 10011
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "6ed493a483ba5e32fa72ded1a3252d15f27daacccf9e684769dad08c243da7e9",
+        "verdict": "distinct",
+        "docId": 39934
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "cf55512d9815c96bd6b31e808c111ac17a6d64fe060c7d51e83d3fbab4ae56bf",
+        "verdict": "distinct",
+        "docId": 39934
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "7d39b7add6163e359389dfd9bc99e6f20f73e9f7b6ba059c3f9c6558c1d2aae5",
+        "verdict": "distinct",
+        "docId": 39934
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signature": "8d3929e1de1507da9702ebc6588ab7dd6b0370cee222898e292d696ae852845f",
+        "verdict": "distinct",
+        "docId": 39934
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signature": "094ed79e2bb714350351275ab6a4d14f5a97df3ef21d04eaa3c74b38c88e892a",
+        "verdict": "distinct",
+        "docId": 39934
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "6ed493a483ba5e32fa72ded1a3252d15f27daacccf9e684769dad08c243da7e9",
+        "verdict": "distinct",
+        "docId": 40102
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "cf55512d9815c96bd6b31e808c111ac17a6d64fe060c7d51e83d3fbab4ae56bf",
+        "verdict": "distinct",
+        "docId": 40102
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "7d39b7add6163e359389dfd9bc99e6f20f73e9f7b6ba059c3f9c6558c1d2aae5",
+        "verdict": "distinct",
+        "docId": 40102
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "5cbcfe0190c7c95124dab89706dfa532a28f9dd54e49f9ff071eb9191dabae53",
+        "verdict": "distinct",
+        "docId": 40102
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "signature": "fca79e7b71374cb666888bb6a24550da09a0bf93f6015efd09f06f43f5453983",
+        "verdict": "distinct",
+        "docId": 40102
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Chedot Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Citrio Browser"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Comodo Dragon Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "IceDragon"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "z.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "signature": "428167fc0b75b351e0484c805a336a73b79904fbc243f91a6e6fd4f45498d696",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "signature": "94f367a89027202ebcaf370fd4918c0ce2514299404243f63b31178afa1f87d1",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ChakraCore"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "signature": "8e4bf4fa302b6159979c8dd2097992b1e7ff14915b77e9a8f8397bb5805f34e2",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Chedot Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "9849ce7c8bbb2447e41225ebe633f14f26adaddc36e700ba48f580daba1aaad3",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Citrio Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "191147e21513185cd1cefd52d117c8f1dc3d84a88ee3eeba397971392fbb1dc0",
+        "verdict": "distinct",
+        "docId": 619229
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "stage1.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage2.ps1"
+        },
+        "signature": "d0b14a12b3d9daf4ae272812c15ada50e3be820de83f2d1ecffb6abcc2871d44",
+        "verdict": "rung",
+        "docId": 703548
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "signature": "b774ced761f4e0d2d3aab67ec7bf4f4da4ce10e9c41c1ab508fe74cc242ef087",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "c871cf4e8e295a171c52f7b656575770fc75a92b4c939658d5f942cddd0954df",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signature": "7fdb9e4d62c969114445be227f20b870baa8026d8a1fa0e2b7d93c2dbc3f3927",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "ce542dc6d0092ebeaaf3307fd85da86f972569a9aaad0f9fa602b2929257df5b",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "d50b5a8d895e08ac5084de3d696acd6874ec9c575f98da738d6f3f08ead9686c",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signature": "7e0e194fd52b668fbb5d167dbd6ff38a3c51e0a010a0f267a4345fcba64792e9",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Windows Server 2012"
+        },
+        "signature": "4bf6fd792ba7d5ef49198326f9bac2811de2cf0d10438e772dbf794cc703b819",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "signature": "d1a4046dc2eac110de84d9ecf49cfa9c16a093904b8cb7ee91cfe55122941737",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "signature": "328031d3cd45d63cb62ef7525a7c25d7b93e375d9c9fa94fab4d335a65e1574c",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8132"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "signature": "c239669a951a79039e7056f4ae69e209ccbc454f3e6463343d1a9ae29e57b302",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signature": "e1a3ae135a21533f4a538f0755fbef2983dfff1fa0679e1d323310b6f87a7735",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signature": "bf3c0ce552353dedf6c2eb58c4c197b6c2d042ec5c1c3f27d3a266321e41bc4c",
+        "verdict": "distinct",
+        "docId": 861292
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "signature": "e269a4fa384fef964f6dd4ed3f5d59d5a928eca840e395e2b5e41eae238b52aa",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signature": "388ec7c9bc249a8a828679eb9ca26ea961eafe464398b809718498f1e7b37618",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Amigo Browser"
+        },
+        "signature": "1322955fade9543c70f285a01881d902a54ba8162a72c9b173128c45ef59dbbd",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "6bcf26efdeb541d1c326e1463fc4f0fb52f7ee2118c9243fac7931ee32962d28",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "4924d6c015e5f417e05ce5a72fb0e328a5a2ba7030e029ad69a00e3f231325f7",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "d2c62be4839f5a233330b331249fdb8e8fb0f26c1bacd7a83d2f63635a42ab55",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Foxmail"
+        },
+        "signature": "29de7f99a121a571e3863e47c4ffde7d5e7cbede6410f7bb14f1567f8a2ae16a",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "signature": "ff6d498d68b2f1a6435c09bce88be5ec9d4e7c51a928844bbfd15ceb563c527f",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signature": "9b93a2d679eeaeb77f98ce17f9f37833a549503d4d8c1cad7587ea78f2776efc",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "signature": "1a501baf0dfe552e0ee3788b0aa24b4547a551358f22d6a089f3b301affb2e4c",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signature": "1baefb7a5a055d7f7ecac614d9dea033b8f7cbadecc5adc298adabbb6a6283e6",
+        "verdict": "distinct",
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 1563322
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "signature": "428167fc0b75b351e0484c805a336a73b79904fbc243f91a6e6fd4f45498d696",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signature": "fa71d55cbaf7bbfd414e77e06bf32e2f8bf9e17edbfb3a414be4a78c22fedd8a",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "6bcf26efdeb541d1c326e1463fc4f0fb52f7ee2118c9243fac7931ee32962d28",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "4037db8f93e6a43f30d80d70d9b3a93bd3ef75bc39796284ca3a306c62dd28ea",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "9f60897c9c0bc716321107424c6c983cac4b3752c360b71bd0fa8b52ecf340ab",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CredoMap_v2"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "FTPGetter"
+        },
+        "signature": "daa521b565c5bee85fdb2cf3ade72641a59a644b2e3e8447cf2e42af5b9651dd",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "signature": "a91d609686a20a94d3022502a295b36fb3c7703187a259609a79c95cf63b3371",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signature": "6d2ec694ce54b11d72917e48b299818dc0e6f9f9c9ebd5a1e3138e619185ee35",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Thunderbird"
+        },
+        "signature": "bfe65fc7ecf1d5b1198fec0378aa72209524d54ba9fe708a17b42cc61b5c4210",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Paltalk"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Foxmail"
+        },
+        "signature": "ae089ea10900af806c7c727bba0cae137bd79d73cfef902ac011e48c4fed6db1",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Smokeloader"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remote Utilities"
+        },
+        "signature": "9968e119d196b31fdabab29c797df2152d66979efd32b54fcb5b90b702ce6388",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "installer.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "jDownloader"
+        },
+        "signature": "817d9d84d2a8ba7e7c2794c37b9a2afdb6f60777db900917e231dae8c0d65712",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "PowerShell"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage1.ps1"
+        },
+        "signature": "640796e68367fb45cd179fa9be8863ea26c6652f9449ee7232aaa1866fea09a9",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "z.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage2.ps1"
+        },
+        "signature": "f536dc4b4b06ae5576c21f41b8d457ec89f9da6138250ea65be73aef9a529be2",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "signature": "d0f4071b432a98ac663f2d38938db37b1224a01b56521eaed9619e5b69b8183d",
+        "verdict": "distinct",
+        "docId": 3804703
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "a0f9fc36983a9f6b2725f2c1e8e4e0e753dcd3349d0fe864dcbdf89aeb1fe35f",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "6ed493a483ba5e32fa72ded1a3252d15f27daacccf9e684769dad08c243da7e9",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "4924d6c015e5f417e05ce5a72fb0e328a5a2ba7030e029ad69a00e3f231325f7",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "6bcf26efdeb541d1c326e1463fc4f0fb52f7ee2118c9243fac7931ee32962d28",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "d2c62be4839f5a233330b331249fdb8e8fb0f26c1bacd7a83d2f63635a42ab55",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "9f60897c9c0bc716321107424c6c983cac4b3752c360b71bd0fa8b52ecf340ab",
+        "verdict": "distinct",
+        "docId": 6276567
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "signature": "3c45357b28947acffa4406826d96589388daa53b7b750c3117c61c58f8ba13d8",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "signature": "7e77126cad72b12bd5db76d0a097bf9268c8c2a75cbda1992b3a726fdf5db33a",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "scandoc.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "SmartAssembly"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signature": "00859a4adbac931bedfe9590e71e6253eb659c596c1f996486b343fa0af8c49a",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Amigo Browser"
+        },
+        "signature": "3917a39b68b966b29d55b8a361667c90e14dd24698d2282f670f6622d8fe5019",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "signature": "c7e23294256a9c41905051c82008ddf09bc4f38579b31e9eb77388016546870a",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "signature": "cc34a28122e7652574c02eb43cc95fb0f628ea729ee8cfacddca8b5823402d45",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "c0d502d33282983bda48e8bee2ad96283e27b78a04b18b228849ffe08f06b752",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "770475114f964152112bdc54468f110659de8d19c702d97d677a0eb41a2a7d5a",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "617e24f21a685254f4f351b3e154441e78c51455ebc8ffabfe6c9eb6b4ccb4fb",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "df823b587994bba9bfd822046322b6ec4aac5d9686cc0ac8e4b2438392d95b59",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "bfbde5aff7ea8e745da57dd120eefe8bf4a1331d4e6c98989efa0d4ab6704659",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "9f60897c9c0bc716321107424c6c983cac4b3752c360b71bd0fa8b52ecf340ab",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "d2c62be4839f5a233330b331249fdb8e8fb0f26c1bacd7a83d2f63635a42ab55",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CentBrowser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "b628071a60f4c1dcec6c58bf8bd581a238cfff5b48d4a37ff661a703160d1578",
+        "verdict": "distinct",
+        "docId": 6276824
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "signature": "3c45357b28947acffa4406826d96589388daa53b7b750c3117c61c58f8ba13d8",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "stage1.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage2.ps1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signature": "fa71d55cbaf7bbfd414e77e06bf32e2f8bf9e17edbfb3a414be4a78c22fedd8a",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "40fa72ef5b8caedafa80f1fc76ed7a737f5d0cd59af05c4742a0da7aa5462fef",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "8b457dbff002d251185511f4ecea2f5926a7fd4bc210bd07711aee18bfcc5664",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "2f384ef31ea3bb6aee767f131710b36bed592aa0ad564316c44dba74938a6194",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "021eb78aa593bec0badd5c13345fff410149f1e16701387c8cc8234c8f00bce0",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "fcf6a36b1c6d25f39c7d0123c32b70cd149efdc3683976331c1b8203ef9ca524",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8134"
+        },
+        "signature": "b5f38d564daeed7009589855162ddaf9b0b41591248d188026fb43514cbc3e51",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "faf37faf9f67cebfdf9e63bca9eded4066ad511fd51d0e1c86f47781771a7257",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "42f296a70b1a20f553028c08ab0a4cd01ede0f89011e68792b2d6275217dfde8",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "9431d8dbac6cdae00bbdeb4b744b8a82d594eafd8590c4db4f7502f1a420f9f2",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "PowerShell"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signature": "9e68752b7c9dd43b4e531b5233238e72cead791af138638c9e95bf35df51b60d",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CentBrowser"
+        },
+        "signature": "5860c85a859d3d766d63c42bce3f6973af474a0eabec16806922f5ffad1c63ef",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CredoMap_v2"
+        },
+        "signature": "f9f6c160967cabf8b5163be12c1949ffa858c2d4dbcc6da4657febe12ee303be",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Iridium Browser"
+        },
+        "signature": "55b214d4161791eb72c2bf436386236d08737d092404f0d05aaf8f19d5d6f12e",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "signature": "f3fc19fc80abdba803f3cb3e60d4a4ed8921fe2788ad71316fce8405d3ea03f2",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "SmartFTP"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "signature": "18a0bd74520d88f3a52589dc5f12d91e54f3ca0c8e3d7b0d1cc096af160a495f",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Smokeloader"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "signature": "acbacb9a60302b242a847aa79d1e00fd3ce9bedc4a859a20ca51195c1d42f8cd",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Trillian"
+        },
+        "signature": "451914d7db5040726dac98cf217ef7627d3e64f30ceff10dea8ecc0f1c56fbb0",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "host_news_mod_mod.msi"
+        },
+        "signature": "baf85088bd590051ec781d7333df05fe78003b12f4a8db34be456837fe242324",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "z.ps1"
+        },
+        "signature": "56918f01dccee88f4e12abe3f154d20671d280fb62f2c249d75748f24704b499",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "installer.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "signature": "87fd1ec7f3384cdb1616595b6e5a27a0370b108c799c68db0e791d01994261a7",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "signature": "8b68c20383cd753da221302b2d07d3374057ffc7e6fa66aeafa57c0dc7fedfc4",
+        "verdict": "distinct",
+        "docId": 6277063
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "RegAsm.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "scandoc.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "spi.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Електронний запит.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "ckZ89.ExE"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "До оплати рах.ф. 74 - 2018р.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Рахунки за выполненные работы от 11.12.2018.js"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MISP"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "SmartFTP"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "installer.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "stage1.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "stage2.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "z.ps1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "RegAsm.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Remote Utilities"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remcos"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "Remote Utilities"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CCleaner.zip"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "wsuscr.exe"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "RegAsm.exe"
+        },
+        "signature": "",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "7Star Browser"
+        },
+        "signature": "3c45357b28947acffa4406826d96589388daa53b7b750c3117c61c58f8ba13d8",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "signature": "7e77126cad72b12bd5db76d0a097bf9268c8c2a75cbda1992b3a726fdf5db33a",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signature": "00859a4adbac931bedfe9590e71e6253eb659c596c1f996486b343fa0af8c49a",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Amigo Browser"
+        },
+        "signature": "3917a39b68b966b29d55b8a361667c90e14dd24698d2282f670f6622d8fe5019",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CCleaner.zip"
+        },
+        "signature": "9bc861166104d56f720e70070a79b54959355ad81a541beea9c274396a618ec4",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2017-11882"
+        },
+        "signature": "c7e23294256a9c41905051c82008ddf09bc4f38579b31e9eb77388016546870a",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "signature": "0ed43815334a8c45bb3b94b828fdd2878c7f8ed25e59d699f0c2964317103d26",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8141"
+        },
+        "signature": "0d8f20299081c63de66a946ab8158166a7c94e3072e1ec2f895aeeefca01697d",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8170"
+        },
+        "signature": "6edf2fc4077dc7923fea4f5a01c0b8825d032965dc881579cd29fe144f1e25e7",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CVE-2018-8174"
+        },
+        "signature": "bc728acc5bd0459ce896b0f88157c882862cee932f34fa551826bbe606cf981e",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "CentBrowser"
+        },
+        "signature": "aae5423d4891924378866772b6d212a325b4424c323bb875440ff931a342da78",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Foxmail"
+        },
+        "signature": "b94940788df568ab1b22fac2c61310652dd0a768f6f1c32df1069c8dfc152e9e",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "signature": "5c3c44c6e3cecf86fda0c1ee571f01aa8f9f9d500471cc3a33a8ee27b6a03ac2",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "signature": "746912341ca3e98a4bd7dc27f1801222218562a8523b1575aafbe16fdb45de89",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "GammaSteel.PS1"
+        },
+        "signature": "fa30fca06cb02fb03973c8bf906743047728795f37750aa8a615857230f1cd53",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MISP"
+        },
+        "signature": "c03a68a22fe9eac627ae0861005423c1345a6f49ffc99307fe789d11da45ffaa",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "ff34f4f264a0dc1fc3c9b59c06172dc473b592cc1ce5b24c20e329fa6ef2f018",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signature": "206d6e023394f01577d0b3f6a2cd9ad30d43943ebb8a102c608a49917e2f3cfd",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Microsoft Windows"
+        },
+        "signature": "ce61710c650b6e5dab8cf0d8bb672616243a65a82bc9c580fab38bb6ea9b3311",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "signature": "cf3d4977f0508096c588e58476d199bc89b0eeaa74bd599b8b24797a419a9b91",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Paltalk"
+        },
+        "signature": "adc19299c44e05860548224627d1e513b17b161d127d2deaa66f1a426faf7cfe",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signature": "5cf4f6bc4211958a3e8bb7bdde0886c02bf3dc7e9396ca5d347555758493e24a",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "RegAsm.exe"
+        },
+        "signature": "e2f40994bf72bf11ef1bbb8fac2bf2f8d58772c85c8a2004ccad606e7243241e",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Remote Utilities"
+        },
+        "signature": "4019600f62a5fbc46ef2a1e0d87fea4e3b7341e2630e2d7a48ce6b8df07ff7ec",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "360Chrome Browser"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "SmartFTP"
+        },
+        "signature": "86c0f2d9ad45b634ec540b9bfede021980560a95817389fdd4258651e6ad67e7",
+        "verdict": "distinct",
+        "docId": 6277285
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signature": "0d0b0730e2102d1b66e988442e57b893a5cfa9edd4b3f4f481bebdbb1ddf9ee7",
+        "verdict": "keep",
+        "docId": 6277896
+      }
+    ],
+    "spillover": [
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 2724
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "PGMB New Order 18-2077.xlsx"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 2724
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "CVE-2018-8136"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Petya"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 2724
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Adobe Flash Player"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Agent Tesla"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Amigo Browser"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Foxmail"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "MS Excel"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Meterpreter"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Opera Browser"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "Paltalk"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaSteel.NET"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "SmartFTP"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "TRYxaEbX_2.ps1"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "jDownloader"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "major.exe"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage1.ps1"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "stage2.ps1"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      },
+      {
+        "a": {
+          "category": "Software",
+          "canonical": "GammaLoad.PS1"
+        },
+        "b": {
+          "category": "Software",
+          "canonical": "z.ps1"
+        },
+        "signal": "defer",
+        "score": 1,
+        "docId": 1229152
+      }
+    ],
+    "repairedThrough": 6280422
+  }
+}

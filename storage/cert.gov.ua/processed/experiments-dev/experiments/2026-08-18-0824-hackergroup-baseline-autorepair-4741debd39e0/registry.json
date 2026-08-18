@@ -1,0 +1,214 @@
+{
+  "version": 4,
+  "canonicalPolicy": "first-seen",
+  "categories": {
+    "HackerGroup": {
+      "APT28": {
+        "aliases": [
+          {
+            "surface": "APT28",
+            "docId": 37788,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "APT28 (UAC-0028)",
+            "docId": 40102,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          },
+          {
+            "surface": "UAC-0028",
+            "docId": 37788,
+            "decision": "merge",
+            "addedBy": null,
+            "evidence": "Code-verified naming equivalence",
+            "confidence": 1
+          },
+          {
+            "surface": "UAC-0028 (APT28)",
+            "docId": 6277822,
+            "decision": "merge",
+            "confidence": 1,
+            "evidence": "Code-verified naming equivalence",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 4
+        },
+        "firstSeen": {
+          "doc": 37788,
+          "date": "16.03.2022"
+        }
+      },
+      "UAC-0003 (Turla)": {
+        "aliases": [
+          {
+            "surface": "UAC-0003 (Turla)",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        }
+      },
+      "UAC-0050": {
+        "aliases": [
+          {
+            "surface": "UAC-0050",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        }
+      },
+      "DaVinci Group": {
+        "aliases": [
+          {
+            "surface": "DaVinci Group",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        }
+      },
+      "UAC-0010": {
+        "aliases": [
+          {
+            "surface": "UAC-0010",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        }
+      },
+      "Sandworm": {
+        "aliases": [
+          {
+            "surface": "Sandworm",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        }
+      },
+      "UAC-0063": {
+        "aliases": [
+          {
+            "surface": "UAC-0063",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        }
+      },
+      "UAC-0001": {
+        "aliases": [
+          {
+            "surface": "UAC-0001",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "UAC-0001 (APT28)",
+            "docId": 6281123,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 2
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        }
+      }
+    }
+  },
+  "granularityEdges": {},
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [
+      {
+        "a": {
+          "category": "HackerGroup",
+          "canonical": "UAC-0001"
+        },
+        "b": {
+          "category": "HackerGroup",
+          "canonical": "APT28"
+        },
+        "signature": "c25f91260691f9587b0f4674e5ca7a9375afc12d6897cc0e6b6f047ef584ec2f",
+        "verdict": "distinct",
+        "docId": 6281123
+      }
+    ],
+    "spillover": [],
+    "repairedThrough": 6281123
+  }
+}

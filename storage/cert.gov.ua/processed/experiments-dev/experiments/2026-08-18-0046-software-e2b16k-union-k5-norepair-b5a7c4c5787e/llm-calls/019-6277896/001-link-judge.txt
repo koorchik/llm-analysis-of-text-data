@@ -1,0 +1,156 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "АНОНС: Практичний семінар для кіберфахівців"
+Source Excerpt:
+"""
+<p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "SRP" (Software); ladder: (none; use g0); candidates: SmartFTP [rung unknown] (aliases: SmartFTP); WinSCP [g0] (aliases: WinSCP); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); WS_FTP [rung unknown] (aliases: WS_FTP); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework)
+2. "AppLocker" (Software); ladder: (none; use g0); candidates: jDownloader [rung unknown] (aliases: jDownloader); FTPGetter [rung unknown] (aliases: FTPGetter); Opera Browser [g0] (aliases: Opera Browser); Uran Browser [g0] (aliases: Uran Browser); 7Star Browser [g0] (aliases: 7Star Browser)
+3. "YARA" (Software); ladder: (none; use g0); candidates: Yandex Browser [g0] (aliases: Yandex Browser); CCleaner.rar [g0] (aliases: CCleaner.rar); QuasarRAT [g0] (aliases: QuasarRAT); TRYxaEbX [g0] (aliases: TRYxaEbX); ChakraCore [g0] (aliases: ChakraCore)
+4. "Mikrotik" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Microsoft Outlook [g0] (aliases: Microsoft Outlook); MS Word [rung unknown] (aliases: MS Word, Microsoft Word, .NET Framework); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor); AutoIt [g0] (aliases: AutoIt)
+5. "pfSense" (Software); ladder: (none; use g0); candidates: rfusclient.exe [g0] (aliases: rfusclient.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE, ConfuserEx); rutserv.exe [g0] (aliases: rutserv.exe); powershell.exe [g0] (aliases: powershell.exe); CCleaner.exe [g0] (aliases: CCleaner.exe)
+6. "SIEM" (Software); ladder: (none; use g0); candidates: MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); spi.exe [g0] (aliases: spi.exe); ckZ89.ExE [g0] (aliases: ckZ89.ExE, ConfuserEx); wscript.exe [g0] (aliases: wscript.exe); MISP [g0] (aliases: MISP)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (26.7s, in 1995 / out 1408 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "SRP",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of SRP among the candidates."
+    },
+    {
+      "index": 2,
+      "mention": "AppLocker",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of AppLocker among the candidates."
+    },
+    {
+      "index": 3,
+      "mention": "YARA",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of YARA among the candidates."
+    },
+    {
+      "index": 4,
+      "mention": "Mikrotik",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of Mikrotik among the candidates."
+    },
+    {
+      "index": 5,
+      "mention": "pfSense",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of pfSense among the candidates."
+    },
+    {
+      "index": 6,
+      "mention": "SIEM",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No evidence in the source establishes the identity of SIEM among the candidates."
+    }
+  ]
+}

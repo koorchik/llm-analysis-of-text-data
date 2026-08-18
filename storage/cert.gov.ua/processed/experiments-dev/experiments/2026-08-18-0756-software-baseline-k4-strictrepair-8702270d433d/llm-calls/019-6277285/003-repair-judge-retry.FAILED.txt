@@ -1,0 +1,56 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 3 · signal: union-blocker 0.90
+  A. CCleaner.rar (Software)
+     aliases: []  · minted d6277285
+     gloss: (none)
+     evidence: d6277285 "CCleaner.rar"
+  B. CCleaner.zip (Software)
+     aliases: []  · minted d6277285
+     gloss: (none)
+     evidence: d6277285 "CCleaner.zip"
+  pairs to adjudicate: A–B (union-blocker 0.90)
+
+Component 2 of 3 · signal: coherence
+  A. MS Office (Software)
+     aliases: [Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016, Microsoft Office Services and Web Apps, .NET Framework, VBScript, IceDragon, QuasarRAT]  · minted d20
+     gloss: (none)
+     evidence: d6277063 "QuasarRAT"
+     evidence: d3028 "IceDragon"
+     evidence: d2724 "Microsoft Office"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 3 of 3 · signal: union-blocker 0.91
+  A. Електронний план евакуації.exe (Software)
+     aliases: []  · minted d6277285
+     gloss: (none)
+     evidence: d6277285 "Електронний план евакуації.exe"
+  B. Електронний план евакуації.rar (Software)
+     aliases: []  · minted d6277285
+     gloss: (none)
+     evidence: d6277285 "Електронний план евакуації.rar"
+  pairs to adjudicate: A–B (union-blocker 0.91)
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (17.0s, in 825 / out 904 tok, stop) ===
+```json
+{"reviews":[
+  {"component":1,"ops":[{"op":"merge","pair":["CCleaner.rar","CCleaner.zip"],"confidence":"high","evidence":"d6277285 \"CCleaner.rar\""}]}
+]}
+```
+
+=== OUTCOME (FAILED) ===
+no repair op survived validation

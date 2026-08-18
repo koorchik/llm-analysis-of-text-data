@@ -1,0 +1,116 @@
+{
+  "gold": {
+    "version": "gold-aliases-v2",
+    "inputContentHash": "37d57e4712f1f392a45f0d03bc825dd69d8506bd631c665a03fa7006a5718dff",
+    "order": "numeric-id",
+    "clusters": 167,
+    "members": 178,
+    "byStratum": {
+      "c": 6,
+      "a": 161
+    },
+    "bySplit": {
+      "dev": 167
+    },
+    "clustersWithEvidence": 0,
+    "edges": 4,
+    "nilLabels": 254
+  },
+  "results": [
+    {
+      "condition": "software-completev2-k6-norepair",
+      "runIds": [
+        "software-completev2-k6-norepair-1ab06f11cffa"
+      ],
+      "tier": "seeded",
+      "merge": {
+        "c": {
+          "stratum": "c",
+          "pairs": 91,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 3,
+          "trueNegatives": 25,
+          "skipped": 63,
+          "precision": null,
+          "recall": 0,
+          "f1": null
+        },
+        "a": {
+          "stratum": "a",
+          "pairs": 13366,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 2,
+          "trueNegatives": 349,
+          "skipped": 13015,
+          "precision": null,
+          "recall": 0,
+          "f1": null
+        },
+        "all": {
+          "stratum": "all",
+          "pairs": 13457,
+          "truePositives": 0,
+          "falsePositives": 0,
+          "falseNegatives": 5,
+          "trueNegatives": 374,
+          "skipped": 13078,
+          "precision": null,
+          "recall": 0,
+          "f1": null
+        }
+      },
+      "nil": {
+        "truePositives": 28,
+        "falsePositives": 7,
+        "falseNegatives": 0,
+        "trueNegatives": 0,
+        "deferred": 0,
+        "deferredOnNil": 0,
+        "observations": 35,
+        "deferralRate": 0,
+        "precision": 0.8,
+        "recall": 1,
+        "f1": 0.888888888888889
+      },
+      "cluster": {
+        "universeSize": 35,
+        "predictedClusters": 35,
+        "goldClusters": 30,
+        "macro": {
+          "precision": 1,
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091
+        },
+        "micro": {
+          "precision": 1,
+          "recall": 0.8571428571428571,
+          "f1": 0.923076923076923
+        },
+        "pairwise": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        "bCubed": {
+          "precision": 1,
+          "recall": 0.8571428571428571,
+          "f1": 0.923076923076923
+        },
+        "ari": 0
+      },
+      "cost": {
+        "calls": 20,
+        "inputTokens": 30579,
+        "outputTokens": 24452,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 477812
+      },
+      "unpricedModels": [],
+      "downstreamTau": null,
+      "orderAri": null
+    }
+  ]
+}

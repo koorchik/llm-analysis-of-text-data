@@ -1,0 +1,87 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.
+
+Valid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.
+
+Return one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.
+{"choices":[{"mention":"<exact mention>","category":"<exact category>","choice":1}]}
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: <p>Сьогодні, 13.12.2018, зафіксована масова розсилка листів з шкідливим вкладенням, який не детектується популярними в України антивірусними засобами. Вкладення з розширенням.lzh (архів), який містить в собі 2 файли, один з яких є підробленим, або раніше викраденим документом формату xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використовується
+Mentions:
+1. "Smokeloader" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. MS Word [aliases: MS Word]
+     4. MS Office [aliases: MS Office]
+     5. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     6. Misha [aliases: Misha]
+     7. NEW ENTITY
+2. "spi.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. Office 2007 [aliases: Office 2007]
+     6. Office 2010 [aliases: Office 2010]
+     7. NEW ENTITY
+3. "ckZ89.ExE" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. Microsoft Office [aliases: Microsoft Office]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     5. MS Office [aliases: MS Office]
+     6. MS PowerPoint [aliases: MS PowerPoint]
+     7. NEW ENTITY
+4. "До оплати від 11.12.18.lzh" (Software)
+     1. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     4. Office 2013 [aliases: Office 2013]
+     5. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     6. MS Excel [aliases: MS Excel]
+     7. NEW ENTITY
+5. "Рахунки и новые списки.lzh" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office]
+     3. Microsoft Office [aliases: Microsoft Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     6. Microsoft Office 2007 [aliases: Microsoft Office 2007]
+     7. NEW ENTITY
+6. "Рахунки за выполненные работы от 11.12.2018.js" (Software)
+     1. Windows Server 2012 [aliases: Windows Server 2012]
+     2. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     3. CVE-2017-11882 [aliases: CVE-2017-11882]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     5. Office 2016 [aliases: Office 2016]
+     6. Office 2013 [aliases: Office 2013]
+     7. NEW ENTITY
+7. "До оплати рах.ф. 74 - 2018р.js" (Software)
+     1. Microsoft Office 2013 [aliases: Microsoft Office 2013]
+     2. Microsoft Office 2016 [aliases: Microsoft Office 2016]
+     3. Office 2013 [aliases: Office 2013]
+     4. Office 2016 [aliases: Office 2016]
+     5. Windows Server 2012 [aliases: Windows Server 2012]
+     6. CVE-2017-0199 [aliases: CVE-2017-0199]
+     7. NEW ENTITY
+8. "cmd.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. Microsoft Office [aliases: Microsoft Office]
+     5. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     6. Misha [aliases: Misha]
+     7. NEW ENTITY
+9. "powershell.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. Microsoft Office [aliases: Microsoft Office]
+     6. Office 2007 [aliases: Office 2007]
+     7. NEW ENTITY
+
+=== RESPONSE (20.0s, in 1566 / out 1045 tok, stop) ===
+

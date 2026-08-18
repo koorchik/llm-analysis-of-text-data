@@ -1,0 +1,143 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Указ Президента України No 576/22 про безпрецедентні заходи безпеки" та вкладенням у вигляді ISO-файлу "Указ Президента України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає Po
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "Meterpreter" (Software); ladder: (none; use g0); candidates: FTPGetter [rung unknown] (aliases: FTPGetter); Opera Browser [g0] (aliases: Opera Browser); Kometa Browser [g0] (aliases: Kometa Browser); 7Star Browser [g0] (aliases: 7Star Browser); CentBrowser [g0] (aliases: CentBrowser)
+2. "z.ps1" (Software); ladder: (none; use g0); candidates: ckZ89.ExE [g0] (aliases: ckZ89.ExE); WinSCP [g0] (aliases: WinSCP); spi.exe [g0] (aliases: spi.exe); FileZilla [rung unknown] (aliases: FileZilla); cmd.exe [g0] (aliases: cmd.exe)
+3. "b.exe" (Software); ladder: (none; use g0); candidates: cmd.exe [g0] (aliases: cmd.exe); spi.exe [g0] (aliases: spi.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); installer.exe [g0] (aliases: installer.exe); major.exe [g0] (aliases: major.exe)
+4. "loader.exe" (Software); ladder: (none; use g0); candidates: installer.exe [g0] (aliases: installer.exe); major.exe [g0] (aliases: major.exe); cmd.exe [g0] (aliases: cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); rutserv.exe [g0] (aliases: rutserv.exe)
+5. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software); ladder: (none; use g0); candidates: До оплати від 11.12.18.lzh [g0] (aliases: До оплати від 11.12.18.lzh); Електронний запит.exe [g0] (aliases: Електронний запит.exe); Adobe Flash Player [g0] (aliases: Adobe Flash Player); MS Office [rung unknown] (aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Microsoft Windows, Office 2007, Office 2013, Office 2010, Office 2016, Windows 7, Windows Vista, Windows Server 2008, Windows Server 2012, Microsoft Office Services and Web Apps, Microsoft Exchange Server, Windows Host Compute Service Shim, VBScript, Win32k, Double Kill); Agent Tesla [g0] (aliases: Agent Tesla)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (30.6s, in 1770 / out 1629 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "Meterpreter",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "No candidate entity explicitly matches 'Meterpreter' based on the source evidence."
+    },
+    {
+      "index": 2,
+      "mention": "z.ps1",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The script 'z.ps1' is mentioned, but no corresponding executable or file candidate is explicitly identified."
+    },
+    {
+      "index": 3,
+      "mention": "b.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The executable 'b.exe' is mentioned, but no specific candidate entity is established as its identity."
+    },
+    {
+      "index": 4,
+      "mention": "loader.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "defer",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The executable 'loader.exe' is mentioned, but no specific candidate entity is established as its identity."
+    },
+    {
+      "index": 5,
+      "mention": "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "Електронний запит.exe",
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The LNK file is contextually linked to the candidate file 'Електронний запит.exe'."
+    }
+  ]
+}

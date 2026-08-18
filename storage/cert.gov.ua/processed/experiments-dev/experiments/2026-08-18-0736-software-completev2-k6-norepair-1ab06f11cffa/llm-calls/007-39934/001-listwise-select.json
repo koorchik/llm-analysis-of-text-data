@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:40:42.418Z",
+  "operator": "listwise-select",
+  "docId": 39934,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою \"Указ Президента України No 576/22 про безпрецедентні заходи безпеки\" та вкладенням у вигляді ISO-файлу \"Указ Президента України No 151 про безпрецедентні заходи безпеки.iso\".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку \"a.docx\", LNK-файл \"УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk\", PowerShell-скрипт \"z.ps1\" та EXE-файл \"b.exe\". У випадку запуску LNK-файлу, останній виконає Po\nMentions:\n1. \"Meterpreter\" (Software)\n     1. FTPGetter [aliases: FTPGetter]\n     2. Internet Explorer [aliases: Internet Explorer]\n     3. Opera Browser [aliases: Opera Browser]\n     4. Kometa Browser [aliases: Kometa Browser]\n     5. 7Star Browser [aliases: 7Star Browser]\n     6. CentBrowser [aliases: CentBrowser]\n     7. NEW ENTITY\n2. \"z.ps1\" (Software)\n     1. ckZ89.ExE [aliases: ckZ89.ExE]\n     2. WinSCP [aliases: WinSCP]\n     3. FileZilla [aliases: FileZilla]\n     4. spi.exe [aliases: spi.exe]\n     5. Agent Tesla [aliases: Agent Tesla]\n     6. cmd.exe [aliases: cmd.exe]\n     7. NEW ENTITY\n3. \"b.exe\" (Software)\n     1. cmd.exe [aliases: cmd.exe]\n     2. spi.exe [aliases: spi.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. installer.exe [aliases: installer.exe]\n     5. major.exe [aliases: major.exe]\n     6. powershell.exe [aliases: powershell.exe]\n     7. NEW ENTITY\n4. \"loader.exe\" (Software)\n     1. installer.exe [aliases: installer.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. rutserv.exe [aliases: rutserv.exe]\n     5. major.exe [aliases: major.exe]\n     6. spi.exe [aliases: spi.exe]\n     7. NEW ENTITY\n5. \"УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk\" (Software)\n     1. До оплати від 11.12.18.lzh [aliases: До оплати від 11.12.18.lzh]\n     2. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]\n     3. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]\n     4. .NET Framework [aliases: .NET Framework]\n     5. Електронний запит.exe [aliases: Електронний запит.exe]\n     6. Adobe Flash Player [aliases: Adobe Flash Player]\n     7. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 1080,
+    "outputTokens": 890
+  },
+  "latencyMs": 16871,
+  "finishReason": "stop"
+}

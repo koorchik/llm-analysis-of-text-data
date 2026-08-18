@@ -1,0 +1,91 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 3 · signal: coherence
+  A. .NET Framework (Software)
+     aliases: [Електронний план евакуації.rar]  · minted d2724
+     gloss: (none)
+     evidence: d6277285 "Електронний план евакуації.rar"
+     evidence: d2724 ".NET Framework"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 2 of 3 · signal: union-blocker 0.88
+  A. Chromium Browser (Software)
+     aliases: [chrome_updater.dll]  · minted d3028
+     gloss: (none)
+     evidence: d6280422 "chrome_updater.dll"
+     evidence: d3028 "Chromium Browser"
+  B. Torch Browser (Software)
+     aliases: [Browser.dll]  · minted d3028
+     gloss: (none)
+     evidence: d6280422 "Browser.dll"
+     evidence: d3028 "Torch Browser"
+  pairs to adjudicate: A–B (union-blocker 0.88)
+
+Component 3 of 3 · signal: coherence
+  A. PowerShell (Software)
+     aliases: [Screen.dll]  · minted d1563322
+     gloss: (none)
+     evidence: d6280422 "Screen.dll"
+     evidence: d6280422 "PowerShell"
+     evidence: d6277063 "PowerShell"
+  coherence check: A — does every listed alias belong to this entity?
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (20.8s, in 709 / out 1094 tok, stop) ===
+```json
+{"reviews":[
+  {
+    "component": 1,
+    "ops": [
+      {
+        "op": "distinct",
+        "pair": [
+          "Chromium Browser",
+          ".NET Framework"
+        ],
+        "confidence": "high",
+        "evidence": "Entities are distinct software products."
+      }
+    ]
+  },
+  {
+    "component": 2,
+    "ops": [
+      {
+        "op": "distinct",
+        "pair": [
+          "Chromium Browser",
+          "Torch Browser"
+        ],
+        "confidence": "high",
+        "evidence": "The two entities are distinct browsers."
+      }
+    ]
+  },
+  {
+    "component": 3,
+    "ops": [
+      {
+        "op": "keep",
+        "entity": "PowerShell"
+      }
+    ]
+  }
+]}
+```
+
+=== OUTCOME (ok) ===
+2 op(s) accepted

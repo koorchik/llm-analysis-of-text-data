@@ -80,6 +80,8 @@ const CONFIG = {
   // Normalized to undefined when empty: `DECISION_STRATEGY=` must behave exactly like unset, or the
   // run card would record an empty-string arm name that reads as "none" but is not `?? `-defaulted.
   decisionStrategy: process.env.DECISION_STRATEGY || undefined,
+  listwisePromptId: process.env.LISTWISE_PROMPT_ID || undefined,
+  listwiseK: process.env.LISTWISE_K === undefined ? undefined : Number(process.env.LISTWISE_K),
 
   // M5 candidate generation. Unset means `string-sim` — the generator the M2.5 golden fixture pins
   // and the M4 gate is scored against — so the default arm is provably unchanged. Empty behaves as
@@ -114,6 +116,8 @@ const CONFIG = {
   // arm: no StreamingRepairer (and no GlossIndex) is constructed at all, so this has to be its own
   // knob rather than a threshold that happens to silence everything.
   repair: process.env.REPAIR === undefined ? true : process.env.REPAIR === '1',
+  repairPromptId: process.env.REPAIR_PROMPT_ID || undefined,
+  repairStrictIdentity: process.env.REPAIR_STRICT_IDENTITY === '1',
   // "Category=0.97,default=0.9" format (parseThresholds); unset keeps T6's conservative built-ins.
   repairGlossThresholds: process.env.REPAIR_GLOSS_THRESHOLDS || undefined,
   repairBlockerThresholds: process.env.REPAIR_BLOCKER_THRESHOLDS || undefined,
@@ -210,6 +214,8 @@ async function main() {
       // RQ3 NAIVE arm) must not share a runId with a repaired arm, and two repaired arms differing
       // only by threshold must not share one either — same argument as `decisionStrategy` above.
       repair: CONFIG.repair,
+      repairPromptId: CONFIG.repairPromptId ?? 'repair-judge',
+      repairStrictIdentity: CONFIG.repairStrictIdentity,
       repairGlossThresholds: CONFIG.repairGlossThresholds ?? null,
       repairBlockerThresholds: CONFIG.repairBlockerThresholds ?? null,
       repairCoherenceThreshold: CONFIG.repairCoherenceThreshold ?? null,
@@ -417,7 +423,12 @@ function createDecisionStrategy(
 
   if (isOfflineStrategyId(id)) return createOfflineStrategy(id);
   if (id === 'listwise-mint-candidate') {
-    return new ListwiseMintCandidateDecision({ llmClient, decisionLog });
+    return new ListwiseMintCandidateDecision({
+      llmClient,
+      decisionLog,
+      promptId: CONFIG.listwisePromptId,
+      k: CONFIG.listwiseK,
+    });
   }
   if (id === 'comem-select') return new ComemSelectDecision({ llmClient, decisionLog });
 
@@ -578,6 +589,8 @@ function createProcessors(
         entityRegistry,
         decisionLog,
         glossIndex,
+        promptId: CONFIG.repairPromptId,
+        strictIdentity: CONFIG.repairStrictIdentity,
         // The SAME instance the normalizer prepares below — sharing keeps its phase-1 indexes warm
         // instead of paying for a second cold build (StreamingRepairer's Params doc).
         blocker: candidateGenerator,

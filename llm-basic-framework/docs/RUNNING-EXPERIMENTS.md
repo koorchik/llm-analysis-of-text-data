@@ -112,6 +112,8 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `OUTPUT_DIR` | `../storage/cert.gov.ua/processed` | |
 | `DECISIONS_LOG` | off | **Set to `1`.** Without it there is nothing to score or replay |
 | `DECISION_STRATEGY` | unset | Selects the decision stage (§4). Unset = the built-in `link-judge` path |
+| `LISTWISE_PROMPT_ID` | `listwise-select` | Prompt variant for `DECISION_STRATEGY=listwise-mint-candidate` |
+| `LISTWISE_K` | `4` | Candidates shown per mention by the listwise judge |
 | `CANDIDATE_GENERATOR` | unset | Selects the blocker (§4a). Unset = `string-sim`, the arm the M4 gate pins. `union` = the SKEIN v2 five-channel RRF union blocker (needs embeddings config) |
 | `CANDIDATE_K`, `CANDIDATE_MIN_SIM` | `5`, `0.5` | The golden fixture's values; changing either forks the runId |
 | `LADDER_ENSEMBLE_N` | `3` | SKEIN v2 ladder bootstrap: same-model ensemble size (spec floor 3). Folds into the runId |
@@ -120,6 +122,8 @@ FLOW=batch CONDITION=psi-norm-default STEPS=dataExtractor,dataEntitiesCollector 
 | `LAMBDA` | unset (= `default=g0`) | Fold-time merge granularity for `streamingGraphBuilder`, e.g. `Software=g2,default=g0`. NOT in the runId — refolds are free; recorded in `graph/lambda.json` |
 | `LAMBDA_INTERPRETIVE` | off | `1` lets λ fold `part-of` (widening) edges; folded edges are marked `inferred` and the view labels itself interpretive |
 | `REPAIR` | `1` (on) | SKEIN v2 synchronous per-document repair (§4.3, `StreamingRepairer`), riding inside `streamingNormalizer`'s `processFile`. `REPAIR=0` is the RQ3 NAIVE arm — no repairer (and no `GlossIndex`) is constructed at all. Folds into the runId |
+| `REPAIR_PROMPT_ID` | `repair-judge` | Prompt variant used by `StreamingRepairer` |
+| `REPAIR_STRICT_IDENTITY` | off | `1` auto-merges only code-verifiable naming equivalents, auto-separates other suspects, disables rename/split/move, and makes no repair-judge calls |
 | `REPAIR_GLOSS_THRESHOLDS`, `REPAIR_BLOCKER_THRESHOLDS` | unset (= conservative built-ins: 0.92, 0.88) | `"Category=0.97,default=0.85"` format; per-category floor for the gloss-ANN / union-blocker suspect probes. Folds into the runId |
 | `REPAIR_COHERENCE_THRESHOLD` | unset (= `0.5`) | Floor BELOW which an alias-add's coherence drift becomes a suspect. Folds into the runId |
 | `REPAIR_TOKEN_CAP` | `8000` | Per-document repair-judge prompt budget; components over the cap evict their lowest-scoring edge and re-scope. Folds into the runId |
@@ -191,7 +195,7 @@ for it:
 #    see docs/REPRODUCE.md §1). Only normalize + repair run; extraction is skipped entirely
 #    because every file already exists.
 SRC=../storage/cert.gov.ua/processed/experiments/2026-08-04-psi-link-default-4ee484f372fc
-RUNDIR=../storage/cert.gov.ua/processed/experiments/<YYYY-MM-DD>-<new-runId>   # printed once the run starts
+RUNDIR=../storage/cert.gov.ua/processed/experiments/<YYYY-MM-DD-HHmm>-<new-runId>   # printed once the run starts
 mkdir -p "$RUNDIR/extractions"
 cp "$SRC"/extractions/*.json "$RUNDIR/extractions/"
 
@@ -248,7 +252,7 @@ npm run make-subset -- --list gold/subsets/dev-software-22.txt \
 
 # Run the arm (pre-seed frozen extractions for these 22 docs per RUN-STREAMING.md §4 first).
 # OUTPUT_DIR is the DEV tree, not /tmp: iterations survive reboots and stay comparable across
-# sessions, while the published-arm tree keeps only what the paper cites. It is gitignored.
+  # sessions, while the published-arm tree keeps only what the paper cites. It is Git-visible.
 INPUT_DIR=/tmp/subset-dev-software \
   OUTPUT_DIR=../storage/cert.gov.ua/processed/experiments-dev \
   STEPS=streamingPipeline FLOW=incremental CONDITION=fastloop-software \
@@ -257,9 +261,9 @@ INPUT_DIR=/tmp/subset-dev-software \
   CANDIDATE_GENERATOR=union EMBEDDINGS=1 EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=embeddinggemma \
   DECISIONS_LOG=1 npm start
 
-# Score on dev, Software only (run dirs are dated: <YYYY-MM-DD>-<runId>)
+# Score on dev, Software only (run dirs are timestamped: <YYYY-MM-DD-HHmm>-<runId>)
 npm run evaluate -- --gold gold/gold.json --split dev --allow-dev --category Software \
-  --run ../storage/cert.gov.ua/processed/experiments-dev/experiments/<YYYY-MM-DD>-<runId>
+  --run ../storage/cert.gov.ua/processed/experiments-dev/experiments/<YYYY-MM-DD-HHmm>-<runId>
 ```
 
 Judge model: `gemma4:e2b-16k` fits GPU memory here and runs ~165 s/doc (the repair-judge dominates,
@@ -312,9 +316,9 @@ the id.
 Transcript volume scales with prompt size and call count: a measured 3-document run with a small
 local judge wrote ~45 KB per document, which extrapolates to roughly 10 MB for the 204-document
 corpus — but prompts grow with the registry and a larger judge writes more, so treat tens of
-megabytes per full run as the planning figure and check `du -sh` on your own arm. `llm-calls/` is
-in `.gitignore`, but note that `git add -f` on a run directory overrides ignore rules: **do not
-force-add a run directory that still has its transcripts**, or delete `llm-calls/` first.
+megabytes per full run as the planning figure and check `du -sh` on your own arm. Experiment
+artifacts and `llm-calls/` are Git-visible; inspect and stage runs selectively rather than using
+`git add` on the whole experiment tree.
 
 ---
 

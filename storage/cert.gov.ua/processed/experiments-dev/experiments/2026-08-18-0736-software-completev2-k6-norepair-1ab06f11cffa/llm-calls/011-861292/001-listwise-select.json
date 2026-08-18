@@ -1,0 +1,19 @@
+{
+  "runId": "software-completev2-k6-norepair-1ab06f11cffa",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:42:01.726Z",
+  "operator": "listwise-select",
+  "docId": 861292,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve every mention against its numbered options. Choose an existing option only for the exact same entity; otherwise choose NEW ENTITY.\n\nValid identity: exact alias, standard abbreviation (for example MS = Microsoft), translation/transliteration, or explicit co-reference. Preserve identity-bearing identifiers and version numbers: different CVE/UAC codes, versions, products, files, components, or related entities are not the same. Category, role, behavior, context, and option rank do not prove identity. If uncertain, choose NEW ENTITY.\n\nReturn one choice object for EVERY input mention, in the same order. Copy mention and category exactly. Do not omit repeated mentions. No explanation or markdown.\n{\"choices\":[{\"mention\":\"<exact mention>\",\"category\":\"<exact category>\",\"choice\":1}]}\n",
+  "text": "Source: \"Кібератака на державні організації України з використанням теми ОК \"Південь\" та шкідливої програми AgentTesla (CERT-UA#4987)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA виявлено файл \"Доповідь_050722_4.ppt\", що містить зображення-мініатюру, на якій згадєуться оперативне командування \"Південь\".&nbsp;</p><p>У випадку відкриття документу та активації макросу останній забезпечить створення файлів \"gksg023ig.lnk\" та \"sgegkseg23mjl.exe\", а також виконання LNK-файлу за допомогою rundll32.exe, що, в свою чергу, призведе до запуску згаданого EXE-файлу.</p><p>Виконуваний файл є .NET-програмою, обфускованою за допомогою ConfuserEx, що здійснює зава\nMentions:\n1. \"AgentTesla\" (Software)\n     1. Agent Tesla [aliases: Agent Tesla]\n     2. Adobe Flash Player [aliases: Adobe Flash Player]\n     3. FileZilla [aliases: FileZilla]\n     4. FTPGetter [aliases: FTPGetter]\n     5. Internet Explorer [aliases: Internet Explorer]\n     6. CentBrowser [aliases: CentBrowser]\n     7. NEW ENTITY\n2. \"ConfuserEx\" (Software)\n     1. ckZ89.ExE [aliases: ckZ89.ExE]\n     2. CocCoc Browser [aliases: CocCoc Browser]\n     3. Coowon Browser [aliases: Coowon Browser]\n     4. rfusclient.exe [aliases: rfusclient.exe]\n     5. Microsoft Exchange Server [aliases: Microsoft Exchange Server]\n     6. Microsoft Edge [aliases: Microsoft Edge]\n     7. NEW ENTITY\n3. \"MCMDiction.exe\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. RegAsm.exe [aliases: RegAsm.exe]\n     4. loader.exe [aliases: loader.exe]\n     5. installer.exe [aliases: installer.exe]\n     6. baseupd.exe [aliases: baseupd.exe]\n     7. NEW ENTITY\n4. \"sgegkseg23mjl.exe\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. RegAsm.exe [aliases: RegAsm.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. loader.exe [aliases: loader.exe]\n     5. installer.exe [aliases: installer.exe]\n     6. baseupd.exe [aliases: baseupd.exe]\n     7. NEW ENTITY\n5. \"rundll32.exe\" (Software)\n     1. b.exe [aliases: b.exe]\n     2. RegAsm.exe [aliases: RegAsm.exe]\n     3. cmd.exe [aliases: cmd.exe]\n     4. baseupd.exe [aliases: baseupd.exe]\n     5. loader.exe [aliases: loader.exe]\n     6. rutserv.exe [aliases: rutserv.exe]\n     7. NEW ENTITY",
+  "response": "",
+  "usage": {
+    "inputTokens": 988,
+    "outputTokens": 730
+  },
+  "latencyMs": 13807,
+  "finishReason": "stop"
+}

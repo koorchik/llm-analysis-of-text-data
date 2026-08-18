@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k4-norepair-8f0e78b46407",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:30:01.837Z",
+  "operator": "listwise-select",
+  "docId": 39934,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою \"Указ Президента України No 576/22 про безпрецедентні заходи безпеки\" та вкладенням у вигляді ISO-файлу \"Указ Президента України No 151 про безпрецедентні заходи безпеки.iso\".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку \"a.docx\", LNK-файл \"УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk\", PowerShell-скрипт \"z.ps1\" та EXE-файл \"b.exe\". У випадку запуску LNK-файлу, останній виконає Po\nMentions:\n1. \"Meterpreter\" (Software)\n     1. FTPGetter [aliases: FTPGetter]\n     2. Internet Explorer [aliases: Internet Explorer]\n     3. Opera Browser [aliases: Opera Browser]\n     4. Kometa Browser [aliases: Kometa Browser]\n     5. NEW ENTITY\n2. \"z.ps1\" (Software)\n     1. ckZ89.ExE [aliases: ckZ89.ExE]\n     2. WinSCP [aliases: WinSCP]\n     3. FileZilla [aliases: FileZilla]\n     4. spi.exe [aliases: spi.exe, Електронний запит.exe]\n     5. NEW ENTITY\n3. \"b.exe\" (Software)\n     1. cmd.exe [aliases: cmd.exe]\n     2. spi.exe [aliases: spi.exe, Електронний запит.exe]\n     3. powershell.exe [aliases: powershell.exe, installer.exe]\n     4. RegAsm.exe [aliases: RegAsm.exe]\n     5. NEW ENTITY\n4. \"loader.exe\" (Software)\n     1. powershell.exe [aliases: powershell.exe, installer.exe]\n     2. rutserv.exe [aliases: rutserv.exe]\n     3. major.exe [aliases: major.exe]\n     4. cmd.exe [aliases: cmd.exe]\n     5. NEW ENTITY\n5. \"УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk\" (Software)\n     1. До оплати від 11.12.18.lzh [aliases: До оплати від 11.12.18.lzh]\n     2. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]\n     3. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]\n     4. spi.exe [aliases: spi.exe, Електронний запит.exe]\n     5. NEW ENTITY",
+  "response": "```json\n{\"choices\":[5,5,5,5,4]}\n```",
+  "usage": {
+    "inputTokens": 910,
+    "outputTokens": 1285
+  },
+  "latencyMs": 24316,
+  "finishReason": "stop"
+}

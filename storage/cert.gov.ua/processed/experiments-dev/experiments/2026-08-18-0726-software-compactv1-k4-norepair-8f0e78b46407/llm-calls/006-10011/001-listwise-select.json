@@ -1,0 +1,19 @@
+{
+  "runId": "software-compactv1-k4-norepair-8f0e78b46407",
+  "seq": 1,
+  "timestamp": "2026-08-18T04:29:37.498Z",
+  "operator": "listwise-select",
+  "docId": 10011,
+  "provider": "ollama",
+  "model": "gemma4:e2b-16k",
+  "sampling": {},
+  "instructions": "Resolve EVERY mention, in order. Choose the numbered option that is the exact same entity, or NEW ENTITY.\n\nIdentity evidence: exact name, standard abbreviation, translation/transliteration, or explicit alias. Keep different identifiers, versions, products, components, and related/co-occurring entities separate. Category, role, behavior, and option rank do not prove identity. When uncertain choose NEW ENTITY.\n\nReturn only compact JSON with exactly one integer per mention, in input order:\n{\"choices\":[5,1,3]}\n",
+  "text": "Source: \"Масштабна фішингова атака на державні установи України 19.01.2021\" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class=\"ql-align-center\">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151\nMentions:\n1. \"Remote Utilities\" (Software)\n     1. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps]\n     2. Agent Tesla [aliases: Agent Tesla]\n     3. FTPGetter [aliases: FTPGetter]\n     4. Trillian [aliases: Trillian]\n     5. NEW ENTITY\n2. \"Remote Utilities - Host\" (Software)\n     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]\n     2. .NET Framework [aliases: .NET Framework]\n     3. Microsoft Office [aliases: Microsoft Office, Microsoft Office Services and Web Apps]\n     4. Adobe Flash Player [aliases: Adobe Flash Player]\n     5. NEW ENTITY\n3. \"Електронний запит.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. spi.exe [aliases: spi.exe]\n     4. major.exe [aliases: major.exe]\n     5. NEW ENTITY\n4. \"installer.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. spi.exe [aliases: spi.exe]\n     4. powershell.exe [aliases: powershell.exe]\n     5. NEW ENTITY\n5. \"host_news_mod_mod.msi\" (Software)\n     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]\n     2. .NET Framework [aliases: .NET Framework]\n     3. MS Word [aliases: MS Word]\n     4. Postbox Credential [aliases: Postbox Credential]\n     5. NEW ENTITY\n6. \"rutserv.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. spi.exe [aliases: spi.exe]\n     4. powershell.exe [aliases: powershell.exe]\n     5. NEW ENTITY\n7. \"rfusclient.exe\" (Software)\n     1. RegAsm.exe [aliases: RegAsm.exe]\n     2. cmd.exe [aliases: cmd.exe]\n     3. spi.exe [aliases: spi.exe]\n     4. powershell.exe [aliases: powershell.exe]\n     5. NEW ENTITY\n8. \"killself.bat\" (Software)\n     1. Trillian [aliases: Trillian]\n     2. Mozilla Firefox [aliases: Mozilla Firefox]\n     3. FileZilla [aliases: FileZilla]\n     4. powershell.exe [aliases: powershell.exe]\n     5. NEW ENTITY",
+  "response": "{\"choices\":[1,2,3,4,5,6,7,8]}",
+  "usage": {
+    "inputTokens": 1029,
+    "outputTokens": 1556
+  },
+  "latencyMs": 30135,
+  "finishReason": "stop"
+}

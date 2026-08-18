@@ -1,0 +1,169 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are a high-precision entity-linking and granularity-resolution judge for an incremental entity registry.
+
+Resolve each entity mention against the listed candidate records. Do not infer identity from an entity's role in a source, behavior, relationships, co-occurrence, or dataset-specific conventions.
+
+### SOURCE EVIDENCE
+Source Title: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)"
+Source Excerpt:
+"""
+<p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+"""
+
+Use source evidence only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. Other contextual facts do not establish identity.
+
+### UNRESOLVED MENTIONS AND CANDIDATES
+1. "GammaLoad.PS1" (Software); ladder: (none; use g0); candidates: TRYxaEbX.ps1 [rung unknown] (aliases: TRYxaEbX.ps1); stage1.ps1 [g0] (aliases: stage1.ps1); z.ps1 [g0] (aliases: z.ps1); stage2.ps1 [g0] (aliases: stage2.ps1); TRYxaEbX_2.ps1 [rung unknown] (aliases: TRYxaEbX_2.ps1); loader.exe [g0] (aliases: loader.exe); Smokeloader [g0] (aliases: Smokeloader); jDownloader [rung unknown] (aliases: jDownloader); installer.exe [g0] (aliases: installer.exe); Amigo Browser [g0] (aliases: Amigo Browser)
+2. "GammaSteel.PS1" (Software); ladder: (none; use g0); candidates: TRYxaEbX.ps1 [rung unknown] (aliases: TRYxaEbX.ps1); stage1.ps1 [g0] (aliases: stage1.ps1); z.ps1 [g0] (aliases: z.ps1); stage2.ps1 [g0] (aliases: stage2.ps1); TRYxaEbX_2.ps1 [rung unknown] (aliases: TRYxaEbX_2.ps1); Agent Tesla [g0] (aliases: Agent Tesla, AgentTesla); powershell.exe [g0] (aliases: powershell.exe); MCMDiction.exe [rung unknown] (aliases: MCMDiction.exe); SmartFTP [rung unknown] (aliases: SmartFTP); Paltalk [rung unknown] (aliases: Paltalk)
+3. "GammaSteel.NET" (Software); ladder: (none; use g0); candidates: .NET Framework [g0] (aliases: .NET Framework); Agent Tesla [g0] (aliases: Agent Tesla, AgentTesla); Internet Explorer [g0] (aliases: Internet Explorer); MS Excel [rung unknown] (aliases: MS Excel, Microsoft Equation Editor, Рахунки и новые списки.lzh); Adobe Flash Player [g0] (aliases: Adobe Flash Player); ConfuserEx [rung unknown] (aliases: ConfuserEx); Amigo Browser [g0] (aliases: Amigo Browser); Meterpreter [g0] (aliases: Meterpreter); Foxmail [g0] (aliases: Foxmail); SmartFTP [rung unknown] (aliases: SmartFTP)
+4. "HarvesterX" (Software); ladder: (none; use g0); candidates: FTPGetter [rung unknown] (aliases: FTPGetter); Meterpreter [g0] (aliases: Meterpreter); ConfuserEx [rung unknown] (aliases: ConfuserEx); TRYxaEbX [rung unknown] (aliases: TRYxaEbX); Thunderbird [g0] (aliases: Thunderbird); Internet Explorer [g0] (aliases: Internet Explorer); 7Star Browser [g0] (aliases: 7Star Browser); Brave Browser [g0] (aliases: Brave Browser); SQLite.Interop.dll [g0] (aliases: SQLite.Interop.dll); Uran Browser [g0] (aliases: Uran Browser)
+5. "PowerShell (powershell.exe)" (Software); ladder: (none; use g0); candidates: powershell.exe [g0] (aliases: powershell.exe); b.exe [g0] (aliases: b.exe); major.exe [g0] (aliases: major.exe, cmd.exe); baseupd.exe [g0] (aliases: baseupd.exe); loader.exe [g0] (aliases: loader.exe); spi.exe [g0] (aliases: spi.exe); rutserv.exe [g0] (aliases: rutserv.exe); rundll32.exe [g0] (aliases: rundll32.exe); installer.exe [g0] (aliases: installer.exe); RegAsm.exe [g0] (aliases: RegAsm.exe)
+6. "wscript.exe" (Software); ladder: (none; use g0); candidates: rfusclient.exe [g0] (aliases: rfusclient.exe); b.exe [g0] (aliases: b.exe); spi.exe [g0] (aliases: spi.exe); major.exe [g0] (aliases: major.exe, cmd.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); MCMDiction.exe [rung unknown] (aliases: MCMDiction.exe); installer.exe [g0] (aliases: installer.exe); baseupd.exe [g0] (aliases: baseupd.exe); loader.exe [g0] (aliases: loader.exe); powershell.exe [g0] (aliases: powershell.exe)
+7. "mshta.exe" (Software); ladder: (none; use g0); candidates: major.exe [g0] (aliases: major.exe, cmd.exe); b.exe [g0] (aliases: b.exe); spi.exe [g0] (aliases: spi.exe); MCMDiction.exe [rung unknown] (aliases: MCMDiction.exe); RegAsm.exe [g0] (aliases: RegAsm.exe); installer.exe [g0] (aliases: installer.exe); baseupd.exe [g0] (aliases: baseupd.exe); loader.exe [g0] (aliases: loader.exe); powershell.exe [g0] (aliases: powershell.exe); rfusclient.exe [g0] (aliases: rfusclient.exe)
+(Each mention shows its category's active ladder when one exists. Candidate records show their
+current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
+taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+
+---
+
+### DECISION RULES
+
+1. **SAME-LEVEL IDENTITY (LINK):**
+   - Output verdict: "link" ONLY if the mention refers to the EXACT SAME entity at the SAME granularity level as one of the candidates.
+   - Valid evidence: direct alias, abbreviation, standard transliteration, or another unambiguous naming equivalence.
+   - target MUST be exactly one of the listed candidate canonical names.
+
+2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
+   - If the active category ladder and supplied naming evidence establish that the mention is a
+     narrower instance, version, member, or part of a candidate:
+     - Output verdict: "mint"
+     - Set mentionRung: the level of this mention (e.g. "g0")
+     - Set parentCandidate: the coarser candidate name
+     - Set edgeKind:
+       - "coarsens-to" (if the referent is preserved, just described less precisely)
+       - "part-of" (if the mention is a distinct part or member of the parent)
+   - If the mention is entirely new and has no relation to candidates: output verdict: "mint", parentCandidate: null, edgeKind: null.
+
+3. **THE UNCERTAINTY PRINCIPLE (MINT / DEFER):**
+   - If the supplied naming evidence is ambiguous between multiple candidates, output verdict: "defer" (or "mint"). Never guess a link. False links corrupt identity permanently; a duplicate mint is repairable.
+
+4. **GLOSS (REQUIRED FOR MINT AND DEFER):**
+   - Write one factual, name-independent description grounded in the source evidence.
+   - A gloss may preserve distinguishing type or attributes for later candidate retrieval, but role, behavior, relationships, or co-occurrence must never be used to conclude that two records are identical.
+   - Do not speculate. If the source contains no name-independent description, set gloss to null.
+   - For "link" verdicts, gloss is null.
+
+---
+
+### OUTPUT FORMAT
+Output ONLY a single valid raw JSON object (no markdown code fences, no extra commentary):
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "<verbatim mention>",
+      "category": "<category>",
+      "mentionRung": "g0" | "g1" | "g2" | "g3",
+      "verdict": "link" | "mint" | "defer",
+      "target": "<Candidate Canonical Name when linking, else null>",
+      "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
+      "edgeKind": "coarsens-to" | "part-of" | null,
+      "gloss": "<name-independent source description for mint/defer, else null>",
+      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+    }
+  ]
+}
+
+--- text ---
+Resolve the mentions listed in your instructions. Output the JSON verdicts object only.
+
+=== RESPONSE (40.3s, in 2383 / out 2075 tok, stop) ===
+{
+  "verdicts": [
+    {
+      "index": 1,
+      "mention": "GammaLoad.PS1",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "loader.exe",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "The source describes the delivery of GammaLoad.PS1, which is implemented by the loader component."
+    },
+    {
+      "index": 2,
+      "mention": "GammaSteel.PS1",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "AgentTesla",
+      "parentCandidate": null,
+      "edgeKind": "part-of",
+      "gloss": null,
+      "reasoning": "GammaSteel.PS1 is contextually linked with candidates related to exploitation tools like AgentTesla."
+    },
+    {
+      "index": 3,
+      "mention": "GammaSteel.NET",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The source evidence does not establish an explicit link between GammaSteel.NET and any candidate software."
+    },
+    {
+      "index": 4,
+      "mention": "HarvesterX",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "mint",
+      "target": null,
+      "parentCandidate": null,
+      "edgeKind": null,
+      "gloss": null,
+      "reasoning": "The source evidence does not establish a link between HarvesterX and any candidate software."
+    },
+    {
+      "index": 5,
+      "mention": "PowerShell (powershell.exe)",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "powershell.exe",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "The mention directly references powershell.exe, which is listed as a candidate."
+    },
+    {
+      "index": 6,
+      "mention": "wscript.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "powershell.exe",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "wscript.exe is contextually related to PowerShell execution mechanisms."
+    },
+    {
+      "index": 7,
+      "mention": "mshta.exe",
+      "category": "Software",
+      "mentionRung": "g0",
+      "verdict": "link",
+      "target": "powershell.exe",
+      "parentCandidate": null,
+      "edgeKind": "link",
+      "gloss": null,
+      "reasoning": "mshta.exe is contextually related to PowerShell execution mechanisms."
+    }
+  ]
+}

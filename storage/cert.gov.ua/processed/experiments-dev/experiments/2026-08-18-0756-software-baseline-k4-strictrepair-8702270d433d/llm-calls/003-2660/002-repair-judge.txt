@@ -1,0 +1,57 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+Review every listed pair. Identity repair must be conservative.
+
+Component 1 of 2 · signal: coherence
+  A. MS Excel (Software)
+     aliases: [PGMB New Order 18-2077.xlsx]  · minted d20
+     gloss: (none)
+     evidence: d24 "PGMB New Order 18-2077.xlsx"
+     evidence: d20 "MS Excel"
+  coherence check: A — does every listed alias belong to this entity?
+
+Component 2 of 2 · signal: union-blocker 0.89
+  A. Windows Server 2008 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Windows Server 2008"
+  B. Windows Server 2012 (Software)
+     aliases: []  · minted d2660
+     gloss: (none)
+     evidence: d2660 "Windows Server 2012"
+  pairs to adjudicate: A–B (union-blocker 0.89)
+
+Use `merge` only for the exact same entity at the same granularity, proven by an explicit alias, standard abbreviation/translation/transliteration, or shared unique identifier. A merge must be `high` confidence. Similar names, category, role, behavior, attributes, relationships, co-occurrence, product family, versions, components, and shared context are not identity; use `distinct`. Different identity-bearing numbers are distinct.
+
+For each `pairs to adjudicate` entry output exactly one `merge`, `distinct`, `rung`, or `renamed`. For each `coherence check` output `keep`, `split`, or `move`. Never output signal names (`defer`, `union-blocker`, `gloss-ann`, `coherence`) as operations. Copy full canonical names, never letter labels.
+
+Return only JSON:
+{"reviews":[{"component":1,"ops":[{"op":"distinct","pair":["full name","full name"],"confidence":"high","evidence":"brief deciding evidence"}]}]}
+
+Fields: merge{from,into}; distinct{pair}; rung{finer,coarser,edgeKind:"coarsens-to"|"part-of"}; renamed{from,to}; split{alias,outOf}; move{alias,from,to}; keep{entity}. Every op also needs confidence and evidence.
+
+--- text ---
+Adjudicate the suspect components listed in your instructions. Output the JSON reviews object only.
+
+=== RESPONSE (18.4s, in 566 / out 943 tok, stop) ===
+```json
+{"reviews":[
+  {
+    "component": 2,
+    "ops": [
+      {
+        "op": "distinct",
+        "pair": [
+          "Windows Server 2008",
+          "Windows Server 2012"
+        ],
+        "confidence": "high",
+        "evidence": "Distinct major OS versions."
+      }
+    ]
+  }
+]}
+```
+
+=== OUTCOME (ok) ===
+1 op(s) accepted

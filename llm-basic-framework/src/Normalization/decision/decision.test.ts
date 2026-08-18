@@ -322,6 +322,27 @@ describe('ListwiseMintCandidateDecision', () => {
     assert.equal(llm.callCount(), 1);
   });
 
+  it('accepts compact positional choices with exactly one entry per askable mention', async () => {
+    const llm = fakeLlm(['{"choices":[1,2]}']);
+    const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
+    const decisions = await strategy.decide([
+      request('a', [candidate('A', 0.9)]),
+      request('b', [candidate('B', 0.9)]),
+    ]);
+    assert.equal(decisions[0].target, 'A');
+    assert.equal(decisions[1].kind, 'mint');
+  });
+
+  it('rejects an incomplete compact response instead of shifting choices', async () => {
+    const llm = fakeLlm(['{"choices":[1]}']);
+    const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
+    const decisions = await strategy.decide([
+      request('a', [candidate('A', 0.9)]),
+      request('b', [candidate('B', 0.9)]),
+    ]);
+    assert.ok(decisions.every((decision) => decision.kind === 'mint'));
+  });
+
   it('spends nothing when no mention has candidates', async () => {
     const llm = fakeLlm(['{"choices":[]}']);
     const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
@@ -362,6 +383,18 @@ describe('ListwiseMintCandidateDecision', () => {
   it('records the prompt hash in config, so the run card pins the judged text', () => {
     const llm = fakeLlm(['{}']);
     const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
+    assert.match(String(strategy.config.promptSha256), /^[0-9a-f]{64}$/);
+  });
+
+  it('records an explicit prompt variant and candidate width in config', () => {
+    const llm = fakeLlm(['{}']);
+    const strategy = new ListwiseMintCandidateDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-select-compact-v1',
+      k: 8,
+    });
+    assert.equal(strategy.config.promptId, 'listwise-select-compact-v1');
+    assert.equal(strategy.config.k, 8);
     assert.match(String(strategy.config.promptSha256), /^[0-9a-f]{64}$/);
   });
 
