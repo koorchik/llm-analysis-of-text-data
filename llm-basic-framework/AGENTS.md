@@ -126,6 +126,71 @@ a registry whose repair pass never ran). The old deferred, manually-triggered
 (`npm run batch-reference`, run against a COPY of a run directory). Full reference:
 `docs/RUNNING-EXPERIMENTS.md`; repair design: `docs/streaming-pipeline-spec.md` §4.3.
 
+### Testing one scoped case (single category, dev subset)
+
+The fast loop for "does this change help category X?" — minutes, not an hour, and no cloud spend.
+Every number it produces is **non-reportable** (dev split × single category × subset corpus); it
+exists to rank iterations. Full reference: `docs/RUNNING-EXPERIMENTS.md` §3b; measured results and
+the current best-known knobs per category: `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md`.
+
+Three ingredients make it fast: `CATEGORIES` drops every other category's mentions at plan-build
+time, a committed doc subset (`gold/subsets/*.txt`) shrinks the corpus, and pre-seeded frozen
+extractions with `STEPS=streamingNormalizer` skip the expensive extraction step entirely.
+
+```bash
+# 1. Materialize the subset once (already on disk at /tmp/opencode/software-22 in most sessions)
+npm run make-subset -- --list gold/subsets/dev-software-22.txt \
+  --from ../storage/cert.gov.ua/fetched --to /tmp/subset-dev-software
+
+# 2. Learn the run directory: start the arm, let it print `RUN <runId> → <runDir>`, Ctrl-C.
+#    With STEPS=streamingNormalizer and no extractions yet it exits on its own (ENOENT extractions).
+INPUT_DIR=/tmp/subset-dev-software \
+  OUTPUT_DIR=../storage/cert.gov.ua/processed/experiments-dev \
+  STEPS=streamingNormalizer FLOW=incremental CONDITION=software-<label> CATEGORIES=Software \
+  LLM_PROVIDER=ollama LLM_MODEL=gemma4:e2b-16k \
+  DECISION_STRATEGY=listwise-mint-candidate \
+  CANDIDATE_GENERATOR=union CANDIDATE_K=10 CANDIDATE_MIN_SIM=0 \
+  REPAIR=0 LADDER_MIN_EXAMPLES=100000 \
+  EMBEDDINGS=1 EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=embeddinggemma \
+  DECISIONS_LOG=1 npm start
+
+# 3. Pre-seed the frozen gpt-5 extractions into that run dir, injecting the empty `relations` the
+#    normalizer iterates unguarded (a bare `cp` crashes on document 1). See RUN-STREAMING.md §4.
+RUNDIR=../storage/cert.gov.ua/processed/experiments-dev/experiments/<dated-runId>
+mkdir -p "$RUNDIR/extractions"
+node -e '
+const fs=require("fs"),path=require("path");
+const src="../storage/cert.gov.ua/processed/raw-unified/gpt-5", inp=process.argv[2], dst=process.argv[1];
+for (const f of fs.readdirSync(inp).filter(f=>f.endsWith(".json"))) {
+  const j=JSON.parse(fs.readFileSync(path.join(src,f),"utf8"));
+  j.relations ??= []; j.schemaProposals ??= [];
+  fs.writeFileSync(path.join(dst,f), JSON.stringify(j,null,2));
+}' "$RUNDIR/extractions" /tmp/subset-dev-software
+
+# 4. Rerun the IDENTICAL command from step 2 — same runId, same directory, extraction skipped.
+# 5. Score it (free, no LLM calls; --allow-dev is required or evaluate refuses the dev split)
+npm run evaluate -- --gold gold/gold.json --split dev --allow-dev --category Software \
+  --run "$RUNDIR"
+```
+
+`--run` is repeatable: pass the old and new run directories in one `evaluate` call to get both
+rows in one table, scored against the same gold. Always re-score the baseline rather than quoting a
+number from a doc — gold corrections silently move old figures (the Software baseline moved 0.667 →
+0.889 that way).
+
+**The runId moves when the tree goes from clean to dirty.** `readGitState` sets `dirty` from
+`git status --porcelain` (untracked files count) but `diffHash` from `git diff HEAD` (they do not).
+So the *first* run in a clean tree gets one id and the second gets another — creating the run
+directory made the tree dirty. Once an untracked run directory exists the id is stable, which is
+why step 2 above must be run before pre-seeding and its id reused. Delete stray bootstrap
+directories from the failed first attempt.
+
+**Read the diff, not just the F1.** These slices are ~5 scorable clusters wide, so one merge moves
+pairwise F1 by ~0.15, and false merges on pairs gold does not label are invisible to every metric
+in the table. Diff the two registries' `categories.<Category>` alias sets before concluding that
+the higher number is the better arm — the `gemma4:26b-16k` probe scored 0.571 against e2b's 0.889
+while making strictly fewer identity errors.
+
 ### Switching LLM Models
 Models are configured via environment variables `LLM_PROVIDER`, `LLM_MODEL`, `EMBEDDINGS_PROVIDER`, `EMBEDDINGS_MODEL`. See `README-CONFIGURATION.md` for details.
 

@@ -108,3 +108,51 @@ transitivity conflicts and the absence of stratum (d) remain unresolved limitati
 - `../storage/cert.gov.ua/processed/experiments-dev/experiments/2026-08-18-0820-country-builtin-autorepair-2501cb95cff0`
 - `../storage/cert.gov.ua/processed/experiments-dev/experiments/2026-08-18-0824-hackergroup-baseline-autorepair-4741debd39e0`
 - `../storage/cert.gov.ua/processed/experiments-dev/experiments/2026-08-18-0844-software-best-candidatek20-91bf337ea764`
+
+## Judge-size probe: `gemma4:26b-16k` on the winning Software arm
+
+Same arm as the Software winner (`DECISION_STRATEGY=listwise-mint-candidate`,
+`CANDIDATE_GENERATOR=union`, `CANDIDATE_K=10`, `CANDIDATE_MIN_SIM=0`, `REPAIR=0`,
+`LADDER_MIN_EXAMPLES=100000`, `EMBEDDINGS_MODEL=embeddinggemma`), 22-doc dev-Software subset,
+frozen gpt-5 extractions, `STEPS=streamingNormalizer`. Only the judge model changed. Both rows
+scored against the same corrected gold.
+
+| Judge | Pairwise F1 | Merge P/R (a) | Merge P/R (c) | NIL F1 | B³ F1 | ARI | Calls | Tokens (in+out) | Wall |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `gemma4:e2b-16k` | **0.889** | 1.000 / 0.500 | 1.000 / 1.000 | 0.893 | 0.986 | 0.888 | 20 | 27,426+21,661 | 400 s |
+| `gemma4:26b-16k` | 0.571 | 1.000 / 0.500 | 1.000 / 0.333 | **0.900** | 0.955 | 0.569 | 20 | 28,535+45,724 | 1,505 s |
+
+The larger judge is worse on the headline metric, 3.8× slower, and doubles output tokens. But the
+scored delta is three gold clusters wide and the two arms fail in opposite directions.
+
+Per gold cluster (only 9 dev-Software multi-member clusters have ≥2 members present in the subset):
+
+| Gold cluster | `e2b-16k` | `26b-16k` |
+|---|---|---|
+| g86 `Microsoft Office 2010` / `Office 2010` | MISS (put `Microsoft Office 2010` under `MS Excel`) | **OK** |
+| g104 `shellcode.x64 (Cobalt Strike Beacon)` / `.bin` | **OK** | MISS |
+| g105 `shellcode.x86 (Cobalt Strike Beacon)` / `.bin` | **OK** | MISS |
+| g106 `SmartAssembly` / `SmartAssembly .NET` | **OK** | MISS |
+| g100 `Remcos` / `Remcos RAT` / `RemcosRAT` | MISS | MISS |
+| g65, g83, g95, g103 | unreachable (members absent from subset) | same |
+
+So 26b is precision-conservative in exactly the place e2b is loose: it refuses the
+suffix-variant merges (`X` vs `X .NET`, `X` vs `X.bin`) that carry three of the five reachable
+scored clusters, while being the only arm that assembles the Office version family correctly.
+
+Off-gold behaviour, which the metrics do not see, runs the other way. `e2b-16k` produced several
+false merges on pairs gold does not label — `MS Office ← Microsoft Windows`, `VBScript ←
+JavaScript`, `Remote Utilities ← Remcos, RemcosRAT`, `MS PowerPoint ← Microsoft Equation Editor` —
+none of which `26b-16k` made; it kept `Remcos` separate and merged the PowerShell surfaces
+correctly. Its own worst off-gold merge is `MS Excel ← PGMB New Order 18-2077.xlsx` (an attachment
+into the application). The 0.889 therefore flatters e2b: on this slice the smaller judge wins the
+scored pairs while making more identity errors overall.
+
+Read this as a probe, not a promotion decision. It suggests the remaining Software headroom is in
+the suffix-variant rule (a code-verifiable class — `REPAIR_STRICT_IDENTITY`'s canonical-name
+evidence already covers similar keys) rather than in judge size, and that 22 documents with five
+scorable clusters cannot separate two judges this close. Keep `gemma4:e2b-16k` as the local
+Software judge on cost alone until a wider slice says otherwise.
+
+Run artifact:
+`../storage/cert.gov.ua/processed/experiments-dev/experiments/2026-08-18-0959-software-26b16k-listwise-norepair-f79aa8f0c877`
