@@ -36,7 +36,7 @@ Pairwise cluster F1. Software and HackerGroup on `--split dev --allow-dev`, Coun
 | `26b-16k` base | spills | 0.571 | 0.952 | 0.500 |
 | **`26b-16k` + v6** | spills | **1.000** | **0.952** | **1.000** |
 | `31b-16k` base | spills | 0.571 † | 0.952 | 0.500 † |
-| `31b-16k` + v6 | spills | see §4 † | 0.952 | 1.000 |
+| `31b-16k` + v6 | spills | 0.889 † | 0.952 | 1.000 |
 
 † degraded by dropped calls — see §4.
 
@@ -99,10 +99,15 @@ Software winner was a favourable draw. The 12b arms, by contrast, reproduced ide
 replicate taken (v4 ×2, v5 ×2, v6 ×3).
 
 **`31b-16k` does not fit and its runs are degraded.** 19 GB model, 16 GB card: heavy CPU offload, and
-requests time out — `fetch failed` in 8 of 24 Software judge calls (base arm), 4 of 6 HackerGroup calls,
-6+ on the v6 Software arm. A dropped call mints every mention in that document, so 31b's numbers are a
-floor, not a measurement. 26b (17 GB) spills too but completed every call. Nothing here suggests 31b
-would judge worse given headroom — it simply cannot be measured on this box.
+requests die with `fetch failed` — 8 of 24 Software judge calls on the base arm, 8 of 24 on the v6 arm,
+4 of 6 HackerGroup calls. A dropped call mints every mention in that document, so 31b's numbers are a
+floor, not a measurement.
+
+The v6 Software arm shows this exactly: 0.889 rather than the 1.000 that 12b and 26b reach, and the
+four documents whose calls died include `2660` — the Office document carrying gold cluster g86, the one
+cluster it misses. Its `merge R (c)` is 1.000, so every pair it was actually asked about, it got right.
+26b (17 GB) spills too but completed every call. Nothing here suggests 31b judges worse given headroom;
+it simply cannot be measured on this box.
 
 ## 5. Recommended local policy
 
