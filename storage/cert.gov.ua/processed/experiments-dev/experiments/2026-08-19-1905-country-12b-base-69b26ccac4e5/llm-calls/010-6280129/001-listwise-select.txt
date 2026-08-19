@@ -1,0 +1,46 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "UAC-0063 атакує науково-дослідні установи України: HATVIBE + CHERRYSPY + CVE-2024-23692 (CERT-UA#10356)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA досліджено кібератаку угрупування UAC-0063, здійснену 08.07.2024 по відношенню до однієї з українських науково-дослідних установ з використанням шкідливих програм HATVIBE та CHERRYSPY.</p><p>На етапі первинного ураження зловмисник, маючи доступ до облікового запису електронної пошти співробітника установи, здійснив відправку копії нещодавно відправленого листа десяткам адресатів (включаючи самого відправника), замінивши оригінальний документ-вкладення іншим документом, в
+Mentions:
+1. "Вірменія" (Country)
+     1. Росія [aliases: Росія, Russian Federation, Російська Федерація, Russia]
+     2. Індія [aliases: Індія, India]
+     3. Естонія [aliases: Естонія]
+     4. Israel [aliases: Israel]
+     5. NEW ENTITY
+2. "Киргизька Республіка" (Country)
+     1. Росія [aliases: Росія, Russian Federation, Російська Федерація, Russia]
+     2. Kyrgyzstan [aliases: Kyrgyzstan]
+     3. Kazakhstan [aliases: Kazakhstan]
+     4. Ukraine [aliases: Ukraine, Україна]
+     5. NEW ENTITY
+
+=== RESPONSE (16.5s, in 673 / out 1304 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "Вірменія",
+      "category": "Country",
+      "choice": 5
+    },
+    {
+      "mention": "Киргизька Республіка",
+      "category": "Country",
+      "choice": 2
+    }
+  ]
+}

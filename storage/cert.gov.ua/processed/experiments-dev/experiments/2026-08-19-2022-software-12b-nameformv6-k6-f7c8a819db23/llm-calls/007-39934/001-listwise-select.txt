@@ -1,0 +1,112 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Указ Президента України No 576/22 про безпрецедентні заходи безпеки" та вкладенням у вигляді ISO-файлу "Указ Президента України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає Po
+Mentions:
+1. "Meterpreter" (Software)
+     1. FTPGetter [aliases: FTPGetter]
+     2. Internet Explorer [aliases: Internet Explorer]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Kometa Browser [aliases: Kometa Browser]
+     5. 7Star Browser [aliases: 7Star Browser]
+     6. CentBrowser [aliases: CentBrowser]
+     7. NEW ENTITY
+2. "z.ps1" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office, ckZ89.ExE]
+     2. WinSCP [aliases: WinSCP]
+     3. MS Excel [aliases: MS Excel, Smokeloader, spi.exe]
+     4. FileZilla [aliases: FileZilla]
+     5. Agent Tesla [aliases: Agent Tesla]
+     6. cmd.exe [aliases: cmd.exe]
+     7. NEW ENTITY
+3. "b.exe" (Software)
+     1. cmd.exe [aliases: cmd.exe]
+     2. installer.exe [aliases: installer.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. MS Excel [aliases: MS Excel, Smokeloader, spi.exe]
+     5. powershell.exe [aliases: powershell.exe]
+     6. major.exe [aliases: major.exe]
+     7. NEW ENTITY
+4. "loader.exe" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. MS Excel [aliases: MS Excel, Smokeloader, spi.exe]
+     3. rutserv.exe [aliases: rutserv.exe]
+     4. major.exe [aliases: major.exe]
+     5. cmd.exe [aliases: cmd.exe]
+     6. RegAsm.exe [aliases: RegAsm.exe]
+     7. NEW ENTITY
+5. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software)
+     1. Microsoft Office 2016 [aliases: Microsoft Office 2016, Office 2016, До оплати від 11.12.18.lzh]
+     2. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     3. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     4. CVE-2017-11882 [aliases: CVE-2017-11882, Рахунки за выполненные работы от 11.12.2018.js]
+     5. .NET Framework [aliases: .NET Framework]
+     6. Електронний запит.exe [aliases: Електронний запит.exe]
+     7. NEW ENTITY
+
+=== RESPONSE (17.4s, in 1636 / out 1332 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "Meterpreter",
+      "category": "Software",
+      "choice": 7
+    },
+    {
+      "mention": "z.ps1",
+      "category": "Software",
+      "choice": 7
+    },
+    {
+      "mention": "b.exe",
+      "category": "Software",
+      "choice": 7
+    },
+    {
+      "mention": "loader.exe",
+      "category": "Software",
+      "choice": 7
+    },
+    {
+      "mention": "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk",
+      "category": "Software",
+      "choice": 7
+    }
+  ]
+}

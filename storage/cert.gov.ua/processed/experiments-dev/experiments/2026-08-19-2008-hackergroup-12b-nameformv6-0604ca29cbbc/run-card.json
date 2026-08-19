@@ -1,0 +1,185 @@
+{
+  "version": "run-card-v1",
+  "runId": "hackergroup-12b-nameformv6-0604ca29cbbc",
+  "condition": "hackergroup-12b-nameformv6",
+  "createdAt": "2026-08-19T17:08:36.948Z",
+  "updatedAt": "2026-08-19T17:09:52.343Z",
+  "config": {
+    "condition": "hackergroup-12b-nameformv6",
+    "orchestration": "incremental",
+    "input": {
+      "path": "/tmp/claude-1000/-home-koorchik-work-kpi-llm-analysis-of-text-data/3c7e6193-6e11-4455-972a-85a2d51b050c/scratchpad/subset-hackergroup",
+      "contentHash": "b496a1d4884789155ab404d7f4f51c044086dbabcbcbb1ad07ea17a8a4e5d6e8",
+      "fileCount": 11
+    },
+    "llm": {
+      "provider": "ollama",
+      "model": "gemma4:12b-16k"
+    },
+    "embeddings": {
+      "provider": "ollama",
+      "model": "embeddinggemma"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": true,
+        "seed": true,
+        "topP": true
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "b077e5b79e2218e7bba562a18cd1752c4001e94f254cb6b4dd5757ab9a41ead8",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "db594b471762abec3e693fb58c7889f0bf87cfa6bd5db345ffb3b8a7f78123c9",
+      "link-judge": "eeba95805bf5772e2fe1d6a1ae901bca18d7fa5d7603fabef654b39a67002c6f",
+      "listwise-select": "86c55200158baa55f5f0f29ea8c7a959e95a428fc37842e1fd60fdae72f07d59",
+      "listwise-select-balanced-v3": "6a57a768e9dde69e70acc19b986a2c669f5580337b7c84fbbe98ef31f6d1ed6d",
+      "listwise-select-compact-v1": "89ba001e11718c6d85f16dcab983cf605509e8690bbccb2718dfeea8866c362f",
+      "listwise-select-complete-v2": "f62e7505d7ac2c510faba6dedeecf6a82f0e8d512dcc1ad99f2ee72d2c0d84fc",
+      "listwise-select-nameform-v4": "afa615d01fee3642f7f8f652c9960bd3dd4b0b5db39d1bff5572c9ea4eb9435b",
+      "listwise-select-nameform-v5": "f64a2ea1cd12891590ea7c95e394d3266566d0dd49fd1b55302ab5d9c12be68c",
+      "listwise-select-nameform-v6": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "repair-judge": "815ada73de637b30f4ee71cb5e2e4b3c844ee793a76375b5ed95640942fdfb64",
+      "repair-judge-compact-v1": "511fda3ab0d08a8ed895602a33bea56d3d99bab60877f76b7bb571892333e088",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingNormalizer"
+      ],
+      "edgesFrom": "extracted",
+      "decisionStrategy": "listwise-mint-candidate",
+      "decisionStrategyConfig": {
+        "k": 4,
+        "promptId": "listwise-select-nameform-v6",
+        "promptSha256": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725"
+      },
+      "candidateGenerator": "rrf(string-sim(identity,max-lev-dice),string-sim(identity+transliterate+confusable-skeleton,max-lev-dice),tfidf-3gram(identity),bm25(identity),embedding(embeddinggemma,name+gloss,max-over-aliases))",
+      "candidateGeneratorConfig": {
+        "rrfK": 60,
+        "perChildK": 20,
+        "children": [
+          {
+            "id": "string-sim(identity,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "string-sim(identity+transliterate+confusable-skeleton,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity",
+                "transliterate",
+                "confusable-skeleton"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "tfidf-3gram(identity)",
+            "config": {
+              "n": 3,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "bm25(identity)",
+            "config": {
+              "k1": 1.2,
+              "b": 0.75,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "embedding(embeddinggemma,name+gloss,max-over-aliases)",
+            "config": {
+              "provider": "ollama",
+              "model": "embeddinggemma",
+              "representation": "name+gloss",
+              "clusterRepresentation": "max-over-aliases",
+              "backend": {
+                "provider": "ollama",
+                "model": "embeddinggemma",
+                "host": "default"
+              }
+            }
+          }
+        ]
+      },
+      "candidateK": 10,
+      "candidateMinSim": 0,
+      "embeddings": true,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 100000
+      },
+      "repair": false,
+      "repairPromptId": "repair-judge",
+      "repairStrictIdentity": false,
+      "repairGlossThresholds": null,
+      "repairBlockerThresholds": null,
+      "repairCoherenceThreshold": null,
+      "repairTokenCap": null,
+      "repairTopK": null,
+      "categories": [
+        "HackerGroup"
+      ]
+    },
+    "git": {
+      "sha": "6ca3c058d49f410fdb5ccceb5db24eabe633f358",
+      "dirty": true,
+      "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runId": "hackergroup-12b-nameformv6-0604ca29cbbc"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "hackergroup-12b-nameformv6-0604ca29cbbc",
+    "totals": {
+      "calls": 4,
+      "inputTokens": 4601,
+      "outputTokens": 5689,
+      "costUsd": 0,
+      "unpricedCalls": 0,
+      "wallClockMs": 73361
+    },
+    "byOperator": {
+      "listwise-select": {
+        "calls": 4,
+        "inputTokens": 4601,
+        "outputTokens": 5689,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 73361
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 35,
+    "misses": 0,
+    "entries": 497
+  },
+  "completedAt": "2026-08-19T17:09:52.343Z"
+}

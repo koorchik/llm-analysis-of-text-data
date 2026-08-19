@@ -1,0 +1,82 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Атака групи UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4941)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано факт масового розповсюдження електронних листів з темою "Об'єднаний офіційний звіт про гуманітарну ситуацію. Україна" та вкладенням у вигляді XLS-документу "Гуманітарна катастрофа України з 24 лютого 2022 року.xls". При цьому електронні листи розсилаються зі скомпрометованих електронних адрес державних органів України.</p><p>Згаданий документ містить макрос, активація якого призведе до запуску файлу "baseupd.exe", виконання якого призведе до ураження комп'ютер
+Mentions:
+1. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software)
+     1. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk [aliases: УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk]
+     2. Інформація щодо наявності вакансій та їх укомплектування.xls [aliases: Інформація щодо наявності вакансій та їх укомплектування.xls]
+     3. Електронний запит.exe [aliases: Електронний запит.exe]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+2. "baseupd.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. RegAsm.exe [aliases: RegAsm.exe]
+     4. spi.exe [aliases: spi.exe]
+     5. NEW ENTITY
+3. "oYUuQbXu" (Software)
+     1. TRYxaEbX [aliases: TRYxaEbX]
+     2. TRYxaEbX.ps1 [aliases: TRYxaEbX.ps1]
+     3. Orbitum Browser [aliases: Orbitum Browser]
+     4. Thunderbird [aliases: Thunderbird]
+     5. NEW ENTITY
+4. "stage1.ps1" (Software)
+     1. TRYxaEbX.ps1 [aliases: TRYxaEbX.ps1]
+     2. z.ps1 [aliases: z.ps1]
+     3. TRYxaEbX_2.ps1 [aliases: TRYxaEbX_2.ps1]
+     4. installer.exe [aliases: installer.exe]
+     5. NEW ENTITY
+5. "stage2.ps1" (Software)
+     1. z.ps1 [aliases: z.ps1]
+     2. TRYxaEbX.ps1 [aliases: TRYxaEbX.ps1]
+     3. TRYxaEbX_2.ps1 [aliases: TRYxaEbX_2.ps1]
+     4. installer.exe [aliases: installer.exe]
+     5. NEW ENTITY
+6. "shellcode.x86.bin" (Software)
+     1. shellcode.x86 (Cobalt Strike Beacon) [aliases: shellcode.x86 (Cobalt Strike Beacon)]
+     2. shellcode.x64 (Cobalt Strike Beacon) [aliases: shellcode.x64 (Cobalt Strike Beacon)]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. loader.exe [aliases: loader.exe]
+     5. NEW ENTITY
+7. "shellcode.x64.bin" (Software)
+     1. shellcode.x64 (Cobalt Strike Beacon) [aliases: shellcode.x64 (Cobalt Strike Beacon)]
+     2. shellcode.x86 (Cobalt Strike Beacon) [aliases: shellcode.x86 (Cobalt Strike Beacon)]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. loader.exe [aliases: loader.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (6.8s, in 1570 / out 1600 tok, stop) ===
+{ "choices": [ { "mention": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls", "category": "Software", "choice": 5 }, { "mention": "baseupd.exe", "category": "Software", "choice": 5 }, { "mention": "oYUuQbXu", "category": "Software", "choice": 5 }, { "mention": "stage1.ps1", "category": "Software", "choice": 5 }, { "mention": "stage2.ps1", "category": "Software", "choice": 5 }, { "mention": "shellcode.x86.bin", "category": "Software", "choice": 5 }, { "mention": "shellcode.x64.bin", "category": "Software", "choice": 5 } ] }

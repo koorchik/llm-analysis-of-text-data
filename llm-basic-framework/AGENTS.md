@@ -131,7 +131,9 @@ a registry whose repair pass never ran). The old deferred, manually-triggered
 The fast loop for "does this change help category X?" — minutes, not an hour, and no cloud spend.
 Every number it produces is **non-reportable** (dev split × single category × subset corpus); it
 exists to rank iterations. Full reference: `docs/RUNNING-EXPERIMENTS.md` §3b; measured results and
-the current best-known knobs per category: `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md`.
+the current best-known knobs per category: `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-19.md` (judge
+`gemma4:12b-16k` + `LISTWISE_PROMPT_ID=listwise-select-nameform-v6`), with the earlier configuration
+study in `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md`.
 
 Three ingredients make it fast: `CATEGORIES` drops every other category's mentions at plan-build
 time, a committed doc subset (`gold/subsets/*.txt`) shrinks the corpus, and pre-seeded frozen

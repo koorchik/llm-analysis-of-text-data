@@ -1,0 +1,63 @@
+=== REQUEST (ollama gemma4:26b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Mentions:
+1. "GammaLoad.PS1" (Software)
+     1. TRYxaEbX.ps1 [aliases: TRYxaEbX.ps1]
+     2. stage1.ps1 [aliases: stage1.ps1]
+     3. z.ps1 [aliases: z.ps1]
+     4. stage2.ps1 [aliases: stage2.ps1]
+     5. NEW ENTITY
+2. "GammaSteel.PS1" (Software)
+     1. TRYxaEbX.ps1 [aliases: TRYxaEbX.ps1]
+     2. stage1.ps1 [aliases: stage1.ps1]
+     3. z.ps1 [aliases: z.ps1]
+     4. stage2.ps1 [aliases: stage2.ps1]
+     5. NEW ENTITY
+3. "GammaSteel.NET" (Software)
+     1. .NET Framework [aliases: .NET Framework]
+     2. Internet Explorer [aliases: Internet Explorer]
+     3. AgentTesla [aliases: AgentTesla]
+     4. MS Excel [aliases: MS Excel]
+     5. NEW ENTITY
+4. "HarvesterX" (Software)
+     1. FTPGetter [aliases: FTPGetter]
+     2. Meterpreter [aliases: Meterpreter]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. ConfuserEx [aliases: ConfuserEx]
+     5. NEW ENTITY
+5. "PowerShell (powershell.exe)" (Software)
+     1. powershell.exe [aliases: powershell.exe]
+     2. b.exe [aliases: b.exe]
+     3. cmd.exe [aliases: cmd.exe]
+     4. baseupd.exe [aliases: baseupd.exe]
+     5. NEW ENTITY
+6. "wscript.exe" (Software)
+     1. rfusclient.exe [aliases: rfusclient.exe]
+     2. b.exe [aliases: b.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. cmd.exe [aliases: cmd.exe]
+     5. NEW ENTITY
+7. "mshta.exe" (Software)
+     1. b.exe [aliases: b.exe]
+     2. spi.exe [aliases: spi.exe]
+     3. MCMDiction.exe [aliases: MCMDiction.exe]
+     4. RegAsm.exe [aliases: RegAsm.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (32.4s, in 1071 / out 1422 tok, stop) ===
+{ "choices": [ { "mention": "GammaLoad.PS1", "category": "Software", "choice": 5 }, { "mention": "GammaSteel.PS1", "category": "Software", "choice": 5 }, { "mention": "GammaSteel.NET", "category": "Software", "choice": 5 }, { "mention": "HarvesterX", "category": "Software", "choice": 5 }, { "mention": "PowerShell (powershell.exe)", "category": "Software", "choice": 1 }, { "mention": "wscript.exe", "category": "Software", "choice": 5 }, { "mention": "mshta.exe", "category": "Software", "choice": 5 } ] }

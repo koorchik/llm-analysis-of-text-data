@@ -1,0 +1,92 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "УВАГА! Спостерігається масова розсилка фішингових листів, які використовують вразливість CVE-2017-11882" — evidence: <p>Дана вразливість надає можливість виконання віддаленого коду, коли програмне забезпечення MS Equation не обробляє належним чином об'єкти в пам'яті. Зловмисник може виконувати довільний код з правами поточного користувача. Якщо користувач виконав вхід у систему з правами адміністратора, зловмисник може взяти під контроль систему та вчиняти наступні дії:</p><ul><li>встановлювати програми;</li><li>переглядати, змінювати або видаляти дані;</li><li>створювати нові облікові записи з правами адміністратора.</li></ul><p>Після експлуатації вразливості CVE-2017-11882 на цільову систему завантажується
+Mentions:
+1. "CVE-2017-11882" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+2. "major.exe" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+3. "PGMB New Order 18-2077.xlsx" (Software)
+     1. MS Word [aliases: MS Word]
+     2. MS Excel [aliases: MS Excel]
+     3. MS Office [aliases: MS Office]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+4. "Microsoft Equation Editor" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. MS Office [aliases: MS Office]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+5. "Microsoft Office 2016" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+6. "Microsoft Office 2013" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+7. "Microsoft Office 2010" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+8. "Microsoft Office 2007" (Software)
+     1. MS Office [aliases: MS Office]
+     2. MS Excel [aliases: MS Excel]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. MS Word [aliases: MS Word]
+     5. NEW ENTITY
+
+=== RESPONSE (7.6s, in 1464 / out 1806 tok, stop) ===
+{ "choices": [ { "mention": "CVE-2017-11882", "category": "Software", "choice": 5 }, { "mention": "major.exe", "category": "Software", "choice": 5 }, { "mention": "PGMB New Order 18-2077.xlsx", "category": "Software", "choice": 1 }, { "mention": "Microsoft Equation Editor", "category": "Software", "choice": 5 }, { "mention": "Microsoft Office 2016", "category": "Software", "choice": 2 }, { "mention": "Microsoft Office 2013", "category": "Software", "choice": 2 }, { "mention": "Microsoft Office 2010", "category": "Software", "choice": 2 }, { "mention": "Microsoft Office 2007", "category": "Software", "choice": 2 } ] }

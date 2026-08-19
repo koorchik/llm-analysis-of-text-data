@@ -1,0 +1,98 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: <p>Сьогодні, 13.12.2018, зафіксована масова розсилка листів з шкідливим вкладенням, який не детектується популярними в України антивірусними засобами. Вкладення з розширенням.lzh (архів), який містить в собі 2 файли, один з яких є підробленим, або раніше викраденим документом формату xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використовується
+Mentions:
+1. "Smokeloader" (Software)
+     1. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     2. MS Word [aliases: MS Word, PGMB New Order 18-2077.xlsx, Microsoft Word]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor, Microsoft Office]
+     5. NEW ENTITY
+2. "spi.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     3. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+3. "ckZ89.ExE" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor, Microsoft Office]
+     4. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+4. "До оплати від 11.12.18.lzh" (Software)
+     1. MS Word [aliases: MS Word, PGMB New Order 18-2077.xlsx, Microsoft Word]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     4. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+5. "Рахунки и новые списки.lzh" (Software)
+     1. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor, Microsoft Office]
+     3. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. MS PowerPoint [aliases: MS PowerPoint]
+     5. NEW ENTITY
+6. "Рахунки за выполненные работы от 11.12.2018.js" (Software)
+     1. MS Word [aliases: MS Word, PGMB New Order 18-2077.xlsx, Microsoft Word]
+     2. Windows Server 2012 [aliases: Windows Server 2012]
+     3. CVE-2017-11882 [aliases: CVE-2017-11882]
+     4. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     5. NEW ENTITY
+7. "До оплати рах.ф. 74 - 2018р.js" (Software)
+     1. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     2. MS Word [aliases: MS Word, PGMB New Order 18-2077.xlsx, Microsoft Word]
+     3. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+8. "cmd.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     3. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor, Microsoft Office]
+     5. NEW ENTITY
+9. "powershell.exe" (Software)
+     1. major.exe [aliases: major.exe]
+     2. MS Excel [aliases: MS Excel, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007]
+     3. Windows Server 2008 [aliases: Windows Server 2008]
+     4. MS Office [aliases: MS Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+
+=== RESPONSE (5.8s, in 2221 / out 1317 tok, stop) ===
+{ "choices": [ { "mention": "Smokeloader", "category": "Software", "choice": 5 }, { "mention": "spi.exe", "category": "Software", "choice": 5 }, { "mention": "ckZ89.ExE", "category": "Software", "choice": 5 }, { "mention": "До оплати від 11.12.18.lzh", "category": "Software", "choice": 5 }, { "mention": "Рахунки и новые списки.lzh", "category": "Software", "choice": 5 }, { "mention": "Рахунки за выполненные работы от 11.12.2018.js", "category": "Software", "choice": 5 }, { "mention": "До оплати рах.ф. 74 - 2018р.js", "category": "Software", "choice": 5 }, { "mention": "cmd.exe", "category": "Software", "choice": 5 }, { "mention": "powershell.exe", "category": "Software", "choice": 5 } ] }

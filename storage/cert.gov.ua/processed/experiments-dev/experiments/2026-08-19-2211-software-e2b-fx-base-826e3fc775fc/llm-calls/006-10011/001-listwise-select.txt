@@ -1,0 +1,69 @@
+=== REQUEST (ollama gemma4:e2b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Mentions:
+1. "Remote Utilities" (Software)
+     1. Agent Tesla [aliases: Agent Tesla]
+     2. MS Office [aliases: MS Office, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016, Microsoft Edge]
+     3. FTPGetter [aliases: FTPGetter]
+     4. Trillian [aliases: Trillian]
+     5. NEW ENTITY
+2. "Remote Utilities - Host" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. .NET Framework [aliases: .NET Framework]
+     3. MS Word [aliases: MS Word, Microsoft Word, Microsoft Office Services and Web Apps]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+3. "Електронний запит.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+4. "installer.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+5. "host_news_mod_mod.msi" (Software)
+     1. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     2. MS Excel [aliases: MS Excel, PGMB New Order 18-2077.xlsx, Internet Explorer]
+     3. .NET Framework [aliases: .NET Framework]
+     4. MS Word [aliases: MS Word, Microsoft Word, Microsoft Office Services and Web Apps]
+     5. NEW ENTITY
+6. "rutserv.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+7. "rfusclient.exe" (Software)
+     1. RegAsm.exe [aliases: RegAsm.exe]
+     2. cmd.exe [aliases: cmd.exe]
+     3. spi.exe [aliases: spi.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+8. "killself.bat" (Software)
+     1. Trillian [aliases: Trillian]
+     2. Mozilla Firefox [aliases: Mozilla Firefox]
+     3. FileZilla [aliases: FileZilla]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+
+=== RESPONSE (2.5s, in 1246 / out 521 tok, stop) ===
+{ "choices": [ { "mention": "Remote Utilities", "category": "Software", "choice": 5 } , { "mention": "Remote Utilities - Host", "category": "Software", "choice": 5 } , { "mention": "Електронний запит.exe", "category": "Software", "choice": 5 } , { "mention": "installer.exe", "category": "Software", "choice": 5 } , { "mention": "host_news_mod_mod.msi", "category": "Software", "choice": 5 } , { "mention": "rutserv.exe", "category": "Software", "choice": 5 } , { "mention": "rfusclient.exe", "category": "Software", "choice": 5 } , { "mention": "killself.bat", "category": "Software", "choice": 5 } ] }

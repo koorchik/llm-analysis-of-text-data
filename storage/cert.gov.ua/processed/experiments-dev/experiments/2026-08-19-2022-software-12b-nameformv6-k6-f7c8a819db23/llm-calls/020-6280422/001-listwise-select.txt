@@ -1,0 +1,190 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Mentions:
+1. "SPECTR" (Software)
+     1. MS Excel [aliases: MS Excel, Smokeloader, spi.exe]
+     2. AppLocker [aliases: AppLocker]
+     3. HarvesterX [aliases: HarvesterX]
+     4. Opera Browser [aliases: Opera Browser]
+     5. ChakraCore [aliases: ChakraCore]
+     6. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     7. NEW ENTITY
+2. "FIRMACHAGENT" (Software)
+     1. Mozilla Firefox [aliases: Mozilla Firefox]
+     2. Foxmail [aliases: Foxmail]
+     3. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     4. Misha [aliases: Misha]
+     5. TRYxaEbX [aliases: TRYxaEbX]
+     6. Postbox Credential [aliases: Postbox Credential]
+     7. NEW ENTITY
+3. "IDCLIPNET_x86.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. shellcode.x86 (Cobalt Strike Beacon) [aliases: shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin]
+     4. rfusclient.exe [aliases: rfusclient.exe]
+     5. Internet Explorer [aliases: Internet Explorer]
+     6. wscript.exe [aliases: wscript.exe]
+     7. NEW ENTITY
+4. "chrome_updater.dll" (Software)
+     1. Google Chrome [aliases: Google Chrome]
+     2. vaultcli.dll [aliases: vaultcli.dll]
+     3. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     4. Chromium Browser [aliases: Chromium Browser]
+     5. CCleaner.exe [aliases: CCleaner.exe]
+     6. CCleaner.zip [aliases: CCleaner.zip]
+     7. NEW ENTITY
+5. "Browser.dll" (Software)
+     1. Brave Browser [aliases: Brave Browser]
+     2. Chromium Browser [aliases: Chromium Browser]
+     3. Opera Browser [aliases: Opera Browser]
+     4. Iridium Browser [aliases: Iridium Browser]
+     5. Torch Browser [aliases: Torch Browser]
+     6. Sputnik Browser [aliases: Sputnik Browser]
+     7. NEW ENTITY
+6. "Files.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. FileZilla [aliases: FileZilla]
+     4. powershell.exe [aliases: powershell.exe, PowerShell (powershell.exe), PowerShell]
+     5. Double Kill [aliases: Double Kill]
+     6. rfusclient.exe [aliases: rfusclient.exe]
+     7. NEW ENTITY
+7. "Screen.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. wscript.exe [aliases: wscript.exe]
+     4. scandoc.exe [aliases: scandoc.exe]
+     5. powershell.exe [aliases: powershell.exe, PowerShell (powershell.exe), PowerShell]
+     6. Postbox Credential [aliases: Postbox Credential]
+     7. NEW ENTITY
+8. "Social.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. powershell.exe [aliases: powershell.exe, PowerShell (powershell.exe), PowerShell]
+     4. MS Excel [aliases: MS Excel, Smokeloader, spi.exe]
+     5. Double Kill [aliases: Double Kill]
+     6. wscript.exe [aliases: wscript.exe]
+     7. NEW ENTITY
+9. "USB.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. powershell.exe [aliases: powershell.exe, PowerShell (powershell.exe), PowerShell]
+     4. wsuscr.exe [aliases: wsuscr.exe]
+     5. Double Kill [aliases: Double Kill]
+     6. b.exe [aliases: b.exe]
+     7. NEW ENTITY
+10. "JavaScript" (Software)
+     1. VBScript [aliases: VBScript]
+     2. wscript.exe [aliases: wscript.exe]
+     3. AutoIt [aliases: AutoIt]
+     4. WinSCP [aliases: WinSCP]
+     5. CCleaner.zip [aliases: CCleaner.zip]
+     6. Brave Browser [aliases: Brave Browser]
+     7. NEW ENTITY
+11. "Software Restriction Policies (SRP)" (Software)
+     1. SRP [aliases: SRP]
+     2. Remote Utilities [aliases: Remote Utilities, RemoteUtilities]
+     3. Remote Utilities - Host [aliases: Remote Utilities - Host]
+     4. Cobalt Strike Beacon [aliases: Cobalt Strike Beacon]
+     5. Microsoft Office Services and Web Apps [aliases: Microsoft Office Services and Web Apps]
+     6. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     7. NEW ENTITY
+
+=== RESPONSE (50.6s, in 2181 / out 4010 tok, stop) ===
+{
+ "choices": [
+  {
+   "mention": "SPECTR",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "FIRMACHAGENT",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "IDCLIPNET_x86.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "chrome_updater.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "Browser.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "Files.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "Screen.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "Social.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "USB.dll",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "JavaScript",
+   "category": "Software",
+   "choice": 7
+  },
+  {
+   "mention": "Software Restriction Policies (SRP)",
+   "category": "Software",
+   "choice": 1
+  }
+ ]
+}

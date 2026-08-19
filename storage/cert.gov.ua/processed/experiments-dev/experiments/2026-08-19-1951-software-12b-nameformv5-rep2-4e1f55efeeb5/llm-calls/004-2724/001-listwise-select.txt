@@ -1,0 +1,309 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Microsoft випустила оновлення, які усувають велику кількість вразливостей." — evidence: <p>Microsoft випустила оновлення, які усувають велику кількість вразливостей, серед яких присутні вразливості нульового дня (zero-day vulnerabilities), які вже експлуатуються хакерськими угрупуваннями.</p><p><a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</
+Mentions:
+1. "Internet Explorer" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. MS Office [aliases: MS Office, Microsoft Office]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. NEW ENTITY
+2. "Microsoft Edge" (Software)
+     1. Microsoft Windows [aliases: Microsoft Windows]
+     2. MS Office [aliases: MS Office, Microsoft Office]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     5. NEW ENTITY
+3. "Microsoft Office Services and Web Apps" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office]
+     2. Microsoft Office 2010 [aliases: Microsoft Office 2010, Office 2010]
+     3. Microsoft Office 2007 [aliases: Microsoft Office 2007, Office 2007]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013, Office 2013]
+     5. NEW ENTITY
+4. "ChakraCore" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office]
+     2. MS Word [aliases: MS Word, Microsoft Word]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. Microsoft Office 2007 [aliases: Microsoft Office 2007, Office 2007]
+     5. NEW ENTITY
+5. "Adobe Flash Player" (Software)
+     1. Smokeloader [aliases: Smokeloader]
+     2. MS Excel [aliases: MS Excel]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. MS Office [aliases: MS Office, Microsoft Office]
+     5. NEW ENTITY
+6. ".NET Framework" (Software)
+     1. MS Word [aliases: MS Word, Microsoft Word]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. Microsoft Office 2007 [aliases: Microsoft Office 2007, Office 2007]
+     4. Microsoft Office 2010 [aliases: Microsoft Office 2010, Office 2010]
+     5. NEW ENTITY
+7. "Microsoft Exchange Server" (Software)
+     1. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     2. Microsoft Windows [aliases: Microsoft Windows]
+     3. Windows Server 2008 [aliases: Windows Server 2008]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+8. "Windows Host Compute Service Shim" (Software)
+     1. Windows Server 2012 [aliases: Windows Server 2012]
+     2. Windows Server 2008 [aliases: Windows Server 2008]
+     3. Microsoft Windows [aliases: Microsoft Windows]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+9. "VBScript" (Software)
+     1. MS PowerPoint [aliases: MS PowerPoint]
+     2. MS Office [aliases: MS Office, Microsoft Office]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+10. "Win32k" (Software)
+     1. Windows 7 [aliases: Windows 7]
+     2. Windows Vista [aliases: Windows Vista]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. NEW ENTITY
+11. "CVE-2018-8174" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+12. "Double Kill" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office, Microsoft Office]
+     3. Microsoft Office 2007 [aliases: Microsoft Office 2007, Office 2007]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. NEW ENTITY
+13. "CVE-2018-8120" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Microsoft Office 2010 [aliases: Microsoft Office 2010, Office 2010]
+     5. NEW ENTITY
+14. "CVE-2018-0854" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+15. "CVE-2018-0958" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+16. "CVE-2018-8124" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+17. "CVE-2018-8127" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+18. "CVE-2018-8129" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+19. "CVE-2018-8132" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. CVE-2017-0199 [aliases: CVE-2017-0199]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013, Office 2013]
+     5. NEW ENTITY
+20. "CVE-2018-8134" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013, Office 2013]
+     5. NEW ENTITY
+21. "CVE-2018-8136" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Microsoft Office 2013 [aliases: Microsoft Office 2013, Office 2013]
+     5. NEW ENTITY
+22. "CVE-2018-8141" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+23. "CVE-2018-8170" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+24. "CVE-2018-8897" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+
+=== RESPONSE (55.7s, in 4114 / out 4399 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "Internet Explorer",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Microsoft Edge",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Microsoft Office Services and Web Apps",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "ChakraCore",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Adobe Flash Player",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": ".NET Framework",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Microsoft Exchange Server",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Windows Host Compute Service Shim",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "VBScript",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Win32k",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8174",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Double Kill",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8120",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-0854",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-0958",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8124",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8127",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8129",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8132",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8134",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8136",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8141",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8170",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CVE-2018-8897",
+      "category": "Software",
+      "choice": 5
+    }
+  ]
+}

@@ -311,6 +311,25 @@ describe('ListwiseMintCandidateDecision', () => {
     assert.ok(decisions.every((decision) => decision.kind === 'mint'));
   });
 
+  it('accepts a mention echoed back with the quotes the prompt showed it in', async () => {
+    const llm = fakeLlm(['{"choices":[{"mention":"\\"shellcode.x64.bin\\"","category":"Software","choice":1}]}']);
+    const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
+    const [decision] = await strategy.decide([
+      request('shellcode.x64.bin', [candidate('shellcode.x64 (Cobalt Strike Beacon)', 0.9)]),
+    ]);
+    assert.equal(decision.target, 'shellcode.x64 (Cobalt Strike Beacon)');
+  });
+
+  it('still refuses a quoted mention-only match when the surface is ambiguous', async () => {
+    const llm = fakeLlm(['{"choices":[{"mention":"\\"atera\\"","choice":1}]}']);
+    const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });
+    const decisions = await strategy.decide([
+      request('atera', [candidate('Atera Networks', 0.9)], { category: 'Organization' }),
+      request('atera', [candidate('AteraAgent', 0.9)], { category: 'Software' }),
+    ]);
+    assert.ok(decisions.every((decision) => decision.kind === 'mint'));
+  });
+
   it('makes exactly one call per document, not per mention', async () => {
     const llm = fakeLlm(['{"choices":[]}']);
     const strategy = new ListwiseMintCandidateDecision({ llmClient: llm.client });

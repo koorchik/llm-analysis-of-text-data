@@ -200,22 +200,31 @@ function decisionForOption(option: number, shown: string[]): Decision {
   };
 }
 
-const keyOf = (category: string, mention: string) =>
-  `${category.trim().toLowerCase()}|${mention.trim().toLowerCase()}`;
+/**
+ * The prompt renders each mention in quotes (`1. "RemcosLoader" (Software)`), and a judge that reads
+ * carefully echoes it back the way it was shown — `"mention": "\"RemcosLoader\""`. Keying on the raw
+ * string dropped those verdicts and minted instead, so a *more* literal judge scored worse: measured
+ * on `gemma4:26b-16k`, which lost both `shellcode.x*.bin` merges this way while having answered them
+ * correctly. Fold the wrapping quotes away before keying.
+ */
+const fold = (value: string) =>
+  value
+    .trim()
+    .replace(/^["'`«»“”„]+|["'`«»“”„]+$/g, '')
+    .trim()
+    .toLowerCase();
+
+const keyOf = (category: string, mention: string) => `${fold(category)}|${fold(mention)}`;
 
 function unambiguousByMention(
   byKey: Map<string, Choice>,
   askable: Array<{ request: DecisionRequest }>,
   mention: string
 ): Choice | undefined {
-  const folded = mention.trim().toLowerCase();
-  const sameSurface = askable.filter(
-    (entry) => entry.request.mention.trim().toLowerCase() === folded
-  );
+  const folded = fold(mention);
+  const sameSurface = askable.filter((entry) => fold(entry.request.mention) === folded);
   if (sameSurface.length !== 1) return undefined;
 
-  const matches = [...byKey.values()].filter(
-    (choice) => choice.mention.trim().toLowerCase() === folded
-  );
+  const matches = [...byKey.values()].filter((choice) => fold(choice.mention) === folded);
   return matches.length === 1 ? matches[0] : undefined;
 }

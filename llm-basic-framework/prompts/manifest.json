@@ -231,5 +231,32 @@
   "sha256": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16",
   "variables": [],
   "bytes": 632
+ },
+ "listwise-select-nameform-v4": {
+  "file": "prompts/listwise-select-nameform-v4.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-19 judge-size study: baseline text plus explicit written-form identity rules (vendor prefix, punctuation, bracketed descriptor, extension/platform suffix, generic type word, acronym, transliteration/translation) and the matching non-identity rules (version/edition, part-of, artifact-vs-program, different base name).",
+  "sha256": "afa615d01fee3642f7f8f652c9960bd3dd4b0b5db39d1bff5572c9ea4eb9435b",
+  "variables": [],
+  "bytes": 2391
+ },
+ "listwise-select-nameform-v5": {
+  "file": "prompts/listwise-select-nameform-v5.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-19: v4 plus identifier precedence — a structured identifier paired with a descriptive label carries the identity, the bare label is a broader entity. Fixes HackerGroup, regresses Software (x86/x64 confusion).",
+  "sha256": "f64a2ea1cd12891590ea7c95e394d3266566d0dd49fd1b55302ab5d9c12be68c",
+  "variables": [],
+  "bytes": 2699
+ },
+ "listwise-select-nameform-v6": {
+  "file": "prompts/listwise-select-nameform-v6.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-19: v5 plus exact-identifier matching when options differ only by a code, number, or few characters. Best local arm: pairwise F1 1.000 on Software and HackerGroup dev probes and 1.000 on the Country test probe at k=6, with gemma4:12b-16k.",
+  "sha256": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
+  "variables": [],
+  "bytes": 2950
  }
 }

@@ -1,0 +1,19 @@
+{
+  "runId": "country-31b-fx-base-2dc8e5ee991d",
+  "seq": 1,
+  "timestamp": "2026-08-19T20:21:42.521Z",
+  "operator": "listwise-select",
+  "docId": 3761023,
+  "provider": "ollama",
+  "model": "gemma4:31b-16k",
+  "sampling": {},
+  "instructions": "You are an entity-resolution judge for an incremental entity registry.\n\nFor each mention below you are given a numbered list of options. Exactly one option is always \"NEW ENTITY\" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.\n\nOnly choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose \"NEW ENTITY\" because duplicates are repairable later and wrong merges are not.\n\nSource context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.\n\nDo not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.\n\nOutput a single raw JSON object, no markdown fences, no commentary:\n{ \"choices\": [ { \"mention\": \"<mention>\", \"category\": \"<category>\", \"choice\": <option number> } ] }\n",
+  "text": "Source: \"Активність групи UAC-0114 (Winter Vivern) у відношенні державних органів України та Польщі (CERT-UA#5909)\" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA виявлено вебсторінку, що імітує офіційний вебресурс Міністерства закордонних справ України, на якій пропонується завантажити програмне забезпечення для \"виявлення заражених комп'ютерів\".&nbsp;</p><p>У разі переходу за посиланням на ЕОМ буде завантажено BAT-файл \"Protector.bat\", відкриття якого призведе до завантаження та запуску на комп'ютері PowerShell-скриптів, один з яких забезпечить рекурсивний пошук файлів з розширеннями: .edb, .ems, .eme, .emz, .key, .pem, .ovpn, .b\nMentions:\n1. \"Польща\" (Country)\n     1. Росія [aliases: Росія, Russian Federation, Російська Федерація, Russia]\n     2. Ukraine [aliases: Ukraine, Україна]\n     3. China [aliases: China]\n     4. США [aliases: США, USA]\n     5. NEW ENTITY",
+  "response": "{ \"choices\": [ { \"mention\": \"Польща\", \"category\": \"Country\", \"choice\": 5 } ] }",
+  "usage": {
+    "inputTokens": 570,
+    "outputTokens": 117
+  },
+  "latencyMs": 24354,
+  "finishReason": "stop"
+}

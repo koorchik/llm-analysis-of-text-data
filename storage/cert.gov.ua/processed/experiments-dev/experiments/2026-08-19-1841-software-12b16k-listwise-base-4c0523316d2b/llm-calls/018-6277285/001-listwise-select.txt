@@ -1,0 +1,101 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)" — evidence: <p class="ql-align-justify"><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 22.01.2024 виявлено факти масового розповсюдження електронних листів, начебто, від імені Держспецзв'язку та ДСНС України, що містять RAR-архів або посилання на Bitbucket та присвячені "видаленню вірусу" і "евакуації", відовідно.</p><p>У випадку відкриття будь-якого з файлів, в т.ч., завантажених зі згаданого вебсервісу ("Електронний план евакуації.rar", "plan_dsns.gov.ua.rar", "CCleaner.rar"), в кінцевому випадку буде виконано MSI-інсталятор "inst
+Mentions:
+1. "install.msi" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. host_news_mod_mod.msi [aliases: host_news_mod_mod.msi]
+     3. powershell.exe [aliases: powershell.exe, PowerShell (powershell.exe), PowerShell]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+2. "CCleaner.zip" (Software)
+     1. UkrScanner.rar [aliases: UkrScanner.rar]
+     2. loader.exe [aliases: loader.exe]
+     3. installer.exe [aliases: installer.exe]
+     4. UkrScanner.exe (SFX) [aliases: UkrScanner.exe (SFX)]
+     5. NEW ENTITY
+3. "CCleaner.exe" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. loader.exe [aliases: loader.exe]
+     3. b.exe [aliases: b.exe]
+     4. cmd.exe [aliases: cmd.exe]
+     5. NEW ENTITY
+4. "CCleaner.rar" (Software)
+     1. UkrScanner.rar [aliases: UkrScanner.rar]
+     2. installer.exe [aliases: installer.exe]
+     3. loader.exe [aliases: loader.exe]
+     4. CocCoc Browser [aliases: CocCoc Browser]
+     5. NEW ENTITY
+5. "Електронний план евакуації.rar" (Software)
+     1. Електронний запит.exe [aliases: Електронний запит.exe]
+     2. UkrScanner.rar [aliases: UkrScanner.rar]
+     3. Інформація щодо наявності вакансій та їх укомплектування.xls [aliases: Інформація щодо наявності вакансій та їх укомплектування.xls]
+     4. Гуманітарна катастрофа України з 24 лютого 2022 року.xls [aliases: Гуманітарна катастрофа України з 24 лютого 2022 року.xls]
+     5. NEW ENTITY
+6. "Електронний план евакуації.exe" (Software)
+     1. Електронний запит.exe [aliases: Електронний запит.exe]
+     2. b.exe [aliases: b.exe]
+     3. MCMDiction.exe [aliases: MCMDiction.exe]
+     4. cmd.exe [aliases: cmd.exe]
+     5. NEW ENTITY
+7. "plan_dsns.gov.ua.rar" (Software)
+     1. UkrScanner.rar [aliases: UkrScanner.rar]
+     2. Amigo Browser [aliases: Amigo Browser]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     5. NEW ENTITY
+
+=== RESPONSE (21.6s, in 1202 / out 1626 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "install.msi",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CCleaner.zip",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CCleaner.exe",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CCleaner.rar",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Електронний план евакуації.rar",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Електронний план евакуації.exe",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "plan_dsns.gov.ua.rar",
+      "category": "Software",
+      "choice": 5
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+=== REQUEST (ollama gemma4:31b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Microsoft випустила оновлення, які усувають велику кількість вразливостей." — evidence: <p>Microsoft випустила оновлення, які усувають велику кількість вразливостей, серед яких присутні вразливості нульового дня (zero-day vulnerabilities), які вже експлуатуються хакерськими угрупуваннями.</p><p><a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</
+Mentions:
+1. "Internet Explorer" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. NEW ENTITY
+2. "Microsoft Edge" (Software)
+     1. Microsoft Windows [aliases: Microsoft Windows]
+     2. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     5. NEW ENTITY
+3. "Microsoft Office Services and Web Apps" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     2. Microsoft Windows [aliases: Microsoft Windows]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. NEW ENTITY
+4. "ChakraCore" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     2. MS Word [aliases: MS Word, Microsoft Word]
+     3. ckZ89.ExE [aliases: ckZ89.ExE]
+     4. major.exe [aliases: major.exe]
+     5. NEW ENTITY
+5. "Adobe Flash Player" (Software)
+     1. Smokeloader [aliases: Smokeloader]
+     2. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     3. MS Excel [aliases: MS Excel]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+6. ".NET Framework" (Software)
+     1. MS Word [aliases: MS Word, Microsoft Word]
+     2. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. Petya [aliases: Petya]
+     5. NEW ENTITY
+7. "Microsoft Exchange Server" (Software)
+     1. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     2. Microsoft Windows [aliases: Microsoft Windows]
+     3. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     4. Windows Server 2008 [aliases: Windows Server 2008]
+     5. NEW ENTITY
+8. "Windows Host Compute Service Shim" (Software)
+     1. Windows Server 2012 [aliases: Windows Server 2012]
+     2. Microsoft Windows [aliases: Microsoft Windows]
+     3. Windows Server 2008 [aliases: Windows Server 2008]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+9. "VBScript" (Software)
+     1. MS PowerPoint [aliases: MS PowerPoint]
+     2. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+10. "Win32k" (Software)
+     1. Windows 7 [aliases: Windows 7]
+     2. Windows Vista [aliases: Windows Vista]
+     3. Microsoft Windows [aliases: Microsoft Windows]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+11. "CVE-2018-8174" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+12. "Double Kill" (Software)
+     1. MS Excel [aliases: MS Excel]
+     2. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     3. Microsoft Windows [aliases: Microsoft Windows]
+     4. Windows Server 2008 [aliases: Windows Server 2008]
+     5. NEW ENTITY
+13. "CVE-2018-8120" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+14. "CVE-2018-0854" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+15. "CVE-2018-0958" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+16. "CVE-2018-8124" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+17. "CVE-2018-8127" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+18. "CVE-2018-8129" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+19. "CVE-2018-8132" (Software)
+     1. CVE-2017-11882 [aliases: CVE-2017-11882]
+     2. CVE-2017-0199 [aliases: CVE-2017-0199]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+20. "CVE-2018-8134" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+21. "CVE-2018-8136" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. MS Office [aliases: MS Office, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Microsoft Office, Office 2007, Office 2013, Office 2010, Office 2016]
+     5. NEW ENTITY
+22. "CVE-2018-8141" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. До оплати рах.ф. 74 - 2018р.js [aliases: До оплати рах.ф. 74 - 2018р.js]
+     5. NEW ENTITY
+23. "CVE-2018-8170" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+24. "CVE-2018-8897" (Software)
+     1. CVE-2017-0199 [aliases: CVE-2017-0199]
+     2. CVE-2017-11882 [aliases: CVE-2017-11882]
+     3. Рахунки за выполненные работы от 11.12.2018.js [aliases: Рахунки за выполненные работы от 11.12.2018.js]
+     4. PGMB New Order 18-2077.xlsx [aliases: PGMB New Order 18-2077.xlsx]
+     5. NEW ENTITY
+
+=== ERROR ===
+fetch failed
+TypeError: fetch failed

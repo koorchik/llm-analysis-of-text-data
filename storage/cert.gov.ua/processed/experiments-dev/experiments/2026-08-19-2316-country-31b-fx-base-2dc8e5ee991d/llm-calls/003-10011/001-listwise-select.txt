@@ -1,0 +1,27 @@
+=== REQUEST (ollama gemma4:31b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity, such as a direct alias, standard transliteration, or unambiguous abbreviation. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. If uncertain, choose "NEW ENTITY" because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Mentions:
+1. "Російська Федерація" (Country)
+     1. Росія [aliases: Росія, Russian Federation]
+     2. Індія [aliases: Індія]
+     3. Естонія [aliases: Естонія]
+     4. Ukraine [aliases: Ukraine]
+     5. NEW ENTITY
+
+=== RESPONSE (39.4s, in 588 / out 195 tok, stop) ===
+{"choices": [ { "mention": "Російська Федерація", "category": "Country", "choice": 1 } ] }
