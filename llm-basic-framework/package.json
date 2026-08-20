@@ -16,7 +16,8 @@
     "capture-golden": "ts-node bin/capture-golden.ts",
     "migrate-registry": "ts-node bin/migrate-registry.ts",
     "run-stats": "node bin/run-stats.js",
-    "embed-bench": "node bin/embed-bench.js"
+    "embed-bench": "node bin/embed-bench.js",
+    "blocker-bench": "ts-node bin/blocker-bench.ts"
   },
   "author": "",
   "license": "ISC",

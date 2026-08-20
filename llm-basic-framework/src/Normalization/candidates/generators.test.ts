@@ -4,6 +4,7 @@ import type { Candidate, CandidateGenerator, CandidateQuery, RegistrySnapshot, S
 import { Bm25Generator } from './Bm25Generator';
 import { resolveGenerator } from './index';
 import { ExactMatchGenerator } from './ExactMatchGenerator';
+import { RoundRobinFusionGenerator } from './RoundRobinFusionGenerator';
 import { RrfFusionGenerator } from './RrfFusionGenerator';
 import { StringSimilarityGenerator } from './StringSimilarityGenerator';
 import { TfidfNgramGenerator } from './TfidfNgramGenerator';
@@ -330,4 +331,61 @@ test('union: the SKEIN v2 blocker composes all five channels behind one id', () 
 
 test('union without an embeddings client is fatal, never a silent downgrade', () => {
   assert.throws(() => resolveGenerator('union', {}), /EmbeddingsClient/);
+});
+
+// --- RoundRobinFusionGenerator: interleaving instead of consensus -----------------------------------
+
+test('round-robin gives every child its rank-1 slot, so a single-channel match reaches the judge', async () => {
+  // The contract that fixes Poland/Польща: the dense channel ranks it first, the lexical channels
+  // cannot see a Latin/Cyrillic pair at all and bury it below every distractor. Under RRF the
+  // uninformed majority decides the order (measured: recall@4 74.4% vs 85.9% for the dense channel
+  // alone, `npm run blocker-bench`); interleaving reserves rank 1 of each channel instead.
+  const blind = (id: string) =>
+    new StubGenerator(id, [
+      ...['noise1', 'noise2', 'noise3', 'noise4', 'noise5'].map((canonical) => ({ canonical, sim: 0.3 })),
+      { canonical: 'truth', sim: 0 },
+    ]);
+  const rr = new RoundRobinFusionGenerator({
+    children: [
+      blind('lexical-a'),
+      blind('lexical-b'),
+      new StubGenerator('dense', [
+        { canonical: 'truth', sim: 0.95 },
+        { canonical: 'noise1', sim: 0.6 },
+      ]),
+    ],
+  });
+  await rr.prepare(snapshotOf({ C: [] }));
+
+  // Three children, so every child's best pick is inside the first three slots, whatever the rest
+  // of the field looks like.
+  const found = await rr.candidates(query({ minSim: 0, k: 3 }));
+  assert.deepEqual(found.map((candidate) => candidate.canonical), ['noise1', 'truth', 'noise2']);
+});
+
+test('round-robin de-duplicates across children and keeps the first placement', async () => {
+  const rr = new RoundRobinFusionGenerator({
+    children: [
+      new StubGenerator('a', [{ canonical: 'x', sim: 0.5 }, { canonical: 'y', sim: 0.4 }]),
+      new StubGenerator('b', [{ canonical: 'x', sim: 0.9 }, { canonical: 'z', sim: 0.4 }]),
+    ],
+  });
+  await rr.prepare(snapshotOf({ C: [] }));
+  const found = await rr.candidates(query({ minSim: 0, k: 10 }));
+  assert.deepEqual(found.map((c) => c.canonical), ['x', 'y', 'z']);
+  assert.equal(found[0].sim, 0.9, 'sim is the best child similarity, as in rrf');
+  assert.equal(found[0].channel, 'rr:a+b', 'every contributing channel recorded');
+});
+
+test('round-robin applies the caller minSim once, at the end', async () => {
+  const rr = new RoundRobinFusionGenerator({
+    children: [new StubGenerator('a', [{ canonical: 'weak', sim: 0.2 }])],
+  });
+  await rr.prepare(snapshotOf({ C: [] }));
+  assert.deepEqual(await rr.candidates(query({ minSim: 0.5 })), []);
+  assert.equal((await rr.candidates(query({ minSim: 0.1 }))).length, 1);
+});
+
+test('union-rr without an embeddings client is fatal, never a silent downgrade', () => {
+  assert.throws(() => resolveGenerator('union-rr', {}), /EmbeddingsClient/);
 });

@@ -378,9 +378,37 @@ alone keeps the arm the gate pins. An unknown id is **fatal**, never a silent fa
 | `tfidf-ngram` | `tfidf-ngram` | Char-3gram TF-IDF cosine, IDF over the live registry |
 | `bm25` | `bm25` | Word tokens, so it fuses with the char-level channels rather than duplicating them |
 | `embedding` | `embedding` | Dense cosine over `EMBEDDINGS_MODEL`. Brute force, **no ANN index** |
+| `union` | `union:*` | The SKEIN v2 deck's blocker: all five channels, RRF-fused. What the 2026-08-08 four-arm study and both committed baselines ran |
+| `union-rr` | `union-rr:*` | The same five channels **interleaved** instead of fused. Recommended since 2026-08-20 |
 
 `rrf` is deliberately absent: it takes child generators rather than plain options, so it cannot be
 built from an id alone. That arrives with M7's config loader.
+
+**Prefer `union-rr` over `union`.** RRF ranks by how many channels tolerate a candidate, which is the
+wrong prior when the channels have disjoint competence: a Latin/Cyrillic pair is invisible to edit
+distance, 3-grams and BM25, all of which still cast a rank vote and outweigh the one channel that
+recognises it. Measured on the full gold pool, RRF costs 11 points of recall against its own dense
+child. `union-rr` gives every channel's rank-1 a guaranteed slot instead. `union` stays registered and
+unchanged so the published arms keep resolving to the blocker they ran.
+See `docs/BLOCKER-FUSION-2026-08-20.md`.
+
+### Measuring a blocker — `npm run blocker-bench`
+
+Recall@k over the **full gold pool** (1,400 surfaces, 270 queries, 8 categories), no LLM calls, and
+embeddings served from the shared cache. Every gold surface becomes its own registry entry — nothing
+pre-merged, as when the sibling was minted a few documents earlier — and a hit means a same-cluster
+sibling made the top-k. `--k 4,10` reports the judge's window (`LISTWISE_K`) and the retrieval width
+(`CANDIDATE_K`) side by side.
+
+```bash
+npm run blocker-bench -- --generators embedding,union,union-rr --k 4,10
+#   union      recall@4 74.4%   recall@10 82.6%
+#   embedding  recall@4 85.9%   recall@10 90.0%
+#   union-rr   recall@4 85.6%   recall@10 90.7%
+```
+
+Recall@k is a blocker metric: it says the right answer was on the ballot, not that the judge picked
+it. Pair it with an end-to-end `evaluate` run before believing a retrieval change helped.
 
 **This is what makes `threshold` an embedding pole.** `ThresholdDecision` reads
 `candidates[0].sim` and nothing else — it has no idea what produced it. The plan's "embedding cosine

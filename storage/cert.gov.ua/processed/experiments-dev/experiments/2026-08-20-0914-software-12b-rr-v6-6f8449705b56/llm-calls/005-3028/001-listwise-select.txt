@@ -1,0 +1,586 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: <p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+Mentions:
+1. "Agent Tesla" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. MS PowerPoint [aliases: MS PowerPoint]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+2. "RegAsm.exe" (Software)
+     1. spi.exe [aliases: spi.exe]
+     2. ckZ89.ExE [aliases: ckZ89.ExE]
+     3. cmd.exe [aliases: cmd.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+3. "vaultcli.dll" (Software)
+     1. spi.exe [aliases: spi.exe]
+     2. Double Kill [aliases: Double Kill]
+     3. .NET Framework [aliases: .NET Framework]
+     4. VBScript [aliases: VBScript]
+     5. NEW ENTITY
+4. "WinSCP" (Software)
+     1. Microsoft Windows [aliases: Microsoft Windows]
+     2. Win32k [aliases: Win32k]
+     3. VBScript [aliases: VBScript]
+     4. Windows 7 [aliases: Windows 7]
+     5. NEW ENTITY
+5. "Google Chrome" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Double Kill [aliases: Double Kill]
+     3. ChakraCore [aliases: ChakraCore]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+6. "Mozilla Firefox" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Double Kill [aliases: Double Kill]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. MS Office [aliases: MS Office, Microsoft Office]
+     5. NEW ENTITY
+7. "Microsoft Outlook" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office]
+     2. Microsoft Windows [aliases: Microsoft Windows]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. MS Word [aliases: MS Word, Microsoft Word]
+     5. NEW ENTITY
+8. "IceDragon" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. ChakraCore [aliases: ChakraCore]
+     3. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+9. "Yandex Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+10. "Iridium Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+11. "Epic Privacy Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. ChakraCore [aliases: ChakraCore]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+12. "Chromium Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. ChakraCore [aliases: ChakraCore]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+13. "7Star Browser" (Software)
+     1. Windows 7 [aliases: Windows 7]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Vista [aliases: Windows Vista]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+14. "Torch Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows Server 2012 [aliases: Windows Server 2012]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     5. NEW ENTITY
+15. "ChromePlus Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+16. "Kometa Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Vista [aliases: Windows Vista]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+17. "Amigo Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+18. "Brave Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+19. "CentBrowser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+20. "Liebao Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+21. "Elements Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. MS Excel [aliases: MS Excel]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+22. "Vivaldi Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Vista [aliases: Windows Vista]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+23. "Citrio Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows Server 2012 [aliases: Windows Server 2012]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. NEW ENTITY
+24. "360Chrome Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+25. "Uran Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+26. "Chedot Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Internet Explorer [aliases: Internet Explorer]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. NEW ENTITY
+27. "Orbitum Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+28. "Sputnik Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+29. "Comodo Dragon Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Microsoft Equation Editor [aliases: Microsoft Equation Editor]
+     3. Windows Host Compute Service Shim [aliases: Windows Host Compute Service Shim]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+30. "CocCoc Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+31. "QIP Surf Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+32. "Coowon Browser" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Windows 7 [aliases: Windows 7]
+     3. Windows Server 2012 [aliases: Windows Server 2012]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+33. "Opera Browser" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Windows Server 2012 [aliases: Windows Server 2012]
+     3. Microsoft Edge [aliases: Microsoft Edge]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+34. "Thunderbird" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Double Kill [aliases: Double Kill]
+     3. MS Word [aliases: MS Word, Microsoft Word]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+35. "Claws Mail" (Software)
+     1. MS Office [aliases: MS Office, Microsoft Office]
+     2. Windows Vista [aliases: Windows Vista]
+     3. major.exe [aliases: major.exe]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+36. "Postbox Credential" (Software)
+     1. Petya [aliases: Petya]
+     2. Double Kill [aliases: Double Kill]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+37. "Foxmail" (Software)
+     1. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     2. Double Kill [aliases: Double Kill]
+     3. .NET Framework [aliases: .NET Framework]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+38. "Opera Mail" (Software)
+     1. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     2. Petya [aliases: Petya]
+     3. major.exe [aliases: major.exe]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+39. "Pocomail" (Software)
+     1. Petya [aliases: Petya]
+     2. Double Kill [aliases: Double Kill]
+     3. MS PowerPoint [aliases: MS PowerPoint]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+40. "Becky!" (Software)
+     1. Petya [aliases: Petya]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Misha [aliases: Misha]
+     4. Double Kill [aliases: Double Kill]
+     5. NEW ENTITY
+41. "OpenVPN" (Software)
+     1. Microsoft Edge [aliases: Microsoft Edge]
+     2. Petya [aliases: Petya]
+     3. .NET Framework [aliases: .NET Framework]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+42. "FileZilla" (Software)
+     1. Win32k [aliases: Win32k]
+     2. Double Kill [aliases: Double Kill]
+     3. Adobe Flash Player [aliases: Adobe Flash Player]
+     4. Microsoft Office 2007 [aliases: Microsoft Office 2007, Office 2007]
+     5. NEW ENTITY
+43. "Paltalk" (Software)
+     1. Petya [aliases: Petya]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Misha [aliases: Misha]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+44. "jDownloader" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Adobe Flash Player [aliases: Adobe Flash Player]
+     4. Windows Server 2012 [aliases: Windows Server 2012]
+     5. NEW ENTITY
+45. "SmartFTP" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. major.exe [aliases: major.exe]
+     3. Smokeloader [aliases: Smokeloader]
+     4. Adobe Flash Player [aliases: Adobe Flash Player]
+     5. NEW ENTITY
+46. "FTP Commander" (Software)
+     1. cmd.exe [aliases: cmd.exe]
+     2. Smokeloader [aliases: Smokeloader]
+     3. Internet Explorer [aliases: Internet Explorer]
+     4. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     5. NEW ENTITY
+47. "WS_FTP" (Software)
+     1. VBScript [aliases: VBScript]
+     2. .NET Framework [aliases: .NET Framework]
+     3. Microsoft Exchange Server [aliases: Microsoft Exchange Server]
+     4. Windows Vista [aliases: Windows Vista]
+     5. NEW ENTITY
+48. "FTPGetter" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Petya [aliases: Petya]
+     3. .NET Framework [aliases: .NET Framework]
+     4. Smokeloader [aliases: Smokeloader]
+     5. NEW ENTITY
+49. "Trillian" (Software)
+     1. Internet Explorer [aliases: Internet Explorer]
+     2. Misha [aliases: Misha]
+     3. Double Kill [aliases: Double Kill]
+     4. Microsoft Edge [aliases: Microsoft Edge]
+     5. NEW ENTITY
+
+=== RESPONSE (80.8s, in 4553 / out 5548 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "Agent Tesla",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "RegAsm.exe",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "vaultcli.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "WinSCP",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Google Chrome",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Mozilla Firefox",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Microsoft Outlook",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "IceDragon",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Yandex Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Iridium Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Epic Privacy Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Chromium Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "7Star Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Torch Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "ChromePlus Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Kometa Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Amigo Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Brave Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CentBrowser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Liebao Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Elements Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Vivaldi Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Citrio Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "360Chrome Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Uran Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Chedot Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Orbitum Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Sputnik Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Comodo Dragon Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "CocCoc Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "QIP Surf Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Coowon Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Opera Browser",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Thunderbird",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Claws Mail",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Postbox Credential",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Foxmail",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Opera Mail",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Pocomail",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Becky!",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "OpenVPN",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "FileZilla",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Paltalk",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "jDownloader",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "SmartFTP",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "FTP Commander",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "WS_FTP",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "FTPGetter",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Trillian",
+      "category": "Software",
+      "choice": 5
+    }
+  ]
+}

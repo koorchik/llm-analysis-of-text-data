@@ -1,0 +1,113 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)" — evidence: <p><strong>Загальна інформація</strong></p><p><span style="color: rgb(36, 36, 36);">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Кібератака", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву "UkrScanner.rar".</span></p><p><span style="color: rgb(36, 36, 36);">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр
+Mentions:
+1. "CredoMap_v2" (Software)
+     1. VBScript [aliases: VBScript]
+     2. Chedot Browser [aliases: Chedot Browser]
+     3. Postbox Credential [aliases: Postbox Credential]
+     4. Vivaldi Browser [aliases: Vivaldi Browser]
+     5. NEW ENTITY
+2. "UkrScanner.rar" (Software)
+     1. jDownloader [aliases: jDownloader]
+     2. Uran Browser [aliases: Uran Browser]
+     3. 7Star Browser [aliases: 7Star Browser]
+     4. installer.exe [aliases: installer.exe]
+     5. NEW ENTITY
+3. "UkrScanner.exe (SFX)" (Software)
+     1. installer.exe [aliases: installer.exe]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. loader.exe [aliases: loader.exe]
+     4. spi.exe [aliases: spi.exe]
+     5. NEW ENTITY
+4. "scan.exe (CredoMap_v2)" (Software)
+     1. cmd.exe [aliases: cmd.exe]
+     2. RegAsm.exe [aliases: RegAsm.exe]
+     3. b.exe [aliases: b.exe]
+     4. powershell.exe [aliases: powershell.exe]
+     5. NEW ENTITY
+5. "SQLite.Interop.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. spi.exe [aliases: spi.exe]
+     3. CentBrowser [aliases: CentBrowser]
+     4. Internet Explorer [aliases: Internet Explorer]
+     5. NEW ENTITY
+6. "MISP" (Software)
+     1. Misha [aliases: Misha]
+     2. spi.exe [aliases: spi.exe]
+     3. WinSCP [aliases: WinSCP]
+     4. Microsoft Windows [aliases: Microsoft Windows]
+     5. NEW ENTITY
+
+=== RESPONSE (17.4s, in 1393 / out 1224 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "CredoMap_v2",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "UkrScanner.rar",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "UkrScanner.exe (SFX)",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "scan.exe (CredoMap_v2)",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "SQLite.Interop.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "MISP",
+      "category": "Software",
+      "choice": 5
+    }
+  ]
+}

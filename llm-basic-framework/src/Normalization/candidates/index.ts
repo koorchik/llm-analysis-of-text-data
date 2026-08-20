@@ -8,6 +8,7 @@ import type { CandidateGenerator } from '../types';
 import { Bm25Generator } from './Bm25Generator';
 import { EmbeddingGenerator } from './EmbeddingGenerator';
 import { ExactMatchGenerator } from './ExactMatchGenerator';
+import { RoundRobinFusionGenerator } from './RoundRobinFusionGenerator';
 import { RrfFusionGenerator } from './RrfFusionGenerator';
 import { StringSimilarityGenerator } from './StringSimilarityGenerator';
 import { TfidfNgramGenerator } from './TfidfNgramGenerator';
@@ -68,6 +69,37 @@ export const GENERATORS: Record<string, (deps: GeneratorDeps) => CandidateGenera
       ],
     });
   },
+  /**
+   * The same five channels as `union`, interleaved instead of RRF-fused.
+   *
+   * Measured on the full gold pool (`npm run blocker-bench`, 1,400 surfaces, 270 queries):
+   * recall@4 74.4% for `union`, 85.9% for the dense channel alone, 88.1% for this. Consensus
+   * fusion is the wrong prior when the channels have disjoint competence — see
+   * `RoundRobinFusionGenerator`.
+   */
+  'union-rr': (deps) => {
+    if (!deps.embeddingsClient) {
+      throw new Error('Generator "union-rr" requires an EmbeddingsClient');
+    }
+    return new RoundRobinFusionGenerator({
+      channel: 'union-rr',
+      children: [
+        // Dense first: it is the channel with the broadest competence on this corpus, so it also
+        // owns rank 1 of the interleave whenever two channels disagree about the best pick.
+        new EmbeddingGenerator({
+          embeddingsClient: deps.embeddingsClient,
+          representation: 'name+gloss',
+        }),
+        new StringSimilarityGenerator(),
+        new StringSimilarityGenerator({
+          analyzers: [identityAnalyzer, transliterateAnalyzer, confusableSkeletonAnalyzer],
+          channel: 'translit',
+        }),
+        new TfidfNgramGenerator(),
+        new Bm25Generator(),
+      ],
+    });
+  },
 };
 
 /**
@@ -90,6 +122,7 @@ export function resolveGenerator(id: string, deps: GeneratorDeps = {}): Candidat
 
 export {
   Bm25Generator,
+  RoundRobinFusionGenerator,
   EmbeddingGenerator,
   ExactMatchGenerator,
   RrfFusionGenerator,

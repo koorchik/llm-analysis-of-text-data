@@ -89,6 +89,9 @@ unlabelled pairs are invisible to every metric in the table.
 - Country's one remaining miss under k=4 is **retrieval, not judging**: `Польща` sits at rank 5,
   outside the visible list. `LISTWISE_K=6` recovers it (1.000, fewer tokens) but costs Software one
   false merge (1.000 → 0.909), consistent with 2026-08-18's finding that wider lists hurt that loop.
+  **Resolved on 2026-08-20** — the rank-5 placement was the union blocker's RRF fusion burying its own
+  best candidate (`Польща` scored 0.95, highest on the ballot). `CANDIDATE_GENERATOR=union-rr` takes
+  Country to 1.000 at k=4 with no Software cost: see `BLOCKER-FUSION-2026-08-20.md`.
 
 ## 4. Two caveats about the extremes
 
@@ -115,9 +118,9 @@ it simply cannot be measured on this box.
 LLM_MODEL=gemma4:12b-16k                              # 26b scores the same and is ~2.5x slower
 LISTWISE_PROMPT_ID=listwise-select-nameform-v6
 DECISION_STRATEGY=listwise-mint-candidate
-CANDIDATE_GENERATOR=union CANDIDATE_K=10 CANDIDATE_MIN_SIM=0
+CANDIDATE_GENERATOR=union-rr CANDIDATE_K=10 CANDIDATE_MIN_SIM=0    # union-rr since 2026-08-20
 REPAIR=0 LADDER_MIN_EXAMPLES=100000
-LISTWISE_K=4        # 6 for Country
+LISTWISE_K=4        # k=6 was only needed to work around the fusion bug; union-rr makes it unnecessary
 ```
 
 Wall clock per Software arm (22 docs): e2b ~140 s, 12b ~480 s, 26b ~1100 s, 31b ~3000 s.

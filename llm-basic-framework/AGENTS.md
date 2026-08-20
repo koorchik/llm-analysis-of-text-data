@@ -132,8 +132,10 @@ The fast loop for "does this change help category X?" — minutes, not an hour, 
 Every number it produces is **non-reportable** (dev split × single category × subset corpus); it
 exists to rank iterations. Full reference: `docs/RUNNING-EXPERIMENTS.md` §3b; measured results and
 the current best-known knobs per category: `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-19.md` (judge
-`gemma4:12b-16k` + `LISTWISE_PROMPT_ID=listwise-select-nameform-v6`), with the earlier configuration
-study in `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md`.
+`gemma4:12b-16k` + `LISTWISE_PROMPT_ID=listwise-select-nameform-v6` +
+`CANDIDATE_GENERATOR=union-rr`), with the earlier configuration study in
+`docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md` and the blocker-fusion measurement in
+`docs/BLOCKER-FUSION-2026-08-20.md`.
 
 Three ingredients make it fast: `CATEGORIES` drops every other category's mentions at plan-build
 time, a committed doc subset (`gold/subsets/*.txt`) shrinks the corpus, and pre-seeded frozen
@@ -151,7 +153,7 @@ INPUT_DIR=/tmp/subset-dev-software \
   STEPS=streamingNormalizer FLOW=incremental CONDITION=software-<label> CATEGORIES=Software \
   LLM_PROVIDER=ollama LLM_MODEL=gemma4:e2b-16k \
   DECISION_STRATEGY=listwise-mint-candidate \
-  CANDIDATE_GENERATOR=union CANDIDATE_K=10 CANDIDATE_MIN_SIM=0 \
+  CANDIDATE_GENERATOR=union-rr CANDIDATE_K=10 CANDIDATE_MIN_SIM=0 \
   REPAIR=0 LADDER_MIN_EXAMPLES=100000 \
   EMBEDDINGS=1 EMBEDDINGS_PROVIDER=ollama EMBEDDINGS_MODEL=embeddinggemma \
   DECISIONS_LOG=1 npm start

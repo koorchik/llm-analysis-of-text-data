@@ -1,0 +1,168 @@
+=== REQUEST (ollama gemma4:12b-16k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry.
+
+For each mention below you are given a numbered list of options. Exactly one option is always "NEW ENTITY" — choose it when the mention refers to an entity that is not any of the others. Reply with the number of the option you choose.
+
+Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence.
+
+Two names denote the same entity when they name the same specific thing and differ only in written form:
+
+- one carries a vendor, publisher, or organization prefix the other omits ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, or case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor on an otherwise identical name ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix on an otherwise identical name ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word that only states what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name into another language or script.
+
+Two names denote different entities, however related, when:
+
+- their version, edition, year, or numeric identifier differs, or one carries such a marker and the other does not;
+- one is a part, component, or member of the other, or the other is the family, suite, or group it belongs to;
+- one is a file, sample, or artifact and the other is the program, actor, or system that produced or handles it;
+- the base names themselves differ, even if they are similar in spelling, purpose, or context.
+
+When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+Whenever several options are alike except for such an identifier, a number, or a few characters, match those characters exactly and choose that option. Never choose an option whose identifier differs from the mention's, however small the difference.
+
+If the base names match and only the written form differs, choose that option rather than NEW ENTITY. In every other uncertain case choose "NEW ENTITY", because duplicates are repairable later and wrong merges are not.
+
+Source context may be used only when it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Do not let an option's position influence you. The options are ordered by string similarity, which is not evidence of identity.
+
+Output a single raw JSON object, no markdown fences, no commentary:
+{ "choices": [ { "mention": "<mention>", "category": "<category>", "choice": <option number> } ] }
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Mentions:
+1. "SPECTR" (Software)
+     1. SRP [aliases: SRP]
+     2. FTPGetter [aliases: FTPGetter]
+     3. spi.exe [aliases: spi.exe]
+     4. MISP [aliases: MISP]
+     5. NEW ENTITY
+2. "FIRMACHAGENT" (Software)
+     1. Agent Tesla [aliases: Agent Tesla, AgentTesla]
+     2. IceDragon [aliases: IceDragon]
+     3. Foxmail [aliases: Foxmail]
+     4. GammaSteel.NET [aliases: GammaSteel.NET]
+     5. NEW ENTITY
+3. "IDCLIPNET_x86.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. shellcode.x86 (Cobalt Strike Beacon) [aliases: shellcode.x86 (Cobalt Strike Beacon), shellcode.x86.bin]
+     4. .NET Framework [aliases: .NET Framework]
+     5. NEW ENTITY
+4. "chrome_updater.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. Google Chrome [aliases: Google Chrome]
+     3. ChromePlus Browser [aliases: ChromePlus Browser]
+     4. loader.exe [aliases: loader.exe]
+     5. NEW ENTITY
+5. "Browser.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. 360Chrome Browser [aliases: 360Chrome Browser]
+     3. Brave Browser [aliases: Brave Browser]
+     4. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     5. NEW ENTITY
+6. "Files.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. FileZilla [aliases: FileZilla]
+     3. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     4. rfusclient.exe [aliases: rfusclient.exe]
+     5. NEW ENTITY
+7. "Screen.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. wsuscr.exe [aliases: wsuscr.exe]
+     3. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     4. Postbox Credential [aliases: Postbox Credential]
+     5. NEW ENTITY
+8. "Social.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. loader.exe [aliases: loader.exe]
+     4. Foxmail [aliases: Foxmail]
+     5. NEW ENTITY
+9. "USB.dll" (Software)
+     1. vaultcli.dll [aliases: vaultcli.dll]
+     2. SQLite.Interop.dll [aliases: SQLite.Interop.dll]
+     3. wsuscr.exe [aliases: wsuscr.exe]
+     4. rundll32.exe [aliases: rundll32.exe]
+     5. NEW ENTITY
+10. "JavaScript" (Software)
+     1. VBScript [aliases: VBScript]
+     2. Mozilla Firefox [aliases: Mozilla Firefox]
+     3. QuasarRAT [aliases: QuasarRAT]
+     4. wscript.exe [aliases: wscript.exe]
+     5. NEW ENTITY
+11. "Software Restriction Policies (SRP)" (Software)
+     1. SRP [aliases: SRP]
+     2. MCMDiction.exe [aliases: MCMDiction.exe]
+     3. pfSense [aliases: pfSense]
+     4. Remote Utilities [aliases: Remote Utilities, RemoteUtilities]
+     5. NEW ENTITY
+
+=== RESPONSE (26.9s, in 1821 / out 2091 tok, stop) ===
+{
+  "choices": [
+    {
+      "mention": "SPECTR",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "FIRMACHAGENT",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "IDCLIPNET_x86.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "chrome_updater.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Browser.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Files.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Screen.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Social.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "USB.dll",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "JavaScript",
+      "category": "Software",
+      "choice": 5
+    },
+    {
+      "mention": "Software Restriction Policies (SRP)",
+      "category": "Software",
+      "choice": 1
+    }
+  ]
+}
