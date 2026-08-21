@@ -1,12 +1,12 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry, GranularityEdgeKind } from '../EntityRegistry/EntityRegistry';
-import { LadderDiscovery } from '../Ladder/LadderDiscovery';
+import { LadderDiscovery, spreadSample } from '../Ladder/LadderDiscovery';
 import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
 import type { CandidateGenerator, Decision, DecisionRequest, DecisionStrategy } from '../Normalization/types';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
-import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
+import { SchemaRegistry, type CategoryLadder } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import {
   LinkVerdict,
@@ -130,6 +130,13 @@ export class StreamingNormalizer {
   #prompts: PromptProvider;
   #decisionStrategy?: DecisionStrategy;
   #ladderDiscovery?: LadderDiscovery;
+  /** Last ladder version per category, so a catch-up runs once per version rather than per document. */
+  #ladderVersions = new Map<string, number>();
+  /**
+   * How many canonicals a catch-up reviews in one call. Bounded so the ballot cannot grow with the
+   * registry: at 2x-growth re-fires an unbounded pass would eventually send hundreds of mentions.
+   */
+  #ladderCatchUpWidth = Number(process.env.LADDER_CATCHUP_WIDTH ?? 40);
   #repairer?: Params['repairer'];
 
   constructor(params: Params) {
@@ -235,7 +242,14 @@ export class StreamingNormalizer {
     // document touches, before judging — the judge's candidate lists label rungs from it.
     if (this.#ladderDiscovery) {
       for (const category of new Set(plans.map((plan) => plan.category))) {
-        await this.#ladderDiscovery.maybeDiscover(category, docId);
+        const ladder = await this.#ladderDiscovery.maybeDiscover(category, docId);
+        // A ladder that has just appeared (or been re-derived) is the first global view this run has
+        // had of the category. Everything minted before it exists without a level, and duplicates
+        // that no single document could see are visible for the first time — so review the sample.
+        if (ladder && this.#ladderVersions.get(category) !== ladder.version) {
+          this.#ladderVersions.set(category, ladder.version);
+          await this.#ladderCatchUp(category, ladder, docId);
+        }
       }
     }
 
@@ -806,6 +820,140 @@ export class StreamingNormalizer {
         completionTokens: response?.usage.outputTokens,
       });
     }
+  }
+
+
+  /**
+   * Review a category once its ladder appears, reusing the ordinary linking judge.
+   *
+   * The per-document judge only ever sees one report. A ladder landing is the first moment the run
+   * has a category-wide view, and two things are visible in it that no document could show:
+   * duplicates minted far apart in the stream, and the level each entity sits at. This asks the
+   * same graph judge the same question it answers every document, with the registry's own
+   * canonicals as the mentions.
+   *
+   * Three things differ from a document pass, and each is deliberate:
+   *
+   * 1. **A canonical is never offered itself.** Its own name is an exact match, so leaving it in the
+   *    options makes every verdict a no-op.
+   * 2. **A `link` verdict applies as a merge, not a link.** Both sides are canonicals carrying
+   *    aliases, documents, glosses, rungs and edges; `EntityRegistry.applyMerges` is the operation
+   *    that folds those, picking the survivor under `canonicalPolicy`.
+   * 3. **There is no source document**, so the judge works from names, aliases and glosses alone.
+   *    The prompt's rules already forbid treating context as identity evidence, so nothing is lost
+   *    beyond the alias/transliteration evidence a real document sometimes supplies.
+   */
+  async #ladderCatchUp(category: string, ladder: CategoryLadder, docId: number): Promise<void> {
+    if (!this.#decisionStrategy) return;
+
+    const canonicals = Object.keys(this.#entityRegistry.records(category));
+    if (canonicals.length < 2) return;
+    const sample = spreadSample(canonicals, this.#ladderCatchUpWidth);
+
+    const requests: DecisionRequest[] = [];
+    for (const canonical of sample) {
+      const generated = await this.#candidateGenerator.candidates({
+        mention: canonical,
+        category,
+        k: this.#candidateK,
+        minSim: this.#candidateMinSim,
+        docId,
+      });
+      const options = generated.filter((candidate) => candidate.canonical !== canonical);
+      if (options.length === 0) continue;
+      requests.push({
+        mention: canonical,
+        category,
+        docId,
+        docTitle: `registry review after ladder v${ladder.version}`,
+        ladder: renderLadder(category, this.#schemaRegistry),
+        pool: options.map((candidate) => ({
+          canonical: candidate.canonical,
+          surfaces: candidate.surfaces,
+          rung: this.#entityRegistry.rungOf(category, candidate.canonical),
+        })),
+        candidates: options.map((candidate) => ({
+          canonical: candidate.canonical,
+          sim: candidate.sim,
+          surfaces: candidate.surfaces,
+          channel: candidate.channel,
+          rung: this.#entityRegistry.rungOf(category, candidate.canonical),
+        })),
+      });
+    }
+    if (requests.length === 0) return;
+
+    let decisions: Decision[];
+    try {
+      decisions = await this.#decisionStrategy.decide(requests);
+    } catch (error) {
+      console.error(`LADDER CATCH-UP failed for ${category}:`, error);
+      return;
+    }
+    if (decisions.length !== requests.length) return;
+
+    const merges: Array<{ from: string; into: string; evidence?: string | null }> = [];
+    let runged = 0;
+    let edged = 0;
+
+    decisions.forEach((decision, index) => {
+      const from = requests[index].mention;
+
+      if (decision.kind === 'link' && decision.target && decision.target !== from) {
+        merges.push({ from, into: decision.target, evidence: decision.reason });
+        return;
+      }
+
+      const rung = this.#validatedMentionRung(category, (decision.mentionRung as MentionRung) ?? '');
+      if (rung) {
+        this.#entityRegistry.setRung(category, from, rung);
+        runged += 1;
+      }
+
+      if (decision.parentCandidate && decision.parentCandidate !== from) {
+        const parentRung = this.#entityRegistry.rungOf(category, decision.parentCandidate);
+        const kind = this.#edgeKindForParent(category, parentRung) ?? relationEdgeKind(decision.relation);
+        if (kind) {
+          const added = this.#entityRegistry.addGranularityEdge(category, {
+            from,
+            to: decision.parentCandidate,
+            kind,
+            docId,
+            decision: 'judge',
+            evidence: decision.reason ?? null,
+          });
+          if (added) edged += 1;
+        }
+      }
+    });
+
+    let merged = 0;
+    if (merges.length > 0) {
+      const summary = this.#entityRegistry.applyMerges(category, merges);
+      merged = summary.removed.length;
+      for (const merge of merges) {
+        await this.#decisionLog.log({
+          op: 'merge',
+          doc: docId,
+          category,
+          from: merge.from,
+          into: merge.into,
+          by: 'ladder-catch-up',
+          evidence: merge.evidence ?? null,
+        });
+      }
+    }
+
+    await this.#decisionLog.log({
+      op: 'ladder-catch-up',
+      doc: docId,
+      category,
+      version: ladder.version,
+      reviewed: requests.length,
+      merged,
+      runged,
+      edged,
+    });
   }
 
   #validatedMentionRung(category: string, requested: MentionRung | ''): MentionRung {

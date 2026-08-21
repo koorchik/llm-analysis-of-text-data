@@ -1,0 +1,142 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "country",
+            "example": "Ukraine",
+            "disputed": false
+          }
+        ],
+        "placements": [
+          {
+            "surface": "Естонія",
+            "g": 0
+          },
+          {
+            "surface": "Індія",
+            "g": 0
+          },
+          {
+            "surface": "India",
+            "g": 0
+          },
+          {
+            "surface": "США",
+            "g": 0
+          },
+          {
+            "surface": "USA",
+            "g": 0
+          },
+          {
+            "surface": "Росія",
+            "g": 0
+          },
+          {
+            "surface": "Russian Federation",
+            "g": 0
+          },
+          {
+            "surface": "Російська Федерація",
+            "g": 0
+          },
+          {
+            "surface": "Russia",
+            "g": 0
+          },
+          {
+            "surface": "Ukraine",
+            "g": 0
+          },
+          {
+            "surface": "Україна",
+            "g": 0
+          },
+          {
+            "surface": "China",
+            "g": 0
+          },
+          {
+            "surface": "Польща",
+            "g": 0
+          },
+          {
+            "surface": "Tajikistan",
+            "g": 0
+          },
+          {
+            "surface": "Mongolia",
+            "g": 0
+          },
+          {
+            "surface": "Kazakhstan",
+            "g": 0
+          },
+          {
+            "surface": "Kyrgyzstan",
+            "g": 0
+          },
+          {
+            "surface": "Israel",
+            "g": 0
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Continent / Geographic region",
+            "gate": "1",
+            "reason": "Continents and geographical regions belong to a separate category (Continent/Region), not Country."
+          },
+          {
+            "candidate": "Supranational union or bloc",
+            "gate": "1",
+            "reason": "Geopolitical blocs and international organizations belong to a separate category (Organization/Bloc), not Country."
+          },
+          {
+            "candidate": "Short name from formal name (e.g., Russian Federation -> Russia)",
+            "gate": "2",
+            "reason": "Formal names, short names, abbreviations, and transliterations (e.g., USA/США, Russian Federation/Russia) are lexical aliases and name variants, not rungs."
+          }
+        ],
+        "notes": "All supplied examples denote individual sovereign countries across different languages, scripts, and naming styles (formal vs. short forms, abbreviations). There is no intra-category hierarchical coarsening.",
+        "disagreements": [],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    }
+  ]
+}

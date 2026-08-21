@@ -59,15 +59,32 @@
   .chip.widening { color: var(--chip2); border-color: var(--chip2); }
   .chip.disputed { color: var(--chip3); border-color: var(--chip3); }
   .foldtest { color: var(--muted); font-size: 12px; width: 100%; padding-left: 34px; }
-  ul.forest { list-style: none; padding-left: 18px; margin: 4px 0; }
+  ul.forest { list-style: none; padding-left: 18px; margin: 4px 0; border-left: 1px solid var(--line); }
   ul.forest > li { padding: 2px 0; }
   .ent { border-radius: 4px; padding: 1px 4px; }
   .ent.changed { background: var(--hl); }
-  .ent .rungtag { color: var(--muted); font-size: 11px; margin-left: 4px; }
-  /* Dotted = read from the final registry, not from a journal event at this frame. */
-  .ent .rungtag.final { border-bottom: 1px dotted var(--muted); cursor: help; opacity: .75; }
+  /* The level is the first thing on the row and always the same width, so a column of levels can be
+     read down the page. Without that, a g0 and a g1 sibling look identical. */
+  .lvl { display: inline-block; min-width: 30px; font-size: 11px; font-variant-numeric: tabular-nums;
+         color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px;
+         margin-right: 6px; text-align: center; }
+  .lvl.g1 { color: var(--chip1); border-color: var(--chip1); }
+  .lvl.g2 { color: var(--chip2); border-color: var(--chip2); }
+  .lvl.g3 { color: var(--chip3); border-color: var(--chip3); }
+  .lvl.none { opacity: .45; }
+  .lvl.final { border-style: dashed; }
+  /* A child must be FINER than its parent (lower g). Anything else is a broken hierarchy and the
+     page says so rather than drawing it as if it were fine. */
+  .inversion { color: var(--chip3); font-size: 11px; margin-left: 6px; border: 1px solid var(--chip3);
+               border-radius: 10px; padding: 0 6px; }
+  .fold { color: var(--muted); font-size: 11px; margin-left: 6px; }
   .ent .deferred { color: var(--chip2); font-size: 11px; margin-left: 4px; }
-  .aliases { color: var(--muted); font-size: 12px; padding-left: 12px; overflow-wrap: anywhere; }
+  .aliases { padding-left: 36px; margin-top: 1px; }
+  .alias { display: inline-block; font-size: 11px; color: var(--fg); background: var(--hl);
+           border-radius: 10px; padding: 0 7px; margin: 1px 3px 1px 0; opacity: .85; }
+  .relbar { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted);
+            margin: 2px 0 6px; flex-wrap: wrap; }
+  .relbar label { cursor: pointer; }
   .edgekind { font-size: 11px; margin-left: 6px; }
   .edgekind.coarsens-to { color: var(--chip1); }
   .edgekind.part-of { color: var(--chip2); }
@@ -531,6 +548,11 @@ function renderLadder(state) {
   el.innerHTML = html;
 }
 
+/** Which relation kinds the forest currently draws — the fold, made interactive. */
+var visibleRelations = { 'coarsens-to': true, 'part-of': true };
+function relationVisible(kind) { return visibleRelations[kind] !== false; }
+function toggleRelation(kind, on) { visibleRelations[kind] = on; render(); }
+
 function renderForest(state, docId) {
   var el = document.getElementById('forest');
   var bucket = activeCategory ? state.categories[activeCategory] : null;
@@ -563,34 +585,93 @@ function renderForest(state, docId) {
     return entity && entity.aliases.some(function (a) { return a.toLowerCase().indexOf(filter) !== -1; });
   }
 
-  function nodeHtml(name, edge, seen) {
+  // The level of an entity, and whether it came from this document's stream or the final registry.
+  function rungOf(name) {
+    var entity = bucket.entities[name] || {};
+    if (entity.rung) return { g: entity.rung, journal: true };
+    var final = (DATA.registryRungs[activeCategory] || {})[name];
+    return final ? { g: final, journal: false } : { g: null, journal: false };
+  }
+  function rungNumber(g) { var m = /^g(d+)$/.exec(g || ''); return m ? Number(m[1]) : null; }
+
+  /** Surfaces this node would absorb if the visible relations were contracted into it. */
+  function subtreeSize(name, guard) {
+    guard = guard || {};
+    if (guard[name]) return { nodes: 0, surfaces: 0 };
+    guard[name] = true;
+    var nodes = 0;
+    var surfaces = 0;
+    (children[name] || []).forEach(function (edge) {
+      if (!relationVisible(edge.kind)) return;
+      var entity = bucket.entities[edge.from] || { aliases: [edge.from] };
+      nodes += 1;
+      surfaces += entity.aliases.length;
+      var deeper = subtreeSize(edge.from, guard);
+      nodes += deeper.nodes;
+      surfaces += deeper.surfaces;
+    });
+    return { nodes: nodes, surfaces: surfaces };
+  }
+
+  function nodeHtml(name, edge, seen, parentName) {
     var entity = bucket.entities[name] || { aliases: [name] };
     var repeated = seen[name] === true;
     seen[name] = true;
+    var rung = rungOf(name);
     var cls = 'ent' + (touched[name] ? ' changed' : '');
-    var html = '<li><span class="' + cls + '">' + esc(name);
-    // Journal rung when the stream carried one; otherwise the registry's final rung, marked
-    // "final" because it is not attributable to this document — most rungs are bound
-    // retroactively by the ladder and never appear as an event.
-    var journalRung = entity.rung;
-    var finalRung = (DATA.registryRungs[activeCategory] || {})[name];
-    if (journalRung) {
-      html += '<span class="rungtag">[' + esc(journalRung) + ']</span>';
-    } else if (finalRung) {
-      html += '<span class="rungtag final" title="final rung from registry.json — bound ' +
-        'retroactively by the ladder, not journalled per document">[' + esc(finalRung) + ']</span>';
-    }
+
+    var lvlCls = 'lvl' + (rung.g ? ' ' + rung.g : ' none') + (rung.g && !rung.journal ? ' final' : '');
+    var lvlTitle = rung.g
+      ? (rung.journal ? 'level from this run's stream' : 'level from registry.json — bound by the ladder, not journalled per document')
+      : 'no level assigned';
+    var html = '<li><span class="' + cls + '">' +
+      '<span class="' + lvlCls + '" title="' + lvlTitle + '">' + esc(rung.g || '–') + '</span>' + esc(name);
     if (entity.deferred) html += '<span class="deferred">deferred</span>';
     html += '</span>';
+
     if (edge) html += '<span class="edgekind ' + esc(edge.kind) + '">' + esc(edge.kind) +
       (edge.by ? ' · ' + esc(edge.by) : '') + '</span>';
+
+    // A child must be finer than its parent — a lower g. Equal or coarser is a broken hierarchy,
+    // and saying so is more useful than drawing it as though it were fine.
+    if (parentName) {
+      var childG = rungNumber(rung.g);
+      var parentG = rungNumber(rungOf(parentName).g);
+      if (childG !== null && parentG !== null && childG >= parentG) {
+        html += '<span class="inversion" title="a child must sit at a finer level than its parent">' +
+          'level inversion: ' + esc(rung.g) + ' under ' + esc(rungOf(parentName).g) + '</span>';
+      }
+    }
+
+    var fold = subtreeSize(name);
+    if (fold.nodes > 0) {
+      html += '<span class="fold" title="folding the visible relations into this node absorbs ' +
+        fold.nodes + ' entities and ' + fold.surfaces + ' surfaces">⤵ ' + fold.nodes + ' entities · ' +
+        (fold.surfaces + entity.aliases.length) + ' surfaces</span>';
+    }
+
     var extraAliases = entity.aliases.filter(function (a) { return a !== name; });
-    if (extraAliases.length > 0) html += '<div class="aliases">' + esc(extraAliases.join(' · ')) + '</div>';
+    if (extraAliases.length > 0) {
+      html += '<div class="aliases">' + extraAliases.map(function (a) {
+        return '<span class="alias">' + esc(a) + '</span>';
+      }).join('') + '</div>';
+    }
     if (repeated) { html += ' <span class="repeat">↻ repeated</span></li>'; return html; }
-    var kids = (children[name] || []).slice().sort(function (a, b) { return a.from < b.from ? -1 : 1; });
+
+    // Coarsest children first, then finest, then by name: the level column reads top-to-bottom
+    // instead of interleaving g1 and g0 siblings in alphabetical order.
+    var kids = (children[name] || []).filter(function (kid) { return relationVisible(kid.kind); });
+    kids = kids.slice().sort(function (a, b) {
+      var ga = rungNumber(rungOf(a.from).g);
+      var gb = rungNumber(rungOf(b.from).g);
+      if (ga === null) ga = -1;
+      if (gb === null) gb = -1;
+      if (ga !== gb) return gb - ga;
+      return a.from < b.from ? -1 : 1;
+    });
     if (kids.length > 0) {
       html += '<ul class="forest">' + kids.map(function (kid) {
-        return nodeHtml(kid.from, kid, seen);
+        return nodeHtml(kid.from, kid, seen, name);
       }).join('') + '</ul>';
     }
     return html + '</li>';
@@ -602,10 +683,16 @@ function renderForest(state, docId) {
   var singles = names.filter(function (name) { return !inHierarchy[name] && bucket.entities[name].aliases.length <= 1; });
 
   var seen = {};
-  var html = '';
+  var html = '<div class="relbar">fold along:' +
+    ['coarsens-to', 'part-of'].map(function (kind) {
+      return '<label><input type="checkbox" ' + (relationVisible(kind) ? 'checked' : '') +
+        ' onchange="toggleRelation('' + kind + '', this.checked)"> ' +
+        '<span class="edgekind ' + kind + '">' + kind + '</span></label>';
+    }).join('') +
+    '<span>unticking a relation hides those edges and recomputes what each node absorbs</span></div>';
   var shownRoots = roots.filter(matches);
   if (shownRoots.length > 0) {
-    html += '<ul class="forest">' + shownRoots.map(function (root) { return nodeHtml(root, null, seen); }).join('') + '</ul>';
+    html += '<ul class="forest">' + shownRoots.map(function (root) { return nodeHtml(root, null, seen, null); }).join('') + '</ul>';
   }
   if (bucket.renames.length > 0) {
     html += '<h2>Renames</h2><div class="renames">' + bucket.renames.map(function (edge) {

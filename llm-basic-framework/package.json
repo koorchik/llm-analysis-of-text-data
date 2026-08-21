@@ -18,7 +18,8 @@
     "run-stats": "node bin/run-stats.js",
     "embed-bench": "node bin/embed-bench.js",
     "blocker-bench": "ts-node bin/blocker-bench.ts",
-    "fold": "ts-node bin/fold-registry.ts"
+    "fold": "ts-node bin/fold-registry.ts",
+    "regen-view": "ts-node bin/regen-view.ts"
   },
   "author": "",
   "license": "ISC",

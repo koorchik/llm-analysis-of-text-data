@@ -1,4 +1,4 @@
-import { LadderDiscovery, buildConsensus, validateRun } from './LadderDiscovery';
+import { LadderDiscovery, spreadSample, buildConsensus, validateRun } from './LadderDiscovery';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
@@ -312,4 +312,24 @@ test('buildConsensus keeps g0 bare and stamps edgeKind per non-g0 rung', () => {
   assert.equal(ladder[1].edgeKind, 'part-of', 'base run widening → part-of');
   assert.equal(ladder[1].disputed, true);
   assert.ok(disagreements.length > 0);
+});
+
+test('spreadSample returns everything when the pool fits the window', () => {
+  assert.deepEqual(spreadSample([1, 2, 3], 5), [1, 2, 3]);
+});
+
+test('spreadSample spreads across the pool instead of taking the front', () => {
+  const pool = Array.from({ length: 100 }, (_, index) => index);
+  const sample = spreadSample(pool, 10);
+  assert.equal(sample.length, 10);
+  assert.equal(sample[0], 0);
+  // The tail of the pool is represented — head-N sampling stops at 9 and can never place an entity
+  // minted later in the stream.
+  assert.ok(sample[sample.length - 1] >= 90);
+  assert.deepEqual(sample, [...new Set(sample)], 'no duplicates');
+});
+
+test('spreadSample is deterministic, because the sample is part of what the runId describes', () => {
+  const pool = Array.from({ length: 37 }, (_, index) => `s${index}`);
+  assert.deepEqual(spreadSample(pool, 12), spreadSample(pool, 12));
 });

@@ -1,0 +1,198 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You derive a granularity ladder for one entity category in an incremental entity registry.
+
+The ladder describes how an entity in the supplied category can be represented less specifically:
+either the same referent with detail removed, or a distinct containing whole. Derive the ladder only
+from the supplied category definition and surface forms. Do not assume any dataset, domain, role
+vocabulary, relation vocabulary, or external schema.
+
+## Input
+
+category: <name>
+definition: <one-line definition>
+examples: <8-20 observed surface forms>
+
+## Rungs
+
+g0 is the entity exactly as observed, with every identity-bearing detail intact. Each higher rung
+(g1, g2, g3) must pass all three gates:
+
+1. SAME CATEGORY: the coarser node must still be an entity in the supplied category. A parent from a
+   different category is not a rung.
+2. SOUND PROJECTION: either the coarser name denotes the same referent with detail removed, or the
+   finer referent is a proper part/member of the coarser referent. Shared role, behavior, attributes,
+   relationships, co-occurrence, or thematic similarity do not establish a rung.
+3. NODE ECONOMY: represent one coarsening once. Do not add a synthetic group when the same projection
+   is already represented by a real containing entity.
+
+Distinguish the two projection types with an ATTRIBUTION-REWRITE TEST. Take a generic attributed
+statement about the finer entity — `"<finer> was involved in an event"` (a placeholder event, never
+a real fact, role, or behavior of the entity) — and rewrite it with the coarser name:
+
+- The rewrite is the SAME claim stated less precisely (the subject is still the same referent,
+  described with less detail): set `preserving: true` and use `coarsens-to` downstream.
+- The rewrite attributes the event to a DIFFERENT thing, a containing whole the finer referent
+  belongs to: set `preserving: false` and use `part-of` downstream.
+- The rewrite is neither: reject the rung.
+
+Tiebreak when the rewrite feels arguable — ask what the coarser node IS. A COLLECTION of things
+like the finer one folds as "one of them": `preserving: true`. A THING IN ITS OWN RIGHT that the
+finer one belongs to makes the rewrite change its subject: `preserving: false`. When still
+uncertain, set `preserving: false` — a withheld fold is safe, a silent subject change is not.
+
+## Moves
+
+- `drop-qualifier`: removes a version, edition, date, location, configuration, or other qualifier.
+- `grouped-by`: maps to a collection whose membership is computable from the entity's own name or
+  supplied facets.
+- `part-of`: maps a proper part or member to its containing whole.
+- `kind-of`: maps a specific kind to a broader kind within the same category.
+
+The move is descriptive. The `preserving` flag must come from the attribution-rewrite test, not
+from the move name: a `kind-of` rung is often preserving, a `part-of` rung never is, but decide
+each rung from its own rewrite.
+
+## Hard Rules
+
+- Never emit the category itself as a rung.
+- Never cross into another category.
+- Aliases, abbreviations, transliterations, spelling variants, and renames are not rungs.
+- Identity-bearing identifiers and digits must not be dropped.
+- Once a rung has `preserving: false`, no later rung may have `preserving: true`.
+- Do not invent hierarchy from shared context, role, behavior, or relationships.
+- Do not pad. A category with no justified coarsening must contain only g0.
+- Emit at most four rungs, g0 through g3.
+- Set `disputed: true` when the supplied evidence supports competing projections.
+- Every rung example must be an observed surface or a mechanically computed grouping key. Do not
+  invent a name merely to fill a rung.
+
+## Placements
+
+You have already read every supplied example in order to derive the ladder. Record where each one
+sits: one entry per supplied surface, with the `g` of the rung it belongs to. A surface that is
+already the most specific form belongs at g0. Place every supplied surface exactly once; do not
+invent surfaces that were not supplied.
+
+## Output
+
+Return only this JSON object:
+
+{
+  "category": "<name>",
+  "ladder": [
+    { "g": 0, "alias": "<short noun>", "example": "<observed surface>" },
+    {
+      "g": 1,
+      "alias": "<short noun>",
+      "move": "drop-qualifier" | "grouped-by" | "part-of" | "kind-of",
+      "example": "<coarser observed or mechanically computed form>",
+      "preserving": true | false,
+      "foldTest": "'<finer> was involved in an event' -> '<coarser> was involved in an event': <same claim, less detail | attributed to a distinct containing referent>",
+      "disputed": false
+    }
+  ],
+  "placements": [
+    { "surface": "<one of the supplied examples, verbatim>", "g": 0 }
+  ],
+  "rejected": [
+    {
+      "candidate": "<considered coarser form>",
+      "gate": "1" | "2" | "3",
+      "reason": "<why it is not a valid rung>"
+    }
+  ],
+  "notes": "<uncertainty, missing evidence, or depth pressure>"
+}
+
+## Task
+
+category: Domain
+definition: (no definition recorded — derive from the examples)
+examples: i.ua, answers.microsoft.com, social.technet.microsoft.com, microsoft.com, chubanomania.icu, badpdf.com, chinagrill.co, dyndns.com, docs.microsoft.com, winscp.net, virustotal.com, cert.gov.ua, cuckoo.cert.ee, app.any.run, analyze.intezer.com, dsszzi.gov.ua, rs500cosworth.com, eo2mxtqmeqzafqi.m.pipedream.net, ginaengg.com, skreatortemp.site, onyangdol.site, ftp.artrsllc.com, lover.printing82.detroito.ru, atlantar.ru, motoristo.ru, moolin.ru, bubenci.ru, callsol.ru, clipperso.ru, cooperi.ru, detroito.ru, farafauler.ru, fishitor.ru, flayga.ru, ganara.ru, hawksi.ru, hofsteder.ru, kilitro.ru, kurapat.ru, leonardis.ru, lnasfe.ru, lopasts.ru, mafirti.ru, metanat.ru, mitlubald.ru, paparat.ru, pasamart.ru, qkcew.ru, rncsq.ru, tarlit.ru
+
+--- text ---
+Derive the ladder for category "Domain".
+
+=== RESPONSE (12.7s, in 1570 / out 1253 tok, STOP) ===
+```json
+{
+  "category": "Domain",
+  "ladder": [
+    {
+      "g": 0,
+      "alias": "subdomain",
+      "example": "answers.microsoft.com"
+    },
+    {
+      "g": 1,
+      "alias": "registered-domain",
+      "move": "part-of",
+      "example": "microsoft.com",
+      "preserving": false,
+      "foldTest": "'answers.microsoft.com was involved in an event' -> 'microsoft.com was involved in an event': attributed to a distinct containing referent",
+      "disputed": false
+    }
+  ],
+  "placements": [
+    { "surface": "i.ua", "g": 1 },
+    { "surface": "answers.microsoft.com", "g": 0 },
+    { "surface": "social.technet.microsoft.com", "g": 0 },
+    { "surface": "microsoft.com", "g": 1 },
+    { "surface": "chubanomania.icu", "g": 1 },
+    { "surface": "badpdf.com", "g": 1 },
+    { "surface": "chinagrill.co", "g": 1 },
+    { "surface": "dyndns.com", "g": 1 },
+    { "surface": "docs.microsoft.com", "g": 0 },
+    { "surface": "winscp.net", "g": 1 },
+    { "surface": "virustotal.com", "g": 1 },
+    { "surface": "cert.gov.ua", "g": 1 },
+    { "surface": "cuckoo.cert.ee", "g": 0 },
+    { "surface": "app.any.run", "g": 0 },
+    { "surface": "analyze.intezer.com", "g": 0 },
+    { "surface": "dsszzi.gov.ua", "g": 1 },
+    { "surface": "rs500cosworth.com", "g": 1 },
+    { "surface": "eo2mxtqmeqzafqi.m.pipedream.net", "g": 0 },
+    { "surface": "ginaengg.com", "g": 1 },
+    { "surface": "skreatortemp.site", "g": 1 },
+    { "surface": "onyangdol.site", "g": 1 },
+    { "surface": "ftp.artrsllc.com", "g": 0 },
+    { "surface": "lover.printing82.detroito.ru", "g": 0 },
+    { "surface": "atlantar.ru", "g": 1 },
+    { "surface": "motoristo.ru", "g": 1 },
+    { "surface": "moolin.ru", "g": 1 },
+    { "surface": "bubenci.ru", "g": 1 },
+    { "surface": "callsol.ru", "g": 1 },
+    { "surface": "clipperso.ru", "g": 1 },
+    { "surface": "cooperi.ru", "g": 1 },
+    { "surface": "detroito.ru", "g": 1 },
+    { "surface": "farafauler.ru", "g": 1 },
+    { "surface": "fishitor.ru", "g": 1 },
+    { "surface": "flayga.ru", "g": 1 },
+    { "surface": "ganara.ru", "g": 1 },
+    { "surface": "hawksi.ru", "g": 1 },
+    { "surface": "hofsteder.ru", "g": 1 },
+    { "surface": "kilitro.ru", "g": 1 },
+    { "surface": "kurapat.ru", "g": 1 },
+    { "surface": "leonardis.ru", "g": 1 },
+    { "surface": "lnasfe.ru", "g": 1 },
+    { "surface": "lopasts.ru", "g": 1 },
+    { "surface": "mafirti.ru", "g": 1 },
+    { "surface": "metanat.ru", "g": 1 },
+    { "surface": "mitlubald.ru", "g": 1 },
+    { "surface": "paparat.ru", "g": 1 },
+    { "surface": "pasamart.ru", "g": 1 },
+    { "surface": "qkcew.ru", "g": 1 },
+    { "surface": "rncsq.ru", "g": 1 },
+    { "surface": "tarlit.ru", "g": 1 }
+  ],
+  "rejected": [
+    {
+      "candidate": "Top-level domain / TLD (.ru, .com, .ua)",
+      "gate": "2",
+      "reason": "Top-level domains are registry namespaces rather than coherent domain entities representing an operational containing whole for attribution."
+    }
+  ],
+  "notes": "Domains follow a two-tier hierarchy: fully qualified subdomains (g0) partition under registered apex domains (g1, eTLD+1). Multi-label subdomains map directly to their base registered domain."
+}
+```

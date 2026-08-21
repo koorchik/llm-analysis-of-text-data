@@ -15,6 +15,25 @@ import {
   normalizeLadderProposal,
 } from '../utils/validationUtils';
 
+
+/**
+ * A window onto the surface pool that is spread across it rather than taken from the front.
+ *
+ * `slice(0, max)` reads the *earliest-minted* entities, because the registry iterates canonicals in
+ * insertion order. On a 121-surface Software pool with `max` 50 that means the ladder — and every
+ * placement derived from it — only ever sees the oldest 50, so anything minted later keeps whatever
+ * per-mention level it was given, which is `g0` by default. Striding covers the whole pool at the
+ * same cost, and stays deterministic, which matters because the sample is part of the runId's
+ * behaviour.
+ */
+export function spreadSample<T>(items: T[], max: number): T[] {
+  if (max <= 0 || items.length <= max) return items.slice();
+  const step = items.length / max;
+  const out: T[] = [];
+  for (let index = 0; index < max; index++) out.push(items[Math.floor(index * step)]);
+  return out;
+}
+
 /** One ensemble member: a label for provenance plus the client that runs it. */
 export interface EnsembleMember {
   label: string;
@@ -141,7 +160,7 @@ export class LadderDiscovery {
     const definition =
       this.#schemaRegistry.getCategories().find((entry) => entry.name === category)?.definition ??
       '';
-    const examples = surfaces.slice(0, this.#maxExamples);
+    const examples = spreadSample(surfaces, this.#maxExamples);
     const prompt = this.#prompts.render(this.#promptId, {
       CATEGORY: category,
       DEFINITION: definition || '(no definition recorded — derive from the examples)',
