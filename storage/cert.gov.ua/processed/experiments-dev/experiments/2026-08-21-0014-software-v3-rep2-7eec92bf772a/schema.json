@@ -1,0 +1,88 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "software_instance",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "product_version",
+            "example": "Office 2016",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Office 2016 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "product_line",
+            "example": "Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Office 2016 was involved in an event' -> 'Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "malware_category",
+            "gate": "2",
+            "reason": "The transition from 'Petya' to a general category like 'Malware' is not supported as 'Malware' is not in the provided data or implied by a specific move other than 'kind-of', which is often reserved for distinct types rather than just broader categorization within the same set."
+          }
+        ],
+        "notes": "The ladder follows a reduction of branding and versioning. 'Microsoft' and 'MS' are treated as brand qualifiers; '2016' and '2013' are versions. Both represent instances where the core referent (the application or suite) remains the same while descriptive identifiers are removed.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

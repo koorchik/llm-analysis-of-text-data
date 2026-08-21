@@ -1,0 +1,273 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Microsoft Office 2013",
+            "example": "Microsoft Office 2013",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Office 2013",
+            "example": "Office 2013",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2013 was involved in an event' -> 'Office 2013 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "Office",
+            "example": "MS Office",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Office 2013 was involved in an event' -> 'Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Word",
+            "gate": "2",
+            "reason": "Switching from Office to Word changes the referent from a suite of applications to a single application."
+          },
+          {
+            "candidate": "Application",
+            "gate": "1",
+            "reason": "While technically in the category, this is a common type/class rather than a less-detailed name for the specific software entity 'Office'."
+          }
+        ],
+        "notes": "The ladder follows a path of removing identifier labels (branding and versioning) to move from a specific instantiation toward the general product identity.",
+        "disagreements": [
+          "g1 \"Office 2013\": preserving true vs false (run 2)",
+          "g1 \"Office 2013\": preserving true vs false (run 3)",
+          "g2 \"MS Office\": preserving true vs false (run 2)",
+          "g2 \"MS Office\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 40102
+      }
+    },
+    {
+      "name": "Organization",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 24,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "legal entity name",
+            "example": "SmartApe LLC",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "shortened organization name",
+            "example": "SmartApe",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'SmartApe LLC was involved in an event' -> 'SmartApe was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Matrix",
+            "gate": "3",
+            "reason": "While a valid drop-qualifier from 'Matrix Telecom Ltd', it constitutes the same projection type as removing 'LLC' or 'Ltd'. Creating a separate rung for it would violate Node Economy."
+          }
+        ],
+        "notes": "The core distinction in the provided samples is between names with legal/functional qualifiers (e.g., \"LLC\", \"Ltd\", \"АТ\") and those without. These are consolidated into a single 'drop-qualifier' step as they represent the same reduction of detail for the name.",
+        "disagreements": [],
+        "discoveredAtDoc": 6276824
+      }
+    },
+    {
+      "name": "Domain",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 59,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "FQDN",
+            "example": "social.technet.microsoft.com",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Base Domain",
+            "example": "microsoft.com",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'social.technet.microsoft.com was involved in an event' -> 'microsoft.com was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "TLD",
+            "gate": "2",
+            "reason": "A top-level domain (e.g., .com) is not the same referent as a specific host; it is a broader category of names."
+          }
+        ],
+        "notes": "The transition from a fully qualified domain name to its base host represents the removal of locational/functional sub-identifiers (like 'social' or 'docs'), which are treated as qualifiers in this context. Since both forms are still within the Domain category, it is a valid rung.",
+        "disagreements": [],
+        "discoveredAtDoc": 1563322
+      }
+    },
+    {
+      "name": "Government Body",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26
+    },
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2707
+    },
+    {
+      "name": "Sector",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10011
+    },
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 39934
+    },
+    {
+      "name": "Infrastructure",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6276824
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 24,
+      "op": "admit-category",
+      "name": "Organization"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Domain"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Government Body"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 10011,
+      "op": "admit-category",
+      "name": "Sector"
+    },
+    {
+      "doc": 10011,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 39934,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 1563322,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 6276824,
+      "op": "admit-category",
+      "name": "Infrastructure"
+    },
+    {
+      "doc": 6276824,
+      "op": "discover-ladder",
+      "name": "Organization"
+    }
+  ]
+}

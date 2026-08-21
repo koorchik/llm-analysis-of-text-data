@@ -1,0 +1,98 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Specific Software Product",
+            "example": "MS Office",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Product Suite",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'MS Office was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "Application Component",
+            "example": "MS Word",
+            "disputed": false,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'MS Word was involved in an event' -> 'Application Component was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "CVE-2017-11882",
+            "gate": "1",
+            "reason": "A CVE identifier represents a vulnerability or security advisory, not a piece of software; it falls into a different category."
+          },
+          {
+            "candidate": "Microsoft Windows",
+            "gate": "1",
+            "reason": "Operating Systems are typically categorized separately from general 'Software' applications/suites in hierarchy logic."
+          },
+          {
+            "candidate": "major.exe",
+            "gate": "2",
+            "reason": "The term 'major' is a descriptor of scale or priority, not a semantically valid coarsening of the software type without specific context."
+          }
+        ],
+        "notes": "Excluded CVE IDs and OS entries as they represent distinct classes of entities. MS Office 2016/2013 etc. were collapsed into 'Microsoft Office' via drop-qualifier logic.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

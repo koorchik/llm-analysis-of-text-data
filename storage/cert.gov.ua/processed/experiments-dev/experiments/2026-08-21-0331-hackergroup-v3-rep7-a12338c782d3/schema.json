@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker_group_id",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "The transition from 'APT28 (UAC-0028)' to 'APT28' represents a change in naming convention/alias rather than a reduction in specificity or the removal of an independent qualifier; both refer to the exact same entity."
+          },
+          {
+            "candidate": "Turla",
+            "gate": "1",
+            "reason": "While 'Turla' is a hacker group, it is not a coarser representation of 'UAC-0003'; they are synonyms (aliases) for the same entity."
+          }
+        ],
+        "notes": "The provided examples consist primarily of different names or identifiers for individual threat actors (e.g., APT28/UAC-0028, Turla/UAC-0003). Because these are synonym mappings rather than a hierarchy of specificity, they do not satisfy the requirements for multi-level coarsening.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

@@ -258,5 +258,68 @@
   "sha256": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
   "variables": [],
   "bytes": 2950
+ },
+ "listwise-graph-v1": {
+  "file": "prompts/listwise-graph-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: identity ballot (nameform-v6 rules) plus the granularity half — parent option number, relation, and gloss — so one call per document decides both the partition and the edges between its clusters.",
+  "sha256": "d4d4dc3bf9f6609caa3d6a4bd91a6458f9b8b9f4a44e818d0e2fdabd4621f194",
+  "variables": [],
+  "bytes": 4949
+ },
+ "listwise-graph-v2": {
+  "file": "prompts/listwise-graph-v2.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v1 plus the document-scoped parent pool. Parents are chosen by P-number from every entity the source put on the table, because 14 of 24 reachable gold edges had a parent the identity blocker never retrieved at any depth.",
+  "sha256": "d5e2140bb3d3039a61fe00fa20427eb4d974e5ad836f334315488421c6ee8e42",
+  "variables": [],
+  "bytes": 5556
+ },
+ "listwise-graph-compact-v3": {
+  "file": "prompts/listwise-graph-compact-v3.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: compact dialect — one E-numbered entity list shared by identity and parents, M-numbered mentions, single-letter keys, and a level code so entities get rungs. Cuts the repeated name/category strings that dominate the verbose dialect output.",
+  "sha256": "81f9766ed4e5b8f1ea5e853bbc59842c1870b6d5023087325f3de69ac502ef3f",
+  "variables": [],
+  "bytes": 3762
+ },
+ "listwise-graph-compact-v4": {
+  "file": "prompts/listwise-graph-compact-v4.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: compact-v3 plus the two rules its errors called for — a written-form variant is identity and never a parent edge (the pool run expressed two gold merges as edges instead), and a substitution test separating narrower-of from part-of (it labelled components as coarsenings).",
+  "sha256": "7251c9e593079b01d5adf13610662e407ec49204407cc00e8e3fcef9abd934e8",
+  "variables": [],
+  "bytes": 4566
+ },
+ "listwise-graph-compact-v5": {
+  "file": "prompts/listwise-graph-compact-v5.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v4 with the identifier-precedence rule restored in full. Compressing it to one clause cost HackerGroup identity 1.000 -> 0.500 — the judge linked APT28 (UAC-0028) to the bare label APT28 instead of to UAC-0028, which is the half of the rule the compression dropped.",
+  "sha256": "164419042b65163a7eb21efcce0a8441749f2b4b6fa42a50b1e077afab3c1efe",
+  "variables": [],
+  "bytes": 4839
+ },
+ "listwise-graph-compact-v6": {
+  "file": "prompts/listwise-graph-compact-v6.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v4 with the identifier-precedence rule restored to its VERBATIM nameform-v6 wording. v5 tried a stronger phrasing (never the bare label; it belongs in the parent slot) which fixed HackerGroup and destroyed Software — 4 links instead of 15, identity 0.000.",
+  "sha256": "458735cde71e4ae6fdb24d695e6188669d0eb03d49e05b91cfde5bb7f68c76ce",
+  "variables": [],
+  "bytes": 4774
+ },
+ "listwise-graph-compact-v7": {
+  "file": "prompts/listwise-graph-compact-v7.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: the lean correct variant — compact-v3 structure with ONLY the identifier-precedence rule restored to its verbatim nameform-v6 wording. v4 added an anti-collapse clause and a substitution test on top; this drops both, to test whether they earn their place or merely load the prompt.",
+  "sha256": "3037b740a19cd9ccedb4fa6f0ed449eaa9c4a2bc1f539a6c3bba06abcaf5586a",
+  "variables": [],
+  "bytes": 3970
  }
 }

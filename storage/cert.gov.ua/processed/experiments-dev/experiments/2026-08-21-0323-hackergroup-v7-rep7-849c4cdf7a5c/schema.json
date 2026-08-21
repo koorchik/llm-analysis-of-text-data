@@ -1,0 +1,68 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Detailed Identifier",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Common Name",
+            "example": "APT28",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "HackerGroup",
+            "gate": "1",
+            "reason": "The category itself cannot be a rung."
+          },
+          {
+            "candidate": "Security Threat",
+            "gate": "1",
+            "reason": "Crosses into another category (security/threats)."
+          }
+        ],
+        "notes": "The ladder captures the distinction between specifically tagged identifiers and their corresponding common names. Several examples provided (e.g., UAC-0050) lack a known common name in the text, meaning they remain at g0 unless an alias is mapped.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You derive a granularity ladder for one entity category in an incremental entity registry.
+
+The ladder describes how an entity in the supplied category can be represented less specifically:
+either the same referent with detail removed, or a distinct containing whole. Derive the ladder only
+from the supplied category definition and surface forms. Do not assume any dataset, domain, role
+vocabulary, relation vocabulary, or external schema.
+
+## Input
+
+category: <name>
+definition: <one-line definition>
+examples: <8-20 observed surface forms>
+
+## Rungs
+
+g0 is the entity exactly as observed, with every identity-bearing detail intact. Each higher rung
+(g1, g2, g3) must pass all three gates:
+
+1. SAME CATEGORY: the coarser node must still be an entity in the supplied category. A parent from a
+   different category is not a rung.
+2. SOUND PROJECTION: either the coarser name denotes the same referent with detail removed, or the
+   finer referent is a proper part/member of the coarser referent. Shared role, behavior, attributes,
+   relationships, co-occurrence, or thematic similarity do not establish a rung.
+3. NODE ECONOMY: represent one coarsening once. Do not add a synthetic group when the same projection
+   is already represented by a real containing entity.
+
+Distinguish the two projection types with an ATTRIBUTION-REWRITE TEST. Take a generic attributed
+statement about the finer entity — `"<finer> was involved in an event"` (a placeholder event, never
+a real fact, role, or behavior of the entity) — and rewrite it with the coarser name:
+
+- The rewrite is the SAME claim stated less precisely (the subject is still the same referent,
+  described with less detail): set `preserving: true` and use `coarsens-to` downstream.
+- The rewrite attributes the event to a DIFFERENT thing, a containing whole the finer referent
+  belongs to: set `preserving: false` and use `part-of` downstream.
+- The rewrite is neither: reject the rung.
+
+Tiebreak when the rewrite feels arguable — ask what the coarser node IS. A COLLECTION of things
+like the finer one folds as "one of them": `preserving: true`. A THING IN ITS OWN RIGHT that the
+finer one belongs to makes the rewrite change its subject: `preserving: false`. When still
+uncertain, set `preserving: false` — a withheld fold is safe, a silent subject change is not.
+
+## Moves
+
+- `drop-qualifier`: removes a version, edition, date, location, configuration, or other qualifier.
+- `grouped-by`: maps to a collection whose membership is computable from the entity's own name or
+  supplied facets.
+- `part-of`: maps a proper part or member to its containing whole.
+- `kind-of`: maps a specific kind to a broader kind within the same category.
+
+The move is descriptive. The `preserving` flag must come from the attribution-rewrite test, not
+from the move name: a `kind-of` rung is often preserving, a `part-of` rung never is, but decide
+each rung from its own rewrite.
+
+## Hard Rules
+
+- Never emit the category itself as a rung.
+- Never cross into another category.
+- Aliases, abbreviations, transliterations, spelling variants, and renames are not rungs.
+- Identity-bearing identifiers and digits must not be dropped.
+- Once a rung has `preserving: false`, no later rung may have `preserving: true`.
+- Do not invent hierarchy from shared context, role, behavior, or relationships.
+- Do not pad. A category with no justified coarsening must contain only g0.
+- Emit at most four rungs, g0 through g3.
+- Set `disputed: true` when the supplied evidence supports competing projections.
+- Every rung example must be an observed surface or a mechanically computed grouping key. Do not
+  invent a name merely to fill a rung.
+
+## Output
+
+Return only this JSON object:
+
+{
+  "category": "<name>",
+  "ladder": [
+    { "g": 0, "alias": "<short noun>", "example": "<observed surface>" },
+    {
+      "g": 1,
+      "alias": "<short noun>",
+      "move": "drop-qualifier" | "grouped-by" | "part-of" | "kind-of",
+      "example": "<coarser observed or mechanically computed form>",
+      "preserving": true | false,
+      "foldTest": "'<finer> was involved in an event' -> '<coarser> was involved in an event': <same claim, less detail | attributed to a distinct containing referent>",
+      "disputed": false
+    }
+  ],
+  "rejected": [
+    {
+      "candidate": "<considered coarser form>",
+      "gate": "1" | "2" | "3",
+      "reason": "<why it is not a valid rung>"
+    }
+  ],
+  "notes": "<uncertainty, missing evidence, or depth pressure>"
+}
+
+## Task
+
+category: Software
+definition: (no definition recorded — derive from the examples)
+examples: MS Office, MS Word, MS Excel, MS PowerPoint, CVE-2017-11882, major.exe, PGMB New Order 18-2077.xlsx, Microsoft Equation Editor, Microsoft Office 2016, Microsoft Office 2013, Microsoft Office 2010, Microsoft Office 2007, Petya, Misha, CVE-2017-0199, Microsoft Word, Microsoft Office, Microsoft Windows, Office 2007, Office 2013
+
+--- text ---
+Derive the ladder for category "Software".
+
+=== RESPONSE (113.2s, in 1282 / out 9085 tok, stop) ===
+```json
+{
+  "category": "Software",
+  "ladder": [
+    {
+      "g": 0,
+      "alias": "Microsoft Office 2013",
+      "example": "Microsoft Office 2013"
+    },
+    {
+      "g": 1,
+      "alias": "Microsoft Office",
+      "move": "drop-qualifier",
+      "example": "Microsoft Office",
+      "preserving": true,
+      "foldTest": "'Microsoft Office 2013 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+      "disputed": false
+    }
+  ],
+  "rejected": [
+    {
+      "candidate": "MS Word to Microsoft Office",
+      "gate": "2",
+      "reason": "The fold test identifies a shift from a specific application to a containing suite, which is not the same claim (different referent)."
+    },
+    {
+      "candidate": "Microsoft Office to Software",
+      "gate": "1",
+      "reason": "Category names cannot be used as rungs."
+    }
+  ],
+  "notes": "The ladder uses a standard version-stripping progression. While 'MS Word' and 'Microsoft Office' both exist in the list, they would transition via 'part_of' (preserving: false) rather than 'drop-qualifier', making the selected path more consistent for a single item."
+}
+```

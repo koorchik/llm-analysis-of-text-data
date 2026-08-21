@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Labeled_Entity",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Named_Entity",
+            "example": "APT28",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "This is a different identifier for the same entity (a synonym/alias), not a less specific version of the name."
+          },
+          {
+            "candidate": "Sandworm",
+            "gate": "1",
+            "reason": "Sandworm is an entity in the category, but it is not 'less specific' than APT28; they are siblings in the hierarchy."
+          }
+        ],
+        "notes": "The ladder captures the relationship between a specific tracked identifier and its common name. Evidence suggests that pairs like (UAC-0003, Turla) and (UAC-0028, APT28) exist as distinct ways of naming the same entity.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

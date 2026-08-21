@@ -1,0 +1,73 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "specific form",
+            "example": "Російська Федерація",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common name",
+            "example": "Росія",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Російська Федерація was involved in an event' -> 'Росія was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Індія / India (translation)",
+            "gate": "2",
+            "reason": "Translation and transliteration are not rungs; they represent the same level of specificity in different languages."
+          },
+          {
+            "candidate": "Region/Continent",
+            "gate": "1",
+            "reason": "A region or continent is not a member of the 'Country' category."
+          }
+        ],
+        "notes": "The ladder identifies the transition from formal state names (containing organizational qualifiers like 'Federation') to common names. Variations in language (e.g., Росія vs Russia) are ignored as rungs per rule 2 and are treated as separate instances of the same level of specificity.",
+        "disagreements": [],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    }
+  ]
+}

@@ -27,6 +27,7 @@ import { createLlmBackend as buildLlmBackend } from '../src/LlmClient/createBack
 import {
   DECISION_STRATEGIES,
   ComemSelectDecision,
+  ListwiseGraphDecision,
   ListwiseMintCandidateDecision,
   createOfflineStrategy,
   isOfflineStrategyId,
@@ -424,6 +425,14 @@ function createDecisionStrategy(
   if (isOfflineStrategyId(id)) return createOfflineStrategy(id);
   if (id === 'listwise-mint-candidate') {
     return new ListwiseMintCandidateDecision({
+      llmClient,
+      decisionLog,
+      promptId: CONFIG.listwisePromptId,
+      k: CONFIG.listwiseK,
+    });
+  }
+  if (id === 'listwise-graph') {
+    return new ListwiseGraphDecision({
       llmClient,
       decisionLog,
       promptId: CONFIG.listwisePromptId,

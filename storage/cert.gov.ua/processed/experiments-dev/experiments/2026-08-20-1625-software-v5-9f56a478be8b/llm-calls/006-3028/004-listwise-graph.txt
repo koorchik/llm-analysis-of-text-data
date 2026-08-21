@@ -1,0 +1,199 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Answer the option carrying that **identifier**, never the option carrying only the bare label: the bare label is a different, broader entity, and it belongs in `p` if anywhere.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: <p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+Entities:
+E1. Internet Explorer <g0>
+E2. MS PowerPoint
+E3. Microsoft Edge <g0>
+E4. Adobe Flash Player <g0>
+E5. .NET Framework <g0>
+E6. Misha <g0>
+E7. Petya <g0>
+E8. Windows Vista <g0>
+E9. CVE-2017-0199 <g0>
+E10. Рахунки и новые списки.lzh <g0>
+E11. spi.exe <g0>
+E12. ckZ89.ExE <g0>
+E13. cmd.exe <g0>
+E14. powershell.exe <g0>
+E15. major.exe <g0>
+E16. Microsoft Windows <g0>
+E17. Win32k <g0>
+E18. VBScript <g0>
+E19. Double Kill <g0>
+E20. До оплати від 11.12.18.lzh <g0>
+E21. MS Excel
+E22. Windows 7 <g0>
+E23. Windows Server 2012 <g0>
+E24. Windows Server 2008 <g0>
+E25. ChakraCore <g0>
+E26. Microsoft Exchange Server <g0>
+E27. MS Office [aka Microsoft Office] <g1>
+E28. Smokeloader <g0>
+E29. Microsoft Office 2007 <g0>
+E30. Microsoft Office 2010 <g0>
+E31. MS Word [aka Microsoft Word] <g0>
+E32. Microsoft Office 2013 <g0>
+E33. Microsoft Office 2016 <g0>
+E34. Microsoft Equation Editor <g0>
+E35. Office 2010 <g0>
+E36. Microsoft Office Services and Web Apps <g0>
+E37. PGMB New Order 18-2077.xlsx <g0>
+E38. Windows Host Compute Service Shim <g0>
+E39. CVE-2017-11882 <g0>
+E40. Office 2007 <g0>
+E41. Office 2013 <g0>
+E42. RegAsm.exe
+E43. vaultcli.dll
+E44. WinSCP
+E45. Google Chrome
+E46. Mozilla Firefox
+E47. Microsoft Outlook
+E48. IceDragon
+E49. Yandex Browser
+E50. Iridium Browser
+E51. Epic Privacy Browser
+E52. Chromium Browser
+E53. 7Star Browser
+E54. Torch Browser
+E55. ChromePlus Browser
+E56. Kometa Browser
+E57. Amigo Browser
+E58. Brave Browser
+E59. CentBrowser
+E60. Liebao Browser
+E61. Elements Browser
+E62. Vivaldi Browser
+E63. Citrio Browser
+E64. 360Chrome Browser
+E65. Uran Browser
+E66. Chedot Browser
+E67. Orbitum Browser
+E68. Sputnik Browser
+E69. Comodo Dragon Browser
+E70. CocCoc Browser
+E71. QIP Surf Browser
+E72. Coowon Browser
+E73. Opera Browser
+E74. Thunderbird
+E75. Claws Mail
+E76. Postbox Credential
+E77. Foxmail
+E78. Opera Mail
+E79. Pocomail
+E80. Becky!
+E81. OpenVPN
+E82. FileZilla
+E83. Paltalk
+E84. jDownloader
+E85. SmartFTP
+E86. FTP Commander
+E87. WS_FTP
+E88. FTPGetter
+E89. Trillian
+E90. Agent Tesla
+Levels: g0=ms_word (observed entity; example: MS Word) | g1=word (drop-qualifier; same referent; example: Word)
+Mentions:
+M1. "Agent Tesla" (Software) — options: E1, E2, E3, E4
+M2. "RegAsm.exe" (Software) — options: E11, E12, E13, E14
+M3. "vaultcli.dll" (Software) — options: E11, E19, E5, E18
+M4. "WinSCP" (Software) — options: E16, E17, E18, E22
+M5. "Google Chrome" (Software) — options: E3, E19, E25, E1
+M6. "Mozilla Firefox" (Software) — options: E3, E19, E1, E27
+M7. "Microsoft Outlook" (Software) — options: E27, E30, E3, E31
+M8. "IceDragon" (Software) — options: E1, E25, E34, E3
+M9. "Yandex Browser" (Software) — options: E1, E22, E23, E3
+M10. "Iridium Browser" (Software) — options: E1, E22, E23, E3
+M11. "Epic Privacy Browser" (Software) — options: E1, E25, E23, E3
+M12. "Chromium Browser" (Software) — options: E3, E25, E23, E1
+M13. "7Star Browser" (Software) — options: E22, E28, E8, E1
+M14. "Torch Browser" (Software) — options: E1, E23, E3, E26
+M15. "ChromePlus Browser" (Software) — options: E3, E28, E23, E1
+M16. "Kometa Browser" (Software) — options: E1, E28, E8, E3
+M17. "Amigo Browser" (Software) — options: E1, E28, E23, E3
+M18. "Brave Browser" (Software) — options: E1, E28, E23, E3
+M19. "CentBrowser" (Software) — options: E1, E22, E23, E3
+M20. "Liebao Browser" (Software) — options: E1, E28, E23, E3
+M21. "Elements Browser" (Software) — options: E1, E21, E23, E3
+M22. "Vivaldi Browser" (Software) — options: E1, E22, E8, E3
+M23. "Citrio Browser" (Software) — options: E1, E23, E3, E16
+M24. "360Chrome Browser" (Software) — options: E3, E28, E23, E1
+M25. "Uran Browser" (Software) — options: E3, E22, E23, E1
+M26. "Chedot Browser" (Software) — options: E3, E1, E23, E16
+M27. "Orbitum Browser" (Software) — options: E3, E22, E23, E1
+M28. "Sputnik Browser" (Software) — options: E1, E28, E23, E3
+M29. "Comodo Dragon Browser" (Software) — options: E1, E34, E38, E3
+M30. "CocCoc Browser" (Software) — options: E1, E28, E23, E3
+M31. "QIP Surf Browser" (Software) — options: E1, E28, E23, E3
+M32. "Coowon Browser" (Software) — options: E3, E22, E23, E1
+M33. "Opera Browser" (Software) — options: E1, E23, E3, E4
+M34. "Thunderbird" (Software) — options: E1, E19, E31, E3
+M35. "Claws Mail" (Software) — options: E27, E8, E15, E3
+M36. "Postbox Credential" (Software) — options: E7, E19, E2, E3
+M37. "Foxmail" (Software) — options: E26, E19, E5, E3
+M38. "Opera Mail" (Software) — options: E26, E7, E15, E3
+M39. "Pocomail" (Software) — options: E7, E19, E2, E1
+M40. "Becky!" (Software) — options: E7, E5, E6, E19
+M41. "OpenVPN" (Software) — options: E3, E7, E5, E1
+M42. "FileZilla" (Software) — options: E17, E19, E4, E40
+M43. "Paltalk" (Software) — options: E7, E5, E6, E4
+M44. "jDownloader" (Software) — options: E1, E28, E4, E23
+M45. "SmartFTP" (Software) — options: E1, E15, E28, E4
+M46. "FTP Commander" (Software) — options: E13, E28, E1, E26
+M47. "WS_FTP" (Software) — options: E18, E5, E26, E8
+M48. "FTPGetter" (Software) — options: E1, E7, E5, E28
+M49. "Trillian" (Software) — options: E1, E6, E19, E3
+
+=== RESPONSE (2.0s, in 3771 / out 36 tok, stop) ===
+{"v":[{"m":"M1","id":"E90","p":null,"r":null,"lvl":"g0","g":null}]}

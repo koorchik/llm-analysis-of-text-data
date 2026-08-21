@@ -1,0 +1,64 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex_id",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common_name",
+            "example": "APT28",
+            "disputed": true,
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28)' was involved in an event' -> 'APT28' was involved in an event: same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT_group",
+            "gate": "1",
+            "reason": "This move would cross into a different category (e.g., threat type or behavioral classification) rather than staying within HackerGroup."
+          }
+        ],
+        "notes": "The distinction between 'UAC-0028' and 'APT28' suggests an internal tracking ID versus a common identifier. The ladder reflects the removal of the specific system-oriented qualifier to provide the community-facing name while maintaining the same entity.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

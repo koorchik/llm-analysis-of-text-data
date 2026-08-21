@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker_group_id",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "This is an alias/synonym for UAC-0028; it does not represent a coarser entity, but rather the same entity with a different identifier."
+          },
+          {
+            "candidate": "UAC-0038 (Turla)",
+            "gate": "1",
+            "reason": "Selecting 'Turla' as a coarser form of 'UAC-0003' fails because both are specific entities within the same category; one is not a broader container for the other."
+          },
+          {
+            "candidate": "APT",
+            "gate": "1",
+            "reason": "Moving from APT28 to APT would move into a different category (threat types/methodology) or out of the specific scope of 'HackerGroup' entities."
+          }
+        ],
+        "notes": "The provided examples consist of specific hacker groups, identified by either internal tracking codes (UAC-XXXX) or common industry monikers (Turla, Sandworm). Because these terms are typically synonymous for a single entity or represent distinct individuals within the same category, no progression of coarsening exists between them. Therefore, only g0 is valid.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

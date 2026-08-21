@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "APT28 (UAC-0028)",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "APT28",
+            "example": "APT28",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT",
+            "gate": "1",
+            "reason": "The term 'APT' (Advanced Persistent Threat) is a classification of threat actor behavior and likely belongs to a different category than the specific group names."
+          }
+        ],
+        "notes": "Several items in the source list represent the same entity using different naming conventions (e.g., internal tracking IDs versus common aliases). The ladder reflects the removal of these clarifying identifiers as a reduction in specificity.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

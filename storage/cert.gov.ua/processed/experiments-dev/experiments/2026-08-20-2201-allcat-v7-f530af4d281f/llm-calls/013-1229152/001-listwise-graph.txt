@@ -1,0 +1,212 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Entities:
+E1. UAC-0056 <g0>
+E2. UAC-0098
+E3. APT28 (UAC-0028) <g0>
+E4. TrickBot
+E5. TRYxaEbX.ps1 <g0>
+E6. z.ps1 <g0>
+E7. stage1.ps1 <g0>
+E8. stage2.ps1 <g0>
+E9. TRYxaEbX_2.ps1 <g0>
+E10. spi.exe <g0>
+E11. loader.exe <g0>
+E12. powershell.exe <g0>
+E13. Smokeloader <g0>
+E14. jDownloader <g0>
+E15. Agent Tesla [aka AgentTesla] <g0>
+E16. FTP Commander <g0>
+E17. SmartFTP <g0>
+E18. Google Chrome <g0>
+E19. .NET Framework <g0>
+E20. WinSCP <g0>
+E21. Internet Explorer <g0>
+E22. WS_FTP <g0>
+E23. MS Excel
+E24. RegAsm.exe <g0>
+E25. Foxmail <g0>
+E26. FTPGetter <g0>
+E27. Meterpreter <g0>
+E28. Thunderbird <g0>
+E29. ConfuserEx <g0>
+E30. TRYxaEbX <g0>
+E31. Windows Server 2012 <g0>
+E32. Windows Server 2008 <g0>
+E33. Mozilla Firefox <g0>
+E34. Microsoft Exchange Server <g0>
+E35. MCMDiction.exe <g0>
+E36. MS PowerPoint
+E37. cmd.exe <g0>
+E38. shellcode.x64 (Cobalt Strike Beacon) [aka shellcode.x64.bin] <g0>
+E39. installer.exe <g0>
+E40. b.exe <g0>
+E41. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E42. write.exe <g0>
+E43. VBScript <g0>
+E44. rfusclient.exe <g0>
+E45. major.exe <g0>
+E46. baseupd.exe <g0>
+E47. GammaSteel.PS1
+E48. GammaSteel.NET
+E49. HarvesterX
+E50. PowerShell (powershell.exe)
+E51. wscript.exe
+E52. mshta.exe
+E53. GammaLoad.PS1
+E54. cuckoo.cert.ee <g0>
+E55. onyangdol.site <g0>
+E56. analyze.intezer.com <g0>
+E57. chubanomania.icu [aka chinagrill.co] <g0>
+E58. app.any.run <g0>
+E59. badpdf.com <g0>
+E60. cert.gov.ua <g0>
+E61. answers.microsoft.com
+E62. skreatortemp.site <g0>
+E63. dyndns.com <g0>
+E64. i.ua
+E65. ftp.artrsllc.com <g0>
+E66. winscp.net <g0>
+E67. dsszzi.gov.ua <g0>
+E68. virustotal.com <g0>
+E69. microsoft.com <g0>
+E70. docs.microsoft.com <g0>
+E71. ginaengg.com <g0>
+E72. social.technet.microsoft.com <g0>
+E73. rs500cosworth.com <g0>
+E74. eo2mxtqmeqzafqi.m.pipedream.net <g0>
+E75. atlantar.ru
+E76. motoristo.ru
+E77. moolin.ru
+E78. bubenci.ru
+E79. callsol.ru
+E80. clipperso.ru
+E81. cooperi.ru
+E82. detroito.ru
+E83. farafauler.ru
+E84. fishitor.ru
+E85. flayga.ru
+E86. ganara.ru
+E87. hawksi.ru
+E88. hofsteder.ru
+E89. kilitro.ru
+E90. kurapat.ru
+E91. leonardis.ru
+E92. lnasfe.ru
+E93. lopasts.ru
+E94. mafirti.ru
+E95. metanat.ru
+E96. mitlubald.ru
+E97. paparat.ru
+E98. pasamart.ru
+E99. qkcew.ru
+E100. rncsq.ru
+E101. tarlit.ru
+E102. tbwelo.ru
+E103. wicksl.ru
+E104. xcqef.ru
+E105. nxkad.ru
+E106. dnslookup.seowebchecker.com
+E107. ip-api.com
+E108. tools.nexcess.net
+E109. viewdns.info
+E110. www.portcheckers.com
+E111. lover.printing82.detroito.ru
+Levels: g0=suite (observed entity; example: Microsoft Office 2016) | g1=suite (drop-qualifier; same referent; example: Office) || g0=multi-level subdomain (observed entity; example: social.technet.microsoft.com) | g1=base domain (drop-qualifier; same referent; example: microsoft.com)
+Mentions:
+M1. "UAC-0010 (Armageddon)" (HackerGroup) — options: E1, E2, E3, E4
+M2. "GammaLoad.PS1" (Software) — options: E5, E6, E7, E8
+M3. "GammaSteel.PS1" (Software) — options: E7, E5, E6, E8
+M4. "GammaSteel.NET" (Software) — options: E18, E19, E20, E15
+M5. "HarvesterX" (Software) — options: E25, E26, E27, E28
+M6. "PowerShell (powershell.exe)" (Software) — options: E12, E6, E35, E36
+M7. "wscript.exe" (Software) — options: E12, E42, E43, E35
+M8. "mshta.exe" (Software) — options: E10, E45, E40, E35
+M9. "lover.printing82.detroito.ru" (Domain) — options: E54, E55, E56, E57
+M10. "atlantar.ru" (Domain) — options: E64, E58, E63, E56
+M11. "motoristo.ru" (Domain) — options: E64, E62, E58, E54
+M12. "moolin.ru" (Domain) — options: E64, E58, E54, E57
+M13. "bubenci.ru" (Domain) — options: E64, E57, E58, E54
+M14. "callsol.ru" (Domain) — options: E63, E57, E58, E64
+M15. "clipperso.ru" (Domain) — options: E57, E58, E64, E61
+M16. "cooperi.ru" (Domain) — options: E54, E58, E64, E57
+M17. "detroito.ru" (Domain) — options: E64, E67, E58, E63
+M18. "farafauler.ru" (Domain) — options: E54, E58, E64, E65
+M19. "fishitor.ru" (Domain) — options: E64, E67, E58, E63
+M20. "flayga.ru" (Domain) — options: E64, E58, E63, E57
+M21. "ganara.ru" (Domain) — options: E64, E57, E58, E54
+M22. "hawksi.ru" (Domain) — options: E64, E57, E58, E54
+M23. "hofsteder.ru" (Domain) — options: E64, E56, E58, E57
+M24. "kilitro.ru" (Domain) — options: E64, E58, E54, E62
+M25. "kurapat.ru" (Domain) — options: E64, E57, E58, E54
+M26. "leonardis.ru" (Domain) — options: E64, E57, E58, E56
+M27. "lnasfe.ru" (Domain) — options: E64, E58, E63, E56
+M28. "lopasts.ru" (Domain) — options: E64, E58, E54, E65
+M29. "mafirti.ru" (Domain) — options: E64, E58, E57, E56
+M30. "metanat.ru" (Domain) — options: E64, E58, E56, E57
+M31. "mitlubald.ru" (Domain) — options: E64, E58, E69, E54
+M32. "paparat.ru" (Domain) — options: E64, E58, E54, E57
+M33. "pasamart.ru" (Domain) — options: E57, E58, E64, E65
+M34. "qkcew.ru" (Domain) — options: E54, E58, E64, E56
+M35. "rncsq.ru" (Domain) — options: E66, E58, E64, E73
+M36. "tarlit.ru" (Domain) — options: E64, E65, E58, E54
+M37. "tbwelo.ru" (Domain) — options: E64, E58, E54, E56
+M38. "wicksl.ru" (Domain) — options: E54, E69, E66, E58
+M39. "xcqef.ru" (Domain) — options: E54, E58, E63, E69
+M40. "nxkad.ru" (Domain) — options: E64, E58, E63, E57
+M41. "dnslookup.seowebchecker.com" (Domain) — options: E68, E59, E56, E63
+M42. "ip-api.com" (Domain) — options: E63, E71, E69, E59
+M43. "tools.nexcess.net" (Domain) — options: E66, E63, E74, E68
+M44. "viewdns.info" (Domain) — options: E63, E68, E61, E66
+M45. "www.portcheckers.com" (Domain) — options: E57, E59, E61, E62
+
+=== RESPONSE (104.2s, in 4146 / out 8311 tok, stop) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"threat actor identified as Armageddon"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a PowerShell script for initial access"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malicious script used in infection chain"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a .NET-based malicious component"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"data harvesting tool"},{"m":"M6","id":"E12","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host for VBScript files"},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an executable for running HTML applications"},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain associated with malicious activity"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a reported tracking domain"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a listed suspicious website"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a recorded malicious host"},{"m":"M13","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain in the reporting data"},{"m":"M14","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a destination for network traffic"},{"m":"M15","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an observed server address"},{"m":"M16","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain involved in the infrastructure"},{"m":"M17","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host for malicious traffic"},{"m":"M18","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an endpoint used in cyber campaigns"},{"m":"M19","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain linked to malware"},{"m":"M20","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a destination for malicious payloads"},{"m":"M21","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a registered host address"},{"m":"M22","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a site found in intelligence"},{"m":"M23","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online destination identified by CERT-UA"},{"m":"M24","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain reported in the analysis"},{"m":"M25","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online server for data exchange"},{"m":"M26","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a web host detected in logs"},{"m":"M27","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain linked to malicious files"},{"m":"M28","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an identified web address"},{"m":"M29","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host reported in infrastructure logs"},{"m":"M30","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a destination for malicious connections"},{"m":"M31","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online domain used by threat actors"},{"m":"M32","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host identified in cyber data"},{"m":"M33","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an infrastructure site for malicious content"},{"m":"M34","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain reported during investigation"},{"m":"M35","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host observed in threat telemetry"},{"m":"M36","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online destination for malware communication"},{"m":"M37","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a network address found in reports"},{"m":"M38","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain linked to command infrastructure"},{"m":"M39","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online host for data transfer"},{"m":"M40","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a remote site identified in reports"},{"m":"M41","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain associated with tracking"},{"m":"M42","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online service point for data"},{"m":"M43","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a host used by malicious entities"},{"m":"M44","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a domain seen in network captures"},{"m":"M45","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an online destination for command commands"}]}

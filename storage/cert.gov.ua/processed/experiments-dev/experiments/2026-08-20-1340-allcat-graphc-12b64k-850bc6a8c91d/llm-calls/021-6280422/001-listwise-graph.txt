@@ -1,0 +1,170 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs an identifier with a label ("K-12 (Foo)"), the identifier is what it identifies.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Entities:
+E1. ConfuserEx <g0>
+E2. FTPGetter <g0>
+E3. spi.exe <g0>
+E4. Mozilla Firefox <g0>
+E5. MS Excel
+E6. Sputnik Browser <g0>
+E7. Trillian <g0>
+E8. AppLocker <g0>
+E9. .NET Framework <g0>
+E10. Thunderbird <g0>
+E11. Agent Tesla [aka AgentTesla] <g0>
+E12. IceDragon <g0>
+E13. Foxmail <g0>
+E14. GammaSteel.NET <g0>
+E15. Microsoft Exchange Server <g0>
+E16. FileZilla <g0>
+E17. HarvesterX <g0>
+E18. ChakraCore <g0>
+E19. Misha <g0>
+E20. vaultcli.dll <g0>
+E21. wscript.exe <g0>
+E22. SQLite.Interop.dll <g0>
+E23. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E24. scandoc.exe <g0>
+E25. CCleaner.exe <g0>
+E26. rfusclient.exe <g0>
+E27. rundll32.exe <g0>
+E28. CCleaner.rar <g0>
+E29. WinSCP <g0>
+E30. Google Chrome <g0>
+E31. ChromePlus Browser <g0>
+E32. Chromium Browser <g0>
+E33. 360Chrome Browser <g0>
+E34. wsuscr.exe <g0>
+E35. Brave Browser <g0>
+E36. 7Star Browser <g0>
+E37. Iridium Browser <g0>
+E38. Amigo Browser <g0>
+E39. Uran Browser <g0>
+E40. Opera Browser <g0>
+E41. powershell.exe [aka PowerShell (powershell.exe), PowerShell] <g0>
+E42. Double Kill <g0>
+E43. killself.bat <g0>
+E44. Postbox Credential <g0>
+E45. scan.exe (CredoMap_v2) <g0>
+E46. Microsoft Windows <g1>
+E47. MS Office [aka Microsoft Office] <g1>
+E48. Paltalk <g0>
+E49. Microsoft Outlook <g0>
+E50. Pocomail <g0>
+E51. b.exe <g0>
+E52. VBScript <g0>
+E53. QuasarRAT <g0>
+E54. AutoIt <g0>
+E55. SRP <g0>
+E56. MCMDiction.exe <g0>
+E57. Remote Utilities [aka RemoteUtilities] <g0>
+E58. Microsoft Equation Editor <g0>
+E59. Remote Utilities - Host <g0>
+E60. Cobalt Strike Beacon <g0>
+E61. FIRMACHAGENT
+E62. IDCLIPNET_x86.dll
+E63. chrome_updater.dll
+E64. Browser.dll
+E65. Files.dll
+E66. Screen.dll
+E67. Social.dll
+E68. USB.dll
+E69. JavaScript
+E70. Software Restriction Policies (SRP)
+E71. SPECTR
+E72. dyndns.com <g0>
+E73. telecomds.online <g0>
+E74. fishitor.ru <g0>
+E75. t-online.de <g0>
+E76. farafauler.ru <g0>
+E77. skreatortemp.site <g0>
+E78. kilitro.ru <g0>
+E79. bubenci.ru <g0>
+E80. motoristo.ru <g0>
+E81. moolin.ru <g0>
+E82. wicksl.ru <g0>
+E83. ukr.net <g0>
+E84. cuckoo.cert.ee <g0>
+E85. onyangdol.site <g0>
+E86. 8161.uk <g0>
+E87. qkcew.ru <g0>
+E88. answers.microsoft.com
+E89. academiadutygroup.com.br <g0>
+E90. badpdf.com <g0>
+E91. miecznet.com.pl <g0>
+E92. detroito.ru <g0>
+E93. microsoft.com <g0>
+E94. kurapat.ru <g0>
+E95. ginaengg.com <g0>
+E96. social.technet.microsoft.com <g0>
+E97. mitlubald.ru <g0>
+E98. ukraero.space
+E99. beget.com
+E100. prozorro.online
+Levels: g0=Word processor (observed entity; example: Microsoft Word) | g1=Product suite (part-of; containing referent; example: Microsoft Office) || g0=hostname (observed entity; example: social.technet.microsoft.com) | g1=base domain (drop-qualifier; same referent; example: microsoft.com)
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E11, E12, E13, E14
+M3. "IDCLIPNET_x86.dll" (Software) — options: E20, E21, E22, E23
+M4. "chrome_updater.dll" (Software) — options: E20, E30, E31, E32
+M5. "Browser.dll" (Software) — options: E20, E33, E35, E21
+M6. "Files.dll" (Software) — options: E20, E16, E22, E21
+M7. "Screen.dll" (Software) — options: E20, E21, E22, E24
+M8. "Social.dll" (Software) — options: E20, E21, E22, E13
+M9. "USB.dll" (Software) — options: E20, E21, E22, E34
+M10. "JavaScript" (Software) — options: E4, E52, E30, E53
+M11. "prozorro.online" (Domain) — options: E72, E73, E74, E75
+M12. "ukraero.space" (Domain) — options: E82, E77, E83, E84
+M13. "beget.com" (Domain) — options: E79, E90, E91, E92
+M14. "Software Restriction Policies (SRP)" (Software) — options: E55, E56, E8, E57
+
+=== RESPONSE (137.3s, in 2945 / out 11040 tok, stop) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a new tool identified by CERT-UA"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"code used to launch an obfuscated PowerShell script"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M13","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M14","id":"NEW","p":null,"r":null,"lvl":"g0","g":null}]}

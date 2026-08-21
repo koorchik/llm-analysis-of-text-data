@@ -1,0 +1,83 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Suite Version",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Product Brand",
+            "example": "Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Word Processor",
+            "gate": "3",
+            "reason": "While a valid kind_of for 'MS Word', it does not encompass the variety of objects in the sample (like 'Petya' or various 'Office' versions) as effectively as the product-based progression."
+          },
+          {
+            "candidate": "Malware",
+            "gate": "2",
+            "reason": "A valid kind_of for some entries, but it represents a separate branch of the tree; selecting it would exclude the majority of the provided examples in the ladder construction."
+          }
+        ],
+        "notes": "The evidence heavily favors an 'Office' suite-based path. The transition from specific versions (2016, 2013) and branded items (MS Office, Microsoft Office) to the core product name 'Office' removes two distinct qualifiers (vendor name and version number) while preserving the identity of the software referent.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

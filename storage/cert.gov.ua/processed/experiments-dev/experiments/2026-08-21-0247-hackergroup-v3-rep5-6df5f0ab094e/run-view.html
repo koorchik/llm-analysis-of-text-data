@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>SKEIN run playback — hackergroup-v3-rep5-6df5f0ab094e</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2328; --muted: #656d76; --line: #d0d7de; --panel: #f6f8fa;
+    --chip1: #0969da; --chip2: #9a6700; --chip3: #8250df; --warn-bg: #fff8c5; --warn-line: #d4a72c;
+    --hl: #fff3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #8d96a0; --line: #30363d; --panel: #161b22;
+      --chip1: #58a6ff; --chip2: #d29922; --chip3: #bc8cff; --warn-bg: #3a2d12; --warn-line: #9e6a03;
+      --hl: #4d3800;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 14px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  header { padding: 10px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0;
+           background: var(--bg); z-index: 5; }
+  header h1 { font-size: 16px; margin: 0 0 6px; }
+  header .sub { color: var(--muted); font-size: 12px; }
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .controls input[type=range] { flex: 1; min-width: 200px; }
+  .controls button { background: var(--panel); color: var(--fg); border: 1px solid var(--line);
+                     border-radius: 6px; padding: 3px 10px; cursor: pointer; font-size: 13px; }
+  .controls .pos { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+  .armrow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px;
+            padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+  .armrow label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+                  color: var(--muted); }
+  .armrow select { background: var(--panel); color: var(--fg); border: 1px solid var(--line);
+                   border-radius: 6px; padding: 3px 8px; font-size: 13px; max-width: 100%; }
+  .armrow .armmeta { color: var(--muted); font-size: 12px; }
+  .armrow .armmeta code { color: var(--fg); }
+  .banner { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 6px;
+            padding: 8px 12px; margin: 10px 16px; font-size: 13px; }
+  main { display: grid; grid-template-columns: 220px 1fr 340px; gap: 0; min-height: 0; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+  nav { border-right: 1px solid var(--line); padding: 10px; }
+  nav .cat { display: flex; justify-content: space-between; padding: 4px 8px; border-radius: 6px;
+             cursor: pointer; }
+  nav .cat.active { background: var(--panel); font-weight: 600; }
+  nav .cat .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+  section.middle { padding: 12px 16px; min-width: 0; }
+  aside { border-left: 1px solid var(--line); padding: 12px; font-size: 13px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+       margin: 14px 0 6px; }
+  .ladder { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+  .rung { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; flex-wrap: wrap; }
+  .g { font-weight: 700; font-variant-numeric: tabular-nums; width: 26px; }
+  .chip { font-size: 11px; border-radius: 10px; padding: 0 8px; border: 1px solid var(--line); }
+  .chip.preserving { color: var(--chip1); border-color: var(--chip1); }
+  .chip.widening { color: var(--chip2); border-color: var(--chip2); }
+  .chip.disputed { color: var(--chip3); border-color: var(--chip3); }
+  .foldtest { color: var(--muted); font-size: 12px; width: 100%; padding-left: 34px; }
+  ul.forest { list-style: none; padding-left: 18px; margin: 4px 0; }
+  ul.forest > li { padding: 2px 0; }
+  .ent { border-radius: 4px; padding: 1px 4px; }
+  .ent.changed { background: var(--hl); }
+  .ent .rungtag { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  /* Dotted = read from the final registry, not from a journal event at this frame. */
+  .ent .rungtag.final { border-bottom: 1px dotted var(--muted); cursor: help; opacity: .75; }
+  .ent .deferred { color: var(--chip2); font-size: 11px; margin-left: 4px; }
+  .aliases { color: var(--muted); font-size: 12px; padding-left: 12px; overflow-wrap: anywhere; }
+  .edgekind { font-size: 11px; margin-left: 6px; }
+  .edgekind.coarsens-to { color: var(--chip1); }
+  .edgekind.part-of { color: var(--chip2); }
+  .repeat { color: var(--muted); font-style: italic; }
+  input.filter { width: 100%; margin: 4px 0 8px; padding: 5px 8px; border: 1px solid var(--line);
+                 border-radius: 6px; background: var(--bg); color: var(--fg); }
+  .event { border-bottom: 1px solid var(--line); padding: 5px 0; overflow-wrap: anywhere; }
+  .event .op { font-weight: 600; }
+  .event .op.link { color: var(--chip1); }
+  .event .op.mint { color: var(--fg); }
+  .event .op.defer { color: var(--chip2); }
+  .event .op.repair { color: var(--chip3); }
+  .event .why { color: var(--muted); font-size: 12px; }
+  details.singletons summary { color: var(--muted); cursor: pointer; }
+  .renames { color: var(--muted); font-size: 13px; }
+  .empty { color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>SKEIN run playback — <code id="runid"></code></h1>
+  <div class="armrow" id="armrow" hidden>
+    <label for="arm">model / arm</label>
+    <select id="arm"></select>
+    <span class="armmeta" id="armmeta"></span>
+  </div>
+  <div class="sub" id="docline"></div>
+  <div class="controls">
+    <button id="step-back" title="one document back">⏮</button>
+    <button id="play">▶</button>
+    <button id="step-fwd" title="one document forward">⏭</button>
+    <input type="range" id="scrubber" min="0" value="0">
+    <span class="pos" id="pos"></span>
+    <select id="speed"><option value="600">slow</option><option value="250" selected>normal</option><option value="80">fast</option></select>
+  </div>
+</header>
+<div id="banner"></div>
+<main>
+  <nav id="cats"></nav>
+  <section class="middle">
+    <input class="filter" id="filter" placeholder="filter entity names…">
+    <h2>Granularity ladder</h2>
+    <div id="ladder"></div>
+    <h2>Registry (granularity forest)</h2>
+    <div id="forest"></div>
+  </section>
+  <aside>
+    <h2 id="doc-events-title">This document</h2>
+    <div id="doc-events"></div>
+  </aside>
+</main>
+<script>
+var exports = {};
+exports.createEmptyState = function () {
+    return {
+        categories: {},
+        ladders: {},
+        counts: { links: 0, mints: 0, defers: 0 },
+        repairCounts: { suspects: 0, distinct: 0, spillover: 0, glossFlagged: 0 },
+        pendingCrossCategoryMerge: null,
+    };
+};
+exports.docOf = function (event) {
+    const doc = event.docId !== undefined ? event.docId : event.doc;
+    return typeof doc === 'number' ? doc : -1;
+};
+exports.applyEvent = function (state, event) {
+    const category = function (name) {
+        if (!state.categories[name]) {
+            state.categories[name] = { entities: {}, edges: [], renames: [] };
+        }
+        return state.categories[name];
+    };
+    const ensureEntity = function (categoryName, canonical, doc) {
+        const bucket = category(categoryName);
+        if (!bucket.entities[canonical]) {
+            bucket.entities[canonical] = { aliases: [canonical], firstDoc: doc };
+        }
+        return bucket.entities[canonical];
+    };
+    const doc = (0, exports.docOf)(event);
+    if (event.op === 'decision') {
+        const target = event.target || event.mintedAs;
+        if (!event.category || !target) {
+            if (event.decision === 'defer')
+                state.counts.defers += 1;
+            return;
+        }
+        const entity = ensureEntity(event.category, target, doc);
+        if (event.decision === 'link') {
+            state.counts.links += 1;
+            if (event.mention && entity.aliases.indexOf(event.mention) === -1) {
+                entity.aliases.push(event.mention);
+            }
+        }
+        else if (event.decision === 'mint') {
+            state.counts.mints += 1;
+        }
+        else if (event.decision === 'defer') {
+            state.counts.defers += 1;
+            entity.deferred = true;
+        }
+        if (event.mentionRung && !entity.rung)
+            entity.rung = event.mentionRung;
+        return;
+    }
+    if (event.op === 'granularity-edge' && event.category) {
+        const bucket = category(event.category);
+        const exists = bucket.edges.some(function (edge) {
+            return edge.from === event.from && edge.to === event.to && edge.kind === event.kind;
+        });
+        if (!exists) {
+            ensureEntity(event.category, event.from, doc);
+            ensureEntity(event.category, event.to, doc);
+            bucket.edges.push({ from: event.from, to: event.to, kind: event.kind, by: event.by, doc });
+        }
+        if (event.mentionRung && bucket.entities[event.from] && !bucket.entities[event.from].rung) {
+            bucket.entities[event.from].rung = event.mentionRung;
+        }
+        return;
+    }
+    if (event.op === 'rename-edge' && event.category) {
+        const bucket = category(event.category);
+        ensureEntity(event.category, event.from, doc);
+        ensureEntity(event.category, event.to, doc);
+        bucket.renames.push({ from: event.from, to: event.to, kind: 'renamed-to', by: event.by, doc });
+        return;
+    }
+    if (event.op === 'discover-ladder' && event.category && event.outcome === 'cached') {
+        if (!state.ladders[event.category])
+            state.ladders[event.category] = [];
+        state.ladders[event.category].push(event.ladder);
+        return;
+    }
+    // --- T11: StreamingRepairer telemetry — no structural fold, just a running count. -------------
+    if (event.op === 'suspect') {
+        state.repairCounts.suspects += 1;
+        return;
+    }
+    if (event.op === 'repair-distinct') {
+        state.repairCounts.distinct += 1;
+        return;
+    }
+    if (event.op === 'repair-spillover') {
+        state.repairCounts.spillover += typeof event.size === 'number' ? event.size : 1;
+        return;
+    }
+    if (event.op === 'gloss-flagged') {
+        state.repairCounts.glossFlagged += 1;
+        return;
+    }
+    // --- T11: repair-move — a single alias relocates between canonicals, possibly cross-category. --
+    if (event.op === 'repair-move' && Array.isArray(event.categories) && event.categories.length === 2) {
+        const fromBucket = category(event.categories[0]);
+        const source = fromBucket.entities[event.from];
+        if (source) {
+            source.aliases = source.aliases.filter(function (alias) {
+                return alias !== event.alias;
+            });
+        }
+        const target = ensureEntity(event.categories[1], event.to, doc);
+        if (target.aliases.indexOf(event.alias) === -1)
+            target.aliases.push(event.alias);
+        return;
+    }
+    // `repair-merge` (real doc id) folds exactly like `merge-canonical` (doc -1) — same field names
+    // (category/from/into), just a different origin.
+    if ((event.op === 'merge-canonical' || event.op === 'repair-merge') && event.category) {
+        const bucket = category(event.category);
+        const pending = state.pendingCrossCategoryMerge;
+        const degenerate = event.op === 'repair-merge' &&
+            event.from === event.into &&
+            pending !== null &&
+            pending.category === event.category &&
+            pending.movedName === event.from;
+        state.pendingCrossCategoryMerge = null;
+        // Ordinarily `from` is the absorbed name and `into` is the survivor. In the degenerate case
+        // (canonicalPolicy kept the JUST-MOVED entity's own name as survivor) `from` and `into` are
+        // identical and this event alone can't say who the other merge partner was — recovered from the
+        // category-correction event that preceded it (see `pendingCrossCategoryMerge` doc comment).
+        const absorbedName = degenerate ? pending.requestedInto : event.from;
+        const source = bucket.entities[absorbedName];
+        const target = ensureEntity(event.category, event.into, doc);
+        if (source && source !== target) {
+            for (const alias of source.aliases) {
+                if (target.aliases.indexOf(alias) === -1)
+                    target.aliases.push(alias);
+            }
+            if (!target.rung && source.rung)
+                target.rung = source.rung;
+            delete bucket.entities[absorbedName];
+        }
+        const project = function (name) {
+            return name === absorbedName ? event.into : name;
+        };
+        bucket.edges = bucket.edges
+            .map(function (edge) {
+            return { from: project(edge.from), to: project(edge.to), kind: edge.kind, by: edge.by, doc: edge.doc };
+        })
+            .filter(function (edge) {
+            return edge.from !== edge.to;
+        });
+        // Renames are LEFT ALONE, deliberately — mirrors `EntityRegistry#rewriteAfterMerge`, which never
+        // touches rename edges in either direction (user ruling 2026-08-05). The `renamed` verdict path
+        // logs `rename-edge(A→B)` immediately followed by `repair-merge(A→B)` as dual-replayable history;
+        // projecting A→B through this merge would turn it into a B→B self-loop and the same filter above
+        // would then delete it, silently erasing the rename from the Renames panel on the ROUTINE path.
+        return;
+    }
+    // `repair-split` folds exactly like `split-canonical` — same structural fields
+    // (category/canonical/detached/newCanonical).
+    if ((event.op === 'split-canonical' || event.op === 'repair-split') && event.category) {
+        const bucket = category(event.category);
+        const source = bucket.entities[event.canonical];
+        if (!source || !event.newCanonical)
+            return;
+        const detached = event.detached || [];
+        source.aliases = source.aliases.filter(function (alias) {
+            return detached.indexOf(alias) === -1;
+        });
+        const target = ensureEntity(event.category, event.newCanonical, doc);
+        for (const alias of detached) {
+            if (target.aliases.indexOf(alias) === -1)
+                target.aliases.push(alias);
+        }
+        return;
+    }
+    if (event.op === 'category-correction' && event.from && event.into) {
+        const fromBucket = category(event.from.category);
+        const entity = fromBucket.entities[event.from.canonical];
+        if (!entity)
+            return;
+        delete fromBucket.entities[event.from.canonical];
+        fromBucket.edges = fromBucket.edges.filter(function (edge) {
+            return edge.from !== event.from.canonical && edge.to !== event.from.canonical;
+        });
+        if (event.by === 'StreamingRepairer') {
+            // Mirrors `EntityRegistry#move` (StreamingRepairer.ts:1027-1036): relocate the record into the
+            // target category UNDER ITS OWN NAME, carrying its aliases. The merge under the REQUESTED name
+            // (if any) is a separate step (`applyMerges`) that the `repair-merge` event immediately
+            // following this one folds — pre-empting that merge here, under the requested name, is exactly
+            // the bug this fix corrects (review finding): it left `bucket.entities[a]` undefined for the
+            // repair-merge fold to mint a fresh, empty duplicate when canonicalPolicy kept `a`'s own name.
+            const targetBucket = category(event.into.category);
+            const existing = targetBucket.entities[event.from.canonical];
+            if (existing && existing !== entity) {
+                for (const alias of entity.aliases) {
+                    if (existing.aliases.indexOf(alias) === -1)
+                        existing.aliases.push(alias);
+                }
+                if (!existing.rung && entity.rung)
+                    existing.rung = entity.rung;
+            }
+            else {
+                targetBucket.entities[event.from.canonical] = entity;
+            }
+            state.pendingCrossCategoryMerge =
+                event.from.canonical === event.into.canonical
+                    ? null
+                    : { category: event.into.category, movedName: event.from.canonical, requestedInto: event.into.canonical };
+            return;
+        }
+        // Older / non-StreamingRepairer events (e.g. RegistryConsolidator's cross-category sweep,
+        // RegistryConsolidator.ts:336-357): no follow-up merge event is ever logged for this pass — the
+        // one event stands for both the move AND the merge — so fold both here, best-effort, under the
+        // requested name (the only name this single event gives us).
+        state.pendingCrossCategoryMerge = null;
+        const target = ensureEntity(event.into.category, event.into.canonical, doc);
+        for (const alias of entity.aliases) {
+            if (target.aliases.indexOf(alias) === -1)
+                target.aliases.push(alias);
+        }
+        return;
+    }
+};
+var createEmptyState = exports.createEmptyState;
+var docOf = exports.docOf;
+var applyEvent = exports.applyEvent;
+
+var DATA = null; // the active arm — bound by bindArm() below
+var RUNS = [{"runId":"hackergroup-v3-rep5-6df5f0ab094e","arm":{"condition":"hackergroup-v3-rep5","provider":"ollama","model":"gemma4:12b-64k","ladderModels":null},"registryRungs":{"HackerGroup":{"UAC-0028":"g0","APT28":"g1","UAC-0003 (Turla)":"g0","UAC-0050":"g0","DaVinci Group":"g0","UAC-0010":"g0","Sandworm":"g0","UAC-0063":"g0","UAC-0001":"g0"}},"docOrder":[{"id":37788,"date":"16.03.2022","title":"Фішингова кампанія з використанням тематики сервісу UKR.NET та QR-кодів (CERT-UA#4193)"},{"id":40102,"date":"06.05.2022","title":"Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)"},{"id":341128,"date":"20.06.2022","title":"Кібератака групи APT28 з використанням шкідливої програми CredoMap (CERT-UA#4843)"},{"id":4492467,"date":"28.04.2023","title":"Кібератака групи APT28: розповсюдження електронних листів з \"інструкціями\" щодо \"оновлення операційної системи\" (CERT-UA#6562)"},{"id":4905829,"date":"20.06.2023","title":"Групою APT28 застосовано три експлойти для Roundcube (CVE-2020-35730, CVE-2021-44026, CVE-2020-12641) під час чергової шпигунської кампанії (CERT-UA#6805)"},{"id":5105791,"date":"08.07.2023","title":"Фішингові атаки групи APT28 (UAC-0028) з метою отримання автентифікаційних даних до публічних поштових сервісів (CERT-UA#6975)"},{"id":5702579,"date":"04.09.2023","title":"Кібератака APT28: msedge як завантажувач, TOR та сервіси mockbin.org/website.hook як центр управління (CERT-UA#7469)"},{"id":6276894,"date":"28.12.2023","title":"APT28: від первинного ураження до створення загроз для контролеру домену за годину (CERT-UA#8399)"},{"id":6277822,"date":"22.02.2024","title":"Щодо обстановки в сфері кібер на 23-24 лютого 2024 року"},{"id":6280129,"date":"21.07.2024","title":"UAC-0063 атакує науково-дослідні установи України: HATVIBE + CHERRYSPY + CVE-2024-23692 (CERT-UA#10356)"},{"id":6281123,"date":"25.10.2024","title":"Кібератака UAC-0001 (APT28): PowerShell-команда в буфері обміну як \"точка входу\" (CERT-UA#11689)"}],"events":[{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":37788,"mention":"UAC-0028","category":"HackerGroup","candidates":[],"decision":"mint","target":"UAC-0028","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":37788,"mention":"APT28","category":"HackerGroup","candidates":[],"decision":"mint","target":"APT28","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":40102,"kind":"listwise-graph","seconds":14.556,"model":"gemma4:12b-64k","promptTokens":1233,"completionTokens":1111},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":40102,"mention":"APT28 (UAC-0028)","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028"]},{"name":"APT28","sim":0.85,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]}],"decision":"link","target":"UAC-0028"},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6277822,"kind":"listwise-graph","seconds":78.837,"model":"gemma4:12b-64k","promptTokens":1428,"completionTokens":6372},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"UAC-0028 (APT28)","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]},{"name":"APT28","sim":0.83,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]}],"decision":"link","target":"UAC-0028"},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"UAC-0003 (Turla)","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]},{"name":"APT28","sim":0.28,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]}],"decision":"mint","target":"UAC-0003 (Turla)","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"UAC-0050","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]},{"name":"APT28","sim":0.39,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]}],"decision":"mint","target":"UAC-0050","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"DaVinci Group","category":"HackerGroup","candidates":[{"name":"APT28","sim":0.33,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]},{"name":"UAC-0028","sim":0.28,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]}],"decision":"mint","target":"DaVinci Group","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"UAC-0010","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]},{"name":"APT28","sim":0.42,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]}],"decision":"mint","target":"UAC-0010","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6277822,"mention":"Sandworm","category":"HackerGroup","candidates":[{"name":"APT28","sim":0.37,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]},{"name":"UAC-0028","sim":0.31,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)"]}],"decision":"mint","target":"Sandworm","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6280129,"kind":"ladder","seconds":86.292,"model":"gemma4:12b-64k","promptTokens":1234,"completionTokens":6941},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6280129,"kind":"ladder","seconds":92.273,"model":"gemma4:12b-64k","promptTokens":1234,"completionTokens":7443},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6280129,"kind":"ladder","seconds":65.149,"model":"gemma4:12b-64k","promptTokens":1234,"completionTokens":5241},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"granularity-edge","doc":6280129,"category":"HackerGroup","from":"UAC-0028","to":"APT28","kind":"coarsens-to","by":"ladder-binding"},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"discover-ladder","doc":6280129,"category":"HackerGroup","version":1,"outcome":"cached","ladder":{"version":1,"exampleCount":9,"runs":3,"models":["run-1","run-2","run-3"],"rungs":[{"g":0,"alias":"complex_identifier","example":"UAC-0028 (APT28)","disputed":false},{"g":1,"alias":"common_name","example":"APT28","disputed":true,"move":"drop-qualifier","preserving":true,"foldTest":"'UAC-0028 (APT28)' was involved in an event' -> 'APT28' was involved in an event: same claim, less detail","edgeKind":"coarsens-to"}],"rejected":[{"candidate":"State-sponsored actor","gate":"1","reason":"This would be a different category (a broader classification of the entity's nature) rather than a less specific representation of the same entity within the HackerGroup category."},{"candidate":"UAC-0028","gate":"2","reason":"While 'UAC-0028' is an identity-bearing name, it represents a different identification style (internal ID) rather than a less specific version of 'APT28'. Both are roughly equal in specificity within the context provided."}],"notes":"The distinction identified is between names containing both system identifiers and common aliases versus those using only the common name. The internal identifier (e.g., UAC-0010) acts as a qualifier that, when removed, leaves the primary identification of the group.","disagreements":["g1 \"APT28\": omitted by run 3"],"discoveredAtDoc":6280129},"validRuns":3,"softViolations":[],"rejectedRuns":[]},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6280129,"kind":"listwise-graph","seconds":61.81,"model":"gemma4:12b-64k","promptTokens":1451,"completionTokens":4976},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6280129,"mention":"UAC-0063","category":"HackerGroup","candidates":[{"name":"UAC-0010","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0010"]},{"name":"UAC-0050","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0050"]},{"name":"UAC-0028","sim":0.99,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)","UAC-0028 (APT28)"]},{"name":"UAC-0003 (Turla)","sim":0.89,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0003 (Turla)"]},{"name":"APT28","sim":0.35,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]},{"name":"DaVinci Group","sim":0.31,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["DaVinci Group"]},{"name":"Sandworm","sim":0.31,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["Sandworm"]}],"decision":"mint","target":"UAC-0063","gloss":"hacker group targeting Ukrainian research institutions"},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6280129,"mention":"UAC-0001","category":"HackerGroup","candidates":[{"name":"UAC-0010","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0010"]},{"name":"UAC-0050","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0050"]},{"name":"UAC-0028","sim":0.99,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)","UAC-0028 (APT28)"]},{"name":"UAC-0003 (Turla)","sim":0.89,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0003 (Turla)"]},{"name":"APT28","sim":0.4,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]},{"name":"DaVinci Group","sim":0.31,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["DaVinci Group"]},{"name":"Sandworm","sim":0.33,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["Sandworm"]}],"decision":"mint","target":"UAC-0001","gloss":null},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"llm-call","doc":6281123,"kind":"listwise-graph","seconds":42.137,"model":"gemma4:12b-64k","promptTokens":1416,"completionTokens":3364},{"runId":"hackergroup-v3-rep5-6df5f0ab094e","op":"decision","docId":6281123,"mention":"UAC-0001 (APT28)","category":"HackerGroup","candidates":[{"name":"UAC-0028","sim":0.9,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0028","APT28 (UAC-0028)","UAC-0028 (APT28)"]},{"name":"UAC-0001","sim":1,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0001"]},{"name":"APT28","sim":0.74,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["APT28"]},{"name":"UAC-0003 (Turla)","sim":0.63,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0003 (Turla)"]},{"name":"UAC-0010","sim":0.67,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0010"]},{"name":"UAC-0050","sim":0.57,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0050"]},{"name":"UAC-0063","sim":0.4,"channel":"union-rr:bm25+embedding+string-sim+tfidf-ngram+translit","surfaces":["UAC-0063"]},{"name":"Sandworm","sim":0.29,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["Sandworm"]},{"name":"DaVinci Group","sim":0.26,"channel":"union-rr:embedding+string-sim+tfidf-ngram+translit","surfaces":["DaVinci Group"]}],"decision":"link","target":"UAC-0001"}],"selfCheck":{"ok":true,"extraInReplay":{},"missingInReplay":{}}}];
+var runIndex = 0;
+
+// Frame f = state after processing docOrder[f-1]; frame 0 = empty; the last frame appends the
+// consolidator's batch-reference chapter (doc -1 events logged after the stream — T11: per-document
+// repair ops now carry their own real doc id, so this trailing frame is specific to the older
+// whole-corpus consolidator pass). Every arm has its own journal and therefore its own frame axis,
+// so these are rebound on each arm switch.
+var repairEvents = [];
+var frameCount = 0;
+var frame = 0;
+var activeCategory = null;
+var playTimer = null;
+
+/**
+ * Switch arms, carrying the reading position across by DOCUMENT ID rather than frame index —
+ * arms can differ in how many artifacts they produced, so index 57 need not be the same report.
+ * An arm that never saw the current document clamps instead of jumping somewhere arbitrary.
+ */
+function bindArm(index, keepDocId) {
+  runIndex = index;
+  DATA = RUNS[index];
+  repairEvents = DATA.events.filter(function (e) { return docOf(e) < 0; });
+  var previous = frame;
+  frameCount = DATA.docOrder.length + (repairEvents.length > 0 ? 1 : 0);
+  if (keepDocId === undefined || keepDocId === null || keepDocId === -1) {
+    frame = frameCount;
+    return;
+  }
+  for (var i = 0; i < DATA.docOrder.length; i++) {
+    if (DATA.docOrder[i].id === keepDocId) { frame = i + 1; return; }
+  }
+  frame = Math.min(previous, frameCount);
+}
+
+/** "a,a,a" → "a ×3" — the ladder ensemble spec repeats one model per member. */
+function collapseModelSpec(spec) {
+  var counts = {}; var order = [];
+  spec.split(',').forEach(function (entry) {
+    var name = entry.trim();
+    if (!name) return;
+    if (counts[name] === undefined) { counts[name] = 0; order.push(name); }
+    counts[name] += 1;
+  });
+  return order.map(function (n) { return counts[n] > 1 ? n + ' \u00d7' + counts[n] : n; }).join(', ');
+}
+
+function renderArmBar() {
+  if (RUNS.length < 2) return;
+  var row = document.getElementById('armrow');
+  row.hidden = false;
+  document.getElementById('arm').innerHTML = RUNS.map(function (r, i) {
+    return '<option value="' + i + '"' + (i === runIndex ? ' selected' : '') + '>' +
+      esc(r.arm.condition) + ' \u2014 ' + esc(r.arm.provider) + '/' + esc(r.arm.model) + '</option>';
+  }).join('');
+  var meta = '<code>' + esc(DATA.runId) + '</code> \u00b7 ' + DATA.docOrder.length + ' doc(s)';
+  if (DATA.arm.ladderModels) {
+    meta += ' \u00b7 ladder: <code>' + esc(collapseModelSpec(DATA.arm.ladderModels)) + '</code>';
+  }
+  if (!DATA.selfCheck.ok) meta += ' \u00b7 \u26a0 journal incomplete';
+  document.getElementById('armmeta').innerHTML = meta;
+}
+
+function eventsUpTo(f) {
+  var docsIncluded = {};
+  var limit = Math.min(f, DATA.docOrder.length);
+  for (var i = 0; i < limit; i++) docsIncluded[DATA.docOrder[i].id] = true;
+  var includeRepair = f > DATA.docOrder.length || (f === frameCount && repairEvents.length > 0 && f > DATA.docOrder.length - 1 && frameCount > DATA.docOrder.length);
+  return DATA.events.filter(function (e) {
+    var d = docOf(e);
+    if (d < 0) return includeRepair;
+    return docsIncluded[d] === true;
+  });
+}
+
+function stateAt(f) {
+  var state = createEmptyState();
+  eventsUpTo(f).forEach(function (e) { applyEvent(state, e); });
+  return state;
+}
+
+function currentDocId(f) {
+  if (f === 0) return null;
+  if (f > DATA.docOrder.length) return -1;
+  return DATA.docOrder[f - 1].id;
+}
+
+var esc = function (s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+};
+
+function render() {
+  var state = stateAt(frame);
+  var docId = currentDocId(frame);
+  document.getElementById('runid').textContent = DATA.runId;
+  renderArmBar();
+  document.getElementById('scrubber').max = String(frameCount);
+  document.getElementById('scrubber').value = String(frame);
+
+  var posLabel = frame === 0 ? 'before first document'
+    : frame > DATA.docOrder.length ? 'after the batch-reference chapter'
+    : 'after doc ' + frame + '/' + DATA.docOrder.length;
+  document.getElementById('pos').textContent = posLabel +
+    ' · links ' + state.counts.links + ' · mints ' + state.counts.mints + ' · defers ' + state.counts.defers;
+
+  var docline = '';
+  if (docId !== null && docId >= 0) {
+    var ref = DATA.docOrder[frame - 1];
+    docline = 'doc ' + ref.id + ' — ' + esc(ref.title) + ' (' + esc(ref.date) + ')';
+  } else if (docId === -1) {
+    docline = 'batch-reference chapter: consolidator operations (merge / split / edge / rename / category correction)';
+  }
+  document.getElementById('docline').innerHTML = docline;
+
+  renderBanner();
+  renderCategories(state);
+  renderLadder(state);
+  renderForest(state, docId);
+  renderDocEvents(docId);
+}
+
+function renderBanner() {
+  var el = document.getElementById('banner');
+  if (DATA.selfCheck.ok) { el.innerHTML = ''; return; }
+  var parts = [];
+  Object.keys(DATA.selfCheck.missingInReplay).forEach(function (cat) {
+    parts.push(cat + ': ' + DATA.selfCheck.missingInReplay[cat].length + ' canonical(s) on disk but not replayable');
+  });
+  Object.keys(DATA.selfCheck.extraInReplay).forEach(function (cat) {
+    parts.push(cat + ': ' + DATA.selfCheck.extraInReplay[cat].length + ' replayed but not on disk');
+  });
+  el.innerHTML = '<div class="banner">⚠ journal incomplete — the replayed final state differs from registry.json (' +
+    esc(parts.join('; ')) + '). Playback is still usable, but treat per-frame states as approximate.</div>';
+}
+
+function renderCategories(state) {
+  var cats = Object.keys(state.categories).sort();
+  if (activeCategory === null || cats.indexOf(activeCategory) === -1) activeCategory = cats[0] || null;
+  document.getElementById('cats').innerHTML = cats.map(function (cat) {
+    var n = Object.keys(state.categories[cat].entities).length;
+    return '<div class="cat' + (cat === activeCategory ? ' active' : '') + '" data-cat="' + esc(cat) + '">' +
+      '<span>' + esc(cat) + '</span><span class="n">' + n + '</span></div>';
+  }).join('') || '<div class="empty">no categories yet</div>';
+  Array.prototype.forEach.call(document.querySelectorAll('#cats .cat'), function (el) {
+    el.addEventListener('click', function () { activeCategory = el.getAttribute('data-cat'); render(); });
+  });
+}
+
+function renderLadder(state) {
+  var el = document.getElementById('ladder');
+  var versions = (activeCategory && state.ladders[activeCategory]) || [];
+  if (versions.length === 0) {
+    el.innerHTML = '<div class="empty">no ladder discovered yet' +
+      (activeCategory ? ' for ' + esc(activeCategory) : '') + ' — flat g0 mode</div>';
+    return;
+  }
+  var ladder = versions[versions.length - 1];
+  var html = '<div class="ladder"><div class="sub">version ' + esc(ladder.version) +
+    ' · ' + esc(ladder.runs) + ' run(s) · discovered at doc ' + esc(ladder.discoveredAtDoc) +
+    (versions.length > 1 ? ' · ' + (versions.length - 1) + ' earlier version(s)' : '') + '</div>';
+  (ladder.rungs || []).forEach(function (rung) {
+    var chips = '';
+    if (rung.g > 0) {
+      chips += rung.preserving
+        ? '<span class="chip preserving">preserving · coarsens-to</span>'
+        : '<span class="chip widening">widening · part-of</span>';
+    }
+    if (rung.disputed) chips += ' <span class="chip disputed">disputed</span>';
+    if (rung.move) chips += ' <span class="chip">' + esc(rung.move) + '</span>';
+    html += '<div class="rung"><span class="g">g' + esc(rung.g) + '</span>' +
+      '<span>' + esc(rung.example) + '</span> <span class="sub">(' + esc(rung.alias) + ')</span> ' + chips;
+    if (rung.foldTest) html += '<div class="foldtest">' + esc(rung.foldTest) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  if ((ladder.rejected || []).length > 0) {
+    html += '<div class="sub">rejected: ' + ladder.rejected.map(function (r) {
+      return esc(r.candidate) + ' (gate ' + esc(r.gate) + ')';
+    }).join(' · ') + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function renderForest(state, docId) {
+  var el = document.getElementById('forest');
+  var bucket = activeCategory ? state.categories[activeCategory] : null;
+  if (!bucket) { el.innerHTML = '<div class="empty">nothing here yet</div>'; return; }
+  var filter = document.getElementById('filter').value.trim().toLowerCase();
+
+  var children = {}; var hasParent = {};
+  bucket.edges.forEach(function (edge) {
+    (children[edge.to] = children[edge.to] || []).push(edge);
+    hasParent[edge.from] = true;
+  });
+  var inHierarchy = {};
+  bucket.edges.forEach(function (edge) { inHierarchy[edge.from] = true; inHierarchy[edge.to] = true; });
+
+  var touched = {};
+  if (docId !== null) {
+    DATA.events.forEach(function (e) {
+      if (docOf(e) !== docId || (e.category || (e.into && e.into.category)) !== activeCategory) return;
+      [e.target, e.mintedAs, e.from, e.to, e.into, e.canonical, e.newCanonical].forEach(function (name) {
+        if (typeof name === 'string') touched[name] = true;
+        else if (name && name.canonical) touched[name.canonical] = true;
+      });
+    });
+  }
+
+  function matches(name) {
+    if (!filter) return true;
+    var entity = bucket.entities[name];
+    if (name.toLowerCase().indexOf(filter) !== -1) return true;
+    return entity && entity.aliases.some(function (a) { return a.toLowerCase().indexOf(filter) !== -1; });
+  }
+
+  function nodeHtml(name, edge, seen) {
+    var entity = bucket.entities[name] || { aliases: [name] };
+    var repeated = seen[name] === true;
+    seen[name] = true;
+    var cls = 'ent' + (touched[name] ? ' changed' : '');
+    var html = '<li><span class="' + cls + '">' + esc(name);
+    // Journal rung when the stream carried one; otherwise the registry's final rung, marked
+    // "final" because it is not attributable to this document — most rungs are bound
+    // retroactively by the ladder and never appear as an event.
+    var journalRung = entity.rung;
+    var finalRung = (DATA.registryRungs[activeCategory] || {})[name];
+    if (journalRung) {
+      html += '<span class="rungtag">[' + esc(journalRung) + ']</span>';
+    } else if (finalRung) {
+      html += '<span class="rungtag final" title="final rung from registry.json — bound ' +
+        'retroactively by the ladder, not journalled per document">[' + esc(finalRung) + ']</span>';
+    }
+    if (entity.deferred) html += '<span class="deferred">deferred</span>';
+    html += '</span>';
+    if (edge) html += '<span class="edgekind ' + esc(edge.kind) + '">' + esc(edge.kind) +
+      (edge.by ? ' · ' + esc(edge.by) : '') + '</span>';
+    var extraAliases = entity.aliases.filter(function (a) { return a !== name; });
+    if (extraAliases.length > 0) html += '<div class="aliases">' + esc(extraAliases.join(' · ')) + '</div>';
+    if (repeated) { html += ' <span class="repeat">↻ repeated</span></li>'; return html; }
+    var kids = (children[name] || []).slice().sort(function (a, b) { return a.from < b.from ? -1 : 1; });
+    if (kids.length > 0) {
+      html += '<ul class="forest">' + kids.map(function (kid) {
+        return nodeHtml(kid.from, kid, seen);
+      }).join('') + '</ul>';
+    }
+    return html + '</li>';
+  }
+
+  var names = Object.keys(bucket.entities).sort();
+  var roots = names.filter(function (name) { return inHierarchy[name] && !hasParent[name]; });
+  var flat = names.filter(function (name) { return !inHierarchy[name] && bucket.entities[name].aliases.length > 1; });
+  var singles = names.filter(function (name) { return !inHierarchy[name] && bucket.entities[name].aliases.length <= 1; });
+
+  var seen = {};
+  var html = '';
+  var shownRoots = roots.filter(matches);
+  if (shownRoots.length > 0) {
+    html += '<ul class="forest">' + shownRoots.map(function (root) { return nodeHtml(root, null, seen); }).join('') + '</ul>';
+  }
+  if (bucket.renames.length > 0) {
+    html += '<h2>Renames</h2><div class="renames">' + bucket.renames.map(function (edge) {
+      return esc(edge.from) + ' → ' + esc(edge.to);
+    }).join('<br>') + '</div>';
+  }
+  var shownFlat = flat.filter(matches);
+  if (shownFlat.length > 0) {
+    html += '<h2>Merged (no hierarchy)</h2><ul class="forest">' +
+      shownFlat.map(function (name) { return nodeHtml(name, null, {}); }).join('') + '</ul>';
+  }
+  var shownSingles = singles.filter(matches);
+  if (shownSingles.length > 0) {
+    html += '<details class="singletons"><summary>' + shownSingles.length + ' singleton(s)</summary><ul class="forest">' +
+      shownSingles.map(function (name) { return nodeHtml(name, null, {}); }).join('') + '</ul></details>';
+  }
+  el.innerHTML = html || '<div class="empty">no matching entities</div>';
+}
+
+function renderDocEvents(docId) {
+  var el = document.getElementById('doc-events');
+  var title = document.getElementById('doc-events-title');
+  if (docId === null) { title.textContent = 'This document'; el.innerHTML = '<div class="empty">scrub forward to see per-document changes</div>'; return; }
+  // T11: "Repair operations" would now be misleading here — per-document repairs render under their
+  // own doc id ('Changes from doc N'); this frame is specifically the older batch consolidator pass.
+  title.textContent = docId === -1 ? 'Batch-reference operations' : 'Changes from doc ' + docId;
+  var rows = DATA.events.filter(function (e) { return docOf(e) === docId && e.op !== 'llm-call'; });
+  var calls = DATA.events.filter(function (e) { return docOf(e) === docId && e.op === 'llm-call'; });
+  var html = rows.map(function (e) {
+    if (e.op === 'decision') {
+      // Class names are a closed set; anything else in the log renders as plain 'mint' styling.
+      var cls = e.decision === 'link' || e.decision === 'defer' ? e.decision : 'mint';
+      var what = e.decision === 'link' ? esc(e.mention) + ' → ' + esc(e.target)
+        : e.decision === 'defer' ? esc(e.mention) + ' (provisional: ' + esc(e.mintedAs || '?') + ')'
+        : esc(e.mention);
+      return '<div class="event"><span class="op ' + cls + '">' + esc(e.decision) + '</span> ' + what +
+        ' <span class="why">' + esc(e.category || '') + '</span></div>';
+    }
+    if (e.op === 'granularity-edge') {
+      return '<div class="event"><span class="op">edge</span> ' + esc(e.from) + ' —[' + esc(e.kind) + ']→ ' +
+        esc(e.to) + ' <span class="why">' + esc(e.category || '') + (e.by ? ' · ' + esc(e.by) : '') + '</span></div>';
+    }
+    if (e.op === 'discover-ladder') {
+      return '<div class="event"><span class="op">ladder</span> ' + esc(e.category) + ' v' + esc(e.version) +
+        ' — ' + esc(e.outcome) + '</div>';
+    }
+    // T11: repair-merge/repair-split/repair-move/repair-distinct/repair-keep are the StreamingRepairer's
+    // structural verdicts — same "repair" chip as the older consolidator ops they sit alongside (a T9
+    // review flagged that leaving them out of this list makes them fall through to the generic
+    // '<op>' row below, with no description).
+    if (e.op === 'merge-canonical' || e.op === 'split-canonical' || e.op === 'rename-edge' || e.op === 'category-correction' ||
+        e.op === 'repair-merge' || e.op === 'repair-split' || e.op === 'repair-move' || e.op === 'repair-distinct' || e.op === 'repair-keep') {
+      var desc = e.op === 'merge-canonical' || e.op === 'repair-merge' ? esc(e.from) + ' ⇒ ' + esc(e.into)
+        : e.op === 'split-canonical' || e.op === 'repair-split' ? esc(e.canonical) + ' ⇏ ' + esc((e.detached || []).join(', '))
+        : e.op === 'rename-edge' ? esc(e.from) + ' → ' + esc(e.to)
+        : e.op === 'repair-move' ? esc(e.alias) + ': ' + esc(e.from) + ' → ' + esc(e.to)
+        : e.op === 'repair-distinct' ? esc((e.pair || []).join(' ≠ '))
+        : e.op === 'repair-keep' ? esc(e.entity)
+        : esc(e.from && e.from.category) + '/' + esc(e.from && e.from.canonical) + ' ⇒ ' + esc(e.into && e.into.category);
+      var label = e.op.replace('-canonical', '').replace('-edge', '').replace('repair-', '');
+      return '<div class="event"><span class="op repair">' + esc(label) +
+        '</span> ' + desc + ' <span class="why">' + esc(e.category || '') + '</span></div>';
+    }
+    // T11 telemetry: no structural fold, but still worth surfacing as low-key rows rather than
+    // falling through to the bare '<op>' default.
+    if (e.op === 'suspect' || e.op === 'repair-spillover' || e.op === 'gloss-flagged' ||
+        e.op === 'repair-op-rejected' || e.op === 'repair-op-skipped') {
+      var telemetry = e.op === 'suspect' ? esc((e.pair || []).join(' ~ ')) + ' <span class="why">' + esc(e.signal) + ' ' + esc(e.score) + '</span>'
+        : e.op === 'repair-spillover' ? esc(e.size) + ' suspect(s) <span class="why">' + esc(e.reason) + '</span>'
+        : e.op === 'gloss-flagged' ? esc(e.mention) + ' <span class="why">' + esc(e.kind) + '</span>'
+        : esc(e.verdict || '') + ' <span class="why">' + esc(e.reason) + (e.detail ? ': ' + esc(e.detail) : '') + '</span>';
+      return '<div class="event"><span class="op">' + esc(e.op) + '</span> ' + telemetry + '</div>';
+    }
+    return '<div class="event"><span class="op">' + esc(e.op) + '</span></div>';
+  }).join('');
+  if (calls.length > 0) {
+    html += '<div class="event why">' + calls.length + ' LLM call(s): ' + calls.map(function (c) { return esc(c.kind); }).join(', ') + '</div>';
+  }
+  el.innerHTML = html || '<div class="empty">no state changes from this document</div>';
+}
+
+document.getElementById('arm').addEventListener('change', function (e) {
+  if (playTimer) {
+    clearInterval(playTimer); playTimer = null;
+    document.getElementById('play').textContent = '\u25b6';
+  }
+  bindArm(Number(e.target.value), currentDocId(frame));
+  render();
+});
+document.getElementById('scrubber').addEventListener('input', function (e) {
+  frame = Number(e.target.value); render();
+});
+document.getElementById('step-back').addEventListener('click', function () {
+  frame = Math.max(0, frame - 1); render();
+});
+document.getElementById('step-fwd').addEventListener('click', function () {
+  frame = Math.min(frameCount, frame + 1); render();
+});
+document.getElementById('filter').addEventListener('input', function () { render(); });
+document.getElementById('play').addEventListener('click', function () {
+  var btn = document.getElementById('play');
+  if (playTimer) { clearInterval(playTimer); playTimer = null; btn.textContent = '▶'; return; }
+  if (frame >= frameCount) frame = 0;
+  btn.textContent = '⏸';
+  playTimer = setInterval(function () {
+    frame += 1;
+    if (frame >= frameCount) { clearInterval(playTimer); playTimer = null; btn.textContent = '▶'; frame = frameCount; }
+    render();
+  }, Number(document.getElementById('speed').value));
+});
+
+bindArm(0);
+render();
+</script>
+</body>
+</html>

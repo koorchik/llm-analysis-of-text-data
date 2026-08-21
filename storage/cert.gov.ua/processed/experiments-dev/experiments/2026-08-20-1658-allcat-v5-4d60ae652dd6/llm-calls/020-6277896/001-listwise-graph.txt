@@ -1,0 +1,135 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Answer the option carrying that **identifier**, never the option carrying only the bare label: the bare label is a different, broader entity, and it belongs in `p` if anywhere.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Entities:
+E1. UAC-0098
+E2. UAC-0056 [aka UAC-0050] <g0>
+E3. UAC-0010 (Armageddon) <g0>
+E4. UAC-0120 <g0>
+E5. APT28 (UAC-0028) <g0>
+E6. TrickBot
+E7. MISP <g0>
+E8. SmartFTP <g0>
+E9. .NET Framework <g0>
+E10. Remote Utilities <g0>
+E11. VBScript <g0>
+E12. 360Chrome Browser <g0>
+E13. spi.exe <g0>
+E14. WS_FTP <g0>
+E15. 7Star Browser <g0>
+E16. WinSCP <g0>
+E17. Meterpreter <g0>
+E18. Smokeloader <g0>
+E19. Microsoft Office Services and Web Apps <g0>
+E20. Google Chrome <g0>
+E21. jDownloader <g0>
+E22. Internet Explorer <g0>
+E23. FTPGetter <g0>
+E24. CentBrowser <g0>
+E25. Mozilla Firefox <g0>
+E26. Uran Browser <g0>
+E27. QuasarRAT <g0>
+E28. Yandex Browser <g0>
+E29. HarvesterX <g0>
+E30. ChakraCore <g0>
+E31. Opera Browser <g0>
+E32. Paltalk <g0>
+E33. Opera Mail <g0>
+E34. Microsoft Outlook <g0>
+E35. Microsoft Office <g0>
+E36. Sputnik Browser <g0>
+E37. Microsoft Edge <g0>
+E38. Microsoft Word <g0>
+E39. Misha <g0>
+E40. Microsoft Windows <g0>
+E41. PowerShell (powershell.exe) [aka PowerShell] <g0>
+E42. rfusclient.exe <g0>
+E43. ConfuserEx <g0>
+E44. Petya <g0>
+E45. wscript.exe <g0>
+E46. Windows Host Compute Service Shim <g0>
+E47. install.msi <g0>
+E48. MS Excel
+E49. AppLocker
+E50. YARA
+E51. Mikrotik
+E52. pfSense
+E53. SIEM
+E54. SRP
+E55. Ukraine [aka Російська Федерація]
+E56. державні установи України [aka Державні органи України, державні організації України, органи державної влади України]
+E57. German organizations <g0>
+E58. Austrian organizations <g0>
+E59. Ukrainian organizations <g0>
+E60. місцеве самоврядування
+E61. військові формування
+E62. державні установи та підприємства
+E63. органи державної влади
+Levels: g0=Microsoft Office 2013 (observed entity; example: Microsoft Office 2013) | g1=Office 2013 (drop-qualifier; same referent; example: Office 2013) | g2=Office (drop-qualifier; same referent; example: MS Office)
+Mentions:
+M1. "UAC-0010" (HackerGroup) — options: E1, E2, E3, E4
+M2. "SRP" (Software) — options: E7, E8, E9, E10
+M3. "AppLocker" (Software) — options: E17, E18, E19, E20
+M4. "YARA" (Software) — options: E17, E27, E28, E29
+M5. "Mikrotik" (Software) — options: E34, E35, E36, E25
+M6. "pfSense" (Software) — options: E25, E41, E9, E42
+M7. "SIEM" (Software) — options: E17, E13, E9, E7
+M8. "Україна" (Country) — options: E55
+M9. "органи державної влади" (Sector) — options: E56, E57, E58, E59
+M10. "місцеве самоврядування" (Sector) — options: E56, E58, E59, E57
+M11. "військові формування" (Sector) — options: E56, E58, E59, E57
+M12. "державні установи та підприємства" (Sector) — options: E56, E59, E58, E57
+
+=== RESPONSE (6.0s, in 2548 / out 358 tok, stop) ===
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a security protocol"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a Windows feature for application control"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a tool for malware research"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"routerOS networking hardware","m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a firewall/router software"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security information and event management platform"},{"m":"M8","id":"E55","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"E63","p":null,"r":null,"lvl":"g0","g":null},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"local self-government"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"military formations"},{"m":"M12","id":"E62","p":null,"r":null,"lvl":"g0","g":null}]}

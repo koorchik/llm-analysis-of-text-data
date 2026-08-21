@@ -1,0 +1,75 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Russian Federation",
+            "example": "Російська Федерація, Russian Federation",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common country name",
+            "example": "Росія, Russia, Індія, India, Україна, Ukraine, Естонія, Estonia, США, USA, China, Польща, Tajikistan, Mongolia, Kazakhstan, Kyrgyzstan, Israel",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Російська Федерація was involved in an event' -> 'Росія was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "USA/США to United States of America",
+            "gate": "2",
+            "reason": "The transition from 'USA' (abbreviation) or 'Росія' (common name) to a full formal title is not a removal of detail but an addition of it; conversely, the jump from 'Russian Federation' to 'Russia' removes the qualifier 'Federation'."
+          },
+          {
+            "candidate": "Індія/India",
+            "gate": "2",
+            "reason": "These are linguistic variations (translations) and do not represent a change in granularity of the entity type."
+          }
+        ],
+        "notes": "The ladder is based on the distinction between formal, qualified state names (e.g., 'Russian Federation') and common-name identifiers. All other countries listed are represented by their common titles and appear at the same level of detail as 'Росія/Russia'.",
+        "disagreements": [
+          "g1 \"Росія, Russia, Індія, India, Україна, Ukraine, Естонія, Estonia, США, USA, China, Польща, Tajikistan, Mongolia, Kazakhstan, Kyrgyzstan, Israel\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    }
+  ]
+}

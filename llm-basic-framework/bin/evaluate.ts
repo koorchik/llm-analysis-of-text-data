@@ -27,6 +27,11 @@ import {
   selectSplit,
   type Split,
 } from '../src/Evaluation/gold';
+import {
+  hierarchyMetrics,
+  readRegistryHierarchy,
+  type HierarchyMetrics,
+} from '../src/Evaluation/hierarchyMetrics';
 import { nilMetrics } from '../src/Evaluation/nilMetrics';
 import {
   fromBatchEntitiesMap,
@@ -45,6 +50,8 @@ import fs from 'fs/promises';
 import path from 'path';
 
 interface Args {
+  /** Score granularity edges against every split, not only the one identity is scored on. */
+  hierarchyAllSplits?: boolean;
   gold?: string;
   split: Split;
   category?: string;
@@ -87,6 +94,14 @@ function parseArgs(argv: string[]): Args {
       case '--allow-dev':
         args.allowDev = true;
         break;
+      case '--hierarchy-all-splits':
+        // Gold hierarchy edges cross the split boundary — 76 of 249 join a dev cluster to a test
+        // one — and `selectSplit` drops every one of those, which leaves a single-split slice with
+        // almost no scorable hierarchy (dev/Software: 4 edges, none reachable). This scores edges
+        // against the whole table while identity stays split-pure. Iteration only: it puts test
+        // clusters in front of a dev measurement.
+        args.hierarchyAllSplits = true;
+        break;
       case '--ignore-categories':
         // For arms whose category vocabulary is emergent and so cannot match a fixed-vocabulary gold.
         args.ignoreCategories = true;
@@ -122,6 +137,44 @@ async function predictedPartitionFor(
   return null;
 }
 
+
+/** Gold edges may name surfaces rather than cluster ids; resolve them the same way scoring does. */
+function clusterIdOfSurface(
+  clusters: Array<{ id: string; category: string; members: string[] }>,
+  category: string,
+  surface: string
+): string | undefined {
+  const want = `${category.trim().toLowerCase()}|${surface.trim().toLowerCase()}`;
+  return clusters.find((cluster) =>
+    cluster.members.some(
+      (member) => `${cluster.category.trim().toLowerCase()}|${member.trim().toLowerCase()}` === want
+    )
+  )?.id;
+}
+
+/**
+ * Hierarchy is reported in its own table, never folded into the identity one: the two answer
+ * different questions and a run can be perfect at one while emitting nothing for the other.
+ */
+function renderHierarchyTable(rows: Array<{ condition: string; metrics: HierarchyMetrics }>): string {
+  const header =
+    '| condition | edges | P | R | F1 | R (reachable) | +transitive | collapsed | unmappable | kind agree | gold edges |';
+  const rule = header.replace(/[^|]/g, '-');
+  const pct = (value: number | null) => (value === null ? '—' : value.toFixed(3));
+  const lines = rows.map(
+    ({ condition, metrics: m }) =>
+      `| ${condition} | ${m.predicted} | ${pct(m.precision)} | ${pct(m.recall)} | ${pct(m.f1)} | ` +
+      `${pct(m.recallReachable)} | ${m.matchedTransitive} | ${m.collapsed} | ${m.unmappable} | ` +
+      `${pct(m.kindAgreement)} | ${m.goldTotal} (${m.goldReachable} reachable) |`
+  );
+  return [
+    'granularity edges — scored between gold clusters, rung labels ignored',
+    header,
+    rule,
+    ...lines,
+  ].join('\n');
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -137,6 +190,11 @@ async function main() {
   const fullTable = await loadGoldTable(args.gold);
   const table = selectSplit(fullTable, args.split);
   const scored = args.category ? selectCategory(table, args.category) : table;
+  const hierarchyTable = args.hierarchyAllSplits
+    ? args.category
+      ? selectCategory(fullTable, args.category)
+      : fullTable
+    : scored;
   const keyOptions = { includeCategory: !args.ignoreCategories };
   const gold = goldPartition(scored, keyOptions);
   const pairs = labeledPairs(scored, keyOptions);
@@ -154,6 +212,7 @@ async function main() {
   console.log();
 
   const results: ConditionResult[] = [];
+  const hierarchy: Array<{ condition: string; metrics: HierarchyMetrics }> = [];
 
   for (const runDir of args.runs) {
     const cardPath = path.join(runDir, 'run-card.json');
@@ -212,6 +271,32 @@ async function main() {
       orderAri: null, // filled by the E6 order-robustness arm (M8)
     });
 
+    // Granularity edges, scored between gold clusters rather than between rung labels. A run whose
+    // judge emits no edges still gets a row — zeros are the finding, not a missing measurement.
+    const registryPath = path.join(runDir, 'registry.json');
+    if (existsSync(registryPath)) {
+      const { canonicals, edges } = readRegistryHierarchy(await readJson(registryPath));
+      hierarchy.push({
+        condition: card.condition,
+        metrics: hierarchyMetrics({
+          predictedEdges: args.category
+            ? edges.filter(
+                (edge) => edge.category.trim().toLowerCase() === args.category!.trim().toLowerCase()
+              )
+            : edges,
+          registryCanonicals: canonicals,
+          goldClusters: hierarchyTable.clusters,
+          goldEdges: (hierarchyTable.edges ?? []).map((edge) => ({
+            ...edge,
+            fromClusterId:
+              edge.fromClusterId ?? clusterIdOfSurface(hierarchyTable.clusters, edge.category, edge.from),
+            toClusterId:
+              edge.toClusterId ?? clusterIdOfSurface(hierarchyTable.clusters, edge.category, edge.to),
+          })),
+        }),
+      });
+    }
+
     console.log(`${card.condition}: partition from ${predicted.source}, ${predicted.partition.size} clusters`);
   }
 
@@ -242,6 +327,12 @@ async function main() {
 
   console.log();
   console.log(renderResultsTable(results));
+  if (hierarchy.length) {
+    console.log(`\n${renderHierarchyTable(hierarchy)}`);
+    if (args.hierarchyAllSplits) {
+      console.log('- edges scored across BOTH splits (--hierarchy-all-splits): iteration only, not a split-pure result');
+    }
+  }
   console.log();
   for (const note of tableNotes(results)) console.log(`- ${note}`);
 

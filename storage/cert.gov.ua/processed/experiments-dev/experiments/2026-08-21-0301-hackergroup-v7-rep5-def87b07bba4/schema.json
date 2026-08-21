@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "UAC-0028",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "The move from 'UAC-0028' to 'APT28' is a synonymous label (alias) rather than a reduction in specificity. Both names refer to the same entity; one is an internal identifier and one is a public name, but neither constitutes a coarser description of the other."
+          },
+          {
+            "candidate": "Turla",
+            "gate": "2",
+            "reason": "Turla is synonymous with UAC-0003. Moving between them doesn't simplify the entity, it only changes the label."
+          }
+        ],
+        "notes": "The dataset consists of specific instances of 'HackerGroup'. Many items (e.g., UAC-0028 and APT28) are different names for the same entity. Because these are aliases rather than hierarchical relationships, and because any move involving the removal of digits or identifiers is explicitly forbidden by the Hard Rules, no coarsening can be justified within this category.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

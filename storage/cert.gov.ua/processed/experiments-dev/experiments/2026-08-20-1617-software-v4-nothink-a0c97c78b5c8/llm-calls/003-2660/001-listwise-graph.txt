@@ -1,0 +1,100 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs an identifier with a label ("K-12 (Foo)"), the identifier is what it identifies.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Нові спроби використання вразливості 2017 року Microsoft Office" — evidence: <p>Всі памʼятають масові атаки шифрувальників Petya та Misha у 2017 для поширення яких використовувалася вразливість для віддаленого виконання коду, а саме CVE-2017-0199.</p><p>При отриманні листів з посиланнями на ресурс для завантаження Microsoft Word документу або ж просто з прикріпленим документом (наприклад з розширенням .rtf, .docx) потрібно бути особливо пильними, оскільки документ з розширенням .rtf може містити вбудований ole-обʼєкт, а документ з розширенням .docx - посилання на інший файл. Зазначимо, що ole-обʼєкт може завантажити і виконати сторонню Microsoft Windows програму, в том
+Entities:
+E1. MS Office
+E2. MS PowerPoint
+E3. CVE-2017-11882 <g0>
+E4. MS Excel
+E5. Microsoft Equation Editor <g0>
+E6. PGMB New Order 18-2077.xlsx <g0>
+E7. MS Word <g0>
+E8. Microsoft Office 2010 <g0>
+E9. Microsoft Office 2007 <g0>
+E10. Microsoft Office 2013 <g0>
+E11. Microsoft Office 2016 <g0>
+E12. major.exe <g0>
+E13. Misha
+E14. CVE-2017-0199
+E15. Microsoft Word
+E16. Microsoft Office
+E17. Microsoft Windows
+E18. Office 2007
+E19. Office 2013
+E20. Office 2010
+E21. Office 2016
+E22. Windows 7
+E23. Windows Vista
+E24. Windows Server 2008
+E25. Windows Server 2012
+E26. Petya
+Levels: g0=software_item (observed entity; example: MS Word) | g1=software_suite (grouped-by; containing referent; example: Microsoft Office)
+Mentions:
+M1. "Petya" (Software) — options: E1, E2, E3, E4
+M2. "Misha" (Software) — options: E1, E5, E8, E4
+M3. "CVE-2017-0199" (Software) — options: E3, E12, E6, E8
+M4. "Microsoft Word" (Software) — options: E7, E1, E5, E8
+M5. "Microsoft Office" (Software) — options: E1, E9, E8, E7
+M6. "Microsoft Windows" (Software) — options: E1, E9, E8, E5
+M7. "Office 2007" (Software) — options: E9, E1, E8, E7
+M8. "Office 2013" (Software) — options: E10, E1, E8, E7
+M9. "Office 2010" (Software) — options: E8, E1, E10, E11
+M10. "Office 2016" (Software) — options: E11, E1, E8, E7
+M11. "Windows 7" (Software) — options: E1, E9, E3, E2
+M12. "Windows Vista" (Software) — options: E1, E2, E3, E5
+M13. "Windows Server 2008" (Software) — options: E1, E9, E4, E8
+M14. "Windows Server 2012" (Software) — options: E1, E8, E4, E10
+
+=== RESPONSE (5.9s, in 2060 / out 399 tok, stop) ===
+{"v":[{"m":"M1","id":"E26","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"E13","p":null,"r":null,"lvl":"g0","g":null},{"m":"M3","id":"E14","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"E7","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"E1","p":null,"r":null,"lvl":"g1","g":null},{"m":"M6","id":"E17","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"E18","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"E19","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"E20","p":null,"r":null,"lvl":"g0","g":null},{"m":"M10","id":"E21","p":null,"r":null,"lvl":"g0","g":null},{"m":"M11","id":"E22","p":null,"r":null,"lvl":"g0","g":null},{"m":"M12","id":"E23","p":null,"r":null,"lvl":"g0","g":null},{"m":"M13","id":"E24","p":null,"r":null,"lvl":"g0","g":null},{"m":"M14","id":"E25","p":null,"r":null,"lvl":"g0","g":null}]}

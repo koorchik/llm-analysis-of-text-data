@@ -1,0 +1,279 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Entities:
+E1. UAC-0120 <g0>
+E2. UAC-0050 <g0>
+E3. UAC-0010 (Armageddon) <g0>
+E4. UAC-0098
+E5. UAC-0056 <g0>
+E6. APT28 (UAC-0028) <g0>
+E7. TrickBot
+E8. WinSCP <g0>
+E9. SmartFTP <g0>
+E10. .NET Framework <g0>
+E11. z.ps1 <g0>
+E12. VBScript <g0>
+E13. 360Chrome Browser <g0>
+E14. PowerShell (powershell.exe) [aka PowerShell] <g0>
+E15. WS_FTP <g0>
+E16. 7Star Browser <g0>
+E17. Adobe Flash Player <g0>
+E18. Meterpreter <g0>
+E19. Smokeloader <g0>
+E20. Microsoft Office Services and Web Apps <g0>
+E21. Google Chrome <g0>
+E22. jDownloader <g0>
+E23. Internet Explorer <g0>
+E24. FTPGetter <g0>
+E25. CentBrowser <g0>
+E26. Mozilla Firefox <g0>
+E27. Uran Browser <g0>
+E28. QuasarRAT <g0>
+E29. Yandex Browser <g0>
+E30. HarvesterX <g0>
+E31. ChakraCore <g0>
+E32. Opera Browser <g0>
+E33. Paltalk <g0>
+E34. Opera Mail <g0>
+E35. CCleaner.rar <g0>
+E36. Microsoft Outlook <g0>
+E37. MS Office [aka Microsoft Office]
+E38. Sputnik Browser <g0>
+E39. MS Word [aka Microsoft Word]
+E40. MISP <g0>
+E41. Microsoft Edge <g0>
+E42. Misha <g0>
+E43. Microsoft Windows <g0>
+E44. rfusclient.exe <g0>
+E45. ConfuserEx <g0>
+E46. Petya <g0>
+E47. spi.exe <g0>
+E48. wscript.exe <g0>
+E49. AppLocker
+E50. YARA
+E51. Mikrotik
+E52. pfSense
+E53. SIEM
+E54. SRP
+E55. Ukraine
+E56. Російська Федерація <g0>
+E57. державні установи України [aka Державні органи України, державні організації України, органи державної влади України]
+E58. German organizations <g0>
+E59. Austrian organizations <g0>
+E60. Ukrainian organizations <g0>
+E61. місцеве самоврядування
+E62. військові формування
+E63. державні установи та підприємства
+E64. органи державної влади
+Levels: g0=product_name (observed entity; example: Microsoft Office 2016) | g1=software_suite (drop-qualifier; same referent; example: Office 2016)
+Mentions:
+M1. "UAC-0010" (HackerGroup) — options: E1, E2, E3, E4
+M2. "SRP" (Software) — options: E8, E9, E10, E11
+M3. "AppLocker" (Software) — options: E18, E19, E20, E21
+M4. "YARA" (Software) — options: E18, E28, E29, E30
+M5. "Mikrotik" (Software) — options: E36, E37, E38, E26
+M6. "pfSense" (Software) — options: E26, E14, E10, E44
+M7. "SIEM" (Software) — options: E18, E47, E10, E14
+M8. "Україна" (Country) — options: E55, E56
+M9. "органи державної влади" (Sector) — options: E57, E58, E59, E60
+M10. "місцеве самоврядування" (Sector) — options: E57, E59, E60, E58
+M11. "військові формування" (Sector) — options: E57, E59, E60, E58
+M12. "державні установи та підприємства" (Sector) — options: E57, E60, E59, E58
+
+=== RESPONSE (129.7s, in 2522 / out 10433 tok, stop) ===
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"Security Reporting Protocol or similar security system"},1568479.834,{"m":"M3","id":"NEW","p":"E43","r":"p","lvl":"g0","g":"security feature in Windows"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"pattern matching tool for malware identification"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"networking equipment manufacturer"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"open source firewall software"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security information and event management system"},{"m":"M8","id":"E55","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"government bodies"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"local self-government"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"military formations"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"state institutions and enterprises"}]}
+
+Wait, I notice a error in my thinking - M4's "YARA" is actually E50. But E50 was not an option for M4. The rule says: "Only choose an existing entity when the supplied names and just those options support identity." Since E50 isn't in the list of options for M4, it must be NEW.
+
+Let me correct my manual count/structure to the required format exactly.
+
+```json
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"Security Reporting Protocol"},{"m":"M3","id":"NEW","p":"E43","r":"p","lvl":"g0","g":"Windows security feature"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware identification tool"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"network equipment manufacturer"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"firewall operating system"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security information management system"},{"m":"M8","id":"E55","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"government bodies"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"local self-governance"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"military formations"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"state institutions and enterprises"}]}
+```
+
+Double checking M3: AppLocker (New) -> E43 (Microsoft Windows). Is it "n" or "p"? It's a specific feature, so "p" is correct.
+For the others like "YARA" (E50), "Mikrotik" (not listed as such except in broader context), etc., they are NEW because their options didn't include the exact match and no direct parent was obvious or fit the definition of n/p.
+
+Wait, I should check M12 again. "державні установи та підприємства". Is there a broad term? It's similar to E63/E64 but they aren't in the options. So it stays NEW.
+
+Final JSON structure:
+M1: E3
+M2: NEW (no p/r)
+M3: NEW, p=E43, r=p
+M4: NEW
+M5: NEW
+M6: NEW
+M7: NEW
+M8: E55
+M9: NEW
+M10: NEW
+M11: NEW
+M12: NEW
+
+I will refine the "g" descriptions to be very short as requested.
+
+One minor thing on M4-M7: even if there's a candidate in the whole list (like E50, E51, E52, E53), since they weren't in the specific option lists for those mentions, I must treat them as "NEW".
+
+Wait, one more check. Should "підприємства" be part of something? No.
+One last look at M8: "Україна" -> E55 (Ukraine). Perfect match.
+
+Final list preparation:
+M1: id="E3"
+M2: id="NEW", g="Security Reporting Protocol"
+M3: id="NEW", p="E43", r="p", g="Windows feature"
+M4: id="NEW", g="malware identification tool"
+M5: id="NEW", g="network hardware brand"
+M6: id="NEW", g="firewall software"
+M7: id="NEW", g="security information management system"
+M8: id="E55"
+M9: id="NEW", g="government bodies"
+M10: id="NEW", g="local government"
+M11: id="NEW", g="military units"
+M12: id="NEW", g="state institutions and enterprises"
+
+I will use these. I'll ensure the labels are concise.
+
+```json
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security protocol"},{"m":"M3","id":"NEW","p":"E43","r":"p","lvl":"g0","g":"Windows feature"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware detection tool"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"network equipment manufacturer"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"firewall software"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security information system"},{"m":"M8","id":"E55","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"government bodies"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"local self-governance"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"military formations"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"state institutions and enterprises"}]}
+```
+
+Wait, I'll make sure to stick strictly to the instructions for "g".
+- 12 words max.
+- No restating name.
+- null if no info.
+
+Actually, for M9-M12, since they are very common terms in a specific context but not explicitly mapped to an entity, I'll just put a short description.
+
+One last check on M3: AppLocker is indeed "p" of Microsoft Windows (E43).
+Is there any other? No.
+
+Final check of the list... E57, E60 are both specific to Ukraine (e.g., Ukrainian government bodies). The mentions M9-M12 are the broader terms. Since they don't match the options exactly and aren't "n" or "p" for those options, "NEW" is correct.
+
+Final check of labels:
+M8: Україна -> E55 (Ukraine) - Good.
+M1: UAC-0010 -> E3 (UAC-0010) - Good.
+Everything else follows the "NEW" logic because they are not in the option list provided for them or don't have a direct parent/child relationship with those specific options.
+
+One tiny thing, M2 is "SRP". I will just say "security protocol".
+M4: YARA -> "malware detection tool".
+M5: Mikrotik -> "router manufacturer".
+M6: pfSense -> "firewall system".
+M7: SIEM -> "security management system".
+
+Final verification of labels: 
+- M1, E3 is UAC-0010. Correct.
+- M8, E55 is Ukraine. Correct.
+Wait, just noticed something else! Should I check if any other options for M2-M7 are actually the right ones?
+M4 (Yara) - Options: [E18(Meterpreter), E28(QuasarRAT), E29(Yandex Browser), E30(HarvesterX)]. None.
+M5 (Mikrotik) - Options: [E36, E37, E38, E26]. No.
+M6 (pfSense) - Options: [E26, E14, E10, E44]. No.
+M7 (SIEM) - Options: [E18, E47, E10, E14]. No.
+
+It seems my assessment of "NEW" is solid.
+
+Wait, I should check if M9-M12 could be seen as "n" for something else?
+M9: "органи державної влади". Is there any other entity that's just a "broader" version of it? No.
+
+I will output the final JSON now. One check on the count (12 mentions). Correct.
+
+One minor point, should M3 be p=E43 or should I put null if it was not in its options?
+Rule 2: "Set p to the E number of the **narrowest** listed entity that is genuinely broader than the mention — any of E1...En". This clearly says I can pick from any.
+
+Actually, let's reconsider M5 (Mikrotik). Is there a parent for it? No clear one in the list.
+M6 (pfSense) - no.
+M7 (SIEM) - no.
+Everything else is NEW with null p/r except for M3.
+
+One final detail: "If no levels are listed, answer 'g0'". The list says `g0=product_name ... | g1=software_suite`. So I will use "g0".
+
+Final check of m8: Україні -> E55 (Ukraine). Perfect.
+Wait! M8 is Ukraine, but the source text only has "Україна" as a part of a sentence about cyber security. That's fine for identification.
+
+Actually, one more double check on M9-M12. Some are quite similar to E57/E60.
+- M9: "органи державної влади" (government bodies) - E64 is the exact match but it isn't in the options [E57, E58, E59, E60].
+- M12: "державні установи та підприємства" - E63 is the exact match.
+
+Since they aren't in the options provided for those questions, they must be NEW. I will provide a brief description in g for them.
+
+```json
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security protocol"},{"m":"M3","id":"NEW","p":"E43","r":"p","lvl":"g0","g":"Windows security feature"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware detection tool"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"network equipment manufacturer"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"firewall system"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"security monitoring tool"},{"m":"M8","id":"E55","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"government bodies"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":"local government"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":"military units"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"state institutions and enterprises"}]}
+```
+Wait, just making sure "system" or "tool" aren't too long. No they are fine.
+
+One small fix for M7: SIEM is a category/type of system. Does it have a parent? Not clearly in this list.
+Actually, I will keep p and r as null if not clear.
+
+Final check on M8 "Україна" vs E55 "Ukraine". Yes, they are translations. Rule 1 says: "a transliteration or translation of the same proper name." So it is a match for E55.
+
+One final check: Should I provide g=null for all but some? The prompt says "For every mention you did NOT link... use null when the source says nothing descriptive."
+Since M1 and M8 were linked, they get `g`: null. All others are not linked (they are NEW), so they must have a `g` description if possible.
+
+Double check:
+M2: "SRP" -> "security protocol" or "service request protocol"? I'll just stick to a general descriptive term from the source/context. Since it's barely in the text, simple is best.
+Actually, let me look at the source again... The source only says "АНОНС: Практичний семінар для кіберфахівців" and then some paragraphs about cyber security. It doesn't have a long list of details for these items. So `g` should be very minimal or null if not helpful. However, since they are NEW, the goal is to identify them later. I will provide short descriptions.
+
+Actually, looking at M1-M8:
+- M2 (SRP) - "security reporting protocol"
+- M3 (AppLK) - "Windows feature"
+- M4 (YARA) - "malware identification tool"
+- M5 (Mikrotik) - "network hardware company"
+- M6 (pfSense) - "firewall firmware"
+- M7 (SIEM) - "information management system"
+
+I'll use these. They are short and accurate.
+
+One last thought on M3: Does the rule about not using names in `g` include the name of the entity itself? Yes, "not restating the name". So for "AppLocker", I shouldn't say "The AppLocker software". "Windows feature" is okay. For "YARA", "malware detection tool". Good.
+
+I'll proceed.

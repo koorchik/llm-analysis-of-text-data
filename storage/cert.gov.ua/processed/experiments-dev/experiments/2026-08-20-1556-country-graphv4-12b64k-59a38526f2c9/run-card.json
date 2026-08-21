@@ -1,0 +1,205 @@
+{
+  "version": "run-card-v1",
+  "runId": "country-graphv4-12b64k-59a38526f2c9",
+  "condition": "country-graphv4-12b64k",
+  "createdAt": "2026-08-20T12:56:25.679Z",
+  "updatedAt": "2026-08-20T13:07:23.274Z",
+  "config": {
+    "condition": "country-graphv4-12b64k",
+    "orchestration": "incremental",
+    "input": {
+      "path": "/tmp/claude-1000/-home-koorchik-work-kpi-llm-analysis-of-text-data/3c7e6193-6e11-4455-972a-85a2d51b050c/scratchpad/subset-country",
+      "contentHash": "31283ae096141c62fd0a8726e895b2d665d77bd095c6141c322ae385e4e8b61f",
+      "fileCount": 14
+    },
+    "llm": {
+      "provider": "ollama",
+      "model": "gemma4:12b-64k"
+    },
+    "embeddings": {
+      "provider": "ollama",
+      "model": "embeddinggemma"
+    },
+    "sampling": {
+      "effective": {},
+      "supported": {
+        "temperature": true,
+        "seed": true,
+        "topP": true
+      }
+    },
+    "seed": null,
+    "order": "numeric-id",
+    "promptHashes": {
+      "comem-select": "b077e5b79e2218e7bba562a18cd1752c4001e94f254cb6b4dd5757ab9a41ead8",
+      "consolidate-merge": "b1c48c0c318fa7704eaa81c18b03d838ec7ecada8085efcbb6672d07f0d3675e",
+      "country-normalize": "b3b0cf98d8a0defc23b441b3586dffc534d27104d2efda40c09f22e86874002d",
+      "extract-batch": "f30493105ac175e1b397aad3fea84e65dc277f4dd28085712e4c7828e251493b",
+      "extract-streaming": "297e652ee7e98954fa3994d149b4d75ec395767488066671c708d1262df24b4a",
+      "gold-pair-label": "474b3e340141740a8aefb208b1fc1ca31fe5c755f1e024f3f6a0e7bf5fc63b34",
+      "gold-policy-label": "ccd23b5fbd5aca6412b5456ff089971fb395d5d6defb514bebe2206d873b7889",
+      "ladder": "db594b471762abec3e693fb58c7889f0bf87cfa6bd5db345ffb3b8a7f78123c9",
+      "link-judge": "eeba95805bf5772e2fe1d6a1ae901bca18d7fa5d7603fabef654b39a67002c6f",
+      "listwise-graph-compact-v3": "81f9766ed4e5b8f1ea5e853bbc59842c1870b6d5023087325f3de69ac502ef3f",
+      "listwise-graph-compact-v4": "7251c9e593079b01d5adf13610662e407ec49204407cc00e8e3fcef9abd934e8",
+      "listwise-graph-v1": "d4d4dc3bf9f6609caa3d6a4bd91a6458f9b8b9f4a44e818d0e2fdabd4621f194",
+      "listwise-graph-v2": "d5e2140bb3d3039a61fe00fa20427eb4d974e5ad836f334315488421c6ee8e42",
+      "listwise-select": "86c55200158baa55f5f0f29ea8c7a959e95a428fc37842e1fd60fdae72f07d59",
+      "listwise-select-balanced-v3": "6a57a768e9dde69e70acc19b986a2c669f5580337b7c84fbbe98ef31f6d1ed6d",
+      "listwise-select-compact-v1": "89ba001e11718c6d85f16dcab983cf605509e8690bbccb2718dfeea8866c362f",
+      "listwise-select-complete-v2": "f62e7505d7ac2c510faba6dedeecf6a82f0e8d512dcc1ad99f2ee72d2c0d84fc",
+      "listwise-select-nameform-v4": "afa615d01fee3642f7f8f652c9960bd3dd4b0b5db39d1bff5572c9ea4eb9435b",
+      "listwise-select-nameform-v5": "f64a2ea1cd12891590ea7c95e394d3266566d0dd49fd1b55302ab5d9c12be68c",
+      "listwise-select-nameform-v6": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
+      "normalize-country": "1927c271560bfd7d833fd01031529144b0a50dd435c3a1a57e9307ef3f2d3070",
+      "normalize-target": "62d13b18fb52b951b1dfca3ff665b6292490d3cfda1052aec24c001bb0358aa4",
+      "pair-rule": "8a76d24ae13885b5e8c999d063ee07ea65ca75fb54027b252a8608b9afcd1dc5",
+      "psi-norm-batch": "dd1d8d6745e2273d8eb4141915600c6f9e8649038843450fb8f55ba1785e013b",
+      "repair-judge": "815ada73de637b30f4ee71cb5e2e4b3c844ee793a76375b5ed95640942fdfb64",
+      "repair-judge-compact-v1": "511fda3ab0d08a8ed895602a33bea56d3d99bab60877f76b7bb571892333e088",
+      "type-judge": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16"
+    },
+    "extra": {
+      "steps": [
+        "streamingNormalizer"
+      ],
+      "edgesFrom": "extracted",
+      "decisionStrategy": "listwise-graph",
+      "decisionStrategyConfig": {
+        "k": 4,
+        "promptId": "listwise-graph-compact-v4",
+        "dialect": "compact",
+        "promptSha256": "7251c9e593079b01d5adf13610662e407ec49204407cc00e8e3fcef9abd934e8"
+      },
+      "candidateGenerator": "rr(embedding(embeddinggemma,name+gloss,max-over-aliases),string-sim(identity,max-lev-dice),string-sim(identity+transliterate+confusable-skeleton,max-lev-dice),tfidf-3gram(identity),bm25(identity))",
+      "candidateGeneratorConfig": {
+        "perChildK": 20,
+        "children": [
+          {
+            "id": "embedding(embeddinggemma,name+gloss,max-over-aliases)",
+            "config": {
+              "provider": "ollama",
+              "model": "embeddinggemma",
+              "representation": "name+gloss",
+              "clusterRepresentation": "max-over-aliases",
+              "backend": {
+                "provider": "ollama",
+                "model": "embeddinggemma",
+                "host": "default"
+              }
+            }
+          },
+          {
+            "id": "string-sim(identity,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "string-sim(identity+transliterate+confusable-skeleton,max-lev-dice)",
+            "config": {
+              "analyzers": [
+                "identity",
+                "transliterate",
+                "confusable-skeleton"
+              ],
+              "metric": "max-lev-dice"
+            }
+          },
+          {
+            "id": "tfidf-3gram(identity)",
+            "config": {
+              "n": 3,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          },
+          {
+            "id": "bm25(identity)",
+            "config": {
+              "k1": 1.2,
+              "b": 0.75,
+              "analyzers": [
+                "identity"
+              ]
+            }
+          }
+        ]
+      },
+      "candidateK": 10,
+      "candidateMinSim": 0,
+      "embeddings": true,
+      "ladder": {
+        "ensembleN": 3,
+        "ensembleModels": null,
+        "minExamples": 8
+      },
+      "repair": false,
+      "repairPromptId": "repair-judge",
+      "repairStrictIdentity": false,
+      "repairGlossThresholds": null,
+      "repairBlockerThresholds": null,
+      "repairCoherenceThreshold": null,
+      "repairTokenCap": null,
+      "repairTopK": null,
+      "categories": [
+        "Country"
+      ]
+    },
+    "git": {
+      "sha": "62963c5912614a6060b6e6905444b72fabe9f140",
+      "dirty": true,
+      "diffHash": null
+    },
+    "runId": "country-graphv4-12b64k-59a38526f2c9"
+  },
+  "resumeEvents": [],
+  "cost": {
+    "runId": "country-graphv4-12b64k-59a38526f2c9",
+    "totals": {
+      "calls": 20,
+      "inputTokens": 22306,
+      "outputTokens": 52255,
+      "costUsd": 0,
+      "unpricedCalls": 0,
+      "wallClockMs": 655291
+    },
+    "byOperator": {
+      "listwise-graph": {
+        "calls": 10,
+        "inputTokens": 15037,
+        "outputTokens": 25002,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 314827
+      },
+      "embed-index": {
+        "calls": 4,
+        "inputTokens": 87,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1660
+      },
+      "ladder": {
+        "calls": 6,
+        "inputTokens": 7182,
+        "outputTokens": 27253,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 338804
+      }
+    },
+    "unpricedModels": []
+  },
+  "embeddingCache": {
+    "hits": 115,
+    "misses": 8,
+    "entries": 1248
+  },
+  "completedAt": "2026-08-20T13:07:23.273Z"
+}

@@ -1,0 +1,68 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex_identifier",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common_name",
+            "example": "APT28",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "Moving from a specific internal ID (UAC-0028) to a common name (APT28) is an alias swap, not necessarily a simplification of the referent's essence."
+          },
+          {
+            "candidate": "Sandworm",
+            "gate": "1",
+            "reason": "Sandworm is a distinct entity in the same category; there is no evidence it is a broader or narrower version of APT28 or other items."
+          }
+        ],
+        "notes": "The data suggests a duality between internal tracking identifiers (e.g., UAC-0028) and public-facing common names (e.g., APT28). The ladder reflects the removal of these system-specific qualifiers to reach the standard descriptive name.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

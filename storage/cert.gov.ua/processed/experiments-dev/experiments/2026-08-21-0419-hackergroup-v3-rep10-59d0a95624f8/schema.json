@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Hacker Group",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "While APT28 is a common name for the group, it is an alias of UAC-0028. Switching between them is not a coarsening of information but a change in labeling."
+          },
+          {
+            "candidate": "Turla",
+            "gate": "1",
+            "reason": "Turla is simply another specific entity (UAC-0003) within the same category. There is no jump to a broader class of entity that remains inside 'HackerGroup'."
+          }
+        ],
+        "notes": "All provided examples are distinct instances of the same entity type (Hackers' organizations). There is no evidence of hierarchical distinctions (e.g., distinguishing between types of groups or their components) within the sample data that would justify additional rungs without crossing into different categories.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

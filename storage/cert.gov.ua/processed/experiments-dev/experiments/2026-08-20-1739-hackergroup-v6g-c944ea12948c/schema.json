@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker group",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "Removing the parenthetical 'APT28' from 'UAC-0028 (APT28)' removes a synonym, not an identity-bearing detail that determines specificity of the entity's scope."
+          },
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "Transitioning between 'UAC-0028' and 'APT28' constitutes a synonym/alias change, not a coarsening of the entity's scope."
+          },
+          {
+            "candidate": "UAC",
+            "gate": "1",
+            "reason": "A collection of groups (implied by the numbering) is not an individual 'HackerGroup' and thus falls outside the category."
+          }
+        ],
+        "notes": "The variations in the input (e.g., UAC-0028 vs APT28, or inclusion/exclusion of parentheses) represent different ways to name the same entity rather than nested levels of specificity within the 'HackerGroup' category. Since no information about sub-types (e.g., state-sponsored vs criminal), geographic affiliations, or organizational hierarchies is provided in the source data, there are no valid coarsening moves that maintain the 'same referent with less detail'.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

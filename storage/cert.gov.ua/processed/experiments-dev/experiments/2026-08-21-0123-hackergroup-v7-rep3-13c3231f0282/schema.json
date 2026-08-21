@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Hacker Group",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "This is an alias for UAC-0028; the relationship is synonymy, not a coarsening of the entity's scope or identity."
+          },
+          {
+            "candidate": "UAC-0028 (APT28)",
+            "gate": "3",
+            "reason": "Removing the parenthetical does not result in a different level of specificity for the entity, only a different representation of the same identifier."
+          }
+        ],
+        "notes": "The surface forms consist entirely of specific entities (distinct hacking groups). There is no evidence in the provided list of nested hierarchies, larger containing organizations, or types that would allow for a coarsening progression while staying within the 'HackerGroup' category. Variations like 'UAC-0028 (APT28)' and 'APT28' are identified as aliases/synonyms.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

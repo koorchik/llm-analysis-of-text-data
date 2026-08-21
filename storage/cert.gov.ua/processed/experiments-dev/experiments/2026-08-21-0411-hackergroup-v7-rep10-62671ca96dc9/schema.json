@@ -1,0 +1,69 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex_id",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common_name",
+            "example": "APT28",
+            "disputed": true,
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "HackerGroup",
+            "gate": "1",
+            "reason": "cannot emit the category itself as a rung"
+          },
+          {
+            "candidate": "APT",
+            "gate": "1",
+            "reason": "moving from APT28 to APT changes the entity type; 'APT' is a categorization/kind, not an individual HackerGroup."
+          }
+        ],
+        "notes": "The ladder reflects the removal of system-specific identifiers (UAC codes) to move from a technically qualified name to a common identifier. Other forms like 'Sandworm' or 'Turla' represent entities without known less-specific variants in this dataset.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

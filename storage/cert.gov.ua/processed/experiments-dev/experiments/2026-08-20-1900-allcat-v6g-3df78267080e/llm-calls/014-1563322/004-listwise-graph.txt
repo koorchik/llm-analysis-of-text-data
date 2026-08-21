@@ -1,0 +1,144 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Масове розповсюдження шкідливої програми AgentTesla (CERT-UA#5252)" — evidence: <p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 30 і 31 серпня 2022 року зафіксовано масові розсилки електронних листів з темами "Технічне креслення" ("Technisches Zeichnen") серед українських, австрійських та німецьких організацій.</p><p> У вкладенні до електронного листа знаходиться IMG-файл (наприклад, "Технічне креслення.img"), що містить одноіменний CHM-файл, відкриття якого призведе до виконання JavaScript-коду, який, в свою чергу, забезпечить завантаження та виконання файлу node.txt за допомогою PowerShell.</p><p> Згаданий файл містить PowerShell-код, як
+Entities:
+E1. UAC-0098
+E2. UAC-0056 <g0>
+E3. UAC-0010 (Armageddon) <g0>
+E4. APT28 (UAC-0028) <g0>
+E5. TrickBot
+E6. PowerShell (powershell.exe) <g0>
+E7. powershell.exe <g0>
+E8. TRYxaEbX.ps1 <g0>
+E9. MS PowerPoint
+E10. stage1.ps1 <g0>
+E11. MS Excel
+E12. shellcode.x64 (Cobalt Strike Beacon) [aka shellcode.x64.bin] <g0>
+E13. wscript.exe <g0>
+E14. Opera Mail <g0>
+E15. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E16. chinagrill.co <g0>
+E17. badpdf.com <g0>
+E18. dnslookup.seowebchecker.com <g0>
+E19. nxkad.ru <g0>
+E20. dyndns.com <g0>
+E21. xcqef.ru <g0>
+E22. ginaengg.com <g0>
+E23. microsoft.com <g0>
+E24. detroito.ru <g0>
+E25. qkcew.ru <g0>
+E26. metanat.ru <g0>
+E27. analyze.intezer.com <g0>
+E28. hofsteder.ru <g0>
+E29. cuckoo.cert.ee <g0>
+E30. motoristo.ru <g0>
+E31. hawksi.ru <g0>
+E32. skreatortemp.site <g0>
+E33. lover.printing82.detroito.ru <g0>
+E34. fishitor.ru <g0>
+E35. atlantar.ru <g0>
+E36. tarlit.ru <g0>
+E37. virustotal.com <g0>
+E38. clipperso.ru <g0>
+E39. onyangdol.site <g0>
+E40. ftp.artrsllc.com <g0>
+E41. tools.nexcess.net <g0>
+E42. winscp.net <g0>
+E43. moolin.ru <g0>
+E44. kurapat.ru <g0>
+E45. lnasfe.ru <g0>
+E46. answers.microsoft.com
+E47. i.ua
+E48. cert.gov.ua <g0>
+E49. eo2mxtqmeqzafqi.m.pipedream.net <g0>
+E50. social.technet.microsoft.com <g0>
+E51. tbwelo.ru <g0>
+E52. wicksl.ru <g0>
+E53. ip-api.com <g0>
+E54. www.portcheckers.com <g0>
+E55. rs500cosworth.com <g0>
+E56. callsol.ru <g0>
+E57. paparat.ru <g0>
+E58. app.any.run <g0>
+E59. lopasts.ru <g0>
+E60. sackmeister.de
+E61. ssttekstil.com
+E62. ftp.ssttekstil.com
+E63. t-online.de
+E64. ukr.net
+E65. westafrance.com
+E66. aon.at
+E67. academiadutygroup.com.br
+E68. державні установи України [aka Державні органи України, державні організації України]
+E69. Austrian organizations
+E70. German organizations
+E71. Ukrainian organizations
+Levels: g0=product_name (observed entity; example: Microsoft Office 2016) | g1=software_suite (drop-qualifier; same referent; example: Office 2016) || g0=subdomain_fqn (observed entity; example: social.technet.microsoft.com) | g1=intermediate_domain (drop-qualifier; same referent; example: technet.microsoft.com) | g2=root_domain (drop-qualifier; same referent; example: microsoft.com)
+Mentions:
+M1. "UAC-0120" (HackerGroup) — options: E1, E2, E3, E4
+M2. "PowerShell" (Software) — options: E6, E7, E8, E9
+M3. "academiadutygroup.com.br" (Domain) — options: E16, E17, E18, E19
+M4. "sackmeister.de" (Domain) — options: E26, E27, E28, E29
+M5. "ssttekstil.com" (Domain) — options: E36, E17, E37, E28
+M6. "ftp.ssttekstil.com" (Domain) — options: E40, E41, E37, E17
+M7. "t-online.de" (Domain) — options: E36, E43, E24, E33
+M8. "ukr.net" (Domain) — options: E47, E42, E48, E41
+M9. "westafrance.com" (Domain) — options: E51, E17, E20, E23
+M10. "aon.at" (Domain) — options: E26, E43, E27, E47
+M11. "Ukrainian organizations" (Sector) — options: E68
+M12. "Austrian organizations" (Sector) — options: E68
+M13. "German organizations" (Sector) — options: E68
+
+=== RESPONSE (142.9s, in 2855 / out 11488 tok, stop) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"E6","p":null,"r":null,"lvl":"g0","g":null},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M13","id":"NEW","p":null,"r":null,"lvl":"g0","g":null}]}

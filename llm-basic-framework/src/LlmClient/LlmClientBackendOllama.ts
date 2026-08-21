@@ -38,15 +38,29 @@ export class LlmClientBackendOllama implements LlmBackendBase {
 
   ollama: Ollama;
   #numCtx: number;
+  /**
+   * Whether the model may spend output tokens on hidden reasoning.
+   *
+   * Measured on `gemma4:12b-64k` deciding one document: 672 characters of answer against **9,910
+   * reported output tokens** — ollama returns the reasoning in `message.thinking`, which never
+   * reaches the parser but is billed, generated, and waited for. `undefined` leaves the model's
+   * default alone so existing arms are unaffected.
+   */
+  #think?: boolean;
 
   /** The window actually requested per call — read by the run log so the arm is self-describing. */
   get numCtx(): number {
     return this.#numCtx;
   }
 
-  constructor(args: { model: string; apiKey?: string; numCtx?: number }) {
+  get think(): boolean | undefined {
+    return this.#think;
+  }
+
+  constructor(args: { model: string; apiKey?: string; numCtx?: number; think?: boolean }) {
     this.model = args.model;
     this.#numCtx = args.numCtx ?? numCtxFromModelTag(args.model) ?? DEFAULT_NUM_CTX;
+    this.#think = args.think;
 
     this.ollama =
       args.apiKey && args.model.match(/gpt-oss/)
@@ -68,6 +82,7 @@ export class LlmClientBackendOllama implements LlmBackendBase {
 
     const response = await this.ollama.chat({
       model: this.model,
+      ...(this.#think === undefined ? {} : { think: this.#think }),
       options: {
         num_ctx: this.#numCtx,
         ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),

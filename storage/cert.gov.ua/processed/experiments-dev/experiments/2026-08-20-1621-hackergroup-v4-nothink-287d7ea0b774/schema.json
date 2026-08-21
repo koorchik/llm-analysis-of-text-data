@@ -1,0 +1,78 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Hacker Group",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Hacker Group",
+            "example": "APT28",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "Hacker Group",
+            "example": "Turla",
+            "disputed": false,
+            "move": "kind-of",
+            "preserving": true,
+            "foldTest": "'UAC-0003 (Turla) was involved in an event' -> 'Turla was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "UAC Track",
+            "gate": "1",
+            "reason": "Moving to a tracking system or registry category violates the requirement to stay within the HackerGroup category."
+          },
+          {
+            "candidate": "APT",
+            "gate": "2",
+            "reason": "APT is an acronym for Advanced Persistent Threat; it describes a threat profile/capability rather than the entity's identity, potentially crossing into a different category."
+          }
+        ],
+        "notes": "The presence of multiple naming conventions (UAC codes vs. common names) suggests that UAC-0028 and APT28 refer to the same entity. The ladder reflects the removal of tracking prefixes/identifiers to reach the primary name used in intelligence reports.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "entities": [
+    {
+      "name": "SPECTR",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SPECTR",
+      "matchedVia": "SPECTR"
+    },
+    {
+      "name": "FIRMACHAGENT",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "FIRMACHAGENT",
+      "matchedVia": "FIRMACHAGENT"
+    },
+    {
+      "name": "IDCLIPNET_x86.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "IDCLIPNET_x86.dll",
+      "matchedVia": "IDCLIPNET_x86.dll"
+    },
+    {
+      "name": "chrome_updater.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "chrome_updater.dll",
+      "matchedVia": "chrome_updater.dll"
+    },
+    {
+      "name": "Browser.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Browser.dll",
+      "matchedVia": "Browser.dll"
+    },
+    {
+      "name": "Files.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Files.dll",
+      "matchedVia": "Files.dll"
+    },
+    {
+      "name": "Screen.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Screen.dll",
+      "matchedVia": "Screen.dll"
+    },
+    {
+      "name": "Social.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "Social.dll",
+      "matchedVia": "Social.dll"
+    },
+    {
+      "name": "USB.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "USB.dll",
+      "matchedVia": "USB.dll"
+    },
+    {
+      "name": "PowerShell",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "PowerShell (powershell.exe)",
+      "matchedVia": "PowerShell"
+    },
+    {
+      "name": "JavaScript",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "JavaScript",
+      "matchedVia": "JavaScript"
+    },
+    {
+      "name": "AppLocker",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "AppLocker",
+      "matchedVia": "AppLocker"
+    },
+    {
+      "name": "Software Restriction Policies (SRP)",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "Software Restriction Policies (SRP)",
+      "matchedVia": "Software Restriction Policies (SRP)"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "19.08.2024",
+    "id": 6280422,
+    "title": "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)",
+    "llmProcessingTimeSeconds": 78.88
+  }
+}

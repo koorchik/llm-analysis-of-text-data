@@ -295,6 +295,15 @@ export class StreamingNormalizer {
 
     // ---- Phase B: mutate + save + write ----
 
+    const pendingEdges: Array<{
+      category: string;
+      from: string;
+      parent: string;
+      kind: GranularityEdgeKind;
+      mentionRung: string | null;
+      evidence: string | null;
+    }> = [];
+
     for (const plan of plans) {
       if (plan.canonical && plan.action !== 'resolved') {
         // link verdict
@@ -338,29 +347,18 @@ export class StreamingNormalizer {
         });
 
         // A mint may carry a validated parent candidate — the "hard non-merge plus a connecting
-        // edge" outcome. The edge kind came from the judge's preserving reading; provenance makes
-        // it StreamingRepairer (this document's phase 2; the duplicate lives ≤1 document)-confirmable.
+        // edge" outcome. Held until every plan in this document has been written: the parent may be
+        // another mention of the same document, which does not exist as a canonical until its own
+        // plan lands, and `addGranularityEdge` requires both endpoints to exist.
         if (!deferred && plan.outcome?.parentCandidate && plan.outcome.edgeKind) {
-          const added = this.#entityRegistry.addGranularityEdge(plan.category, {
+          pendingEdges.push({
+            category: plan.category,
             from: plan.canonical,
-            to: plan.outcome.parentCandidate,
+            parent: plan.outcome.parentCandidate,
             kind: plan.outcome.edgeKind,
-            docId,
-            decision: 'judge',
+            mentionRung: plan.outcome.mentionRung ?? null,
             evidence: plan.outcome.reasoning ?? null,
           });
-          if (added) {
-            await this.#decisionLog.log({
-              op: 'granularity-edge',
-              doc: docId,
-              category: plan.category,
-              from: plan.canonical,
-              to: plan.outcome.parentCandidate,
-              kind: plan.outcome.edgeKind,
-              mentionRung: plan.outcome.mentionRung ?? null,
-              evidence: plan.outcome.reasoning ?? null,
-            });
-          }
         }
 
         if (deferred) {
@@ -408,6 +406,39 @@ export class StreamingNormalizer {
         docMap.set(plan.category, inner);
       }
       inner.set(plan.entity.name, plan.canonical!);
+    }
+
+    // Parent edges, once every mint in this document exists. A parent named here can be another
+    // mention of the same document; resolving it through the plans is what makes "A is part of B"
+    // storable when A and B are first seen together.
+    for (const edge of pendingEdges) {
+      const parentPlan = plans.find(
+        (plan) =>
+          plan.category === edge.category &&
+          plan.entity.name.trim().toLowerCase() === edge.parent.trim().toLowerCase()
+      );
+      const to = parentPlan?.canonical ?? edge.parent;
+      if (to === edge.from) continue; // the parent resolved to the mention's own canonical
+      const added = this.#entityRegistry.addGranularityEdge(edge.category, {
+        from: edge.from,
+        to,
+        kind: edge.kind,
+        docId,
+        decision: 'judge',
+        evidence: edge.evidence,
+      });
+      if (added) {
+        await this.#decisionLog.log({
+          op: 'granularity-edge',
+          doc: docId,
+          category: edge.category,
+          from: edge.from,
+          to,
+          kind: edge.kind,
+          mentionRung: edge.mentionRung,
+          evidence: edge.evidence,
+        });
+      }
     }
 
     // Stamp entities
@@ -494,17 +525,48 @@ export class StreamingNormalizer {
     const title = String(extraction.metadata?.title || 'untitled');
     const snippet = await this.#loadSnippet(file);
 
+    // Every entity this document has put on the table: the candidates retrieved for any mention,
+    // plus the other mentions being decided in this same call. A mention minted here can be the
+    // parent of another mention in the same document, so both halves are needed.
+    const pool = new Map<string, { canonical: string; surfaces: string[]; rung?: string }>();
+    for (const plan of batch) {
+      for (const candidate of plan.candidates) {
+        pool.set(`${plan.category}|${candidate.name.toLowerCase()}`, {
+          canonical: candidate.name,
+          surfaces: candidate.aliases,
+          rung: candidate.rung,
+        });
+      }
+    }
+    for (const plan of batch) {
+      const key = `${plan.category}|${plan.entity.name.toLowerCase()}`;
+      if (!pool.has(key)) pool.set(key, { canonical: plan.entity.name, surfaces: [plan.entity.name] });
+    }
+
     const requests: DecisionRequest[] = batch.map((plan) => ({
       mention: plan.entity.name,
       category: plan.category,
       docId,
       docTitle: title,
       docSnippet: snippet,
+      // The ladder and the candidates' rungs are what let a graph-building strategy separate "same
+      // entity" from "one level narrower"; flat strategies simply ignore both fields.
+      ladder: renderLadder(plan.category, this.#schemaRegistry),
+      // A mention is never its own parent, and the registry stores edges within one category, so
+      // the shared pool is filtered per request.
+      pool: [...pool.entries()]
+        .filter(
+          ([key]) =>
+            key.startsWith(`${plan.category}|`) &&
+            key !== `${plan.category}|${plan.entity.name.toLowerCase()}`
+        )
+        .map(([, entry]) => entry),
       candidates: plan.candidates.map((candidate) => ({
         canonical: candidate.name,
         sim: candidate.sim,
         surfaces: candidate.aliases,
         channel: candidate.channel ?? 'string-sim',
+        rung: candidate.rung,
       })),
     }));
 
@@ -542,7 +604,42 @@ export class StreamingNormalizer {
         );
         return;
       }
-      outcomeMap.set(key, { kind: decision.kind === 'defer' ? 'defer' : 'mint' });
+
+      // mint/defer — the graph half, validated exactly as `#linkJudge` validates the built-in
+      // judge's: the parent must be a candidate we actually showed, and the edge kind comes from
+      // the ladder rung that parent sits on, never from the model.
+      const mentionRung = this.#validatedMentionRung(
+        plan.category,
+        (decision.mentionRung as MentionRung) ?? ''
+      );
+      // The parent may be any entity this document knows — another mention's candidate, or another
+      // mention being decided in this same call — not only a candidate of this mention.
+      const parentKey = decision.parentCandidate
+        ? `${plan.category}|${decision.parentCandidate.trim().toLowerCase()}`
+        : undefined;
+      const parent = parentKey ? pool.get(parentKey) : undefined;
+      // The ladder decides the kind whenever it can place the parent. When the category has no
+      // ladder yet — the common case early in a stream, and permanently for ladder-free arms — fall
+      // back to the relation the judge stated rather than discarding a correct parent.
+      const edgeKind = parent
+        ? this.#edgeKindForParent(plan.category, parent.rung) ?? relationEdgeKind(decision.relation)
+        : undefined;
+      if (decision.parentCandidate && (!parent || !edgeKind)) {
+        console.warn(
+          `DECISION (${strategy.id}): parentCandidate "${decision.parentCandidate}" for "${plan.entity.name}" is not supported by the active ladder and candidate list — edge dropped, mint stands`
+        );
+      }
+      // A gloss that only restates the mention gives the duplicate finder nothing; drop it rather
+      // than re-asking, since the retry prompt belongs to the built-in judge.
+      const gloss = decision.gloss?.trim();
+      outcomeMap.set(key, {
+        kind: decision.kind === 'defer' ? 'defer' : 'mint',
+        mentionRung,
+        parentCandidate: edgeKind ? parent?.canonical : undefined,
+        edgeKind,
+        gloss: gloss && !glossRestatesMention(gloss, plan.entity.name) ? gloss : undefined,
+        reasoning: decision.reason,
+      });
     });
     return outcomeMap;
   }
@@ -869,6 +966,17 @@ function renderLadder(category: string, schemaRegistry: SchemaRegistry): string 
       return `g${rung.g}=${rung.alias} (${relation}; example: ${rung.example})`;
     })
     .join(' | ');
+}
+
+/**
+ * The judge's own reading of the relation, mapped onto the registry's edge vocabulary. Used only
+ * when the ladder cannot place the parent; `coarsens-to` is the registry's word for "same referent,
+ * stated less precisely".
+ */
+function relationEdgeKind(relation: string | null | undefined): GranularityEdgeKind | undefined {
+  if (relation === 'narrower-of') return 'coarsens-to';
+  if (relation === 'part-of') return 'part-of';
+  return undefined;
 }
 
 /** Find the verdict for one plan in a gloss-retry response without conflating categories. */

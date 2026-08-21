@@ -1,0 +1,68 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "UAC-0028 (APT28)",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "APT28",
+            "example": "APT28",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "HackerGroup",
+            "gate": "1",
+            "reason": "The category itself may not be a rung."
+          },
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "While it is less specific than the combined form, it still contains an identification segment that is logically equivalent to APT28; any further simplification would move out of the category or into a non-entity status."
+          }
+        ],
+        "notes": "The list suggests two primary ways of identifying entities: internal tracking codes (UAC-xxxx) and common threat actor names (APT28, Turla, Sandworm). The ladder captures the transition from an identified/tagged name to a standard name. No broader categories are identifiable within the provided data.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

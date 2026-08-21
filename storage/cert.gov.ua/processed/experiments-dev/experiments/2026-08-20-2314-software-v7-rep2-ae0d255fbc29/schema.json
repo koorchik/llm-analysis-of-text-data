@@ -1,0 +1,85 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "software_instance",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "product_name",
+            "example": "Office",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Word",
+            "gate": "3",
+            "reason": "Transition from MS Word to Word is an abbreviation substitution (MS for Microsoft), not a coarsening of the entity's definition."
+          },
+          {
+            "candidate": "Microsoft Office",
+            "gate": "2",
+            "reason": "Moving from MS Word to Microsoft Office involves a change in referent (from a single component to a suite), which is a 'part-of' move, but since it doesn't provide a path to further coarsening within the list and requires a different logic than the available multi-form patterns, the standard drop-qualifier for versions/brands was prioritized."
+          }
+        ],
+        "notes": "The ladder focuses on the removal of versioning (e.g., '2016') and branding ('Microsoft', 'MS') to arrive at the core product name. Since 'MS' and 'Microsoft' are abbreviations, they do not constitute a valid transition step; however, their inclusion in the raw data identifies 'Office' as a primary coarsening node.",
+        "disagreements": [
+          "g1 \"Office\": preserving true vs false (run 2)"
+        ],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

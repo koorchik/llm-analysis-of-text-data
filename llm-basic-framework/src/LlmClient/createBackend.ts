@@ -29,8 +29,16 @@ export function createLlmBackend(params: { provider: string; model: string }): L
         model: params.model,
         apiKey: process.env.OLLAMA_API_KEY,
         ...(override ? { numCtx: Number(override) } : {}),
+        // OLLAMA_THINK=0 turns off hidden reasoning for models that expose it. Left unset the
+        // model's own default stands, so no existing arm changes behaviour.
+        ...(process.env.OLLAMA_THINK === undefined
+          ? {}
+          : { think: process.env.OLLAMA_THINK !== '0' && process.env.OLLAMA_THINK !== 'false' }),
       });
-      console.log(`OLLAMA ${params.model}: num_ctx=${backend.numCtx}`);
+      console.log(
+        `OLLAMA ${params.model}: num_ctx=${backend.numCtx}` +
+          (backend.think === undefined ? '' : `, think=${backend.think}`)
+      );
       return backend;
     }
 

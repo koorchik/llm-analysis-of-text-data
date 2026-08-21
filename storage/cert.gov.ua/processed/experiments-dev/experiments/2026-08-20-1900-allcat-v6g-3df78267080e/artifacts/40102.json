@@ -1,0 +1,82 @@
+{
+  "entities": [
+    {
+      "name": "APT28 (UAC-0028)",
+      "category": "HackerGroup",
+      "role": "Attacker",
+      "normalizedName": "APT28 (UAC-0028)",
+      "matchedVia": "APT28 (UAC-0028)"
+    },
+    {
+      "name": "CredoMap_v2",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "CredoMap_v2",
+      "matchedVia": "CredoMap_v2"
+    },
+    {
+      "name": "UkrScanner.rar",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "UkrScanner.rar",
+      "matchedVia": "UkrScanner.rar"
+    },
+    {
+      "name": "UkrScanner.exe (SFX)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "UkrScanner.exe (SFX)",
+      "matchedVia": "UkrScanner.exe (SFX)"
+    },
+    {
+      "name": "scan.exe (CredoMap_v2)",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "scan.exe (CredoMap_v2)",
+      "matchedVia": "scan.exe (CredoMap_v2)"
+    },
+    {
+      "name": "SQLite.Interop.dll",
+      "category": "Software",
+      "role": "Attacker",
+      "normalizedName": "SQLite.Interop.dll",
+      "matchedVia": "SQLite.Interop.dll"
+    },
+    {
+      "name": "eo2mxtqmeqzafqi.m.pipedream.net",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "eo2mxtqmeqzafqi.m.pipedream.net",
+      "matchedVia": "eo2mxtqmeqzafqi.m.pipedream.net"
+    },
+    {
+      "name": "Pipedream",
+      "category": "Organization",
+      "role": "Neutral",
+      "normalizedName": "Pipedream",
+      "matchedVia": "Pipedream"
+    },
+    {
+      "name": "ginaengg.com",
+      "category": "Domain",
+      "role": "Attacker",
+      "normalizedName": "ginaengg.com",
+      "matchedVia": "ginaengg.com"
+    },
+    {
+      "name": "MISP",
+      "category": "Software",
+      "role": "Neutral",
+      "normalizedName": "MISP",
+      "matchedVia": "MISP"
+    }
+  ],
+  "relations": [],
+  "schemaProposals": [],
+  "metadata": {
+    "date": "06.05.2022",
+    "id": 40102,
+    "title": "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)",
+    "llmProcessingTimeSeconds": 90.997
+  }
+}

@@ -1,0 +1,212 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Answer the option carrying that **identifier**, never the option carrying only the bare label: the bare label is a different, broader entity, and it belongs in `p` if anywhere.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+**A written-form variant is identity, never a parent.** If the mention and one of its options differ only in the ways listed above, answer that option's number in `id` and leave `p` empty. Recording such a pair as a broader/narrower edge is the one error that cannot be repaired later, because it looks like a deliberate distinction.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent: something that ships inside it, runs as part of it, or belongs to it. A module, a feature, a bundled executable, a department, a subsidiary.
+
+Test `"n"` by substitution: put the parent's name in place of the mention in a plain sentence. If the sentence still describes the same thing, only vaguer, it is `"n"`. If it now describes something else that merely contains the mention, it is `"p"`. An artifact and the tool that produced it are neither — leave both empty.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Entities:
+E1. UAC-0098
+E2. UAC-0056 <g0>
+E3. APT28 (UAC-0028) <g0>
+E4. TrickBot
+E5. z.ps1 <g0>
+E6. TRYxaEbX.ps1 <g0>
+E7. loader.exe <g0>
+E8. stage1.ps1 <g0>
+E9. stage2.ps1 <g0>
+E10. spi.exe <g0>
+E11. TRYxaEbX_2.ps1 <g0>
+E12. powershell.exe <g0>
+E13. Smokeloader <g0>
+E14. VBScript <g0>
+E15. Agent Tesla [aka AgentTesla] <g0>
+E16. FTP Commander <g0>
+E17. .NET Framework <g0>
+E18. Internet Explorer <g0>
+E19. Google Chrome <g0>
+E20. MS Excel
+E21. RegAsm.exe <g0>
+E22. 360Chrome Browser <g0>
+E23. Microsoft Edge <g0>
+E24. ConfuserEx <g0>
+E25. FTPGetter <g0>
+E26. Meterpreter <g0>
+E27. Foxmail <g0>
+E28. Thunderbird <g0>
+E29. TRYxaEbX <g0>
+E30. Windows Server 2012 <g0>
+E31. Windows Server 2008 <g0>
+E32. Microsoft Exchange Server <g0>
+E33. MCMDiction.exe <g0>
+E34. MS PowerPoint
+E35. cmd.exe <g0>
+E36. shellcode.x64.bin <g0>
+E37. b.exe <g0>
+E38. shellcode.x86.bin <g0>
+E39. write.exe <g0>
+E40. rfusclient.exe <g0>
+E41. installer.exe <g0>
+E42. major.exe <g0>
+E43. GammaSteel.PS1
+E44. GammaSteel.NET
+E45. HarvesterX
+E46. PowerShell (powershell.exe)
+E47. wscript.exe
+E48. mshta.exe
+E49. GammaLoad.PS1
+E50. cuckoo.cert.ee <g0>
+E51. onyangdol.site <g0>
+E52. analyze.intezer.com <g0>
+E53. chinagrill.co <g0>
+E54. app.any.run <g0>
+E55. badpdf.com <g0>
+E56. cert.gov.ua <g0>
+E57. answers.microsoft.com
+E58. ginaengg.com <g0>
+E59. dyndns.com <g0>
+E60. i.ua
+E61. microsoft.com [aka chubanomania.icu] <g0>
+E62. ftp.artrsllc.com <g0>
+E63. winscp.net <g0>
+E64. skreatortemp.site <g0>
+E65. dsszzi.gov.ua <g0>
+E66. virustotal.com <g0>
+E67. docs.microsoft.com <g0>
+E68. social.technet.microsoft.com
+E69. rs500cosworth.com <g0>
+E70. eo2mxtqmeqzafqi.m.pipedream.net <g0>
+E71. atlantar.ru
+E72. motoristo.ru
+E73. moolin.ru
+E74. bubenci.ru
+E75. callsol.ru
+E76. clipperso.ru
+E77. cooperi.ru
+E78. detroito.ru
+E79. farafauler.ru
+E80. fishitor.ru
+E81. flayga.ru
+E82. ganara.ru
+E83. hawksi.ru
+E84. hofsteder.ru
+E85. kilitro.ru
+E86. kurapat.ru
+E87. leonardis.ru
+E88. lnasfe.ru
+E89. lopasts.ru
+E90. mafirti.ru
+E91. metanat.ru
+E92. mitlubald.ru
+E93. paparat.ru
+E94. pasamart.ru
+E95. qkcew.ru
+E96. rncsq.ru
+E97. tarlit.ru
+E98. tbwelo.ru
+E99. wicksl.ru
+E100. xcqef.ru
+E101. nxkad.ru
+E102. dnslookup.seowebchecker.com
+E103. ip-api.com
+E104. tools.nexcess.net
+E105. viewdns.info
+E106. www.portcheckers.com
+E107. lover.printing82.detroito.ru
+Levels: g0=Microsoft Office 2013 (observed entity; example: Microsoft Office 2013) | g1=Office 2013 (drop-qualifier; same referent; example: Office 2013) | g2=Office (drop-qualifier; same referent; example: MS Office) || g0=multi-level subdomain (observed entity; example: social.tenet.microsoft.com) | g1=single-level subdomain (drop-qualifier; same referent; example: docs.microsoft.com) | g2=root domain (drop-qualifier; same referent; example: microsoft.com)
+Mentions:
+M1. "UAC-0010 (Armageddon)" (HackerGroup) — options: E1, E2, E3, E4
+M2. "GammaLoad.PS1" (Software) — options: E5, E6, E7, E8
+M3. "GammaSteel.PS1" (Software) — options: E5, E6, E8, E9
+M4. "GammaSteel.NET" (Software) — options: E17, E18, E15, E19
+M5. "HarvesterX" (Software) — options: E24, E25, E26, E27
+M6. "PowerShell (powershell.exe)" (Software) — options: E12, E6, E33, E34
+M7. "wscript.exe" (Software) — options: E12, E39, E14, E33
+M8. "mshta.exe" (Software) — options: E37, E42, E33, E41
+M9. "lover.printing82.detroito.ru" (Domain) — options: E50, E51, E52, E53
+M10. "atlantar.ru" (Domain) — options: E60, E54, E59, E52
+M11. "motoristo.ru" (Domain) — options: E58, E64, E54, E60
+M12. "moolin.ru" (Domain) — options: E60, E54, E50, E61
+M13. "bubenci.ru" (Domain) — options: E60, E61, E54, E50
+M14. "callsol.ru" (Domain) — options: E59, E53, E54, E60
+M15. "clipperso.ru" (Domain) — options: E53, E54, E60, E57
+M16. "cooperi.ru" (Domain) — options: E50, E54, E60, E61
+M17. "detroito.ru" (Domain) — options: E60, E65, E54, E59
+M18. "farafauler.ru" (Domain) — options: E50, E54, E60, E62
+M19. "fishitor.ru" (Domain) — options: E60, E65, E54, E59
+M20. "flayga.ru" (Domain) — options: E60, E54, E59, E58
+M21. "ganara.ru" (Domain) — options: E58, E61, E54, E60
+M22. "hawksi.ru" (Domain) — options: E60, E61, E54, E50
+M23. "hofsteder.ru" (Domain) — options: E60, E52, E54, E53
+M24. "kilitro.ru" (Domain) — options: E60, E54, E50, E64
+M25. "kurapat.ru" (Domain) — options: E60, E61, E54, E50
+M26. "leonardis.ru" (Domain) — options: E60, E53, E54, E61
+M27. "lnasfe.ru" (Domain) — options: E60, E54, E59, E52
+M28. "lopasts.ru" (Domain) — options: E60, E54, E50, E62
+M29. "mafirti.ru" (Domain) — options: E60, E54, E53, E61
+M30. "metanat.ru" (Domain) — options: E60, E54, E52, E61
+M31. "mitlubald.ru" (Domain) — options: E60, E54, E61, E50
+M32. "paparat.ru" (Domain) — options: E60, E54, E50, E62
+M33. "pasamart.ru" (Domain) — options: E53, E54, E60, E61
+M34. "qkcew.ru" (Domain) — options: E50, E54, E60, E52
+M35. "rncsq.ru" (Domain) — options: E63, E54, E60, E69
+M36. "tarlit.ru" (Domain) — options: E60, E62, E54, E50
+M37. "tbwelo.ru" (Domain) — options: E60, E54, E50, E52
+M38. "wicksl.ru" (Domain) — options: E50, E61, E63, E54
+M39. "xcqef.ru" (Domain) — options: E70, E54, E50, E61
+M40. "nxkad.ru" (Domain) — options: E58, E54, E60, E61
+M41. "dnslookup.seowebchecker.com" (Domain) — options: E66, E55, E52, E59
+M42. "ip-api.com" (Domain) — options: E59, E58, E55, E66
+M43. "tools.nexcess.net" (Domain) — options: E63, E59, E70, E66
+M44. "viewdns.info" (Domain) — options: E59, E66, E57, E64
+M45. "www.portcheckers.com" (Domain) — options: E53, E55, E57, E58
+
+=== RESPONSE (18.4s, in 4325 / out 1352 tok, stop) ===
+{"v":[{"m":"M1","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"malicious actor group UAC-0010"}, {"m":"M2","id":"E49","p":null,"r":null,"lvl":"g0","g":null},{"m":"M3","id":"E43","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"E44","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"E45","p":null,"r":null,"lvl":"g0","g":null},{"m":"M6","id":"E46","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"E47","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"E48","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"E107","p":null,"r":null,"lvl":"g0","g":null},{"m":"M10","id":"E71","p":null,"r":null,"lvl":"g0","g":null},{"m":"M11","id":"E72","p":null,"r":null,"lvl":"g0","g":null},{"m":"M12","id":"E73","p":null,"r":null,"lvl":"g0","g":null},{"m":"M13","id":"E74","p":null,"r":null,"lvl":"g0","g":null},{"m":"M14","id":"E75","p":null,"r":null,"lvl":"g0","g":null},{"m":"M15","id":"E76","p":null,"r":null,"lvl":"g0","g":null},{"m":"M16","id":"E77","p":null,"r":null,"lvl":"g0","g":null},{"m":"M17","id":"E78","p":null,"r":null,"lvl":"g0","g":null},{"m":"M18","id":"E79","p":null,"r":null,"lvl":"g0","g":null},{"m":"M19","id":"E80","p":null,"r":null,"lvl":"g0","g":null},{"m":"M20","id":"E81","p":null,"r":null,"lvl":"g0","g":null},{"m":"M21","id":"E82","p":null,"r":null,"lvl":"g0","g":null},{"m":"M22","id":"E83","p":null,"r":null,"lvl":"g0","g":null},{"m":"M15","id":"E84","p":null,"r":null,"lvl":"g0","g":null},{"m":"M16","id":"E85","p":null,"r":null,"lvl":"g0","g":null},{"m":"M24","id":"E86","p":null,"r":null,"lvl":"g0","g":null},{"m":"M25","id":"E87","p":null,"r":null,"lvl":"g0","g":null},{"m":"M26","id":"E88","p":null,"r":null,"lvl":"g0","g":null},{"m":"M27","id":"E89","p":null,"r":null,"lvl":"g0","g":null},{"m":"M28","id":"E90","p":null,"r":null,"lvl":"g0","g":null},{"m":"M29","id":"E91","p":null,"r":null,"lvl":"g0","g":null},{"m":"M30","id":"E92","p":null,"r":null,"lvl":"g0","g":null},{"m":"M31","id":"E93","p":null,"r":null,"lvl":"g0","g":null},{"m":"M32","id":"E94","p":null,"r":null,"lvl":"g0","g":null},{"m":"M33","id":"E95","p":null,"r":null,"lvl":"g0","g":null},{"m":"M34","id":"E96","p":null,"r":null,"lvl":"g0","g":null},{"m":"M35","id":"E101","p":null,"r":null,"lvl":"g0","g":null},{"m":"M36","id":"E97","p":null,"r":null,"lvl":"g0","g":null},{"m":"M37","id":"E98","p":null,"r":null,"lvl":"g0","g":null},{"m":"M38","id":"E99","p":null,"r":null,"lvl":"g0","g":null},{"m":"M39","id":"E100","p":null,"r":null,"lvl":"g0","g":null},{"m":"M40","id":"E101","p":null,"r":null,"lvl":"g0","g":null},{"m":"M41","id":"E102","p":null,"r":null,"lvl":"g0","g":null},{"m":"M42","id":"E103","p":null,"r":null,"lvl":"g0","g":null},{"m":"M43","id":"E104","p":null,"r":null,"lvl":"g0","g":null},{"m":"M44","id":"E105","p":null,"r":null,"lvl":"g0","g":null},{"m":"M45","id":"E106","p":null,"r":null,"lvl":"g0","g":null}]}

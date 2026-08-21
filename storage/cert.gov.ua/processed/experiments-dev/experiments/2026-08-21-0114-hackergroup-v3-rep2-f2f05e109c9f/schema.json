@@ -1,0 +1,76 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Hybrid ID",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Core Name",
+            "example": "APT28",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028)' was involved in an event' -> 'APT28' was involved in an event: same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Turla",
+            "gate": "2",
+            "reason": "Turla is a synonym/alias for UAC-0003. Moving from 'UAC-0003 (Turla)' to 'Turla' or 'UAC-0003' changes the naming convention but not the specificity of the entity."
+          },
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "UAC-0028 is a different reporting identifier for the same entity as APT28; it is not a coarser representation of the entity."
+          },
+          {
+            "candidate": "Sandworm",
+            "gate": "2",
+            "reason": "Sandworm is an unrelated entity (different referent) in the same category."
+          }
+        ],
+        "notes": "The ladder addresses the common practice of including internal tracking IDs within a name. The UAC-0028 portion is a technical identifier; its removal leaves the primary known moniker, which constitutes a move to a coarser (less specific) description while preserving the identity.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 2",
+          "g1 \"APT28\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

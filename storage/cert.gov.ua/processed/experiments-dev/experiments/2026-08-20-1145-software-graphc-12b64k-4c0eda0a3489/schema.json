@@ -1,0 +1,78 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "specific_instance",
+            "example": "Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "product_name",
+            "example": "Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Office 2016 was involved in an event' -> 'Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "suite_membership",
+            "gate": "2",
+            "reason": "The transition from a specific app (Word) to a suite (Office) is best represented by 'part-of', but since both entries are valid results of 'drop-qualifier' regarding versioning or branding, they represent the same logical coarsening step for different items."
+          }
+        ],
+        "notes": "The ladder captures the progression from specific instances/versions (e.g., 'Office 2016', 'MS Word') to core product names (e.g., 'Office', 'Word'). The move 'drop-qualifier' addresses both version numbers and vendor prefixes.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

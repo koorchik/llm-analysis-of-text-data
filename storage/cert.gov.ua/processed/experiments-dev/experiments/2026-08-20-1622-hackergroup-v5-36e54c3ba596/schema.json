@@ -1,0 +1,66 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Identifier-Labeled Name",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Common Name",
+            "example": "APT28",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "UAC-0010 / Sandworm_Mapping",
+            "gate": "2",
+            "reason": "Cannot confirm if UAC-0010 and Sandworm refer to the same entity without external metadata; thus, no transformation is evident from surface forms alone."
+          }
+        ],
+        "notes": "The ladder reflects the removal of internal tracking identifiers (UAC-xxxx) as qualifiers. The inclusion of both an internal ID and a common name in g0 provides the most specific representation found in the evidence, while g1 represents the same entity without the procedural identifier.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 2",
+          "g1 \"APT28\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

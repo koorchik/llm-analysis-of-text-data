@@ -1,0 +1,86 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "application",
+            "example": "MS Word",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "suite",
+            "example": "Microsoft Office",
+            "disputed": true,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'MS Word was involved in an event' -> 'Microsoft Office was involved in an event': attributed to a distinct containing referent",
+            "edgeKind": "part-of"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Microsoft Word",
+            "gate": "3",
+            "reason": "This is a synonym of 'MS Word' and represents the same entity, not a coarser one."
+          },
+          {
+            "candidate": "Microsoft Office 2016",
+            "gate": "2",
+            "reason": "While it allows for a drop-qualifier move to 'Microsoft Office', using 'MS Word' as g0 and 'Microsoft Office' as g1 better captures the transition from a specific tool to its containing suite."
+          }
+        ],
+        "notes": "The inclusion of multiple distinct tools (Word, Excel, PowerPoint) in the source list suggests a hierarchy where these are members of the 'Microsoft Office' collection. Using this path allows for more robust coarsening than simply dropping version suffixes from the suite name itself.",
+        "disagreements": [
+          "g1 \"Microsoft Office\": preserving false vs true (run 2)",
+          "g1 \"Microsoft Office\": preserving false vs true (run 3)"
+        ],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

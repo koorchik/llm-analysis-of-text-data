@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex id/name",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "primary identifier",
+            "example": "UAC-0028",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28)' was involved in an event' -> 'UAC-0028' was involved in an event: same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "1",
+            "reason": "Similarity to 'UAC-0028' (a synonym/alias) means it is not a coarser node in terms of detail, but rather an alternative identifier."
+          },
+          {
+            "candidate": "Advanced Persistent Threat",
+            "gate": "1",
+            "reason": "This is likely the category 'HackerGroup' or a related technical classification; including it would move into a different category or represent the category itself."
+          }
+        ],
+        "notes": "The difference between entries like 'UAC-0028 (APT28)' and 'UAC-0028' is purely the presence of an alias. The list suggests that groups are identified either by a system ID, a common name, or both.",
+        "disagreements": [
+          "g1 \"UAC-0028\": omitted by run 2"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

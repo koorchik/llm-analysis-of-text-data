@@ -1,6 +1,7 @@
 import { ComemSelectDecision } from './ComemSelectDecision';
 import { ExactOnlyDecision } from './ExactOnlyDecision';
 import { FellegiSunterDecision } from './FellegiSunterDecision';
+import { ListwiseGraphDecision } from './ListwiseGraphDecision';
 import { ListwiseMintCandidateDecision } from './ListwiseMintCandidateDecision';
 import { ThresholdDecision } from './ThresholdDecision';
 import type { DecisionStrategy } from '../types';
@@ -8,6 +9,7 @@ import type { DecisionStrategy } from '../types';
 export { ComemSelectDecision } from './ComemSelectDecision';
 export { ExactOnlyDecision } from './ExactOnlyDecision';
 export { FellegiSunterDecision, defaultComparators, type Comparator } from './FellegiSunterDecision';
+export { ListwiseGraphDecision } from './ListwiseGraphDecision';
 export { ListwiseMintCandidateDecision } from './ListwiseMintCandidateDecision';
 export { ThresholdDecision } from './ThresholdDecision';
 
@@ -29,6 +31,7 @@ export const DECISION_STRATEGIES = {
   threshold: ThresholdDecision,
   'fellegi-sunter': FellegiSunterDecision,
   'listwise-mint-candidate': ListwiseMintCandidateDecision,
+  'listwise-graph': ListwiseGraphDecision,
   'comem-select': ComemSelectDecision,
 } as const;
 

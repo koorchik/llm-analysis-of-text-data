@@ -17,7 +17,8 @@
     "migrate-registry": "ts-node bin/migrate-registry.ts",
     "run-stats": "node bin/run-stats.js",
     "embed-bench": "node bin/embed-bench.js",
-    "blocker-bench": "ts-node bin/blocker-bench.ts"
+    "blocker-bench": "ts-node bin/blocker-bench.ts",
+    "fold": "ts-node bin/fold-registry.ts"
   },
   "author": "",
   "license": "ISC",

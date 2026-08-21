@@ -1,0 +1,76 @@
+{
+  "categories": [
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2681,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 18,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Russian Federation",
+            "example": "Російська Федерація",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Russia",
+            "example": "Росія",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Russian Federation was involved in an event' -> 'Russia was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Europe",
+            "gate": "1",
+            "reason": "The entity belongs to the category 'Continent' or 'Region', not 'Country'."
+          },
+          {
+            "candidate": "Eurasian State",
+            "gate": "2",
+            "reason": "This is a thematic grouping/description, not a name that identifies the same referent with less detail."
+          }
+        ],
+        "notes": "The ladder identifies the transition from formal legal names (e.g., 'Російська Федерація') to common names ('Росія'). Other forms in the list (such as 'Україна'/'Ukraine' or 'США'/'USA') are surface variations (translation or abbreviation) rather than distinct levels of granularity; they refer to the same entity and thus occupy g0.",
+        "disagreements": [
+          "g1 \"Росія\": omitted by run 2",
+          "g1 \"Росія\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6276652
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 2681,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 10702,
+      "op": "discover-ladder",
+      "name": "Country"
+    },
+    {
+      "doc": 6276652,
+      "op": "discover-ladder",
+      "name": "Country"
+    }
+  ]
+}

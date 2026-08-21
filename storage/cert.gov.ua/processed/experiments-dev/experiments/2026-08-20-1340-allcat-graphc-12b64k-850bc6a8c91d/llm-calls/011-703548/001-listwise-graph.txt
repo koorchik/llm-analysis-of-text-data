@@ -1,0 +1,114 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs an identifier with a label ("K-12 (Foo)"), the identifier is what it identifies.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Атака групи UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4941)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA зафіксовано факт масового розповсюдження електронних листів з темою "Об'єднаний офіційний звіт про гуманітарну ситуацію. Україна" та вкладенням у вигляді XLS-документу "Гуманітарна катастрофа України з 24 лютого 2022 року.xls". При цьому електронні листи розсилаються зі скомпрометованих електронних адрес державних органів України.</p><p>Згаданий документ містить макрос, активація якого призведе до запуску файлу "baseupd.exe", виконання якого призведе до ураження комп'ютер
+Entities:
+E1. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk <g0>
+E2. Інформація щодо наявності вакансій та їх укомплектування.xls <g0>
+E3. До оплати рах.ф. 74 - 2018р.js <g0>
+E4. До оплати від 11.12.18.lzh <g0>
+E5. CVE-2018-8124 <g0>
+E6. PGMB New Order 18-2077.xlsx <g0>
+E7. Рахунки за выполненные работы от 11.12.2018.js <g0>
+E8. Microsoft Equation Editor <g0>
+E9. MS Excel
+E10. Електронний запит.exe <g0>
+E11. RegAsm.exe <g0>
+E12. spi.exe <g0>
+E13. cmd.exe <g0>
+E14. Microsoft Windows <g1>
+E15. b.exe <g0>
+E16. Mozilla Firefox <g0>
+E17. ckZ89.ExE <g0>
+E18. WinSCP <g0>
+E19. loader.exe <g0>
+E20. vaultcli.dll <g0>
+E21. Foxmail <g0>
+E22. TRYxaEbX <g0>
+E23. .NET Framework <g0>
+E24. Paltalk <g0>
+E25. TRYxaEbX.ps1 <g0>
+E26. 360Chrome Browser <g0>
+E27. TRYxaEbX_2.ps1 <g0>
+E28. 7Star Browser <g0>
+E29. Microsoft Outlook <g0>
+E30. z.ps1 <g0>
+E31. WS_FTP <g0>
+E32. installer.exe <g0>
+E33. Agent Tesla <g0>
+E34. MS PowerPoint
+E35. SmartFTP <g0>
+E36. shellcode.x86 (Cobalt Strike Beacon) <g0>
+E37. shellcode.x64 (Cobalt Strike Beacon) <g0>
+E38. Meterpreter <g0>
+E39. killself.bat <g0>
+E40. powershell.exe <g0>
+E41. Thunderbird <g0>
+E42. Windows Host Compute Service Shim <g0>
+E43. baseupd.exe
+E44. oYUuQbXu
+E45. stage1.ps1
+E46. stage2.ps1
+E47. shellcode.x86.bin
+E48. shellcode.x64.bin
+E49. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E50. державні установи України
+Levels: g0=Word processor (observed entity; example: Microsoft Word) | g1=Product suite (part-of; containing referent; example: Microsoft Office)
+Mentions:
+M1. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software) — options: E1, E2, E3, E4
+M2. "baseupd.exe" (Software) — options: E11, E12, E13, E14
+M3. "oYUuQbXu" (Software) — options: E21, E22, E23, E24
+M4. "stage1.ps1" (Software) — options: E30, E25, E11, E18
+M5. "stage2.ps1" (Software) — options: E30, E25, E31, E27
+M6. "shellcode.x86.bin" (Software) — options: E36, E37, E38, E39
+M7. "shellcode.x64.bin" (Software) — options: E37, E36, E38, E39
+M8. "Державні органи України" (Sector) — options: E50
+
+=== RESPONSE (147.6s, in 2184 / out 11882 tok, stop) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an Excel file"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a system executable"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"an alphanumeric identifier"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a first-stage script"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"a second-stage script"},{"m":"M6","id":"E36","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"E37","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"E50","p":null,"r":null,"lvl":"g0","g":null}]}

@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker group",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "1",
+            "reason": "Moving from 'UAC-0028' to 'APT28' is a synonym replacement (alias) rather than a coarse-grained qualification or movement within the hierarchy."
+          },
+          {
+            "candidate": "Sandworm",
+            "gate": "1",
+            "reason": "Like APT28, Sandworm is an alternative name for a specific entity; it is not a broader category of hacker group."
+          }
+        ],
+        "notes": "The sample data contains multiple naming conventions (internal identifiers like 'UAC-0028', common labels like 'Sandworm', and merged forms like 'APT28 (UAC-0028)'). Because these represent the same type of entity with different levels of descriptive detail rather than a nested hierarchy of types, only g0 is provided. Any movement toward more general terms would either step out of the category or be considered an alias switch.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

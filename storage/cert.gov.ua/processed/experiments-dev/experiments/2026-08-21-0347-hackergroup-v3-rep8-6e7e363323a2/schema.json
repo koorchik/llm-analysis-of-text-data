@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex_id",
+            "example": "APT28 (UAC-0028)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "primary_name",
+            "example": "APT28",
+            "disputed": true,
+            "preserving": true,
+            "foldTest": "'APT28 (UAC-0028) was involved in an event' -> 'APT28 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Turla",
+            "gate": "2",
+            "reason": "Turla is a synonym/alias of UAC-003. Switching between names for the same entity is an alias swap, not a coarsening."
+          },
+          {
+            "candidate": "APT",
+            "gate": "1",
+            "reason": "APT refers to a class of entities (Advanced Persistent Threat), not a specific member of the HackerGroup category. Moving here would be a category shift."
+          }
+        ],
+        "notes": "The ladder identifies the removal of internal tracking identifiers or secondary identifiers in parentheses as 'drop-qualifier'. Multiple forms like 'UAC-003 (Turla)' and 'APT28 (UAC-0028)' represent the same logical coarsening step: removing specific technical qualifiers to arrive at a primary identifier.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 2",
+          "g1 \"APT28\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

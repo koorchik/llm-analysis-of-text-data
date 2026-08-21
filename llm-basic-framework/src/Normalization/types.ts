@@ -99,6 +99,12 @@ export interface Candidate {
   /** The canonical's surfaces, as shown to the judge. */
   surfaces: string[];
   /**
+   * The candidate's current ladder rung, when the category has an active ladder. Carried so a
+   * graph-building strategy can tell "same level" from "one level up" — the distinction between a
+   * link and a granularity edge. Absent for ladder-free arms and for generators that do not set it.
+   */
+  rung?: string;
+  /**
    * Which generator surfaced it. Carried into the decision log so E4 can score candidate recall
    * per channel rather than only in aggregate.
    */
@@ -157,6 +163,23 @@ export interface DecisionRequest {
   /** Generic source evidence; strategies must not treat contextual role or behavior as identity. */
   docTitle?: string;
   docSnippet?: string;
+  /**
+   * Entities this document already knows about, offered as possible **parents**: every candidate
+   * surfaced for any mention in the batch, plus the other mentions being decided alongside it.
+   *
+   * Identity retrieval and hierarchy retrieval want different neighbours, which is why this is a
+   * separate list rather than a wider `candidates`. Measured on the dev-Software slice: of 24
+   * reachable gold edges, 14 had a parent the identity blocker never surfaced at any depth
+   * (`rfusclient.exe` → `Remote Utilities`, `MS Excel` → `MS Office`) — they are not near in name or
+   * in embedding space, they are simply discussed in the same report.
+   */
+  pool?: Array<{ canonical: string; surfaces: string[]; rung?: string }>;
+  /**
+   * The category's active granularity ladder, already rendered for a prompt. Supplied so a strategy
+   * can place a mention on the ladder without reaching into `SchemaRegistry` itself — the port stays
+   * a port. Undefined when the category has no ladder yet.
+   */
+  ladder?: string;
 }
 
 export type DecisionKind = 'link' | 'mint' | 'defer';
@@ -183,6 +206,26 @@ export interface Decision {
   confidence: number | null;
   /** Short, loggable reason — appears in the decision log, so keep it stable across runs. */
   reason: string;
+  /**
+   * The graph half of a verdict, filled only by strategies that model granularity. All three are
+   * optional so the flat-identity strategies stay unchanged, and all three are **proposals**: the
+   * caller validates `parentCandidate` against the list it actually showed and derives the edge kind
+   * from the parent's rung, exactly as it does for the built-in judge. A strategy cannot mint an
+   * edge the ladder does not support.
+   */
+  gloss?: string | null;
+  parentCandidate?: string | null;
+  mentionRung?: string | null;
+  /**
+   * The relation the strategy read between mention and parent, in ladder-free words: the same
+   * referent stated less precisely (`narrower-of`) or a distinct component of it (`part-of`).
+   *
+   * The ladder stays authoritative when it has an opinion — the caller derives the edge kind from
+   * the parent's rung first and only falls back to this. Without the fallback a category whose
+   * ladder has not been discovered yet drops **every** edge its judge proposes, which is exactly
+   * what the first `listwise-graph` run did: correct parents, zero edges recorded.
+   */
+  relation?: 'narrower-of' | 'part-of' | null;
 }
 
 /**

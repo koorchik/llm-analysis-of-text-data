@@ -1,0 +1,68 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "compound_identifier",
+            "example": "UAC-0028 (Turla)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "base_identifier",
+            "example": "UAC-0028",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (Turla) was involved in an event' -> 'UAC-0028 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "HackerGroup",
+            "gate": "1",
+            "reason": "The category name itself must not be a rung."
+          },
+          {
+            "candidate": "State-Sponsored Actor",
+            "gate": "1",
+            "reason": "Crosses into a different category/domain (implies specific roles or types of state affiliation)."
+          }
+        ],
+        "notes": "The distinction between g0 and g1 is the removal of secondary naming conventions (e.g., common names in parentheses) while retaining the primary identifier.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

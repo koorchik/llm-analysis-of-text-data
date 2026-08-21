@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker_group_id",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "2",
+            "reason": "Switching from 'UAC-0028 (APT28)' to 'APT28' is an alias/synonym swap, not a reduction of specific detail; both refer to the same entity."
+          },
+          {
+            "candidate": "UAC",
+            "gate": "1",
+            "reason": "A collection or identifier system (UAC) is not an entity within the HackerGroup category."
+          }
+        ],
+        "notes": "The provided examples consist of various names and identification codes for specific groups. There is no internal hierarchy, nested sub-groups, or overlapping container relationships evidenced in the surface forms that would allow for a coarsening move while remaining within the same category.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

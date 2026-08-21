@@ -1,0 +1,219 @@
+{
+  "version": 4,
+  "canonicalPolicy": "first-seen",
+  "categories": {
+    "HackerGroup": {
+      "UAC-0028": {
+        "aliases": [
+          {
+            "surface": "UAC-0028",
+            "docId": 37788,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 37788,
+          "date": "16.03.2022"
+        },
+        "rung": "g1"
+      },
+      "APT28": {
+        "aliases": [
+          {
+            "surface": "APT28",
+            "docId": 37788,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "APT28 (UAC-0028)",
+            "docId": 40102,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          },
+          {
+            "surface": "UAC-0028 (APT28)",
+            "docId": 6277822,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 3
+        },
+        "firstSeen": {
+          "doc": 37788,
+          "date": "16.03.2022"
+        }
+      },
+      "UAC-0003 (Turla)": {
+        "aliases": [
+          {
+            "surface": "UAC-0003 (Turla)",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        },
+        "rung": "g0"
+      },
+      "UAC-0050": {
+        "aliases": [
+          {
+            "surface": "UAC-0050",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        },
+        "rung": "g0"
+      },
+      "DaVinci Group": {
+        "aliases": [
+          {
+            "surface": "DaVinci Group",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        },
+        "rung": "g0"
+      },
+      "UAC-0010": {
+        "aliases": [
+          {
+            "surface": "UAC-0010",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        },
+        "rung": "g0"
+      },
+      "Sandworm": {
+        "aliases": [
+          {
+            "surface": "Sandworm",
+            "docId": 6277822,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6277822,
+          "date": "22.02.2024"
+        },
+        "rung": "g0"
+      },
+      "UAC-0063": {
+        "aliases": [
+          {
+            "surface": "UAC-0063",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "gloss": "a cyberattack group targeting Ukrainian institutions",
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 1
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        },
+        "rung": "g0"
+      },
+      "UAC-0001": {
+        "aliases": [
+          {
+            "surface": "UAC-0001",
+            "docId": 6280129,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "UAC-0001 (APT28)",
+            "docId": 6281123,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "gloss": "a cyber threat actor",
+        "externalIds": {},
+        "categoryCounts": {
+          "HackerGroup": 2
+        },
+        "firstSeen": {
+          "doc": 6280129,
+          "date": "21.07.2024"
+        },
+        "rung": "g0"
+      }
+    }
+  },
+  "granularityEdges": {},
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [],
+    "spillover": [],
+    "repairedThrough": -1
+  }
+}

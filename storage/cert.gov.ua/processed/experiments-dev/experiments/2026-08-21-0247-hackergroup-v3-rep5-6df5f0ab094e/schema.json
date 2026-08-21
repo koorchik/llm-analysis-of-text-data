@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "complex_identifier",
+            "example": "UAC-0028 (APT28)",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "common_name",
+            "example": "APT28",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'UAC-0028 (APT28)' was involved in an event' -> 'APT28' was involved in an event: same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "State-sponsored actor",
+            "gate": "1",
+            "reason": "This would be a different category (a broader classification of the entity's nature) rather than a less specific representation of the same entity within the HackerGroup category."
+          },
+          {
+            "candidate": "UAC-0028",
+            "gate": "2",
+            "reason": "While 'UAC-0028' is an identity-bearing name, it represents a different identification style (internal ID) rather than a less specific version of 'APT28'. Both are roughly equal in specificity within the context provided."
+          }
+        ],
+        "notes": "The distinction identified is between names containing both system identifiers and common aliases versus those using only the common name. The internal identifier (e.g., UAC-0010) acts as a qualifier that, when removed, leaves the primary identification of the group.",
+        "disagreements": [
+          "g1 \"APT28\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

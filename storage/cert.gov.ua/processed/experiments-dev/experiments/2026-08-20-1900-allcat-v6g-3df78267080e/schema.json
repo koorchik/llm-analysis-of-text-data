@@ -1,0 +1,280 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "product_name",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "software_suite",
+            "example": "Office 2016",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Office 2016 was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Office",
+            "gate": "3",
+            "reason": "Dropping '2016' removes a digit/version identifier. The rule states identity-bearing digits must not be dropped."
+          },
+          {
+            "candidate": "Word",
+            "gate": "2",
+            "reason": "Moving from 'Microsoft Word' to 'Word' is valid, but the next logical step (e.g., to 'Application') would exit the category or change the referent."
+          },
+          {
+            "candidate": "Excel",
+            "gate": "2",
+            "reason": "A move from a specific file like 'PGMB New Order 18-2077.xlsx' to 'Excel' changes the referent from an instance/file to the containing application software."
+          }
+        ],
+        "notes": "The ladder identifies products with brand qualifiers (e.g., 'Microsoft') as the primary point of coarsening. Moving beyond the version number (2016) is avoided to comply with the hard rule against dropping identity-bearing digits.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    },
+    {
+      "name": "Organization",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 24,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "Full Name",
+            "example": "Matrix Telecom Ltd",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "Brand Identifier",
+            "example": "Matrix",
+            "disputed": false,
+            "preserving": true,
+            "foldTest": "'Matrix Telecom Ltd was involved in an event' -> 'Matrix was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Telecommunication Provider",
+            "gate": "2",
+            "reason": "This is a kind_of relationship; the attribution-rewrite test results in 'a different thing' (any provider) rather than the same entity with less detail."
+          }
+        ],
+        "notes": "The jump from 'Matrix Telecom Ltd' to 'Matrix' removes both legal status qualifiers (Ltd, LLC, Ат) and functional descriptors (Telecom). Both are handled by the drop-qualifier move. This ladder provides a path for entities that include extra identifying metadata in their names.",
+        "disagreements": [],
+        "discoveredAtDoc": 6276824
+      }
+    },
+    {
+      "name": "Domain",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 59,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "subdomain_fqn",
+            "example": "social.technet.microsoft.com",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "intermediate_domain",
+            "example": "technet.microsoft.com",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'social.technet.microsoft.com was involved in an event' -> 'technet.microsoft.com was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "root_domain",
+            "example": "microsoft.com",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'technet.microsoft.com was involved in an event' -> 'microsoft.com was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": ".ua",
+            "gate": "1",
+            "reason": "A Top-Level Domain (TLD) is typically a distinct category from a specific domain or host record."
+          },
+          {
+            "candidate": "microsoft",
+            "gate": "2",
+            "reason": "The string 'microsoft' without the TLD is a hostname, not a full domain; it lacks required trailing components to be in the same category."
+          }
+        ],
+        "notes": "Multiple rungs are used for drop-qualifier because the source data contains multi-level subdomain hierarchies. This captures both depth (specific sub-sites) and breadth (the primary registered domain).",
+        "disagreements": [
+          "g1 \"technet.microsoft.com\": preserving true vs false (run 3)",
+          "g2 \"microsoft.com\": preserving true vs false (run 3)"
+        ],
+        "discoveredAtDoc": 1563322
+      }
+    },
+    {
+      "name": "Government Body",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26
+    },
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2707
+    },
+    {
+      "name": "Sector",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10011
+    },
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 39934
+    },
+    {
+      "name": "Infrastructure",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6276824
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 24,
+      "op": "admit-category",
+      "name": "Organization"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Domain"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Government Body"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 10011,
+      "op": "admit-category",
+      "name": "Sector"
+    },
+    {
+      "doc": 10011,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 39934,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 1563322,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 6276824,
+      "op": "admit-category",
+      "name": "Infrastructure"
+    },
+    {
+      "doc": 6276824,
+      "op": "discover-ladder",
+      "name": "Organization"
+    }
+  ]
+}

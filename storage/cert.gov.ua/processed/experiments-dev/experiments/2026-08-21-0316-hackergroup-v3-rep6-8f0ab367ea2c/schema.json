@@ -1,0 +1,58 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hack_group_id",
+            "example": "UAC-0028",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28",
+            "gate": "1",
+            "reason": "This is an alias/alternative name for the same entity as UAC-0028, not a coarser category or broader tier."
+          },
+          {
+            "candidate": "Sandworm",
+            "gate": "1",
+            "reason": "This is a distinct entity in the same class (HackerGroup), and thus does not represent a coarser node for UAC-0028."
+          }
+        ],
+        "notes": "The list provided contains specific identifiers (UAC-###) and common monikers (APT28, Sandworm, Turla). These are distinct names/labels for individual entities within the category. Since synonyms or alternative naming conventions do not constitute a hierarchy of scope and there is no evidence that any item represents a collection or sub-type of another within the provided text, only g0 is valid.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

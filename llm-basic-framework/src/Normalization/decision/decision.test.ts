@@ -1,6 +1,7 @@
 import { ComemSelectDecision } from './ComemSelectDecision';
 import { ExactOnlyDecision } from './ExactOnlyDecision';
 import { FellegiSunterDecision, defaultComparators } from './FellegiSunterDecision';
+import { ListwiseGraphDecision } from './ListwiseGraphDecision';
 import { ListwiseMintCandidateDecision } from './ListwiseMintCandidateDecision';
 import { ThresholdDecision } from './ThresholdDecision';
 import { DECISION_STRATEGIES, OFFLINE_STRATEGY_IDS } from './index';
@@ -499,6 +500,7 @@ describe('the strategy registry', () => {
       'comem-select',
       'exact-only',
       'fellegi-sunter',
+      'listwise-graph',
       'listwise-mint-candidate',
       'threshold',
     ]);
@@ -556,5 +558,88 @@ describe('the strategy registry', () => {
       assert.doesNotThrow(() => JSON.stringify(strategy.config), strategy.id);
       assert.ok(Object.keys(strategy.config).length > 0, strategy.id);
     }
+  });
+});
+
+describe('ListwiseGraphDecision', () => {
+  it('decides identity and the parent edge in ONE call per document', async () => {
+    const llm = fakeLlm([
+      '{"choices":[' +
+        '{"mention":"Office 2010","category":"Software","choice":3,"parent":1,"relation":"narrower-of","gloss":"a 2010 release of the office suite"},' +
+        '{"mention":"MS Word","category":"Software","choice":3,"parent":1,"relation":"part-of","gloss":"the word processor in the suite"}' +
+        ']}',
+    ]);
+    const pool = [{ canonical: 'MS Office', surfaces: ['MS Office'] }];
+    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
+    const decisions = await strategy.decide([
+      request('Office 2010', [candidate('MS Office', 0.9), candidate('Excel', 0.5)], { category: 'Software', pool }),
+      request('MS Word', [candidate('MS Office', 0.9), candidate('Excel', 0.5)], { category: 'Software', pool }),
+    ]);
+
+    assert.equal(llm.callCount(), 1, 'both mentions ride one call');
+    assert.equal(decisions[0].kind, 'mint');
+    assert.equal(decisions[0].parentCandidate, 'MS Office');
+    assert.equal(decisions[0].gloss, 'a 2010 release of the office suite');
+    assert.equal(decisions[1].parentCandidate, 'MS Office');
+  });
+
+  it('renders the ladder and each candidate rung, so the judge can tell a level from an identity', async () => {
+    const llm = fakeLlm(['{"choices":[{"mention":"x","category":"Software","choice":2,"parent":null,"relation":null,"gloss":null}]}']);
+    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
+    await strategy.decide([
+      request('x', [{ canonical: 'A', sim: 0.9, surfaces: ['A'], channel: 'test', rung: 'g1' }], {
+        category: 'Software',
+        ladder: 'g0 instance < g1 product',
+      }),
+    ]);
+    assert.match(llm.calls[0].text, /\[level g1\]/);
+    assert.match(llm.calls[0].text, /levels: g0 instance < g1 product/);
+  });
+
+  it('ignores a parent on a mention it linked — an entity cannot be both the same and narrower', async () => {
+    const llm = fakeLlm(['{"choices":[{"mention":"x","category":"Software","choice":1,"parent":2,"relation":"part-of"}]}']);
+    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
+    const [decision] = await strategy.decide([
+      request('x', [candidate('A', 0.9), candidate('B', 0.8)], {
+        category: 'Software',
+        pool: [{ canonical: 'A', surfaces: ['A'] }, { canonical: 'B', surfaces: ['B'] }],
+      }),
+    ]);
+    assert.equal(decision.kind, 'link');
+    assert.equal(decision.parentCandidate, undefined);
+  });
+
+  it('drops a parent number that is out of range rather than guessing', async () => {
+    const llm = fakeLlm(['{"choices":[{"mention":"x","category":"Software","choice":3,"parent":9,"relation":"part-of"}]}']);
+    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
+    const [decision] = await strategy.decide([
+      request('x', [candidate('A', 0.9), candidate('B', 0.8)], {
+        category: 'Software',
+        pool: [{ canonical: 'A', surfaces: ['A'] }],
+      }),
+    ]);
+    assert.equal(decision.kind, 'mint');
+    assert.equal(decision.parentCandidate, null);
+  });
+
+  it('takes a parent that is nowhere in the mention own option list — the pool is the point', async () => {
+    // rfusclient.exe -> Remote Utilities: the identity blocker never surfaces the parent, because a
+    // component and its system do not resemble each other by name. The pool carries it anyway.
+    const llm = fakeLlm([
+      '{"choices":[{"mention":"rfusclient.exe","category":"Software","choice":3,"parent":2,"relation":"part-of","gloss":"a client executable"}]}',
+    ]);
+    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
+    const [decision] = await strategy.decide([
+      request('rfusclient.exe', [candidate('rutserv.exe', 0.6), candidate('b.exe', 0.4)], {
+        category: 'Software',
+        pool: [
+          { canonical: 'rutserv.exe', surfaces: ['rutserv.exe'] },
+          { canonical: 'Remote Utilities', surfaces: ['Remote Utilities'] },
+        ],
+      }),
+    ]);
+    assert.equal(decision.parentCandidate, 'Remote Utilities');
+    assert.equal(decision.relation, 'part-of');
+    assert.match(llm.calls[0].text, /P2\. Remote Utilities/);
   });
 });
