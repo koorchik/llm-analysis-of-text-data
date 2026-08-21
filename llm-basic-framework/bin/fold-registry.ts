@@ -29,7 +29,10 @@ interface Registry {
     string,
     Record<string, { aliases?: Array<{ surface: string } | string>; rung?: string; gloss?: string | null }>
   >;
-  granularityEdges?: Record<string, Array<{ from: string; to: string; kind: string }>>;
+  granularityEdges?: Record<
+    string,
+    Array<{ from: string; to: string; kind: string; relation?: string | null }>
+  >;
 }
 
 const argv = process.argv.slice(2);
@@ -41,6 +44,17 @@ const flag = (name: string, fallback = '') => {
 const RUN = flag('run');
 const CATEGORY = flag('category');
 const RELATIONS = new Set(flag('relations', 'coarsens-to,part-of').split(',').map((s) => s.trim()));
+/**
+ * Contract only these finer relations (`version-of`, `narrower-of`, `part-of`), ignoring the stored
+ * `kind` entirely. This is the aggregation an analysis usually means: `--contract version-of` folds
+ * `Office 2010` into `Office` and `Photoshop 7` into `Photoshop` in one pass, while leaving
+ * `MS Word` under `MS Office` alone — and it does that identically for both products no matter how
+ * deep either chain runs, which a level index cannot promise.
+ */
+const CONTRACT = flag('contract', '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 const LEVEL = flag('level');
 const TOP = Number(flag('top', '25'));
 
@@ -54,7 +68,9 @@ async function main() {
 
   for (const category of categories) {
     const records = registry.categories![category];
-    const edges = (registry.granularityEdges?.[category] ?? []).filter((edge) => RELATIONS.has(edge.kind));
+    const edges = (registry.granularityEdges?.[category] ?? []).filter((edge) =>
+      CONTRACT.length > 0 ? Boolean(edge.relation) && CONTRACT.includes(edge.relation!) : RELATIONS.has(edge.kind)
+    );
     if (Object.keys(records).length === 0) continue;
 
     const parent = new Map<string, { to: string; kind: string }>();
@@ -95,7 +111,8 @@ async function main() {
     const moved = [...folded.values()].reduce((sum, b) => sum + b.members.length, 0) - folded.size;
     console.log(
       `\n=== ${category}: ${Object.keys(records).length} canonicals, ${edges.length} usable edges ` +
-        `(${[...RELATIONS].join('+')}${LEVEL ? `, stop at ${LEVEL}` : ''})`
+        `(${CONTRACT.length > 0 ? `relation ${CONTRACT.join('+')}` : [...RELATIONS].join('+')}` +
+        `${LEVEL ? `, stop at ${LEVEL}` : ''})`
     );
     console.log(`    folded to ${folded.size} nodes — ${moved} canonicals absorbed` +
       (multiParent ? `; ${multiParent} extra parent edges ignored (multi-parent)` : ''));

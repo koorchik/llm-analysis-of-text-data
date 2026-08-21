@@ -84,6 +84,13 @@ export interface GranularityEdge {
   /** Coarser canonical. */
   to: string;
   kind: GranularityEdgeKind;
+  /**
+   * What distinguishes `from` from `to`, when the judge said. `coarsens-to` covers two operations an
+   * analysis usually wants apart: a version/edition/platform qualifier removed (`version-of`) and any
+   * other loss of precision (`narrower-of`). Optional, because every edge written before 2026-08-21
+   * and every edge whose kind came from the ladder has no finer reading recorded.
+   */
+  relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
   docId: number;
   decision: EdgeDecision;
   evidence?: string | null;
@@ -585,6 +592,7 @@ export class EntityRegistry {
       from: string;
       to: string;
       kind: GranularityEdgeKind;
+      relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
       docId: number;
       decision: EdgeDecision;
       evidence?: string | null;
@@ -617,6 +625,7 @@ export class EntityRegistry {
       from: edge.from,
       to: edge.to,
       kind: edge.kind,
+      ...(edge.relation ? { relation: edge.relation } : {}),
       docId: edge.docId,
       decision: edge.decision,
       evidence: edge.evidence ?? null,

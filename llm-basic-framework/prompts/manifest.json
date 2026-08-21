@@ -343,5 +343,14 @@
    }
   ],
   "bytes": 5011
+ },
+ "listwise-graph-compact-v8": {
+  "file": "prompts/listwise-graph-compact-v8.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-21: v7 plus a third relation, `v` — the parent is the mention with a version/edition/platform qualifier removed. Splits the overloaded coarsens-to so an analysis can contract exactly the version step (Office 2010 -> Office, Photoshop 7 -> Photoshop) without folding components into their systems. Stores as coarsens-to; the finer reading rides in `relation`.",
+  "sha256": "73a09cb8988ef5a132dff423e1874a82c8160461c500229526dd569a9d22ffa9",
+  "variables": [],
+  "bytes": 4268
  }
 }

@@ -78,6 +78,8 @@ interface JudgeOutcome {
   /** Validated candidate canonical the mint sits under, when the judge related them. */
   parentCandidate?: string;
   edgeKind?: GranularityEdgeKind;
+  /** The judge's finer reading of the edge, when it gave one — see `Decision.relation`. */
+  relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
   /** 1-line name-independent description (prompts/link-judge.md rule 4), mint/defer only. */
   gloss?: string;
   reasoning?: string;
@@ -314,6 +316,7 @@ export class StreamingNormalizer {
       from: string;
       parent: string;
       kind: GranularityEdgeKind;
+      relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
       mentionRung: string | null;
       evidence: string | null;
     }> = [];
@@ -376,6 +379,7 @@ export class StreamingNormalizer {
             from: plan.canonical,
             parent: plan.outcome.parentCandidate,
             kind: plan.outcome.edgeKind,
+            relation: plan.outcome.relation ?? null,
             mentionRung: plan.outcome.mentionRung ?? null,
             evidence: plan.outcome.reasoning ?? null,
           });
@@ -443,6 +447,7 @@ export class StreamingNormalizer {
         from: edge.from,
         to,
         kind: edge.kind,
+        relation: edge.relation ?? null,
         docId,
         decision: 'judge',
         evidence: edge.evidence,
@@ -657,6 +662,7 @@ export class StreamingNormalizer {
         mentionRung,
         parentCandidate: edgeKind ? parent?.canonical : undefined,
         edgeKind,
+        relation: decision.relation ?? null,
         gloss: gloss && !glossRestatesMention(gloss, plan.entity.name) ? gloss : undefined,
         reasoning: decision.reason,
       });
@@ -918,6 +924,7 @@ export class StreamingNormalizer {
             from,
             to: decision.parentCandidate,
             kind,
+            relation: decision.relation ?? null,
             docId,
             decision: 'judge',
             evidence: decision.reason ?? null,
@@ -1134,7 +1141,9 @@ function renderLadder(category: string, schemaRegistry: SchemaRegistry): string 
  * stated less precisely".
  */
 function relationEdgeKind(relation: string | null | undefined): GranularityEdgeKind | undefined {
-  if (relation === 'narrower-of') return 'coarsens-to';
+  // `version-of` stores as `coarsens-to` — it IS a coarsening, and widening the stored vocabulary
+  // would change what every existing registry means. The finer reading rides along in `relation`.
+  if (relation === 'version-of' || relation === 'narrower-of') return 'coarsens-to';
   if (relation === 'part-of') return 'part-of';
   return undefined;
 }

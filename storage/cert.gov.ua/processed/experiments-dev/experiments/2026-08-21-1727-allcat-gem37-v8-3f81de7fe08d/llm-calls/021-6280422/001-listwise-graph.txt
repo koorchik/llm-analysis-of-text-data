@@ -1,0 +1,176 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to one of three:
+
+- `"v"` — the parent is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the same claim stated less precisely for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the parent, only vaguer.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Entities:
+E1. SRP <g1>
+E2. FTPGetter <g1>
+E3. spi.exe <g0>
+E4. MISP <g1>
+E5. MS Excel <g1>
+E6. Sputnik Browser <g1>
+E7. AppLocker <g1>
+E8. .NET Framework <g1>
+E9. Mozilla Firefox <g1>
+E10. Petya <g1>
+E11. Foxmail <g1>
+E12. IceDragon <g1>
+E13. Agent Tesla [aka AgentTesla] <g1>
+E14. GammaSteel.NET <g0>
+E15. pfSense <g1>
+E16. Microsoft Exchange Server <g1>
+E17. FileZilla <g1>
+E18. YARA <g1>
+E19. ChakraCore <g1>
+E20. vaultcli.dll <g0>
+E21. SQLite.Interop.dll <g0>
+E22. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E23. powershell.exe [aka PowerShell (powershell.exe), PowerShell] <g0>
+E24. CCleaner.exe <g0>
+E25. rfusclient.exe <g0>
+E26. WinSCP <g1>
+E27. CCleaner.rar <g0>
+E28. rundll32.exe <g0>
+E29. Google Chrome <g1>
+E30. ChromePlus Browser <g1>
+E31. Chromium Browser <g1>
+E32. 360Chrome Browser <g1>
+E33. loader.exe <g0>
+E34. CCleaner.zip <g0>
+E35. Brave Browser <g1>
+E36. Internet Explorer <g1>
+E37. 7Star Browser <g1>
+E38. Iridium Browser <g1>
+E39. Amigo Browser <g1>
+E40. Uran Browser <g1>
+E41. Opera Browser <g1>
+E42. wsuscr.exe <g0>
+E43. Double Kill <g0>
+E44. killself.bat <g0>
+E45. Postbox Credential <g1>
+E46. scan.exe (CredoMap_v2) <g0>
+E47. wscript.exe <g0>
+E48. scandoc.exe <g0>
+E49. RegAsm.exe <g0>
+E50. MS Office [aka Microsoft Office] <g1>
+E51. Paltalk <g1>
+E52. Microsoft Outlook <g1>
+E53. Pocomail <g1>
+E54. b.exe <g0>
+E55. VBScript <g1>
+E56. QuasarRAT <g1>
+E57. AutoIt <g1>
+E58. MCMDiction.exe <g0>
+E59. Remote Utilities [aka RemoteUtilities] <g1>
+E60. Microsoft Equation Editor <g0>
+E61. Remote Utilities - Host <g1>
+E62. Cobalt Strike Beacon <g1>
+E63. FIRMACHAGENT
+E64. IDCLIPNET_x86.dll
+E65. chrome_updater.dll
+E66. Browser.dll
+E67. Files.dll
+E68. Screen.dll
+E69. Social.dll
+E70. USB.dll
+E71. JavaScript
+E72. Software Restriction Policies (SRP)
+E73. SPECTR
+E74. t-online.de <g1>
+E75. telecomds.online <g1>
+E76. dyndns.com <g0>
+E77. skreatortemp.site <g1>
+E78. kilitro.ru <g1>
+E79. fishitor.ru <g1>
+E80. motoristo.ru <g1>
+E81. moolin.ru <g1>
+E82. farafauler.ru <g1>
+E83. cooperi.ru <g1>
+E84. ukr.net <g1>
+E85. wicksl.ru <g1>
+E86. cuckoo.cert.ee <g0>
+E87. onyangdol.site <g1>
+E88. 8161.uk <g1>
+E89. answers.microsoft.com <g0>
+E90. academiadutygroup.com.br <g1>
+E91. qkcew.ru <g1>
+E92. bubenci.ru <g1>
+E93. badpdf.com <g0>
+E94. miecznet.com.pl <g1>
+E95. detroito.ru <g1>
+E96. microsoft.com <g0>
+E97. ginaengg.com <g1>
+E98. social.technet.microsoft.com <g0>
+E99. kurapat.ru <g1>
+E100. docs.microsoft.com <g0>
+E101. ukraero.space
+E102. beget.com
+E103. prozorro.online
+Levels (per category):
+  Domain: g0=subdomain > g1=registered domain
+  Software: g0=versioned-software > g1=product
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E11, E12, E13, E9
+M3. "IDCLIPNET_x86.dll" (Software) — options: E20, E21, E22, E3
+M4. "chrome_updater.dll" (Software) — options: E20, E29, E30, E31
+M5. "Browser.dll" (Software) — options: E20, E32, E35, E36
+M6. "Files.dll" (Software) — options: E20, E17, E42, E21
+M7. "Screen.dll" (Software) — options: E20, E3, E21, E42
+M8. "Social.dll" (Software) — options: E20, E3, E21, E11
+M9. "USB.dll" (Software) — options: E20, E3, E21, E42
+M10. "JavaScript" (Software) — options: E19, E55, E9, E56
+M11. "prozorro.online" (Domain) — options: E74, E75, E76, E77
+M12. "ukraero.space" (Domain) — options: E84, E77, E85, E78
+M13. "beget.com" (Domain) — options: E92, E93, E94, E95
+M14. "Software Restriction Policies (SRP)" (Software) — options: E1, E58, E15, E59
+
+=== RESPONSE (6.1s, in 3061 / out 392 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g1","g":"malware"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g1","g":"malicious tool"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware component"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g1","g":"scripting language"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M13","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M14","id":"E1","p":null,"r":null,"lvl":"g1","g":null}]}

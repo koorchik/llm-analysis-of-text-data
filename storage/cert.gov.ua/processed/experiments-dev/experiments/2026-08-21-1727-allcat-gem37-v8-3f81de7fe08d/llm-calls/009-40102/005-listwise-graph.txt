@@ -1,0 +1,135 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to one of three:
+
+- `"v"` — the parent is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the same claim stated less precisely for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the parent, only vaguer.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)" — evidence: <p><strong>Загальна інформація</strong></p><p><span style="color: rgb(36, 36, 36);">Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Кібератака", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву "UkrScanner.rar".</span></p><p><span style="color: rgb(36, 36, 36);">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні пр
+Entities:
+E1. UAC-0098
+E2. TrickBot
+E3. Vivaldi Browser <g1>
+E4. Chedot Browser <g1>
+E5. Postbox Credential <g1>
+E6. Google Chrome <g1>
+E7. IceDragon <g1>
+E8. Pocomail <g1>
+E9. Windows Vista <g0>
+E10. vaultcli.dll <g0>
+E11. CVE-2018-8120 <g0>
+E12. .NET Framework <g1>
+E13. jDownloader <g1>
+E14. Uran Browser <g1>
+E15. 7Star Browser <g1>
+E16. WinSCP <g1>
+E17. installer.exe <g0>
+E18. loader.exe <g0>
+E19. Microsoft Exchange Server <g1>
+E20. FTPGetter <g1>
+E21. spi.exe <g0>
+E22. RegAsm.exe <g0>
+E23. b.exe <g0>
+E24. ckZ89.ExE <g0>
+E25. major.exe <g0>
+E26. cmd.exe <g0>
+E27. Mozilla Firefox <g1>
+E28. powershell.exe <g0>
+E29. CentBrowser <g1>
+E30. Internet Explorer <g1>
+E31. Citrio Browser <g1>
+E32. Meterpreter <g1>
+E33. Liebao Browser <g1>
+E34. Misha <g1>
+E35. Microsoft Windows <g1>
+E36. Paltalk <g1>
+E37. SmartFTP <g1>
+E38. Microsoft Edge <g1>
+E39. MS Excel <g1>
+E40. VBScript <g1>
+E41. Microsoft Outlook <g1>
+E42. UkrScanner.rar
+E43. UkrScanner.exe (SFX)
+E44. scan.exe (CredoMap_v2)
+E45. SQLite.Interop.dll
+E46. MISP
+E47. CredoMap_v2
+E48. cuckoo.cert.ee <g0>
+E49. winscp.net <g0>
+E50. dyndns.com <g0>
+E51. social.technet.microsoft.com <g0>
+E52. analyze.intezer.com <g0>
+E53. chinagrill.co <g0>
+E54. answers.microsoft.com <g0>
+E55. badpdf.com <g0>
+E56. chubanomania.icu <g0>
+E57. app.any.run <g0>
+E58. microsoft.com <g0>
+E59. rs500cosworth.com <g1>
+E60. virustotal.com <g0>
+E61. docs.microsoft.com <g0>
+E62. ginaengg.com
+E63. Microsoft
+E64. Vimpelcom <g0>
+E65. VirusTotal <g0>
+E66. eo2mxtqmeqzafqi.m.pipedream.net
+Levels (per category):
+  Domain: g0=subdomain > g1=registered domain
+  Software: g0=versioned-software > g1=product
+Mentions:
+M1. "APT28 (UAC-0028)" (HackerGroup) — options: E1, E2
+M2. "CredoMap_v2" (Software) — options: E3, E4, E5, E6
+M3. "UkrScanner.rar" (Software) — options: E13, E14, E15, E16
+M4. "UkrScanner.exe (SFX)" (Software) — options: E21, E22, E18, E23
+M5. "scan.exe (CredoMap_v2)" (Software) — options: E17, E22, E23, E26
+M6. "SQLite.Interop.dll" (Software) — options: E10, E21, E29, E30
+M7. "eo2mxtqmeqzafqi.m.pipedream.net" (Domain) — options: E48, E49, E50, E51
+M8. "Pipedream" (Organization) — options: E63, E64, E65
+M9. "ginaengg.com" (Domain) — options: E53, E55, E50, E58
+M10. "MISP" (Software) — options: E21, E34, E16, E35
+
+=== RESPONSE (5.7s, in 2471 / out 316 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"cyber threat group also known as UAC-0028"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"stealer malware used in attacks by APT28"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"password-protected archive attachment in malicious email"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"SFX archive containing CredoMap_v2 malware"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"executable file delivering the CredoMap_v2 stealer"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"dynamic link library component"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g1","g":null}]}

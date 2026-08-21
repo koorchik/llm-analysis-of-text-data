@@ -328,7 +328,14 @@ export class ListwiseGraphDecision implements DecisionStrategy {
 
       const proposed = entityAt(verdict.p);
       const parent = proposed && fold(proposed) !== fold(request.mention) ? proposed : null;
-      const relation = verdict.r === 'n' ? 'narrower-of' : verdict.r === 'p' ? 'part-of' : null;
+      const relation =
+        verdict.r === 'v'
+          ? 'version-of'
+          : verdict.r === 'n'
+            ? 'narrower-of'
+            : verdict.r === 'p'
+              ? 'part-of'
+              : null;
       const gloss = typeof verdict.g === 'string' && verdict.g.trim() ? verdict.g.trim() : null;
       const rung = typeof verdict.lvl === 'string' && /^g\d+$/i.test(verdict.lvl.trim())
         ? verdict.lvl.trim().toLowerCase()
@@ -384,7 +391,11 @@ function decisionForChoice(
       : `choice ${option} out of range 1..${shown.length + 1}`;
 
   const relation =
-    choice.relation === 'narrower-of' || choice.relation === 'part-of' ? choice.relation : null;
+    choice.relation === 'version-of' ||
+    choice.relation === 'narrower-of' ||
+    choice.relation === 'part-of'
+      ? choice.relation
+      : null;
 
   return {
     kind: 'mint',

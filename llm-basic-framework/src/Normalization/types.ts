@@ -217,15 +217,22 @@ export interface Decision {
   parentCandidate?: string | null;
   mentionRung?: string | null;
   /**
-   * The relation the strategy read between mention and parent, in ladder-free words: the same
-   * referent stated less precisely (`narrower-of`) or a distinct component of it (`part-of`).
+   * The relation the strategy read between mention and parent, in ladder-free words: the same thing
+   * with a version/edition/platform qualifier removed (`version-of`), the same referent stated less
+   * precisely for some other reason (`narrower-of`), or a distinct component of it (`part-of`).
+   *
+   * `version-of` is a refinement of `narrower-of`, not a rival: both store `coarsens-to`, so nothing
+   * downstream changes meaning. It is recorded separately because it is the one relation an analysis
+   * usually wants to contract on its own — "products without version names" folds `Office 2010` into
+   * `Office` and `Photoshop 7` into `Photoshop` while leaving `MS Word` under `MS Office` alone —
+   * and that operation is identical across vendors regardless of how deep either chain runs.
    *
    * The ladder stays authoritative when it has an opinion — the caller derives the edge kind from
    * the parent's rung first and only falls back to this. Without the fallback a category whose
    * ladder has not been discovered yet drops **every** edge its judge proposes, which is exactly
    * what the first `listwise-graph` run did: correct parents, zero edges recorded.
    */
-  relation?: 'narrower-of' | 'part-of' | null;
+  relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
 }
 
 /**
