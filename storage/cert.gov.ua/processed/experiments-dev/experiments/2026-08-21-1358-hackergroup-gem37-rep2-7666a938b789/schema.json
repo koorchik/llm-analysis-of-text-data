@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "group",
+            "example": "APT28",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28 (from 'APT28 (UAC-0028)')",
+            "gate": "2",
+            "reason": "Parenthetical tracking identifiers and alternate designations are alias annotations; aliases, renames, and spelling variants are not rungs."
+          },
+          {
+            "candidate": "UAC (from 'UAC-0028')",
+            "gate": "2",
+            "reason": "Dropping the numeric identifier destroys the identity-bearing designation of the tracking cluster."
+          },
+          {
+            "candidate": "State / Intelligence Sponsor (e.g., GRU)",
+            "gate": "1",
+            "reason": "Sponsoring military or government intelligence agencies belong to an organization/government category, violating the same-category gate."
+          }
+        ],
+        "notes": "The observed surface forms represent individual threat actors, tracking clusters (e.g., CERT-UA UAC designations), and composite alias mentions. No valid intra-category hierarchical containment, sub-units, or broad kinds are attested in the evidence.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

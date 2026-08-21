@@ -1,0 +1,110 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Entities:
+E1. Thunderbird <g1>
+E2. Microsoft Equation Editor <g0>
+E3. RegAsm.exe <g0>
+E4. WinSCP <g1>
+E5. Smokeloader <g1>
+E6. Windows Host Compute Service Shim <g1>
+E7. Trillian <g1>
+E8. Chedot Browser <g1>
+E9. Microsoft Office Services and Web Apps <g1>
+E10. FTPGetter <g1>
+E11. cmd.exe <g0>
+E12. SmartFTP <g1>
+E13. Adobe Flash Player <g1>
+E14. Postbox Credential <g1>
+E15. FTP Commander <g1>
+E16. Agent Tesla <g1>
+E17. spi.exe <g0>
+E18. powershell.exe <g0>
+E19. ckZ89.ExE <g0>
+E20. major.exe <g0>
+E21. Microsoft Outlook <g1>
+E22. Windows 7 <g0>
+E23. Рахунки и новые списки.lzh <g0>
+E24. Elements Browser <g1>
+E25. jDownloader <g1>
+E26. vaultcli.dll <g0>
+E27. Internet Explorer <g1>
+E28. Mozilla Firefox <g1>
+E29. Google Chrome <g1>
+E30. Comodo Dragon Browser <g1>
+E31. MS Office [aka Microsoft Office] <g1>
+E32. MS Word [aka Microsoft Word]
+E33. WS_FTP <g1>
+E34. Windows Server 2008 <g0>
+E35. FileZilla <g1>
+E36. Double Kill <g1>
+E37. Misha <g1>
+E38. QIP Surf Browser <g1>
+E39. Remote Utilities - Host
+E40. Електронний запит.exe
+E41. installer.exe
+E42. host_news_mod_mod.msi
+E43. rutserv.exe
+E44. rfusclient.exe
+E45. killself.bat
+E46. Remote Utilities
+Levels: g0=versioned_software (observed entity; example: Microsoft Office 2016) | g1=software_product (drop-qualifier; same referent; example: Microsoft Office)
+Mentions:
+M1. "Remote Utilities" (Software) — options: E1, E2, E3, E4
+M2. "Remote Utilities - Host" (Software) — options: E4, E6, E11, E9
+M3. "Електронний запит.exe" (Software) — options: E17, E3, E18, E19
+M4. "installer.exe" (Software) — options: E18, E3, E20, E17
+M5. "host_news_mod_mod.msi" (Software) — options: E6, E28, E29, E30
+M6. "rutserv.exe" (Software) — options: E18, E3, E17, E19
+M7. "rfusclient.exe" (Software) — options: E18, E3, E17, E19
+M8. "killself.bat" (Software) — options: E4, E35, E36, E26
+
+=== RESPONSE (10.1s, in 2055 / out 213 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M2","id":"NEW","p":"E46","r":"p","lvl":"g1","g":null},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":null}]}

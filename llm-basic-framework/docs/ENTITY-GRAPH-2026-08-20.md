@@ -434,7 +434,48 @@ Vista, Server 2008/2012`, `Remote Utilities <- rutserv.exe, rfusclient.exe`,
 `Cobalt Strike Beacon <- shellcode.x86/x64`. `npm run fold` turns those into any of several analyses
 from the same stored registry (§8).
 
-## 15. Threats to validity
+## 15. Cross-model check: `gemini-3.7-flash`
+
+The recommended configuration with only the judge swapped — same prompt, same `union-rr` blocker, same
+local `embeddinggemma` dense channel, same subsets, same one call per document.
+
+| configuration | local `gemma4:12b-64k` | `gemini-3.7-flash` |
+|---|---:|---:|
+| Software identity | 1.000 (0.750 on 1 of 3 replicates) | **1.000, 3 of 3** |
+| Software edges R_reach, three runs | .364 / .500 / — | **.545 / .545 / .364** |
+| Software edges P / kind (best run) | .667 / .750 | .522 / **.917** |
+| Country identity | 1.000 | **1.000** |
+| HackerGroup identity | 1.000 in 8 of 10 runs | **1.000, 3 of 3** |
+| all-categories identity | 1.000 | **1.000** |
+| all-categories edges P / R_reach / kind | .471 / .348 / .750 (17) | .417 / **.417** / .700 (24) |
+| Software wall-clock | ~2,900 s | **253 s** |
+| Software tokens | 315k | **68k** |
+| all-categories wall-clock | ~1,900 s | **324 s** |
+
+Identity is at ceiling on both, everywhere. The differences are elsewhere:
+
+- **Edge recall favours the cloud judge** — .545/.545/.364 across three Software runs against the local
+  judge's .364/.500, and .417 vs .348 on all-categories. It proposes roughly twice as many edges at
+  somewhat lower precision and better kind agreement (.917 vs .750): the same precision-for-recall
+  trade the pool introduced, one step further along.
+- **It is also steadier.** Three Software replicates all at identity 1.000 and three HackerGroup
+  replicates all at 1.000, against the local judge's 1-in-3 and 2-in-10 misses on the same slices.
+  Edge recall still moves between its runs (.545/.545/.364), so the variance is not gone, only smaller
+  on the identity half.
+- **~11× faster and ~4.6× cheaper in tokens**, and the token gap is mostly §7's hidden reasoning: the
+  local judge spends ~9k output tokens per call on text the parser discards, the Gemini backend strips
+  `thought` parts and reports ~1-2k.
+- The local judge remains the only option when the corpus cannot leave the machine, which is the
+  constraint that motivated the local track in the first place.
+
+`gemini-3.7-flash` has no entry in `config/model-prices.json`, so its runs report `unpriced`. The token
+counts above are the comparable figure until a price is added.
+
+**The prompt transfers.** `listwise-graph-compact-v7` was written against a 12b local judge and reaches
+ceiling identity on a different model family without modification, which is evidence that its rules
+describe the task rather than the judge.
+
+## 16. Threats to validity
 
 - **Slice size.** 22/14/11-document subsets with 22-24 reachable gold edges. One edge moves recall by
   ~0.045 and one merge moves identity F1 by ~0.15. Both finalists were replicated on Software.
@@ -444,8 +485,9 @@ from the same stored registry (§8).
 - **Sparse gold hierarchy.** §10 — measured edge precision is a lower bound by roughly a factor of two.
 - **Prompts tuned on these slices.** The rules were written after reading failures on the same
   categories they are evaluated on; the full-corpus run is the honest next gate.
-- **Single-model.** Everything is `gemma4:12b-64k`. The prompt rules were validated on 12b/26b/31b in
-  `LOCAL-MATCHING-EXPERIMENTS-2026-08-19.md`, but the graph half has only been measured on 12b.
+- **Model coverage.** The optimization ran entirely on `gemma4:12b-64k`; §15 adds a `gemini-3.7-flash`
+  cross-check at single samples per cell (replicates in progress). The identifier-rule replication
+  (n=10) is local-only.
 
 ## Reproduction
 

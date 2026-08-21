@@ -1,0 +1,133 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Entities:
+E1. SRP <g1>
+E2. FTPGetter <g1>
+E3. spi.exe <g0>
+E4. MS Excel
+E5. Sputnik Browser <g1>
+E6. pfSense <g1>
+E7. AppLocker <g1>
+E8. .NET Framework <g1>
+E9. HarvesterX <g0>
+E10. Petya <g1>
+E11. IceDragon <g1>
+E12. Agent Tesla [aka AgentTesla] <g1>
+E13. GammaSteel.NET <g0>
+E14. Mozilla Firefox <g1>
+E15. YARA <g1>
+E16. Microsoft Exchange Server <g1>
+E17. FileZilla <g1>
+E18. TRYxaEbX <g0>
+E19. vaultcli.dll <g0>
+E20. wscript.exe <g0>
+E21. SQLite.Interop.dll <g0>
+E22. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E23. rfusclient.exe <g0>
+E24. installer.exe <g0>
+E25. CCleaner.exe <g0>
+E26. CCleaner.rar <g0>
+E27. rundll32.exe <g0>
+E28. Google Chrome <g1>
+E29. ChromePlus Browser <g1>
+E30. loader.exe <g0>
+E31. Chromium Browser <g1>
+E32. wsuscr.exe <g0>
+E33. 360Chrome Browser <g1>
+E34. Brave Browser <g1>
+E35. 7Star Browser <g1>
+E36. Amigo Browser <g1>
+E37. Uran Browser <g1>
+E38. powershell.exe [aka PowerShell (powershell.exe), PowerShell] <g0>
+E39. Postbox Credential <g1>
+E40. scan.exe (CredoMap_v2) <g0>
+E41. scandoc.exe <g0>
+E42. Foxmail <g1>
+E43. Paltalk <g1>
+E44. b.exe <g0>
+E45. Double Kill <g1>
+E46. VBScript <g1>
+E47. QuasarRAT <g1>
+E48. Windows Vista <g0>
+E49. AutoIt <g1>
+E50. MCMDiction.exe <g0>
+E51. Remote Utilities [aka RemoteUtilities] <g1>
+E52. Microsoft Equation Editor <g0>
+E53. Remote Utilities - Host <g1>
+E54. Cobalt Strike Beacon <g1>
+E55. rutserv.exe <g0>
+E56. FIRMACHAGENT
+E57. IDCLIPNET_x86.dll
+E58. chrome_updater.dll
+E59. Browser.dll
+E60. Files.dll
+E61. Screen.dll
+E62. Social.dll
+E63. USB.dll
+E64. JavaScript
+E65. Software Restriction Policies (SRP)
+E66. SPECTR
+Levels: g0=versioned software release (observed entity; example: Microsoft Office 2016) | g1=software product (drop-qualifier; same referent; example: Microsoft Office)
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E6, E11, E12, E9
+M3. "IDCLIPNET_x86.dll" (Software) — options: E19, E20, E21, E22
+M4. "chrome_updater.dll" (Software) — options: E24, E28, E29, E20
+M5. "Browser.dll" (Software) — options: E20, E33, E34, E19
+M6. "Files.dll" (Software) — options: E23, E17, E19, E20
+M7. "Screen.dll" (Software) — options: E32, E19, E20, E21
+M8. "Social.dll" (Software) — options: E20, E19, E3, E21
+M9. "USB.dll" (Software) — options: E32, E19, E23, E21
+M10. "JavaScript" (Software) — options: E20, E46, E38, E47
+M11. "Software Restriction Policies (SRP)" (Software) — options: E1, E50, E6, E51
+
+=== RESPONSE (5.5s, in 2387 / out 337 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g1","g":"malicious software"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g1","g":"new malicious tool"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library component"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library component"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library plugin"},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library plugin"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library plugin"},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library plugin"},{"m":"M9","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malware dynamic link library plugin"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g1","g":"scripting language embedded in HTML file"},{"m":"M11","id":"E1","p":null,"r":null,"lvl":"g1","g":null}]}

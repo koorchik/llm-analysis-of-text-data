@@ -1,0 +1,128 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Entities:
+E1. Міністерства охорони здоров’я
+E2. i.ua
+E3. cert.gov.ua <g0>
+E4. dyndns.com <g0>
+E5. docs.microsoft.com <g0>
+E6. analyze.intezer.com <g0>
+E7. cuckoo.cert.ee <g0>
+E8. answers.microsoft.com <g0>
+E9. chinagrill.co <g0>
+E10. app.any.run <g0>
+E11. virustotal.com <g0>
+E12. Microsoft
+E13. VirusTotal <g0>
+E14. Ukraine
+E15. Thunderbird <g1>
+E16. Microsoft Equation Editor <g0>
+E17. RegAsm.exe <g0>
+E18. WinSCP <g1>
+E19. Smokeloader <g1>
+E20. Windows Host Compute Service Shim <g1>
+E21. Trillian <g1>
+E22. Chedot Browser <g1>
+E23. Microsoft Office Services and Web Apps <g1>
+E24. FTPGetter <g1>
+E25. cmd.exe <g0>
+E26. SmartFTP <g1>
+E27. Adobe Flash Player <g1>
+E28. Postbox Credential <g1>
+E29. FTP Commander <g1>
+E30. Agent Tesla <g1>
+E31. spi.exe <g0>
+E32. powershell.exe <g0>
+E33. ckZ89.ExE <g0>
+E34. major.exe <g0>
+E35. Microsoft Outlook <g1>
+E36. Windows 7 <g0>
+E37. Рахунки и новые списки.lzh <g0>
+E38. Elements Browser <g1>
+E39. jDownloader <g1>
+E40. vaultcli.dll <g0>
+E41. Internet Explorer <g1>
+E42. Mozilla Firefox <g1>
+E43. MS Office [aka Microsoft Office] <g1>
+E44. Google Chrome <g1>
+E45. Comodo Dragon Browser <g1>
+E46. MS Word [aka Microsoft Word]
+E47. WS_FTP <g1>
+E48. Windows Server 2008 <g0>
+E49. FileZilla <g1>
+E50. Double Kill <g0>
+E51. Misha <g1>
+E52. QIP Surf Browser <g1>
+E53. Remote Utilities - Host
+E54. Електронний запит.exe
+E55. installer.exe
+E56. host_news_mod_mod.msi
+E57. rutserv.exe
+E58. rfusclient.exe
+E59. killself.bat
+E60. Remote Utilities
+Levels: g0=fqdn (observed entity; example: answers.microsoft.com) | g1=registered-domain (part-of; containing referent; example: microsoft.com) || g0=versioned software (observed entity; example: Microsoft Office 2016) | g1=software product (drop-qualifier; same referent; example: Microsoft Office)
+Mentions:
+M1. "Адміністрації Держспецзв’язку" (Government Body) — options: E1
+M2. "dsszzi.gov.ua" (Domain) — options: E2, E3, E4, E5
+M3. "Vimpelcom" (Organization) — options: E12, E13
+M4. "Російська Федерація" (Country) — options: E14
+M5. "Remote Utilities" (Software) — options: E15, E16, E17, E18
+M6. "Remote Utilities - Host" (Software) — options: E18, E20, E25, E23
+M7. "Електронний запит.exe" (Software) — options: E31, E17, E32, E33
+M8. "installer.exe" (Software) — options: E32, E17, E34, E31
+M9. "host_news_mod_mod.msi" (Software) — options: E42, E20, E43, E44
+M10. "rutserv.exe" (Software) — options: E32, E17, E31, E33
+M11. "rfusclient.exe" (Software) — options: E32, E17, E31, E33
+M12. "killself.bat" (Software) — options: E18, E49, E50, E40
+
+=== RESPONSE (6.1s, in 2379 / out 376 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"Ukrainian state agency impersonated in phishing email"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g1","g":"spoofed domain in phishing email sender address"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g1","g":"remote access software suite"},{"m":"M6","id":"NEW","p":"E60","r":"p","lvl":"g1","g":"remote access host software component"},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malicious executable attached to phishing email"},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g0","g":"executable file deployed during infection"},{"m":"M9","id":"NEW","p":"E53","r":"p","lvl":"g0","g":"MSI installer package for remote host"},{"m":"M10","id":"NEW","p":"E53","r":"p","lvl":"g0","g":"Remote Utilities host service binary"},{"m":"M11","id":"NEW","p":"E60","r":"p","lvl":"g0","g":"Remote Utilities component binary"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g0","g":"batch script used to delete components"}]}

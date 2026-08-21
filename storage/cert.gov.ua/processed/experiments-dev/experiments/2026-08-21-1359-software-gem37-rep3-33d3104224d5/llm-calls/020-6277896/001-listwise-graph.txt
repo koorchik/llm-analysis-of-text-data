@@ -1,0 +1,108 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: <p>Шановні колеги!</p><p><br></p><p>Система кіберзахисту держави – це синергія якісної аналітики основних суб’єктів забезпечення кібербезпеки та компетенцій кіберфахівців кожної без виключення інформаційно-комунікаційної системи країни, включаючи механізми оперативного обміну інформацією, протоколи реагування та ін.</p><p>Виходячи з досвіду, переважна більшість кібератак здійснюється з використанням вже відомих недоліків в системах захисту із застосуванням раніше описаних тактик, технік та процедур. А отже, для попередження таких кібератак достатньо усвідомлювати поточний ландшафт кіберзагроз
+Entities:
+E1. Remote Utilities [aka RemoteUtilities] <g1>
+E2. SmartFTP <g1>
+E3. .NET Framework <g1>
+E4. spi.exe <g0>
+E5. VBScript <g1>
+E6. 360Chrome Browser <g1>
+E7. WinSCP <g1>
+E8. WS_FTP <g1>
+E9. 7Star Browser <g1>
+E10. powershell.exe [aka PowerShell (powershell.exe), PowerShell] <g0>
+E11. Meterpreter <g1>
+E12. Smokeloader <g1>
+E13. Microsoft Office Services and Web Apps <g1>
+E14. Google Chrome <g1>
+E15. jDownloader <g1>
+E16. Internet Explorer <g1>
+E17. FTPGetter <g1>
+E18. CentBrowser <g1>
+E19. Mozilla Firefox <g1>
+E20. Uran Browser <g1>
+E21. QuasarRAT <g1>
+E22. Yandex Browser <g1>
+E23. HarvesterX <g0>
+E24. ChakraCore <g1>
+E25. Opera Browser <g1>
+E26. Paltalk <g1>
+E27. Opera Mail <g1>
+E28. CCleaner.rar <g0>
+E29. Microsoft Outlook <g1>
+E30. MS Office [aka Microsoft Office] <g1>
+E31. Sputnik Browser <g1>
+E32. MS Word [aka Microsoft Word]
+E33. MISP <g1>
+E34. Microsoft Edge <g1>
+E35. Misha <g1>
+E36. Microsoft Windows <g1>
+E37. rfusclient.exe <g0>
+E38. ConfuserEx <g1>
+E39. Petya <g1>
+E40. wscript.exe <g0>
+E41. AppLocker
+E42. YARA
+E43. Mikrotik
+E44. pfSense
+E45. SIEM
+E46. SRP
+Levels: g0=versioned software (observed entity; example: Microsoft Office 2016) | g1=software product (drop-qualifier; same referent; example: Microsoft Office)
+Mentions:
+M1. "SRP" (Software) — options: E1, E2, E3, E4
+M2. "AppLocker" (Software) — options: E11, E12, E13, E14
+M3. "YARA" (Software) — options: E11, E21, E22, E23
+M4. "Mikrotik" (Software) — options: E29, E30, E31, E19
+M5. "pfSense" (Software) — options: E19, E10, E3, E37
+M6. "SIEM" (Software) — options: E11, E4, E3, E10
+
+=== RESPONSE (6.5s, in 1900 / out 163 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":"E36","r":"p","lvl":"g1","g":null},{"m":"M2","id":"NEW","p":"E36","r":"p","lvl":"g1","g":null},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g1","g":null},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g1","g":null}]}

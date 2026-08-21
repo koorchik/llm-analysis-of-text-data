@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker group",
+            "example": "APT28",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28 (from 'APT28 (UAC-0028)')",
+            "gate": "2",
+            "reason": "Parenthetical strings in the examples are cross-reference tracking aliases and glosses. Normalizing or dropping an alias variant is entity resolution, not a granularity rung."
+          },
+          {
+            "candidate": "State intelligence service / military sponsor",
+            "gate": "1",
+            "reason": "Sponsoring agencies or military bodies belong to distinct categories (e.g., GovernmentOrganization / MilitaryUnit), violating the same-category requirement."
+          },
+          {
+            "candidate": "Advanced Persistent Threat / Threat Actor",
+            "gate": "2",
+            "reason": "Broad threat classification labels represent category descriptions or threat roles rather than valid coarser entity instances."
+          }
+        ],
+        "notes": "The observed examples consist solely of threat group names and vendor/cert tracking identifiers (such as UAC and APT numbers), alongside parenthetical alias cross-references. No intra-category hierarchical containment (such as subdivisions, distinct operational units, or multi-group cartels) is established in the evidence, so the category contains only g0.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

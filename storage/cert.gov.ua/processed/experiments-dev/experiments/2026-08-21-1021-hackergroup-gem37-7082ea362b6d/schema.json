@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 37788,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "hacker group",
+            "example": "APT28",
+            "disputed": false
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "APT28 (from 'APT28 (UAC-0028)')",
+            "gate": "2",
+            "reason": "Stripping a parenthetical cross-reference or alias is a naming variant/normalization, not a granularity step."
+          },
+          {
+            "candidate": "UAC registry group",
+            "gate": "2",
+            "reason": "The 'UAC' prefix is an external CERT-UA cataloging convention, not a containing entity or sound domain projection."
+          },
+          {
+            "candidate": "State-sponsored cyber group",
+            "gate": "1",
+            "reason": "Sponsoring states or thematic threat clusters cross into other entity categories or represent role/attribution classifications rather than proper part-whole or coarsening relationships within HackerGroup."
+          }
+        ],
+        "notes": "All supplied surface forms represent individual threat groups or alias co-notations (e.g., industry tracking names vs. CERT-UA identifiers). With no sub-units, distinct containing groups, or qualified editions present in the data, the category justifies only g0.",
+        "disagreements": [],
+        "discoveredAtDoc": 6280129
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 37788,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 6280129,
+      "op": "discover-ladder",
+      "name": "HackerGroup"
+    }
+  ]
+}

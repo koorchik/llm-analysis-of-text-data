@@ -1,0 +1,286 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "versioned-software",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "software-product",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Microsoft",
+            "gate": "1",
+            "reason": "Software vendor/publisher belongs to the Organization category, crossing category boundaries."
+          },
+          {
+            "candidate": "CVE-2017-11882",
+            "gate": "1",
+            "reason": "Vulnerability identifier is a security advisory/defect entry, not a software entity."
+          },
+          {
+            "candidate": "PGMB New Order 18-2077.xlsx",
+            "gate": "1",
+            "reason": "Data file/document is content/payload, not a software entity."
+          },
+          {
+            "candidate": "Microsoft Word (as part of Microsoft Office)",
+            "gate": "2",
+            "reason": "While bundled in a suite, individual applications are standalone software products with distinct identities; suite containment does not form a clean sound projection for software as a whole."
+          }
+        ],
+        "notes": "The observed evidence primarily exhibits version/release qualifiers appended to software products (e.g., Office 2016, Office 2013, Office 2010 -> Microsoft Office). No valid software-level rungs exist beyond the unversioned product line without crossing into vendor organizations or category names.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    },
+    {
+      "name": "Organization",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 24,
+      "ladder": {
+        "version": 1,
+        "exampleCount": 9,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "legal-entity",
+            "example": "SmartApe LLC",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "base-organization",
+            "example": "SmartApe",
+            "disputed": true,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'SmartApe LLC was involved in an event' -> 'SmartApe was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Corporate Parent / Conglomerate",
+            "gate": "2",
+            "reason": "Parent-subsidiary relationships are external world knowledge not evidenced in the supplied surface forms; hierarchy cannot be assumed."
+          },
+          {
+            "candidate": "Industry Sector (e.g., Telecom, Cybersecurity)",
+            "gate": "2",
+            "reason": "Grouping by market sector or role is thematic categorization rather than an identity-preserving or part-whole projection."
+          }
+        ],
+        "notes": "Observed forms contain both fully qualified legal corporate entities (with legal status indicators like LLC, Ltd, АТ) and bare enterprise/brand names. Dropping the legal designator yields the base organizational identity.",
+        "disagreements": [
+          "g1 \"SmartApe\": omitted by run 2",
+          "g1 \"SmartApe\": omitted by run 3"
+        ],
+        "discoveredAtDoc": 6276824
+      }
+    },
+    {
+      "name": "Domain",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 59,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "subdomain",
+            "example": "answers.microsoft.com",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "apex-domain",
+            "example": "microsoft.com",
+            "disputed": false,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'answers.microsoft.com was involved in an event' -> 'microsoft.com was involved in an event': attributed to a distinct containing referent",
+            "edgeKind": "part-of"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Top-Level Domain / Public Suffix (.com, .gov.ua)",
+            "gate": "1",
+            "reason": "TLDs and public suffixes are namespace partitions and registry infrastructure, not individual domain entities."
+          },
+          {
+            "candidate": "Autonomous System / IP Network",
+            "gate": "1",
+            "reason": "Crosses into network addressing and routing categories."
+          },
+          {
+            "candidate": "Uniform Resource Locator (URL)",
+            "gate": "1",
+            "reason": "Crosses into web resource/endpoint category."
+          }
+        ],
+        "notes": "Domains observed at apex level (e.g., microsoft.com) originate at g1-equivalent granularity, while specific subdomains (e.g., answers.microsoft.com, social.technet.microsoft.com) coarsen to their parent registered domain via structural part-of delegation.",
+        "disagreements": [],
+        "discoveredAtDoc": 1563322
+      }
+    },
+    {
+      "name": "Government Body",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26
+    },
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2707
+    },
+    {
+      "name": "Sector",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10011
+    },
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 39934
+    },
+    {
+      "name": "Infrastructure",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6276824
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 24,
+      "op": "admit-category",
+      "name": "Organization"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Domain"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Government Body"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 10011,
+      "op": "admit-category",
+      "name": "Sector"
+    },
+    {
+      "doc": 10011,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 39934,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 1563322,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 6276824,
+      "op": "admit-category",
+      "name": "Infrastructure"
+    },
+    {
+      "doc": 6276824,
+      "op": "discover-ladder",
+      "name": "Organization"
+    }
+  ]
+}

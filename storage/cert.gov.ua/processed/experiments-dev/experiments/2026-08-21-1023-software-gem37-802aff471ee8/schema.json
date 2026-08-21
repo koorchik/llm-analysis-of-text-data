@@ -1,0 +1,88 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "versioned software release",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "software product",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim stated less precisely with release year qualifier removed",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "CVE-2017-11882",
+            "gate": "1",
+            "reason": "Vulnerability identifier, not an entity in the Software category."
+          },
+          {
+            "candidate": "PGMB New Order 18-2077.xlsx",
+            "gate": "1",
+            "reason": "Data document/spreadsheet file, not a software program or application."
+          },
+          {
+            "candidate": "Microsoft Office containing Microsoft Word",
+            "gate": "3",
+            "reason": "Software suite part-whole aggregation introduces a subject change (preserving: false) while version qualifier stripping already captures the sound identity-preserving product projection."
+          }
+        ],
+        "notes": "Surface forms contain versioned releases (e.g., Office 2016), unversioned base products/suites (MS Office), standalone malware names (Petya, Misha), and suite components (MS Word, MS Excel, Microsoft Equation Editor). The version-to-product projection (drop-qualifier) is the cleanest identity-preserving ladder step.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}
