@@ -321,5 +321,27 @@
   "sha256": "3037b740a19cd9ccedb4fa6f0ed449eaa9c4a2bc1f539a6c3bba06abcaf5586a",
   "variables": [],
   "bytes": 3970
+ },
+ "ladder-placed-v2": {
+  "file": "prompts/ladder-placed-v2.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Ladder/LadderDiscovery.ts",
+  "note": "2026-08-21: the ladder prompt plus placements — where each supplied example sits on the ladder it just derived. The call has already read those surfaces, so the catch-up pass that gives pre-ladder entities their rungs costs no extra LLM call.",
+  "sha256": "de434e048d2440f7e7813d8ae4b7636bbb2d37aefaaf60c14f443df6b47e62d4",
+  "variables": [
+   {
+    "placeholder": "CATEGORY",
+    "source": "category"
+   },
+   {
+    "placeholder": "DEFINITION",
+    "source": "definition"
+   },
+   {
+    "placeholder": "EXAMPLES",
+    "source": "examples"
+   }
+  ],
+  "bytes": 5011
  }
 }

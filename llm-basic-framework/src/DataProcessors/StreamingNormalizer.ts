@@ -337,7 +337,13 @@ export class StreamingNormalizer {
           { doc: docId, date: docDate },
           { gloss: plan.outcome?.gloss ?? null }
         );
-        if (plan.outcome?.mentionRung) {
+        // A per-mention level answer may only *fill* a rung, never replace one. `mint` is idempotent
+        // on a name already in the registry, so without this guard a later mention of a known entity
+        // re-stamps it with whatever level that document's judge happened to answer — and that
+        // answer is g0 by default. Measured: the ladder placed `Microsoft Windows` at g1 from a
+        // 50-surface sample, then a later mention overwrote it to g0 while `MS Office`, never
+        // re-mentioned, kept g1. Two entities of identical granularity, two different levels.
+        if (plan.outcome?.mentionRung && !this.#entityRegistry.rungOf(plan.category, plan.canonical)) {
           this.#entityRegistry.setRung(plan.category, plan.canonical, plan.outcome.mentionRung);
         }
         this.#candidateGenerator.onRegistryChange({
@@ -955,17 +961,23 @@ function renderMentionLines(plans: MentionPlan[], schemaRegistry: SchemaRegistry
     .join('\n');
 }
 
+/**
+ * The ladder as the judge sees it.
+ *
+ * **Compact by necessity.** A document mixing eight categories renders eight ladders into a prompt
+ * whose whole advantage is being small, so each rung contributes its level and its name and nothing
+ * else — the move, the preserving flag and the example are provenance for a reader of `schema.json`,
+ * not evidence the judge acts on. `>` orders finest to coarsest so the direction is readable without
+ * a legend.
+ */
 function renderLadder(category: string, schemaRegistry: SchemaRegistry): string {
   const ladder = schemaRegistry.getLadder(category);
   if (!ladder) return '(none; use g0)';
   return ladder.rungs
-    .map((rung) => {
-      const relation = rung.g === 0
-        ? 'observed entity'
-        : `${rung.move ?? 'coarser'}; ${rung.preserving ? 'same referent' : 'containing referent'}`;
-      return `g${rung.g}=${rung.alias} (${relation}; example: ${rung.example})`;
-    })
-    .join(' | ');
+    .slice()
+    .sort((a, b) => a.g - b.g)
+    .map((rung) => `g${rung.g}=${rung.alias}`)
+    .join(' > ');
 }
 
 /**

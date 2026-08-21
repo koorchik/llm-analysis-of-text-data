@@ -237,18 +237,23 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       })
       .join('\n');
 
-    const ladders = [
-      ...new Set(
-        askable
-          .map(({ request }) => request.ladder)
-          .filter((ladder): ladder is string => Boolean(ladder) && ladder !== '(none; use g0)')
-      ),
-    ];
+    // One line per category that has a ladder, each labelled. Pooling them unlabelled — which this
+    // did until 2026-08-21 — shows a mention of one category the granularity vocabulary of another,
+    // with nothing to tell them apart once a document mixes categories.
+    const laddersByCategory = new Map<string, string>();
+    for (const { request } of askable) {
+      if (request.ladder && request.ladder !== '(none; use g0)') {
+        laddersByCategory.set(request.category, request.ladder);
+      }
+    }
+    const ladders = [...laddersByCategory.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([category, ladder]) => `${category}: ${ladder}`);
 
     return [
       header,
       `Entities:\n${entityBlock}`,
-      ladders.length ? `Levels: ${ladders.join(' || ')}` : '',
+      ladders.length ? `Levels (per category):\n${ladders.map((line) => `  ${line}`).join('\n')}` : '',
       `Mentions:\n${mentionBlock}`,
     ]
       .filter(Boolean)

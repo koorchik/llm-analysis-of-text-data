@@ -1,0 +1,96 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Указ Президента України No 576/22 про безпрецедентні заходи безпеки" та вкладенням у вигляді ISO-файлу "Указ Президента України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає Po
+Entities:
+E1. WinSCP <g0>
+E2. FTPGetter <g0>
+E3. Kometa Browser <g0>
+E4. Internet Explorer <g0>
+E5. FTP Commander <g0>
+E6. 7Star Browser <g0>
+E7. Mozilla Firefox <g0>
+E8. Elements Browser <g0>
+E9. MS PowerPoint
+E10. OpenVPN <g0>
+E11. FileZilla <g0>
+E12. ckZ89.ExE <g0>
+E13. .NET Framework <g0>
+E14. Paltalk <g0>
+E15. 360Chrome Browser <g0>
+E16. cmd.exe <g0>
+E17. powershell.exe <g0>
+E18. spi.exe <g0>
+E19. RegAsm.exe <g0>
+E20. installer.exe <g0>
+E21. major.exe <g0>
+E22. rfusclient.exe <g0>
+E23. rutserv.exe <g0>
+E24. jDownloader <g0>
+E25. Smokeloader <g0>
+E26. Електронний запит.exe <g0>
+E27. До оплати від 11.12.18.lzh <g0>
+E28. Рахунки за выполненные работы от 11.12.2018.js <g0>
+E29. PGMB New Order 18-2077.xlsx <g0>
+E30. До оплати рах.ф. 74 - 2018р.js <g0>
+E31. Adobe Flash Player <g0>
+E32. z.ps1
+E33. b.exe
+E34. loader.exe
+E35. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E36. Meterpreter
+Mentions:
+M1. "Meterpreter" (Software) — options: E1, E2, E3, E4
+M2. "z.ps1" (Software) — options: E11, E12, E13, E14
+M3. "b.exe" (Software) — options: E16, E18, E19, E20
+M4. "loader.exe" (Software) — options: E20, E21, E24, E19
+M5. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software) — options: E26, E27, E13, E28
+
+=== RESPONSE (5.9s, in 1886 / out 153 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"attack payload framework"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"PowerShell script contained within ISO file"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"executable file contained within ISO file"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g0","g":"LNK file contained within malicious ISO"}]}

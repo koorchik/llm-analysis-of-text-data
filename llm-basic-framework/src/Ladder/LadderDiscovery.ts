@@ -35,6 +35,8 @@ interface Params {
   minExamples?: number;
   /** Surfaces sent to the prompt at most (prompt input ceiling is 20). */
   maxExamples?: number;
+  /** Prompt id; `ladder-placed-v2` additionally returns a placement per supplied surface. */
+  promptId?: string;
 }
 
 /** A validator finding. `hard` findings reject the whole run; soft ones adjust the rung. */
@@ -71,6 +73,7 @@ export class LadderDiscovery {
   #members?: EnsembleMember[];
   #minExamples: number;
   #maxExamples: number;
+  #promptId: string;
   /** Categories attempted this process — a failed discovery is not retried on every document. */
   #attempted = new Set<string>();
 
@@ -84,6 +87,7 @@ export class LadderDiscovery {
     this.#members = params.members;
     this.#minExamples = params.minExamples ?? 8;
     this.#maxExamples = params.maxExamples ?? 20;
+    this.#promptId = params.promptId ?? 'ladder';
   }
 
   /**
@@ -138,7 +142,7 @@ export class LadderDiscovery {
       this.#schemaRegistry.getCategories().find((entry) => entry.name === category)?.definition ??
       '';
     const examples = surfaces.slice(0, this.#maxExamples);
-    const prompt = this.#prompts.render('ladder', {
+    const prompt = this.#prompts.render(this.#promptId, {
       CATEGORY: category,
       DEFINITION: definition || '(no definition recorded — derive from the examples)',
       EXAMPLES: examples.join(', '),
@@ -193,6 +197,7 @@ export class LadderDiscovery {
       runs: members.length,
       models: members.map((member) => member.label),
       rungs: ladder,
+      placements: runs[0].proposal.placements ?? [],
       rejected: runs[0].proposal.rejected,
       notes: runs[0].proposal.notes,
       disagreements,
@@ -230,6 +235,17 @@ export class LadderDiscovery {
    * pure-LLM discovery stays intact, and star groups (`:*`) never bind — they are computed fold
    * targets, never real registry entities.
    */
+  /**
+   * Give existing entities their rung once a ladder lands.
+   *
+   * **Creates no edges, deliberately.** Until 2026-08-21 this chained consecutive rung *examples*
+   * into a granularity edge, assuming a g0 example and a g1 example are one entity at two levels.
+   * They are not — each rung cites whatever surface it happened to pick — so the chain manufactured
+   * `Adobe Illustrator CC -coarsens-to-> MS Office`, `CVE-2020-7048 -coarsens-to-> MS Office`,
+   * `Intel -coarsens-to-> Adobe`. On the committed arms those fabrications were 15 of 129 edges
+   * (opus-5), 21 of 82 (e2b) and 25 of 33 (e4b). An edge asserts a relation between two specific
+   * entities and may only come from a judge that was shown both.
+   */
   async #bindRegistry(category: string, ladder: CategoryLadder, docId: number): Promise<void> {
     const matched: Array<{ rung: CategoryLadderRung; canonical: string }> = [];
     for (const rung of ladder.rungs) {
@@ -240,31 +256,32 @@ export class LadderDiscovery {
       matched.push({ rung, canonical });
     }
 
-    for (let index = 0; index + 1 < matched.length; index++) {
-      const finer = matched[index];
-      const coarser = matched[index + 1];
-      if (finer.canonical === coarser.canonical) continue;
-      const kind = coarser.rung.edgeKind ?? 'part-of';
-      const added = this.#entityRegistry.addGranularityEdge(category, {
-        from: finer.canonical,
-        to: coarser.canonical,
-        kind,
-        docId,
-        decision: 'ladder-binding',
-        evidence: coarser.rung.foldTest ?? null,
-      });
-      if (added) {
-        await this.#decisionLog.log({
-          op: 'granularity-edge',
-          doc: docId,
-          category,
-          from: finer.canonical,
-          to: coarser.canonical,
-          kind,
-          by: 'ladder-binding',
-        });
-      }
+    // Placements: the discovery call already read every supplied surface in order to derive the
+    // ladder, so it can say where each one sits at no extra cost. This is the catch-up for
+    // everything minted before the ladder existed.
+    const available = new Set(ladder.rungs.map((rung) => rung.g));
+    let bound = matched.length;
+    for (const placement of ladder.placements ?? []) {
+      if (!placement.surface || !available.has(placement.g)) continue;
+      const canonical = this.#entityRegistry.resolve(category, placement.surface);
+      if (!canonical) continue;
+      if (matched.some((entry) => entry.canonical === canonical)) continue;
+      this.#entityRegistry.setRung(
+        category,
+        canonical,
+        `g${placement.g}` as 'g0' | 'g1' | 'g2' | 'g3'
+      );
+      bound += 1;
     }
+
+    await this.#decisionLog.log({
+      op: 'ladder-placements',
+      doc: docId,
+      category,
+      version: ladder.version,
+      bound,
+      offered: (ladder.placements ?? []).length + matched.length,
+    });
   }
 
   async #fireOnce(

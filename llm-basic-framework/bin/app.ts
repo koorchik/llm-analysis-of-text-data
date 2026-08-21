@@ -100,6 +100,12 @@ const CONFIG = {
   ladderEnsembleModels: process.env.LADDER_ENSEMBLE_MODELS || undefined,
   ladderMinExamples:
     process.env.LADDER_MIN_EXAMPLES === undefined ? 8 : Number(process.env.LADDER_MIN_EXAMPLES),
+  // How many surfaces the discovery prompt is allowed to see. Raising the floor without raising
+  // this does nothing: the prompt still reads the first 20 and derives the same thin ladder.
+  ladderMaxExamples:
+    process.env.LADDER_MAX_EXAMPLES === undefined ? 20 : Number(process.env.LADDER_MAX_EXAMPLES),
+  /** Ladder prompt id — `ladder-placed-v2` also returns where each supplied surface sits. */
+  ladderPromptId: process.env.LADDER_PROMPT_ID || undefined,
 
   // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
@@ -210,6 +216,8 @@ async function main() {
         ensembleN: CONFIG.ladderEnsembleN,
         ensembleModels: CONFIG.ladderEnsembleModels ?? null,
         minExamples: CONFIG.ladderMinExamples,
+        maxExamples: CONFIG.ladderMaxExamples,
+        promptId: CONFIG.ladderPromptId,
       },
       // T9 repair pass: on/off and every threshold/knob that changes what it does. REPAIR=0 (the
       // RQ3 NAIVE arm) must not share a runId with a repaired arm, and two repaired arms differing
@@ -575,6 +583,8 @@ function createProcessors(
     ensembleN: CONFIG.ladderEnsembleN,
     ...(ladderMembers && ladderMembers.length > 0 ? { members: ladderMembers } : {}),
     minExamples: CONFIG.ladderMinExamples,
+    maxExamples: CONFIG.ladderMaxExamples,
+    promptId: CONFIG.ladderPromptId,
   });
 
   // T9: synchronous per-document repair pass. GlossIndex is built from the run's own

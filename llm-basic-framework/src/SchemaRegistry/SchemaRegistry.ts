@@ -32,6 +32,11 @@ export interface CategoryLadderRung {
   edgeKind?: 'coarsens-to' | 'part-of';
 }
 
+export interface CategoryLadderPlacement {
+  surface: string;
+  g: number;
+}
+
 export interface CategoryLadder {
   /** Increments on every re-fire, so registry structure can name the ladder it was built under. */
   version: number;
@@ -41,6 +46,12 @@ export interface CategoryLadder {
   runs: number;
   models: string[];
   rungs: CategoryLadderRung[];
+  /**
+   * Where the discovery call placed each surface it was shown. Recorded so the catch-up that gives
+   * pre-ladder entities their rung needs no second call, and so a reader can audit which entities a
+   * ladder actually spoke about.
+   */
+  placements?: CategoryLadderPlacement[];
   rejected: Array<{ candidate: string; gate: string; reason: string }>;
   notes: string;
   /** Human-readable ensemble disagreement notes (why a rung got disputed forced). */

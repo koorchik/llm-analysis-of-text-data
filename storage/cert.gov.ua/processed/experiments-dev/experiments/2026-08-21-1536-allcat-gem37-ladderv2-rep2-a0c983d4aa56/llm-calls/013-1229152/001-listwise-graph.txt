@@ -1,0 +1,213 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to:
+
+- `"n"` — the same claim stated less precisely. Every fact true of the mention stays true of the parent, only vaguer: a version under its versionless product, a model under its product line, an instance under its type.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"n","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Entities:
+E1. UAC-0098
+E2. UAC-0056 <g0>
+E3. APT28 (UAC-0028) <g0>
+E4. TrickBot
+E5. TRYxaEbX.ps1 <g0>
+E6. z.ps1 <g0>
+E7. stage1.ps1 <g0>
+E8. stage2.ps1 <g0>
+E9. TRYxaEbX_2.ps1 <g0>
+E10. MCMDiction.exe <g0>
+E11. loader.exe <g0>
+E12. Smokeloader <g1>
+E13. VBScript <g1>
+E14. jDownloader <g1>
+E15. Agent Tesla [aka AgentTesla] <g1>
+E16. FTP Commander <g1>
+E17. .NET Framework <g1>
+E18. Internet Explorer <g1>
+E19. Google Chrome <g1>
+E20. MS Excel <g1>
+E21. Microsoft Edge <g1>
+E22. RegAsm.exe <g1>
+E23. 360Chrome Browser <g1>
+E24. WinSCP <g1>
+E25. Foxmail <g1>
+E26. FTPGetter <g1>
+E27. Meterpreter <g1>
+E28. Thunderbird <g1>
+E29. ConfuserEx <g1>
+E30. TRYxaEbX <g0>
+E31. Windows Server 2012 <g0>
+E32. Windows Server 2008 <g0>
+E33. Microsoft Exchange Server <g1>
+E34. powershell.exe <g0>
+E35. MS PowerPoint <g1>
+E36. cmd.exe <g0>
+E37. shellcode.x64 (Cobalt Strike Beacon) [aka shellcode.x64.bin] <g0>
+E38. b.exe <g0>
+E39. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E40. write.exe <g0>
+E41. rfusclient.exe <g0>
+E42. spi.exe <g0>
+E43. major.exe <g0>
+E44. MS Office [aka Microsoft Office] <g1>
+E45. GammaSteel.PS1
+E46. GammaSteel.NET
+E47. HarvesterX
+E48. PowerShell (powershell.exe)
+E49. wscript.exe
+E50. mshta.exe
+E51. GammaLoad.PS1
+E52. cuckoo.cert.ee <g0>
+E53. onyangdol.site <g1>
+E54. analyze.intezer.com <g0>
+E55. chinagrill.co <g0>
+E56. app.any.run <g0>
+E57. badpdf.com <g0>
+E58. cert.gov.ua <g0>
+E59. answers.microsoft.com <g0>
+E60. skreatortemp.site <g0>
+E61. ftp.artrsllc.com <g0>
+E62. i.ua <g1>
+E63. dyndns.com <g0>
+E64. chubanomania.icu <g0>
+E65. winscp.net <g0>
+E66. dsszzi.gov.ua <g0>
+E67. virustotal.com <g0>
+E68. microsoft.com <g0>
+E69. docs.microsoft.com <g0>
+E70. ginaengg.com <g0>
+E71. social.technet.microsoft.com <g0>
+E72. rs500cosworth.com <g0>
+E73. eo2mxtqmeqzafqi.m.pipedream.net <g0>
+E74. atlantar.ru
+E75. motoristo.ru
+E76. moolin.ru
+E77. bubenci.ru
+E78. callsol.ru
+E79. clipperso.ru
+E80. cooperi.ru
+E81. detroito.ru
+E82. farafauler.ru
+E83. fishitor.ru
+E84. flayga.ru
+E85. ganara.ru
+E86. hawksi.ru
+E87. hofsteder.ru
+E88. kilitro.ru
+E89. kurapat.ru
+E90. leonardis.ru
+E91. lnasfe.ru
+E92. lopasts.ru
+E93. mafirti.ru
+E94. metanat.ru
+E95. mitlubald.ru
+E96. paparat.ru
+E97. pasamart.ru
+E98. qkcew.ru
+E99. rncsq.ru
+E100. tarlit.ru
+E101. tbwelo.ru
+E102. wicksl.ru
+E103. xcqef.ru
+E104. nxkad.ru
+E105. dnslookup.seowebchecker.com
+E106. ip-api.com
+E107. tools.nexcess.net
+E108. viewdns.info
+E109. www.portcheckers.com
+E110. lover.printing82.detroito.ru
+Levels (per category):
+  Domain: g0=subdomain > g1=registered-domain
+  Software: g0=versioned-software > g1=base-software
+Mentions:
+M1. "UAC-0010 (Armageddon)" (HackerGroup) — options: E1, E2, E3, E4
+M2. "GammaLoad.PS1" (Software) — options: E5, E6, E7, E8
+M3. "GammaSteel.PS1" (Software) — options: E7, E5, E6, E8
+M4. "GammaSteel.NET" (Software) — options: E17, E18, E15, E19
+M5. "HarvesterX" (Software) — options: E25, E26, E27, E28
+M6. "PowerShell (powershell.exe)" (Software) — options: E34, E6, E10, E35
+M7. "wscript.exe" (Software) — options: E13, E40, E10, E24
+M8. "mshta.exe" (Software) — options: E10, E43, E38, E22
+M9. "lover.printing82.detroito.ru" (Domain) — options: E52, E53, E54, E55
+M10. "atlantar.ru" (Domain) — options: E62, E56, E63, E54
+M11. "motoristo.ru" (Domain) — options: E62, E60, E56, E52
+M12. "moolin.ru" (Domain) — options: E62, E56, E52, E64
+M13. "bubenci.ru" (Domain) — options: E62, E64, E56, E52
+M14. "callsol.ru" (Domain) — options: E63, E55, E56, E62
+M15. "clipperso.ru" (Domain) — options: E55, E56, E62, E59
+M16. "cooperi.ru" (Domain) — options: E52, E56, E62, E64
+M17. "detroito.ru" (Domain) — options: E62, E66, E56, E63
+M18. "farafauler.ru" (Domain) — options: E52, E56, E62, E61
+M19. "fishitor.ru" (Domain) — options: E62, E66, E56, E63
+M20. "flayga.ru" (Domain) — options: E62, E56, E63, E64
+M21. "ganara.ru" (Domain) — options: E62, E64, E56, E52
+M22. "hawksi.ru" (Domain) — options: E62, E64, E56, E52
+M23. "hofsteder.ru" (Domain) — options: E62, E54, E56, E55
+M24. "kilitro.ru" (Domain) — options: E62, E56, E52, E60
+M25. "kurapat.ru" (Domain) — options: E62, E64, E56, E52
+M26. "leonardis.ru" (Domain) — options: E62, E55, E56, E63
+M27. "lnasfe.ru" (Domain) — options: E62, E56, E63, E54
+M28. "lopasts.ru" (Domain) — options: E62, E56, E52, E61
+M29. "mafirti.ru" (Domain) — options: E62, E56, E55, E64
+M30. "metanat.ru" (Domain) — options: E62, E56, E54, E64
+M31. "mitlubald.ru" (Domain) — options: E62, E56, E68, E52
+M32. "paparat.ru" (Domain) — options: E62, E56, E52, E64
+M33. "pasamart.ru" (Domain) — options: E55, E56, E62, E64
+M34. "qkcew.ru" (Domain) — options: E52, E56, E62, E54
+M35. "rncsq.ru" (Domain) — options: E65, E56, E62, E72
+M36. "tarlit.ru" (Domain) — options: E62, E61, E56, E52
+M37. "tbwelo.ru" (Domain) — options: E62, E56, E52, E54
+M38. "wicksl.ru" (Domain) — options: E52, E68, E65, E56
+M39. "xcqef.ru" (Domain) — options: E52, E56, E63, E68
+M40. "nxkad.ru" (Domain) — options: E62, E56, E63, E64
+M41. "dnslookup.seowebchecker.com" (Domain) — options: E67, E57, E54, E63
+M42. "ip-api.com" (Domain) — options: E63, E70, E68, E57
+M43. "tools.nexcess.net" (Domain) — options: E65, E63, E73, E67
+M44. "viewdns.info" (Domain) — options: E63, E67, E59, E65
+M45. "www.portcheckers.com" (Domain) — options: E55, E57, E59, E60
+
+=== RESPONSE (8.1s, in 4088 / out 1366 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"cyber threat actor tracked by CERT-UA"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g1","g":"malicious PowerShell script used for payload delivery"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g1","g":"PowerShell-based malware"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g1","g":".NET-based malware"},{"m":"M5","id":"NEW","p":null,"r":null,"lvl":"g1","g":"malicious tool used in cyberattacks"},{"m":"M6","id":"E34","p":null,"r":null,"lvl":"g1","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g1","g":"Windows script host executable"},{"m":"M8","id":"NEW","p":null,"r":null,"lvl":"g1","g":"Microsoft HTML application host executable"},{"m":"M9","id":"NEW","p":"E81","r":"p","lvl":"g0","g":"threat actor infrastructure subdomain"},{"m":"M10","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M11","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M12","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M13","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M14","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M15","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M16","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M17","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M18","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M19","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M20","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M21","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M22","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M23","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M24","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M25","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M26","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M27","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M28","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M29","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M30","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M31","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M32","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M33","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M34","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M35","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M36","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M37","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M38","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M39","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M40","id":"NEW","p":null,"r":null,"lvl":"g1","g":"threat actor infrastructure domain"},{"m":"M41","id":"NEW","p":null,"r":null,"lvl":"g0","g":"online DNS lookup service subdomain"},{"m":"M42","id":"NEW","p":null,"r":null,"lvl":"g1","g":"IP geolocation and network lookup API"},{"m":"M43","id":"NEW","p":null,"r":null,"lvl":"g0","g":"network diagnostic tools subdomain"},{"m":"M44","id":"NEW","p":null,"r":null,"lvl":"g1","g":"DNS and network investigation service domain"},{"m":"M45","id":"NEW","p":null,"r":null,"lvl":"g0","g":"online port checking service domain"}]}

@@ -1,0 +1,93 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "versioned product",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "product",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Microsoft",
+            "gate": "1",
+            "reason": "Crosses category into Organization / Vendor."
+          },
+          {
+            "candidate": "CVE-2017-11882",
+            "gate": "1",
+            "reason": "Crosses category into Vulnerability / Identifier."
+          },
+          {
+            "candidate": "PGMB New Order 18-2077.xlsx",
+            "gate": "1",
+            "reason": "Data file / document instance rather than software."
+          },
+          {
+            "candidate": "MS Office",
+            "gate": "3",
+            "reason": "Abbreviation and alias for Microsoft Office; variants and abbreviations do not form rungs."
+          }
+        ],
+        "notes": "The observed examples contain standalone malware (Petya, Misha), individual applications/components (MS Word, MS Excel, Microsoft Equation Editor), and versioned software suites (Microsoft Office 2007 through 2016). Dropping the version qualifier from specific releases to the base product name provides a clean, identity-preserving coarsening.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

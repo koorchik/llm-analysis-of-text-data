@@ -761,9 +761,17 @@ export interface LadderRejection {
   reason: string;
 }
 
+/** Where one supplied example sits on the ladder that was just derived from it. */
+export interface LadderPlacement {
+  surface: string;
+  g: number;
+}
+
 export interface LadderProposal {
   category: string;
   ladder: LadderRungProposal[];
+  /** Absent on a model that ignores the field; the caller treats that as "nothing placed". */
+  placements?: LadderPlacement[];
   rejected: LadderRejection[];
   notes: string;
 }
@@ -785,6 +793,20 @@ const ladderValidator = new LIVR.Validator({
           preserving: [{ default: null }],
           foldTest: [{ default: '' }, 'string'],
           disputed: [{ default: false }],
+        },
+      ],
+    },
+  ],
+  // Where each supplied example sits on the ladder just derived. The discovery call has already
+  // read those surfaces, so placing them costs nothing extra and gives the catch-up pass its
+  // answers without a second call.
+  placements: [
+    { default: [] },
+    {
+      listOfObjects: [
+        {
+          surface: [{ default: '' }, 'string'],
+          g: [{ default: -1 }, 'integer'],
         },
       ],
     },
@@ -826,6 +848,18 @@ export function normalizeLadderProposal(data: RawData): LadderProposal | undefin
       rung.preserving = coerceBool(rung.preserving);
       rung.disputed = coerceBool(rung.disputed) ?? false;
       if (rung.move !== undefined && !LADDER_MOVES.includes(rung.move)) rung.move = '';
+    }
+  }
+  // LIVR's `default` does not fire ahead of `listOfObjects` for an absent field, and a model that
+  // ignores the placements field is normal rather than an error — normalize before validating.
+  if (data.placements === undefined || data.placements === null) data.placements = [];
+  if (Array.isArray(data.placements)) {
+    for (const placement of data.placements) {
+      if (!placement || typeof placement !== 'object') continue;
+      if (typeof placement.g === 'string') {
+        const digits = /^g?(\d+)$/i.exec(placement.g.trim());
+        placement.g = digits ? Number(digits[1]) : -1;
+      }
     }
   }
   if (Array.isArray(data.rejected)) {

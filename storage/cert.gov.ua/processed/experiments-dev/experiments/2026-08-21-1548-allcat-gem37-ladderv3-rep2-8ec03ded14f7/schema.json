@@ -1,0 +1,614 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 3,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "release",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "product",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "placements": [
+          {
+            "surface": "MS Office",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Office",
+            "g": 1
+          },
+          {
+            "surface": "MS Word",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Word",
+            "g": 1
+          },
+          {
+            "surface": "MS Excel",
+            "g": 1
+          },
+          {
+            "surface": "MS PowerPoint",
+            "g": 1
+          },
+          {
+            "surface": "CVE-2017-11882",
+            "g": 0
+          },
+          {
+            "surface": "major.exe",
+            "g": 0
+          },
+          {
+            "surface": "PGMB New Order 18-2077.xlsx",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Equation Editor",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Office 2016",
+            "g": 0
+          },
+          {
+            "surface": "Office 2016",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Office 2013",
+            "g": 0
+          },
+          {
+            "surface": "Office 2013",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Office 2010",
+            "g": 0
+          },
+          {
+            "surface": "Office 2010",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Office 2007",
+            "g": 0
+          },
+          {
+            "surface": "Office 2007",
+            "g": 0
+          },
+          {
+            "surface": "Petya",
+            "g": 1
+          },
+          {
+            "surface": "Misha",
+            "g": 1
+          },
+          {
+            "surface": "CVE-2017-0199",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Windows",
+            "g": 1
+          },
+          {
+            "surface": "Windows 7",
+            "g": 0
+          },
+          {
+            "surface": "Windows Vista",
+            "g": 0
+          },
+          {
+            "surface": "Windows Server 2008",
+            "g": 0
+          },
+          {
+            "surface": "Windows Server 2012",
+            "g": 0
+          },
+          {
+            "surface": "Smokeloader",
+            "g": 1
+          },
+          {
+            "surface": "spi.exe",
+            "g": 0
+          },
+          {
+            "surface": "ckZ89.ExE",
+            "g": 0
+          },
+          {
+            "surface": "До оплати від 11.12.18.lzh",
+            "g": 0
+          },
+          {
+            "surface": "Рахунки и новые списки.lzh",
+            "g": 0
+          },
+          {
+            "surface": "Рахунки за выполненные работы от 11.12.2018.js",
+            "g": 0
+          },
+          {
+            "surface": "До оплати рах.ф. 74 - 2018р.js",
+            "g": 0
+          },
+          {
+            "surface": "cmd.exe",
+            "g": 0
+          },
+          {
+            "surface": "powershell.exe",
+            "g": 0
+          },
+          {
+            "surface": "Internet Explorer",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Edge",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Office Services and Web Apps",
+            "g": 1
+          },
+          {
+            "surface": "ChakraCore",
+            "g": 1
+          },
+          {
+            "surface": "Adobe Flash Player",
+            "g": 1
+          },
+          {
+            "surface": ".NET Framework",
+            "g": 1
+          },
+          {
+            "surface": "Microsoft Exchange Server",
+            "g": 1
+          },
+          {
+            "surface": "Windows Host Compute Service Shim",
+            "g": 1
+          },
+          {
+            "surface": "VBScript",
+            "g": 1
+          },
+          {
+            "surface": "Win32k",
+            "g": 1
+          },
+          {
+            "surface": "CVE-2018-8174",
+            "g": 0
+          },
+          {
+            "surface": "Double Kill",
+            "g": 1
+          },
+          {
+            "surface": "CVE-2018-8120",
+            "g": 0
+          },
+          {
+            "surface": "CVE-2018-0854",
+            "g": 0
+          },
+          {
+            "surface": "CVE-2018-0958",
+            "g": 0
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "Software Suite (e.g. Microsoft Office containing MS Word)",
+            "gate": "3",
+            "reason": "Microsoft Office is already the g1 base product for Office version releases; adding it as a separate g2 suite level would double-count the same entity across conflicting containment relations."
+          },
+          {
+            "candidate": "Operating System / Malware / Vulnerability",
+            "gate": "1",
+            "reason": "Broader taxonomic classifications describe kinds or roles rather than specific coarsened software entities in the registry."
+          }
+        ],
+        "notes": "Specific file attachments, executables, versioned operating systems, and CVE-tagged components sit at g0, while the base unversioned software products sit at g1.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    },
+    {
+      "name": "Organization",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 24
+    },
+    {
+      "name": "Domain",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26,
+      "ladder": {
+        "version": 2,
+        "exampleCount": 59,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "subdomain",
+            "example": "answers.microsoft.com",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "registered-domain",
+            "example": "microsoft.com",
+            "disputed": false,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'answers.microsoft.com was involved in an event' -> 'microsoft.com was involved in an event': attributed to a distinct containing referent",
+            "edgeKind": "part-of"
+          }
+        ],
+        "placements": [
+          {
+            "surface": "i.ua",
+            "g": 1
+          },
+          {
+            "surface": "answers.microsoft.com",
+            "g": 0
+          },
+          {
+            "surface": "social.technet.microsoft.com",
+            "g": 0
+          },
+          {
+            "surface": "microsoft.com",
+            "g": 1
+          },
+          {
+            "surface": "chubanomania.icu",
+            "g": 1
+          },
+          {
+            "surface": "badpdf.com",
+            "g": 1
+          },
+          {
+            "surface": "chinagrill.co",
+            "g": 1
+          },
+          {
+            "surface": "dyndns.com",
+            "g": 1
+          },
+          {
+            "surface": "docs.microsoft.com",
+            "g": 0
+          },
+          {
+            "surface": "winscp.net",
+            "g": 1
+          },
+          {
+            "surface": "virustotal.com",
+            "g": 1
+          },
+          {
+            "surface": "cert.gov.ua",
+            "g": 0
+          },
+          {
+            "surface": "cuckoo.cert.ee",
+            "g": 0
+          },
+          {
+            "surface": "app.any.run",
+            "g": 0
+          },
+          {
+            "surface": "analyze.intezer.com",
+            "g": 0
+          },
+          {
+            "surface": "dsszzi.gov.ua",
+            "g": 0
+          },
+          {
+            "surface": "rs500cosworth.com",
+            "g": 1
+          },
+          {
+            "surface": "eo2mxtqmeqzafqi.m.pipedream.net",
+            "g": 0
+          },
+          {
+            "surface": "ginaengg.com",
+            "g": 1
+          },
+          {
+            "surface": "skreatortemp.site",
+            "g": 1
+          },
+          {
+            "surface": "onyangdol.site",
+            "g": 1
+          },
+          {
+            "surface": "ftp.artrsllc.com",
+            "g": 0
+          },
+          {
+            "surface": "lover.printing82.detroito.ru",
+            "g": 0
+          },
+          {
+            "surface": "atlantar.ru",
+            "g": 1
+          },
+          {
+            "surface": "motoristo.ru",
+            "g": 1
+          },
+          {
+            "surface": "moolin.ru",
+            "g": 1
+          },
+          {
+            "surface": "bubenci.ru",
+            "g": 1
+          },
+          {
+            "surface": "callsol.ru",
+            "g": 1
+          },
+          {
+            "surface": "clipperso.ru",
+            "g": 1
+          },
+          {
+            "surface": "cooperi.ru",
+            "g": 1
+          },
+          {
+            "surface": "detroito.ru",
+            "g": 1
+          },
+          {
+            "surface": "farafauler.ru",
+            "g": 1
+          },
+          {
+            "surface": "fishitor.ru",
+            "g": 1
+          },
+          {
+            "surface": "flayga.ru",
+            "g": 1
+          },
+          {
+            "surface": "ganara.ru",
+            "g": 1
+          },
+          {
+            "surface": "hawksi.ru",
+            "g": 1
+          },
+          {
+            "surface": "hofsteder.ru",
+            "g": 1
+          },
+          {
+            "surface": "kilitro.ru",
+            "g": 1
+          },
+          {
+            "surface": "kurapat.ru",
+            "g": 1
+          },
+          {
+            "surface": "leonardis.ru",
+            "g": 1
+          },
+          {
+            "surface": "lnasfe.ru",
+            "g": 1
+          },
+          {
+            "surface": "lopasts.ru",
+            "g": 1
+          },
+          {
+            "surface": "mafirti.ru",
+            "g": 1
+          },
+          {
+            "surface": "metanat.ru",
+            "g": 1
+          },
+          {
+            "surface": "mitlubald.ru",
+            "g": 1
+          },
+          {
+            "surface": "paparat.ru",
+            "g": 1
+          },
+          {
+            "surface": "pasamart.ru",
+            "g": 1
+          },
+          {
+            "surface": "qkcew.ru",
+            "g": 1
+          },
+          {
+            "surface": "rncsq.ru",
+            "g": 1
+          },
+          {
+            "surface": "tarlit.ru",
+            "g": 1
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "top-level domain (e.g., .com, .ru)",
+            "gate": "2",
+            "reason": "A top-level domain suffix is registry infrastructure rather than a sound containing domain entity for event attribution."
+          }
+        ],
+        "notes": "Domain names coarsen naturally from fully qualified host/subdomain names to their base registered domains (effective TLD+1) via part-of.",
+        "disagreements": [],
+        "discoveredAtDoc": 1563322
+      }
+    },
+    {
+      "name": "Government Body",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 26
+    },
+    {
+      "name": "Country",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 2707
+    },
+    {
+      "name": "Sector",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 10011
+    },
+    {
+      "name": "HackerGroup",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 39934
+    },
+    {
+      "name": "Infrastructure",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 6276824
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 24,
+      "op": "admit-category",
+      "name": "Organization"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Domain"
+    },
+    {
+      "doc": 26,
+      "op": "admit-category",
+      "name": "Government Body"
+    },
+    {
+      "doc": 2707,
+      "op": "admit-category",
+      "name": "Country"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 10011,
+      "op": "admit-category",
+      "name": "Sector"
+    },
+    {
+      "doc": 39934,
+      "op": "admit-category",
+      "name": "HackerGroup"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 861292,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 1563322,
+      "op": "discover-ladder",
+      "name": "Domain"
+    },
+    {
+      "doc": 6276824,
+      "op": "admit-category",
+      "name": "Infrastructure"
+    }
+  ]
+}

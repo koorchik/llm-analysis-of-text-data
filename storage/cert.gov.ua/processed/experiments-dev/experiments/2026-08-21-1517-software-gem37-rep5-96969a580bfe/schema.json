@@ -1,0 +1,93 @@
+{
+  "categories": [
+    {
+      "name": "Software",
+      "definition": "",
+      "examples": [],
+      "aliases": [],
+      "firstSeen": 20,
+      "ladder": {
+        "version": 4,
+        "exampleCount": 121,
+        "runs": 3,
+        "models": [
+          "run-1",
+          "run-2",
+          "run-3"
+        ],
+        "rungs": [
+          {
+            "g": 0,
+            "alias": "versioned release",
+            "example": "Microsoft Office 2016",
+            "disputed": false
+          },
+          {
+            "g": 1,
+            "alias": "software product",
+            "example": "Microsoft Office",
+            "disputed": false,
+            "move": "drop-qualifier",
+            "preserving": true,
+            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "edgeKind": "coarsens-to"
+          }
+        ],
+        "rejected": [
+          {
+            "candidate": "CVE-2017-11882",
+            "gate": "1",
+            "reason": "Vulnerability identifier, belongs to a distinct vulnerability/advisory category rather than Software."
+          },
+          {
+            "candidate": "PGMB New Order 18-2077.xlsx",
+            "gate": "1",
+            "reason": "Data file and document instance, not an executable software entity."
+          },
+          {
+            "candidate": "MS Office",
+            "gate": "3",
+            "reason": "Abbreviation and alias for Microsoft Office, not a distinct granularity rung."
+          },
+          {
+            "candidate": "Microsoft Office (as container for Microsoft Equation Editor)",
+            "gate": "3",
+            "reason": "Microsoft Office is already represented at g1 via qualifier-dropping; adding a distinct part-of suite rung for components would duplicate the node."
+          }
+        ],
+        "notes": "The observed evidence supports coarsening version-qualified releases (e.g., Office 2016, 2013, 2010, 2007) to the unversioned product line. No broader taxonomical groupings (such as 'Office Suite' or 'Malware') appear as observed surface forms.",
+        "disagreements": [],
+        "discoveredAtDoc": 40102
+      }
+    }
+  ],
+  "relationTypes": [],
+  "pairRules": [],
+  "history": [
+    {
+      "doc": 20,
+      "op": "admit-category",
+      "name": "Software"
+    },
+    {
+      "doc": 26,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 2707,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
+      "op": "discover-ladder",
+      "name": "Software"
+    }
+  ]
+}

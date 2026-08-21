@@ -643,3 +643,43 @@ describe('ListwiseGraphDecision', () => {
     assert.match(llm.calls[0].text, /P2\. Remote Utilities/);
   });
 });
+
+describe('ListwiseGraphDecision ladder rendering', () => {
+  it('labels each category ladder, so a mixed-category document cannot cross them', async () => {
+    const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW"},{"m":"M2","id":"NEW"}]}']);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-graph-compact-v7',
+    });
+    await strategy.decide([
+      request('x', [candidate('A', 0.9)], {
+        category: 'Software',
+        ladder: 'g0=versioned-software | g1=software-product',
+        pool: [{ canonical: 'A', surfaces: ['A'] }],
+      }),
+      request('y', [candidate('B', 0.9)], {
+        category: 'Domain',
+        ladder: 'g0=host | g1=registrable-domain',
+        pool: [{ canonical: 'B', surfaces: ['B'] }],
+      }),
+    ]);
+    assert.match(llm.calls[0].text, /Domain: g0=host/);
+    assert.match(llm.calls[0].text, /Software: g0=versioned-software/);
+  });
+
+  it('omits the levels block entirely when no category has a ladder', async () => {
+    const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW"}]}']);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-graph-compact-v7',
+    });
+    await strategy.decide([
+      request('x', [candidate('A', 0.9)], {
+        category: 'Software',
+        ladder: '(none; use g0)',
+        pool: [{ canonical: 'A', surfaces: ['A'] }],
+      }),
+    ]);
+    assert.doesNotMatch(llm.calls[0].text, /Levels/);
+  });
+});
