@@ -1,0 +1,219 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: <p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+Entities:
+E1. pfSense
+E2. AgentTesla
+E3. YARA
+E4. Cobalt Strike Beacon
+E5. FIRMACHAGENT
+E6. SmartAssembly .NET [aka SmartAssembly]
+E7. stage2.ps1
+E8. SIEM
+E9. scan.exe (CredoMap_v2)
+E10. stage1.ps1
+E11. rfusclient.exe
+E12. CCleaner.exe
+E13. b.exe
+E14. installer.exe
+E15. MCMDiction.exe
+E16. write.exe
+E17. loader.exe
+E18. PowerShell [aka PowerShell (powershell.exe), powershell.exe]
+E19. wsuscr.exe
+E20. baseupd.exe
+E21. Browser.dll
+E22. USB.dll
+E23. Files.dll
+E24. IDCLIPNET_x86.dll
+E25. Screen.dll
+E26. Social.dll
+E27. chrome_updater.dll
+E28. MISP
+E29. Software Restriction Policies (SRP) [aka SRP]
+E30. install.msi
+E31. JavaScript
+E32. Mikrotik
+E33. AppLocker
+E34. AutoIt
+E35. ConfuserEx
+E36. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E37. CredoMap_v2
+E38. Meterpreter
+E39. scandoc.exe
+E40. RemcosRAT [aka Remcos]
+E41. rutserv.exe
+E42. Електронний план евакуації.rar
+E43. CCleaner.rar
+E44. SQLite.Interop.dll
+E45. Електронний запит.exe
+E46. UkrScanner.rar
+E47. UkrScanner.exe (SFX)
+E48. SPECTR
+E49. host_news_mod_mod.msi
+E50. CCleaner.zip
+E51. QuasarRAT
+E52. GammaSteel.NET
+E53. rundll32.exe
+E54. HarvesterX
+E55. GammaLoad.PS1
+E56. shellcode.x86 (Cobalt Strike Beacon)
+E57. shellcode.x64 (Cobalt Strike Beacon)
+E58. killself.bat
+E59. wscript.exe
+E60. RemoteUtilities [aka Remote Utilities]
+E61. TRYxaEbX
+E62. TRYxaEbX.ps1
+E63. RegAsm.exe
+E64. vaultcli.dll
+E65. WinSCP
+E66. Google Chrome
+E67. Mozilla Firefox
+E68. Microsoft Outlook
+E69. IceDragon
+E70. Yandex Browser
+E71. Iridium Browser
+E72. Epic Privacy Browser
+E73. Chromium Browser
+E74. 7Star Browser
+E75. Torch Browser
+E76. ChromePlus Browser
+E77. Kometa Browser
+E78. Amigo Browser
+E79. Brave Browser
+E80. CentBrowser
+E81. Liebao Browser
+E82. Elements Browser
+E83. Vivaldi Browser
+E84. Citrio Browser
+E85. 360Chrome Browser
+E86. Uran Browser
+E87. Chedot Browser
+E88. Orbitum Browser
+E89. Sputnik Browser
+E90. Comodo Dragon Browser
+E91. CocCoc Browser
+E92. QIP Surf Browser
+E93. Coowon Browser
+E94. Opera Browser
+E95. Internet Explorer
+E96. Thunderbird
+E97. Claws Mail
+E98. Postbox Credential
+E99. Foxmail
+E100. Opera Mail
+E101. Pocomail
+E102. Becky!
+E103. OpenVPN
+E104. FileZilla
+E105. Paltalk
+E106. jDownloader
+E107. SmartFTP
+E108. FTP Commander
+E109. WS_FTP
+E110. FTPGetter
+E111. Trillian
+E112. Agent Tesla
+Mentions:
+M1. "Agent Tesla" (Software) — options: E1, E2, E3, E4
+M2. "RegAsm.exe" (Software) — options: E11, E12, E13, E14
+M3. "vaultcli.dll" (Software) — options: E11, E21, E22, E17
+M4. "WinSCP" (Software) — options: E1, E28, E14, E29
+M5. "Google Chrome" (Software) — options: E1, E27, E14, E4
+M6. "Mozilla Firefox" (Software) — options: E1, E35, E5, E14
+M7. "Microsoft Outlook" (Software) — options: E32, E28, E1, E35
+M8. "IceDragon" (Software) — options: E1, E5, E4, E28
+M9. "Yandex Browser" (Software) — options: E3, E21, E1, E9
+M10. "Iridium Browser" (Software) — options: E1, E21, E32, E40
+M11. "Epic Privacy Browser" (Software) — options: E1, E21, E32, E33
+M12. "Chromium Browser" (Software) — options: E1, E21, E32, E27
+M13. "7Star Browser" (Software) — options: E1, E21, E17, E38
+M14. "Torch Browser" (Software) — options: E1, E21, E17, E18
+M15. "ChromePlus Browser" (Software) — options: E1, E21, E34, E35
+M16. "Kometa Browser" (Software) — options: E1, E21, E32, E38
+M17. "Amigo Browser" (Software) — options: E1, E21, E32, E33
+M18. "Brave Browser" (Software) — options: E1, E21, E33, E14
+M19. "CentBrowser" (Software) — options: E1, E38, E21, E8
+M20. "Liebao Browser" (Software) — options: E1, E21, E17, E33
+M21. "Elements Browser" (Software) — options: E1, E21, E8, E38
+M22. "Vivaldi Browser" (Software) — options: E1, E21, E32, E33
+M23. "Citrio Browser" (Software) — options: E1, E21, E34, E38
+M24. "360Chrome Browser" (Software) — options: E1, E21, E14, E27
+M25. "Uran Browser" (Software) — options: E1, E21, E3, E46
+M26. "Chedot Browser" (Software) — options: E1, E21, E32, E37
+M27. "Orbitum Browser" (Software) — options: E1, E21, E32, E38
+M28. "Sputnik Browser" (Software) — options: E1, E21, E32, E44
+M29. "Comodo Dragon Browser" (Software) — options: E1, E21, E12, E35
+M30. "CocCoc Browser" (Software) — options: E1, E21, E43, E33
+M31. "QIP Surf Browser" (Software) — options: E1, E21, E28, E33
+M32. "Coowon Browser" (Software) — options: E1, E21, E14, E12
+M33. "Opera Browser" (Software) — options: E1, E21, E32, E33
+M34. "Internet Explorer" (Software) — options: E17, E12, E44, E14
+M35. "Thunderbird" (Software) — options: E1, E44, E17, E32
+M36. "Claws Mail" (Software) — options: E1, E50, E2, E46
+M37. "Postbox Credential" (Software) — options: E1, E25, E37, E32
+M38. "Foxmail" (Software) — options: E1, E26, E2, E32
+M39. "Opera Mail" (Software) — options: E1, E18, E3, E32
+M40. "Pocomail" (Software) — options: E1, E18, E37, E32
+M41. "Becky!" (Software) — options: E15, E33, E4, E32
+M42. "OpenVPN" (Software) — options: E1, E48, E2, E8
+M43. "FileZilla" (Software) — options: E1, E23, E14, E58
+M44. "Paltalk" (Software) — options: E1, E6, E14, E28
+M45. "jDownloader" (Software) — options: E17, E33, E14, E55
+M46. "SmartFTP" (Software) — options: E1, E6, E32, E29
+M47. "FTP Commander" (Software) — options: E1, E33, E17, E32
+M48. "WS_FTP" (Software) — options: E1, E29, E19, E11
+M49. "FTPGetter" (Software) — options: E1, E38, E17, E48
+M50. "Trillian" (Software) — options: E1, E60, E61, E28
+
+=== RESPONSE (9.9s, in 4033 / out 1338 tok, STOP) ===
+{"v":[{"m":"M1","id":"E2","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"Windows .NET assembly registration executable","p":null,"r":null},{"m":"M3","id":"NEW","g":"Windows Vault credentials library","p":null,"r":null},{"m":"M4","id":"NEW","g":"SFTP and FTP client application","p":null,"r":null},{"m":"M5","id":"NEW","g":"web browser developed by Google","p":null,"r":null},{"m":"M6","id":"NEW","g":"web browser developed by Mozilla","p":null,"r":null},{"m":"M7","id":"NEW","g":"email client and personal information manager","p":null,"r":null},{"m":"M8","id":"NEW","g":"web browser developed by Comodo","p":null,"r":null},{"m":"M9","id":"NEW","g":"web browser developed by Yandex","p":null,"r":null},{"m":"M10","id":"NEW","g":"privacy-oriented web browser","p":null,"r":null},{"m":"M11","id":"NEW","g":"privacy-focused Chromium-based browser","p":null,"r":null},{"m":"M12","id":"NEW","g":"open-source web browser project","p":null,"r":null},{"m":"M13","id":"NEW","g":"Chromium-based web browser","p":null,"r":null},{"m":"M14","id":"NEW","g":"Chromium-based web browser with media features","p":null,"r":null},{"m":"M15","id":"NEW","g":"Chromium-based web browser","p":null,"r":null},{"m":"M16","id":"NEW","g":"Russian web browser","p":null,"r":null},{"m":"M17","id":"NEW","g":"web browser developed by Mail.Ru","p":null,"r":null},{"m":"M18","id":"NEW","g":"privacy-focused web browser","p":null,"r":null},{"m":"M19","id":"NEW","g":"enhanced Chromium-based web browser","p":null,"r":null},{"m":"M20","id":"NEW","g":"dual-core web browser by Cheetah Mobile","p":null,"r":null},{"m":"M21","id":"NEW","g":"Chromium-based web browser","p":null,"r":null},{"m":"M22","id":"NEW","g":"freeware web browser developed by Vivaldi Technologies","p":null,"r":null},{"m":"M23","id":"NEW","g":"download-oriented web browser","p":null,"r":null},{"m":"M24","id":"NEW","g":"dual-engine web browser by Qihoo 360","p":null,"r":null},{"m":"M25","id":"NEW","g":"web browser developed by uCoz","p":null,"r":null},{"m":"M26","id":"NEW","g":"Chromium-based web browser","p":null,"r":null},{"m":"M27","id":"NEW","g":"social-network oriented web browser","p":null,"r":null},{"m":"M28","id":"NEW","g":"Russian web browser developed by Rostelecom","p":null,"r":null},{"m":"M29","id":"NEW","g":"security-oriented browser by Comodo","p":null,"r":null},{"m":"M30","id":"NEW","g":"Vietnamese web browser developed by Coc Coc","p":null,"r":null},{"m":"M31","id":"NEW","g":"web browser based on Chromium","p":null,"r":null},{"m":"M32","id":"NEW","g":"Chromium-based web browser","p":null,"r":null},{"m":"M33","id":"NEW","g":"multi-platform web browser","p":null,"r":null},{"m":"M34","id":"NEW","g":"graphical web browser by Microsoft","p":null,"r":null},{"m":"M35","id":"NEW","g":"free email client by Mozilla Foundation","p":null,"r":null},{"m":"M36","id":"NEW","g":"lightweight email client and news reader","p":null,"r":null},{"m":"M37","id":"NEW","g":"commercial email client","p":null,"r":null},{"m":"M38","id":"NEW","g":"email client developed by Tencent","p":null,"r":null},{"m":"M39","id":"NEW","g":"standalone email and news client","p":null,"r":null},{"m":"M40","id":"NEW","g":"email client for Windows","p":null,"r":null},{"m":"M41","id":"NEW","g":"email client developed by RimArts","p":null,"r":null},{"m":"M42","id":"NEW","g":"open-source virtual private network system","p":null,"r":null},{"m":"M43","id":"NEW","g":"cross-platform FTP application","p":null,"r":null},{"m":"M44","id":"NEW","g":"instant messaging and video chat program","p":null,"r":null},{"m":"M45","id":"NEW","g":"download manager written in Java","p":null,"r":null},{"m":"M46","id":"NEW","g":"FTP and cloud transfer client","p":null,"r":null},{"m":"M47","id":"NEW","g":"FTP client application for Windows","p":null,"r":null},{"m":"M48","id":"NEW","g":"file transfer client software","p":null,"r":null},{"m":"M49","id":"NEW","g":"automated FTP client software","p":null,"r":null},{"m":"M50","id":"NEW","g":"multi-protocol instant messaging application","p":null,"r":null}]}

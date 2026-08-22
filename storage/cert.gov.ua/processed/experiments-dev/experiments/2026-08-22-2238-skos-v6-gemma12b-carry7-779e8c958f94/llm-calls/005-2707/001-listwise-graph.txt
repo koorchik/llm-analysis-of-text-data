@@ -1,0 +1,99 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: <p>Сьогодні, 13.12.2018, зафіксована масова розсилка листів з шкідливим вкладенням, який не детектується популярними в України антивірусними засобами. Вкладення з розширенням.lzh (архів), який містить в собі 2 файли, один з яких є підробленим, або раніше викраденим документом формату xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використовується
+Entities:
+E1. MS Excel
+E2. PGMB New Order 18-2077.xlsx
+E3. MS Office [aka Microsoft Office]
+E4. MS Word [aka Microsoft Word]
+E5. Windows Server 2012
+E6. MS PowerPoint
+E7. Windows Server 2008
+E8. CVE-2017-0199
+E9. Misha
+E10. Microsoft Equation Editor
+E11. major.exe
+E12. CVE-2017-11882
+E13. Microsoft Office 2007 [aka Office 2007]
+E14. Microsoft Windows
+E15. Microsoft Office 2010 [aka Office 2010]
+E16. Petya
+E17. Microsoft Office 2013 [aka Office 2013]
+E18. Microsoft Office 2016 [aka Office 2016]
+E19. Windows Vista
+E20. Windows 7
+E21. spi.exe
+E22. ckZ89.ExE
+E23. До оплати від 11.12.18.lzh
+E24. Рахунки и новые списки.lzh
+E25. Рахунки за выполненные работы от 11.12.2018.js
+E26. До оплати рах.ф. 74 - 2018р.js
+E27. cmd.exe
+E28. powershell.exe
+E29. Smokeloader
+Mentions:
+M1. "Smokeloader" (Software) — options: E1, E2, E3, E4
+M2. "spi.exe" (Software) — options: E11, E3, E1, E8
+M3. "ckZ89.ExE" (Software) — options: E1, E11, E3, E8
+M4. "До оплати від 11.12.18.lzh" (Software) — options: E16, E12, E2, E8
+M5. "Рахунки и новые списки.lzh" (Software) — options: E9, E2, E6, E8
+M6. "Рахунки за выполненные работы от 11.12.2018.js" (Software) — options: E16, E2, E15, E9
+M7. "До оплати рах.ф. 74 - 2018р.js" (Software) — options: E16, E15, E2, E17
+M8. "cmd.exe" (Software) — options: E11, E3, E1, E8
+M9. "powershell.exe" (Software) — options: E11, E6, E3, E1
+M10. "Petya" (Software) — options: E3, E9, E8, E6
+M11. "Misha" (Software) — options: E3, E19, E14, E1
+M12. "CVE-2017-0199" (Software) — options: E12, E16, E2, E15
+M13. "Microsoft Windows" (Software) — options: E3, E4, E20, E19
+
+=== RESPONSE (156.1s, in 2459 / out 13770 tok, stop) ===
+{"v":[{"m":"Smokeloader","id":"NEW","g":"malicious software loader","p":null,"r":null},{"m":"spi.exe","id":"NEW","g":"executable file","p":null,"r":null},{"m":"ckZ89.ExE","id":"NEW","g":"executable file","p":null,"r":null},{"m":"До оплати від 11.12.18.lzh","id":"NEW","g":"compressed archive","p":null,"r":null},{"m":"Рахунки и новые списки.lzh","id":"NEW","g":"compressed archive","p":null,"r":null},{"m":"Рахунки за выполненные работы от 11.12.2018.js","id":"NEW","g":"JavaScript file","p":null,"r":null},{"m":"До оплати рах.ф. 74 - 2018р.js","id":"NEW","g":"JavaScript file","p":null,"r":null},{"m":"cmd.exe","id":"NEW","g":"command-line shell","p":"E14","r":"p"},{"m":"powershell.exe","id":"NEW","g":"command-line shell","p":"E14","r":"p"},{"m":"Petya","id":"NEW","g":"malicious software","p":null,"r":null},{"m":"Misha","id":"NEW","g":"antivirus software","p":null,"r":null},{"m":"CVE-2017-0199","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"Microsoft Windows","id":"NEW","g":"operating system","p":"E20","r":"b"}]}

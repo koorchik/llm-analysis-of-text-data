@@ -228,9 +228,16 @@ export class ListwiseGraphDecision implements DecisionStrategy {
           .filter((number): number is number => Boolean(number))
           .map((number) => `E${number}`);
         const ctx = request.contextRef ? ` — ctx: ${request.contextRef}` : '';
+        // Kin: the mention's embedding-near co-mentions, by E number — hierarchy pointers on the
+        // row itself, kept out of the identity options (see DecisionRequest.kinRefs).
+        const kinRefs = (request.kinRefs ?? [])
+          .map((name) => numberOf.get(name.toLowerCase()))
+          .filter((number): number is number => Boolean(number))
+          .map((number) => `E${number}`);
+        const kin = kinRefs.length ? ` — kin: ${kinRefs.join(', ')}` : '';
         return `M${position + 1}. "${request.mention}" (${request.category}) — options: ${
           refs.length ? refs.join(', ') : 'none'
-        }${ctx}`;
+        }${ctx}${kin}`;
       })
       .join('\n');
 
@@ -338,7 +345,78 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       };
     });
 
+    this.#applyEdgeList(parsed, askable, entities, decisions);
+
     return decisions;
+  }
+
+  /**
+   * The set-level dialect (listwise-skos-v4): hierarchy arrives as a top-level `e` list of
+   * {n, b, r} pairs over the shared entity numbers, not as per-mention `p`/`r`. Each edge is
+   * carried by the decision of the mention it anchors — the narrower side when that is one of this
+   * ballot's minted mentions, otherwise the broader side with the endpoints marked swapped. Edges
+   * between two entities that are not mentions of this ballot have no decision to ride on and are
+   * dropped: the doc path can only journal through a mention's outcome.
+   */
+  #applyEdgeList(
+    parsed: Record<string, unknown> | null | undefined,
+    askable: Array<{ request: DecisionRequest; index: number }>,
+    entities: Array<{ canonical: string; surfaces: string[] }>,
+    decisions: Decision[]
+  ): void {
+    const raw = (parsed as { e?: unknown } | null)?.e;
+    if (!Array.isArray(raw)) return;
+
+    const mintedAt = new Map<string, number>();
+    for (const { request, index } of askable) {
+      if (decisions[index].kind === 'mint') mintedAt.set(fold(request.mention), index);
+    }
+
+    // The prompt asks for E numbers, but mentions are labelled M on the same ballot and a model
+    // sometimes answers in that register; both resolve to a canonical name.
+    const endpointAt = (ref: unknown): string | null => {
+      if (typeof ref !== 'string') return null;
+      const match = /^([EM])(\d+)$/i.exec(ref.trim());
+      if (!match) return null;
+      const number = Number(match[2]);
+      if (match[1].toUpperCase() === 'M') {
+        return number >= 1 && number <= askable.length ? askable[number - 1].request.mention : null;
+      }
+      return number >= 1 && number <= entities.length ? entities[number - 1].canonical : null;
+    };
+
+    for (const entry of raw) {
+      if (!entry || typeof entry !== 'object') continue;
+      const edge = entry as { n?: unknown; b?: unknown; r?: unknown };
+      const narrower = endpointAt(edge.n);
+      const broader = endpointAt(edge.b);
+      if (!narrower || !broader || fold(narrower) === fold(broader)) continue;
+
+      const code = typeof edge.r === 'string' ? edge.r.trim().toLowerCase() : '';
+      const broaderType =
+        code === 'v'
+          ? ('broaderInstantial' as const)
+          : code === 'n'
+            ? ('broaderGeneric' as const)
+            : code === 'p'
+              ? ('broaderPartitive' as const)
+              : null;
+      if (!broaderType) continue;
+
+      const asNarrower = mintedAt.get(fold(narrower));
+      const asBroader = mintedAt.get(fold(broader));
+      const carrier = asNarrower ?? asBroader;
+      if (carrier === undefined || decisions[carrier].parentCandidate) continue;
+
+      const mentionIsBroader = asNarrower === undefined;
+      decisions[carrier] = {
+        ...decisions[carrier],
+        reason: `judge asserted edge ${edge.n}->${edge.b} (${broaderType})`,
+        parentCandidate: mentionIsBroader ? narrower : broader,
+        broaderType,
+        ...(mentionIsBroader ? { mentionIsBroader } : {}),
+      };
+    }
   }
 }
 

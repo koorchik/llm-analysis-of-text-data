@@ -1,0 +1,122 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA від учасника інформаційного обміну отримано електронний лист з темою "Указ Президента України No 576/22 про безпрецедентні заходи безпеки" та вкладенням у вигляді ISO-файлу "Указ Президента України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає Po
+Entities:
+E1. shellcode.x86.bin
+E2. rutserv.exe
+E3. HarvesterX
+E4. pfSense
+E5. RemoteUtilities [aka Remote Utilities]
+E6. chrome_updater.dll
+E7. shellcode.x64.bin
+E8. SQLite.Interop.dll
+E9. SIEM
+E10. AppLocker
+E11. wscript.exe
+E12. PowerShell [aka PowerShell (powershell.exe)]
+E13. CCleaner.exe
+E14. scandoc.exe
+E15. MCMDiction.exe
+E16. baseupd.exe
+E17. sgegkseg23mjl.exe
+E18. stage1.ps1
+E19. GammaLoad.PS1
+E20. stage2.ps1
+E21. TRYxaEbX.ps1
+E22. GammaSteel.PS1
+E23. TRYxaEbX_2.ps1
+E24. MISP
+E25. Mikrotik
+E26. AgentTesla
+E27. write.exe
+E28. mshta.exe
+E29. wsuscr.exe
+E30. UkrScanner.exe (SFX)
+E31. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E32. Cobalt Strike Beacon
+E33. Електронний план евакуації.exe
+E34. scan.exe (CredoMap_v2)
+E35. Інформація щодо наявності вакансій та їх укомплектування.xls
+E36. plan_dsns.gov.ua.rar
+E37. Електронний план евакуації.rar
+E38. RemcosRAT [aka Remcos]
+E39. Screen.dll
+E40. CCleaner.rar
+E41. CCleaner.zip
+E42. QuasarRAT
+E43. UkrScanner.rar
+E44. CredoMap_v2
+E45. Browser.dll
+E46. Files.dll
+E47. USB.dll
+E48. Social.dll
+E49. powershell.exe
+E50. z.ps1
+E51. b.exe
+E52. loader.exe
+E53. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E54. Meterpreter
+Mentions:
+M1. "Meterpreter" (Software) — options: E1, E2, E3, E4
+M2. "powershell.exe" (Software) — options: E11, E12, E13, E1
+M3. "z.ps1" (Software) — options: E18, E19, E20, E21
+M4. "b.exe" (Software) — options: E14, E13, E27, E15
+M5. "loader.exe" (Software) — options: E14, E13, E15, E2
+M6. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software) — options: E31, E32, E33, E34
+M7. "CredoMap_v2" (Software) — options: E34, E30, E38, E39
+M8. "UkrScanner.rar" (Software) — options: E14, E40, E30, E34
+M9. "UkrScanner.exe (SFX)" (Software) — options: E14, E43, E34, E13
+M10. "scan.exe (CredoMap_v2)" (Software) — options: E30, E44, E13, E14
+M11. "SQLite.Interop.dll" (Software) — options: E14, E45, E27, E46
+
+=== RESPONSE (6.1s, in 2550 / out 295 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"post-exploitation payload and framework tool","p":null,"r":null},{"m":"M2","id":"E12","g":null,"p":null,"r":null},{"m":"M3","id":"NEW","g":"PowerShell script contained inside malicious ISO","p":null,"r":null},{"m":"M4","id":"NEW","g":"executable file contained inside malicious ISO","p":null,"r":null},{"m":"M5","id":"NEW","g":"malicious loader executable","p":null,"r":null},{"m":"M6","id":"NEW","g":"shortcut file contained inside malicious ISO","p":null,"r":null},{"m":"M7","id":"NEW","g":"malicious software framework or campaign tool","p":"E34","r":"b"},{"m":"M8","id":"NEW","g":"archive containing scanner utility","p":null,"r":null},{"m":"M9","id":"NEW","g":"self-extracting executable scanner archive","p":null,"r":null},{"m":"M10","id":"NEW","g":"executable component of CredoMap_v2","p":"E44","r":"p"},{"m":"M11","id":"NEW","g":"SQLite database interoperability library DLL","p":null,"r":null}]}

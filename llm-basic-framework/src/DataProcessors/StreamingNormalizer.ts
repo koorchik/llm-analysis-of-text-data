@@ -71,6 +71,55 @@ interface Params {
   /** How many canonicals one catch-up reviews — bounded so the ballot cannot grow with the registry. */
   skosCatchupWidth?: number;
   /**
+   * Put each unresolved mention's in-document family into its OPTIONS row: the top-N
+   * embedding-nearest co-mentions of the same category, prepended as `doc-sibling` candidates.
+   * 0 (default) disables. Motivated by the catch-up diagnosis: the judge asserts hierarchy
+   * parents it sees in a mention's own options row and, on large ballots, no other placement —
+   * catch-up's dense per-concept retrieval provided exactly this, and this knob provides it
+   * inside the document ballot, order-independently, at no extra LLM cost.
+   */
+  docSiblingK?: number;
+  /**
+   * Where the doc-siblings land: `options` mixes them into the identity options row (the first
+   * ablation — recall .806/.836/.768 across replicates and reverse order, but a cross-arch twin
+   * in the options occasionally displaces a true identity link); `kin` renders them as a
+   * `kin: E5, E9` annotation on the mention's row, keeping identity options byte-identical to a
+   * sibling-free arm. Default `kin`.
+   */
+  docSiblingMode?: 'options' | 'kin';
+  /**
+   * Fire one deterministic registry-wide review when `run()` finishes the stream: every concept
+   * of every kept scheme, in lexicographic chunks of `skosCatchupWidth` — the order-independent
+   * replacement for the growth-triggered catch-up. Off by default; `bin/app.ts` wires it from
+   * `SKOS_CONSOLIDATE=end`.
+   */
+  skosConsolidateAtEnd?: boolean;
+  /**
+   * Streaming-native re-ask: when a document re-mentions a concept that resolved exactly but has
+   * no broader edge yet, put it back on this document's ballot as a hierarchy-only row — its own
+   * canonical excluded from the options (the catch-up row shape), dense registry retrieval as
+   * candidates. Identity verdicts on these rows are ignored; only the parent half applies. The
+   * trigger is the stream itself re-mentioning the concept, so it needs no growth counter, no
+   * checkpoint, and no end of stream — every recurrence of a family is another chance to place
+   * it, where the one-shot NEW ballot had exactly one.
+   */
+  reaskParentless?: boolean;
+  /**
+   * The one-carry orphan rule: concepts minted by the PREVIOUS document that ended it without a
+   * broader edge ride the next document's ballot as hierarchy-only reask rows — once, and never
+   * again. One document later the whole co-minted family is in the registry, so dense retrieval
+   * can finally print the right parent into the row; a concept that still comes back parentless
+   * is dropped (the re-mention reask remains its only later chance). Bounded by construction:
+   * no queue, no counters, at most one retry per mint, ever.
+   */
+  reaskCarryOrphans?: boolean;
+  /**
+   * Send reask rows (re-mentioned and carried orphans) as a SEPARATE source-free "registry
+   * review" call instead of mixing them into the document ballot — the catch-up frame at
+   * document cadence. Costs one extra call only on documents that have reask rows.
+   */
+  reaskSplit?: boolean;
+  /**
    * Phase 2 of the synchronous per-document pipeline (T9's StreamingRepairer). Optional so
    * repairer-free arms and existing tests remain runnable; when present, `processFile` calls it
    * once this document's registry writes have landed — the repair pass sees a state it can trust.
@@ -124,7 +173,10 @@ interface MentionPlan {
   category: string; // canonical
   canonical?: string; // resolution result once known
   candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string }>;
-  action: 'resolved' | 'mint' | 'judge';
+  /** Embedding-near same-category co-mentions (doc-sibling kin mode), for the ballot's kin refs. */
+  kin?: string[];
+  /** `reask`: identity already resolved, on the ballot for the hierarchy question only. */
+  action: 'resolved' | 'mint' | 'judge' | 'reask';
   outcome?: JudgeOutcome;
 }
 
@@ -168,6 +220,17 @@ export class StreamingNormalizer {
   #embeddingsClient?: EmbeddingsClient;
   #skosCatchupEvery: number;
   #skosCatchupWidth: number;
+  #docSiblingK: number;
+  #docSiblingMode: 'options' | 'kin';
+  #skosConsolidateAtEnd: boolean;
+  #reaskParentless: boolean;
+  #reaskCarryOrphans: boolean;
+  #reaskSplit: boolean;
+  /** Parentless mints of the previous document, awaiting their single carried retry. */
+  #carryOrphans: Array<{ category: string; canonical: string }> = [];
+  /** Highest docId processed, so end-of-stream journal events carry a meaningful doc — max, not
+   *  last, so the label itself is arrival-order independent. */
+  #lastDocId = 0;
   /** Canonical count per category at its last catch-up, so the pass fires on growth, not per doc. */
   #catchUpAt = new Map<string, number>();
   #repairer?: Params['repairer'];
@@ -181,6 +244,12 @@ export class StreamingNormalizer {
     this.#embeddingsClient = params.embeddingsClient;
     this.#skosCatchupEvery = params.skosCatchupEvery ?? 25;
     this.#skosCatchupWidth = params.skosCatchupWidth ?? 40;
+    this.#docSiblingK = params.docSiblingK ?? 0;
+    this.#docSiblingMode = params.docSiblingMode ?? 'kin';
+    this.#skosConsolidateAtEnd = params.skosConsolidateAtEnd ?? false;
+    this.#reaskParentless = params.reaskParentless ?? false;
+    this.#reaskCarryOrphans = params.reaskCarryOrphans ?? false;
+    this.#reaskSplit = params.reaskSplit ?? false;
     this.#repairer = params.repairer;
     this.#fileOrder = params.fileOrder ?? sortByNumericId;
     this.#snippetMode = params.snippetMode ?? 'head';
@@ -208,6 +277,7 @@ export class StreamingNormalizer {
     for (const file of files) {
       await this.processFile(file);
     }
+    await this.#consolidateAtEnd();
   }
 
   async processFile(file: string): Promise<boolean> {
@@ -250,6 +320,7 @@ export class StreamingNormalizer {
       (await fs.readFile(inputFile)).toString()
     ) as StreamingExtraction;
     const docId = resolveDocId(extraction.metadata, file);
+    this.#lastDocId = Math.max(this.#lastDocId, docId);
     const docDate = String(extraction.metadata?.date || 'unknown');
 
     // ---- Phase A: read-only + LLM verdicts (no state mutation on failure) ----
@@ -295,29 +366,67 @@ export class StreamingNormalizer {
       }
     }
 
+    // The one-carry orphan rule: the previous document's parentless mints join this ballot as
+    // pre-marked reask rows (unless this document mentions them itself — the ordinary path then
+    // covers them). The carry list is consumed unconditionally: one retry per mint, ever.
+    if (this.#reaskCarryOrphans && this.#decisionStrategy) {
+      const mentioned = new Set(plans.map((plan) => mentionKey(plan.category, plan.entity.name)));
+      for (const orphan of this.#carryOrphans) {
+        if (mentioned.has(mentionKey(orphan.category, orphan.canonical))) continue;
+        // Merged away or placed since it was recorded — nothing left to ask.
+        if (this.#conceptRegistry.resolve(orphan.category, orphan.canonical) !== orphan.canonical) continue;
+        if (this.#conceptRegistry.broaderOf(orphan.category, orphan.canonical).length > 0) continue;
+        plans.push({
+          entity: { name: orphan.canonical, category: orphan.category, role: 'Neutral' },
+          category: orphan.category,
+          canonical: orphan.canonical,
+          candidates: [],
+          action: 'reask',
+        });
+      }
+      this.#carryOrphans = [];
+    }
+
     // Exact fast path, then candidates
     for (const plan of plans) {
-      const resolved = this.#conceptRegistry.resolve(plan.category, plan.entity.name);
-      if (resolved) {
-        plan.canonical = resolved;
-        plan.action = 'resolved';
-        continue;
+      if (plan.action !== 'reask') {
+        const resolved = this.#conceptRegistry.resolve(plan.category, plan.entity.name);
+        if (resolved) {
+          plan.canonical = resolved;
+          // Re-ask (streaming-native): a re-mentioned concept with no broader edge yet goes back
+          // on the ballot as a hierarchy-only row — the stream re-mentioning it IS the trigger.
+          if (
+            this.#reaskParentless &&
+            this.#decisionStrategy &&
+            this.#conceptRegistry.broaderOf(plan.category, resolved).length === 0
+          ) {
+            plan.action = 'reask';
+          } else {
+            plan.action = 'resolved';
+            continue;
+          }
+        }
       }
       // M4: candidate generation moved out of the registry behind the CandidateGenerator port, so
       // the E2/E4 arms can swap blockers without touching this orchestration.
       const generated = await this.#candidateGenerator.candidates({
-        mention: plan.entity.name,
+        mention: plan.action === 'reask' ? plan.canonical! : plan.entity.name,
         category: plan.category,
         k: this.#candidateK,
         minSim: this.#candidateMinSim,
         docId,
       });
-      plan.candidates = generated.map((candidate) => ({
-        name: candidate.canonical,
-        sim: candidate.sim,
-        aliases: candidate.surfaces,
-        channel: candidate.channel,
-      }));
+      plan.candidates = generated
+        // A reask row never offers the concept itself — its own name is an exact match, which
+        // would make the verdict a no-op (same rule as the catch-up ballot).
+        .filter((candidate) => plan.action !== 'reask' || candidate.canonical !== plan.canonical)
+        .map((candidate) => ({
+          name: candidate.canonical,
+          sim: candidate.sim,
+          aliases: candidate.surfaces,
+          channel: candidate.channel,
+        }));
+      if (plan.action === 'reask') continue;
       // Zero-candidate mentions historically minted without a judge call — silently skipping the
       // hierarchy question. With judgeUnresolved (strategy path only) they go on the ballot too:
       // identity is trivially NEW, but the parent can come from the shared pool (co-mentions).
@@ -327,28 +436,56 @@ export class StreamingNormalizer {
           : 'mint';
     }
 
+    if (this.#docSiblingK > 0 && this.#embeddingsClient) {
+      await this.#augmentWithDocSiblings(plans);
+    }
+
     // Link-judge: ONE batched call for all unresolved mentions with candidates.
     // Dedupe by (category, lowercased name) — the same mention may appear with several roles.
     const judgeBatch = new Map<string, MentionPlan>();
+    // Reask rows in their own source-free call (`reaskSplit`): a carried/re-asked concept's
+    // question is answered from knowledge, and the document frame measurably suppresses exactly
+    // those answers (gemma asserted MS Word→MS Office on every catch-up row and on none of the
+    // same rows inside a document ballot). The split reproduces the catch-up frame — review
+    // title, no source, pool of the reask rows' own dense candidates — at document cadence.
+    const reaskBatch = new Map<string, MentionPlan>();
     for (const plan of plans) {
-      if (plan.action !== 'judge') continue;
+      if (plan.action !== 'judge' && plan.action !== 'reask') continue;
+      const target = this.#reaskSplit && plan.action === 'reask' ? reaskBatch : judgeBatch;
       const key = mentionKey(plan.category, plan.entity.name);
-      if (!judgeBatch.has(key)) judgeBatch.set(key, plan);
+      if (!target.has(key)) target.set(key, plan);
     }
 
-    if (judgeBatch.size > 0) {
+    if (judgeBatch.size > 0 || reaskBatch.size > 0) {
       // M6: the decision stage is a port. With no strategy injected this uses the built-in
       // `link-judge` path — the SKEIN v2 three-verdict judge since 2026-08-04.
-      const outcomeMap = this.#decisionStrategy
-        ? await this.#strategyJudge([...judgeBatch.values()], extraction, docId, file)
-        : await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
+      const outcomeMap =
+        judgeBatch.size === 0
+          ? new Map<string, JudgeOutcome>()
+          : this.#decisionStrategy
+            ? await this.#strategyJudge([...judgeBatch.values()], extraction, docId, file)
+            : await this.#linkJudge([...judgeBatch.values()], extraction, docId, file);
+      if (reaskBatch.size > 0 && this.#decisionStrategy) {
+        const reviewOutcomes = await this.#strategyJudge(
+          [...reaskBatch.values()],
+          extraction,
+          docId,
+          file,
+          'review'
+        );
+        for (const [key, outcome] of reviewOutcomes) outcomeMap.set(key, outcome);
+      }
 
       for (const plan of plans) {
-        if (plan.action !== 'judge') continue;
+        if (plan.action !== 'judge' && plan.action !== 'reask') continue;
         const outcome = outcomeMap.get(mentionKey(plan.category, plan.entity.name));
         if (outcome) {
           plan.outcome = outcome;
-          if (outcome.kind === 'link' && outcome.target) plan.canonical = outcome.target;
+          // A reask row's identity is already resolved — a link verdict there is ignored, only
+          // the hierarchy half applies (Phase B).
+          if (plan.action === 'judge' && outcome.kind === 'link' && outcome.target) {
+            plan.canonical = outcome.target;
+          }
         } // else: judge failed or dropped the mention — stays a mint
       }
     }
@@ -364,8 +501,31 @@ export class StreamingNormalizer {
       type: 'broaderGeneric' | 'broaderPartitive' | 'broaderInstantial';
       evidence: string | null;
     }> = [];
+    // Which canonicals THIS document minted — the candidates for the one-carry orphan rule.
+    const mintedNow = new Set<string>();
 
     for (const plan of plans) {
+      if (plan.action === 'reask') {
+        // Identity was resolved before the ballot; only the hierarchy half of the verdict
+        // applies. No registry identity mutation, no decision event — the row exists to give a
+        // parentless concept another shot at placement each time the stream re-mentions it.
+        const outcome = plan.outcome;
+        if (
+          outcome?.parentCandidate &&
+          outcome.broaderType &&
+          outcome.parentCandidate !== plan.canonical
+        ) {
+          const broaderSide = Boolean(outcome.mentionIsBroader);
+          pendingEdges.push({
+            category: plan.category,
+            narrower: broaderSide ? outcome.parentCandidate : plan.canonical!,
+            broader: broaderSide ? plan.canonical! : outcome.parentCandidate,
+            type: outcome.broaderType,
+            evidence: outcome.reasoning ?? null,
+          });
+        }
+        continue;
+      }
       if (plan.canonical && plan.action !== 'resolved') {
         // link verdict
         this.#conceptRegistry.link(plan.category, plan.canonical, plan.entity.name, {
@@ -403,6 +563,7 @@ export class StreamingNormalizer {
           category: plan.category,
           canonical: plan.canonical,
         });
+        mintedNow.add(mentionKey(plan.category, plan.canonical));
 
         // A mint may carry a validated related entity — the "hard non-merge plus a connecting
         // edge" outcome. Held until every plan in this document has been written, because either
@@ -505,6 +666,21 @@ export class StreamingNormalizer {
       }
     }
 
+    // One-carry orphan rule, recording half: this document's mints that got no broader edge are
+    // remembered for a single retry on the NEXT document's ballot. Runs after the pending edges
+    // landed, so a mint placed above is never carried.
+    if (this.#reaskCarryOrphans) {
+      const orphans = new Map<string, { category: string; canonical: string }>();
+      for (const plan of plans) {
+        if (!plan.canonical) continue;
+        const key = mentionKey(plan.category, plan.canonical);
+        if (!mintedNow.has(key) || orphans.has(key)) continue;
+        if (this.#conceptRegistry.broaderOf(plan.category, plan.canonical).length > 0) continue;
+        orphans.set(key, { category: plan.category, canonical: plan.canonical });
+      }
+      this.#carryOrphans = [...orphans.values()];
+    }
+
     // Stamp entities
     for (const plan of plans) {
       plan.entity.category = plan.category;
@@ -582,17 +758,27 @@ export class StreamingNormalizer {
     batch: MentionPlan[],
     extraction: StreamingExtraction,
     docId: number,
-    file: string
+    file: string,
+    mode: 'doc' | 'review' = 'doc'
   ): Promise<Map<string, JudgeOutcome>> {
     const strategy = this.#decisionStrategy!;
-    const title = String(extraction.metadata?.title || 'untitled');
+    // Review mode (`reaskSplit`): the catch-up frame — a registry-review title, no source
+    // evidence — because the document frame suppresses exactly the knowledge-only hierarchy
+    // answers these rows exist to collect.
+    const title =
+      mode === 'review'
+        ? `registry review at ${Object.keys(this.#conceptRegistry.concepts(batch[0]?.category ?? '')).length} canonicals`
+        : String(extraction.metadata?.title || 'untitled');
     const perMention =
-      this.#snippetMode === 'per-mention'
+      mode === 'doc' && this.#snippetMode === 'per-mention'
         ? await this.#indexedSnippet(file, batch.map((plan) => plan.entity.name))
         : null;
-    const snippet = perMention
-      ? perMention.evidence
-      : await this.#loadSnippet(file, batch.map((plan) => plan.entity.name));
+    const snippet =
+      mode === 'review'
+        ? ''
+        : perMention
+          ? perMention.evidence
+          : await this.#loadSnippet(file, batch.map((plan) => plan.entity.name));
 
     // Every entity this document has put on the table: the candidates retrieved for any mention,
     // plus the other mentions being decided in this same call. A mention minted here can be the
@@ -620,6 +806,7 @@ export class StreamingNormalizer {
       ...(perMention?.refs.get(plan.entity.name.trim().toLowerCase())
         ? { contextRef: perMention.refs.get(plan.entity.name.trim().toLowerCase()) }
         : {}),
+      ...(plan.kin?.length ? { kinRefs: plan.kin } : {}),
       // A mention is never its own parent, and the registry stores edges within one category, so
       // the shared pool is filtered per request.
       pool: [...pool.entries()]
@@ -861,6 +1048,64 @@ export class StreamingNormalizer {
 
 
   /**
+   * The `docSiblingK` augmentation: top-N embedding-nearest same-category co-mentions, prepended
+   * to each unresolved mention's candidate row as `doc-sibling` options.
+   *
+   * The catch-up diagnosis behind it (2026-08-22): across every arm, the judge asserted hierarchy
+   * parents that sat inside a mention's own options row and — on large ballots — nowhere else,
+   * however forcefully the prompt pointed at the shared entity list (reverse-order doc 3028: the
+   * judge wrote "Chromium-based web browser" as fifteen glosses and answered fifteen null
+   * parents, with Chromium sitting at E74). Catch-up escaped this because its per-concept dense
+   * retrieval put the family into the options; this puts it there inside the document's own
+   * ballot, which co-mentions the family in the first place. Prepended, not appended, so the row
+   * survives the LISTWISE_K cut; identity stays with the name-form rules — every catch-up run
+   * showed family-in-options yields NEW + parent, not a false link.
+   */
+  async #augmentWithDocSiblings(plans: MentionPlan[]): Promise<void> {
+    const open = plans.filter((plan) => plan.action === 'judge');
+    if (open.length < 2) return;
+    const vectors = await this.#embeddingsClient!.embed(
+      open.map((plan) => plan.entity.name),
+      { operator: 'doc-sibling' }
+    );
+    const normalized = vectors.map((vector) => l2Normalize(vector));
+
+    open.forEach((plan, i) => {
+      const self = plan.entity.name.toLowerCase();
+      const bySibling = new Map<string, { name: string; sim: number }>();
+      open.forEach((other, j) => {
+        if (i === j || other.category !== plan.category) return;
+        const key = other.entity.name.toLowerCase();
+        if (key === self) return;
+        const sim = cosineNormalized(normalized[i], normalized[j]);
+        const seen = bySibling.get(key);
+        if (sim >= 0.5 && (!seen || sim > seen.sim)) {
+          bySibling.set(key, { name: other.entity.name, sim });
+        }
+      });
+      const have = new Set(plan.candidates.map((candidate) => candidate.name.toLowerCase()));
+      const picked = [...bySibling.values()]
+        .filter((sibling) => !have.has(sibling.name.toLowerCase()))
+        .sort((a, b) => b.sim - a.sim)
+        .slice(0, this.#docSiblingK);
+      if (!picked.length) return;
+      if (this.#docSiblingMode === 'kin') {
+        plan.kin = picked.map((sibling) => sibling.name);
+        return;
+      }
+      plan.candidates = [
+        ...picked.map((sibling) => ({
+          name: sibling.name,
+          sim: sibling.sim,
+          aliases: [sibling.name],
+          channel: 'doc-sibling',
+        })),
+        ...plan.candidates,
+      ];
+    });
+  }
+
+  /**
    * Registry-wide review of a category, reusing the ordinary graph judge.
    *
    * The per-document judge only ever sees one report. This pass is the run's category-wide view,
@@ -881,11 +1126,68 @@ export class StreamingNormalizer {
    *    beyond the alias/transliteration evidence a real document sometimes supplies.
    */
   async #skosCatchUp(category: string, docId: number): Promise<void> {
-    if (!this.#decisionStrategy) return;
-
     const canonicals = Object.keys(this.#conceptRegistry.concepts(category));
     if (canonicals.length < 2) return;
-    const sample = spreadSample(canonicals, this.#skosCatchupWidth);
+    await this.#reviewConcepts(
+      category,
+      spreadSample(canonicals, this.#skosCatchupWidth),
+      docId,
+      'skos-catch-up'
+    );
+  }
+
+  /**
+   * Deterministic end-of-stream consolidation — the order-independent replacement for the
+   * growth-triggered catch-up (campaign log 2026-08-22 §5.1).
+   *
+   * Same review machinery as `#skosCatchUp`, with its two order-dependent parameters fixed: the
+   * trigger is the end of the stream instead of canonical-count growth (so WHETHER it fires no
+   * longer depends on arrival order), and the sample is EVERY concept of each scheme, chunked
+   * into `skosCatchupWidth`-sized passes over a lexicographically sorted list (so WHAT it reviews
+   * no longer depends on arrival order either). Chunks run against the live registry, so a
+   * concept merged away by an earlier chunk is skipped rather than reviewed twice.
+   *
+   * The re-ask is the guarantee the per-document ballot cannot give: whichever order the stream
+   * arrived in, at the end the whole family is in the registry and dense per-concept retrieval
+   * puts each member's relatives into its options row — the one placement the judge has asserted
+   * hierarchy from in every measured run.
+   */
+  async #consolidateAtEnd(): Promise<void> {
+    if (!this.#skosConsolidateAtEnd || !this.#decisionStrategy) return;
+    await this.#schemaRegistry.load();
+    await this.#conceptRegistry.load();
+    if (!this.#generatorPrepared) {
+      await this.#candidateGenerator.prepare(this.#conceptRegistry.snapshot());
+      this.#generatorPrepared = true;
+    }
+
+    for (const category of this.#conceptRegistry.conceptSchemes()) {
+      if (this.#categories && !this.#categories.has(category)) continue;
+      const canonicals = Object.keys(this.#conceptRegistry.concepts(category)).sort();
+      if (canonicals.length < 2) continue;
+      for (let start = 0; start < canonicals.length; start += this.#skosCatchupWidth) {
+        const chunk = canonicals
+          .slice(start, start + this.#skosCatchupWidth)
+          .filter((name) => this.#conceptRegistry.resolve(category, name) === name);
+        if (chunk.length < 2) continue;
+        await this.#reviewConcepts(category, chunk, this.#lastDocId, 'skos-consolidate');
+      }
+    }
+    // The per-document save has already passed by the time this runs.
+    await this.#conceptRegistry.save();
+  }
+
+  /** The shared review body behind `#skosCatchUp` and `#consolidateAtEnd` — see `#skosCatchUp`'s
+   *  doc comment for the three deliberate differences from a document pass. `by` labels the
+   *  journal events and doubles as the summary op. */
+  async #reviewConcepts(
+    category: string,
+    sample: string[],
+    docId: number,
+    by: 'skos-catch-up' | 'skos-consolidate'
+  ): Promise<void> {
+    if (!this.#decisionStrategy) return;
+    const total = Object.keys(this.#conceptRegistry.concepts(category)).length;
 
     const requests: DecisionRequest[] = [];
     for (const canonical of sample) {
@@ -902,7 +1204,7 @@ export class StreamingNormalizer {
         mention: canonical,
         category,
         docId,
-        docTitle: `registry review at ${canonicals.length} canonicals`,
+        docTitle: `registry review at ${total} canonicals`,
         pool: options.map((candidate) => ({
           canonical: candidate.canonical,
           surfaces: candidate.surfaces,
@@ -921,7 +1223,7 @@ export class StreamingNormalizer {
     try {
       decisions = await this.#decisionStrategy.decide(requests);
     } catch (error) {
-      console.error(`SKOS CATCH-UP failed for ${category}:`, error);
+      console.error(`SKOS REVIEW (${by}) failed for ${category}:`, error);
       return;
     }
     if (decisions.length !== requests.length) return;
@@ -964,7 +1266,7 @@ export class StreamingNormalizer {
           category,
           from: merge.from,
           into: merge.into,
-          by: 'skos-catch-up',
+          by,
           evidence: merge.evidence ?? null,
         });
       }
@@ -1003,14 +1305,14 @@ export class StreamingNormalizer {
           broader,
           type: edge.type,
           similarityScore,
-          by: 'skos-catch-up',
+          by,
           evidence: edge.evidence,
         });
       }
     }
 
     await this.#decisionLog.log({
-      op: 'skos-catch-up',
+      op: by,
       doc: docId,
       category,
       reviewed: requests.length,

@@ -119,6 +119,21 @@ const CONFIG = {
     process.env.SKOS_CATCHUP_EVERY === undefined ? 25 : Number(process.env.SKOS_CATCHUP_EVERY),
   skosCatchupWidth:
     process.env.SKOS_CATCHUP_WIDTH === undefined ? 40 : Number(process.env.SKOS_CATCHUP_WIDTH),
+  // Doc-sibling options: put each unresolved mention's top-N embedding-nearest co-mentions into
+  // its options row (0 disables). Folds into the runId like every ballot-shaping knob.
+  docSiblingK: process.env.DOC_SIBLINGS === undefined ? 0 : Number(process.env.DOC_SIBLINGS),
+  docSiblingMode: (process.env.DOC_SIBLINGS_MODE ?? 'kin') as 'options' | 'kin',
+  // End-of-stream consolidation: SKOS_CONSOLIDATE=end fires one deterministic registry-wide
+  // review after the last document, replacing the growth-triggered catch-up.
+  skosConsolidateAtEnd: process.env.SKOS_CONSOLIDATE === 'end',
+  // Streaming-native re-ask: a re-mentioned concept with no broader edge yet goes back on the
+  // document's ballot as a hierarchy-only row.
+  reaskParentless: process.env.REASK_PARENTLESS === '1',
+  // One-carry orphan rule: the previous document's parentless mints get a single retry row on
+  // the next document's ballot.
+  reaskCarryOrphans: process.env.REASK_CARRY === '1',
+  // Reask rows as their own source-free registry-review call (the catch-up frame at doc cadence).
+  reaskSplit: process.env.REASK_SPLIT === '1',
 
   // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
@@ -223,7 +238,13 @@ async function main() {
       skos: {
         catchupEvery: CONFIG.skosCatchupEvery,
         catchupWidth: CONFIG.skosCatchupWidth,
+        consolidateAtEnd: CONFIG.skosConsolidateAtEnd,
       },
+      reaskParentless: CONFIG.reaskParentless,
+      reaskCarryOrphans: CONFIG.reaskCarryOrphans,
+      reaskSplit: CONFIG.reaskSplit,
+      docSiblingK: CONFIG.docSiblingK,
+      docSiblingMode: CONFIG.docSiblingMode,
       snippetMode: CONFIG.snippetMode,
       judgeUnresolved: CONFIG.judgeUnresolved,
       // T9 repair pass: on/off and every threshold/knob that changes what it does. REPAIR=0 (the
@@ -616,6 +637,12 @@ function createProcessors(
     embeddingsClient,
     skosCatchupEvery: CONFIG.skosCatchupEvery,
     skosCatchupWidth: CONFIG.skosCatchupWidth,
+    docSiblingK: CONFIG.docSiblingK,
+    docSiblingMode: CONFIG.docSiblingMode,
+    skosConsolidateAtEnd: CONFIG.skosConsolidateAtEnd,
+    reaskParentless: CONFIG.reaskParentless,
+    reaskCarryOrphans: CONFIG.reaskCarryOrphans,
+    reaskSplit: CONFIG.reaskSplit,
     decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
     // M5: previously hardcoded to StringSimilarityGenerator inside the normalizer, which left every
     // generator M4 shipped with no live caller.

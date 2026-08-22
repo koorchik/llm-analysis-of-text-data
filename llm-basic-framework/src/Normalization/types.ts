@@ -165,6 +165,15 @@ export interface DecisionRequest {
    */
   contextRef?: string;
   /**
+   * This mention's nearest same-category co-mentions by embedding (doc-sibling kin mode):
+   * canonical surface names, rendered on the mention's ballot row as `kin: E5, E9` references.
+   * Kin are candidate relatives for the hierarchy question, deliberately NOT identity options —
+   * the options-mode ablation showed a cross-arch twin in the options row costs identity links
+   * (shellcode.x64.bin ↛ shellcode.x64) while the row-presence is what makes the judge assert
+   * the family edge.
+   */
+  kinRefs?: string[];
+  /**
    * Entities this document already knows about, offered as possible **parents**: every candidate
    * surfaced for any mention in the batch, plus the other mentions being decided alongside it.
    *

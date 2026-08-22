@@ -1,0 +1,131 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. You answer two independent questions: first, for every mention, which entity it is; then, for the entity list as a whole, which hierarchy edges hold between the listed entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `e` — hierarchy edges
+
+When the identities are decided, put the mentions aside and review the entity list `E1…En` as a whole, the way a thesaurus editor reviews a registry: list every pair where one listed entity is genuinely narrower than another. This question is answered from what the entities ARE — your general knowledge of them — not from the source text; the source does not need to state the relation. Options rows play no part here: any listed entity may pair with any other.
+
+Each edge is `{"n": <narrower E number>, "b": <broader E number>, "r": <relation>}` with `r` one of:
+
+- `"v"` — `n` is `b` **with a qualifier added**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision.
+- `"n"` — `n` is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — `n` is a distinct component, member, or subdivision of `b`.
+
+Prefer the **narrowest** `b` genuinely broader than `n`, one edge per `n`. Work through the whole list — when several listed entities are versions, derivatives, components, or members of one base product that is also listed, each of them gets an edge to it; a run of siblings is the commonest case, not an exception. Omit pairs that are merely topical, and pairs whose relation you cannot name — a missing edge is recoverable, a wrong one distorts every later rollup. Never `n` equal to `b`. An empty list is valid.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy edges never depend on the source.
+
+Output one raw JSON object, no markdown fences, no commentary — one `v` entry per mention in order, then the `e` list:
+{"v":[{"m":"M1","id":"E3","g":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}],"e":[{"n":"E7","b":"E1","r":"v"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Entities:
+E1. SRP
+E2. FTPGetter
+E3. spi.exe
+E4. MS Excel
+E5. Sputnik Browser
+E6. Mozilla Firefox
+E7. AppLocker
+E8. .NET Framework
+E9. pfSense
+E10. Petya
+E11. Foxmail
+E12. IceDragon
+E13. Agent Tesla [aka AgentTesla]
+E14. GammaSteel.NET
+E15. Microsoft Exchange Server
+E16. FileZilla
+E17. HarvesterX
+E18. ChakraCore
+E19. vaultcli.dll
+E20. SQLite.Interop.dll
+E21. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin]
+E22. wscript.exe
+E23. loader.exe
+E24. CCleaner.exe
+E25. rfusclient.exe
+E26. CCleaner.rar
+E27. rundll32.exe
+E28. Google Chrome
+E29. ChromePlus Browser
+E30. Chromium Browser
+E31. 360Chrome Browser
+E32. Brave Browser
+E33. 7Star Browser
+E34. Amigo Browser
+E35. Uran Browser
+E36. Internet Explorer
+E37. powershell.exe [aka PowerShell (powershell.exe), PowerShell]
+E38. Double Kill
+E39. Postbox Credential
+E40. scan.exe (CredoMap_v2)
+E41. scandoc.exe
+E42. Win32k
+E43. Paltalk
+E44. Microsoft Outlook
+E45. wsuscr.exe
+E46. b.exe
+E47. VBScript
+E48. QuasarRAT
+E49. AutoIt
+E50. MCMDiction.exe
+E51. Remote Utilities [aka RemoteUtilities]
+E52. Microsoft Equation Editor
+E53. Remote Utilities - Host
+E54. Cobalt Strike Beacon
+E55. WinSCP
+E56. FIRMACHAGENT
+E57. IDCLIPNET_x86.dll
+E58. chrome_updater.dll
+E59. Browser.dll
+E60. Files.dll
+E61. Screen.dll
+E62. Social.dll
+E63. USB.dll
+E64. JavaScript
+E65. Software Restriction Policies (SRP)
+E66. SPECTR
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E11, E12, E13, E6
+M3. "IDCLIPNET_x86.dll" (Software) — options: E19, E20, E21, E22
+M4. "chrome_updater.dll" (Software) — options: E19, E28, E29, E23
+M5. "Browser.dll" (Software) — options: E19, E31, E32, E23
+M6. "Files.dll" (Software) — options: E19, E16, E23, E20
+M7. "Screen.dll" (Software) — options: E19, E22, E20, E23
+M8. "Social.dll" (Software) — options: E19, E23, E20, E22
+M9. "USB.dll" (Software) — options: E19, E22, E20, E23
+M10. "JavaScript" (Software) — options: E18, E47, E6, E48
+M11. "Software Restriction Policies (SRP)" (Software) — options: E1, E50, E9, E51
+
+=== RESPONSE (7.7s, in 2254 / out 396 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"malware tool used in cyber attack"},{"m":"M2","id":"NEW","g":"new malware tool identified in cyber attack"},{"m":"M3","id":"NEW","g":"malicious dynamic link library component"},{"m":"M4","id":"NEW","g":"malicious dynamic link library component"},{"m":"M5","id":"NEW","g":"malware dynamic link library module"},{"m":"M6","id":"NEW","g":"malware dynamic link library module"},{"m":"M7","id":"NEW","g":"malware dynamic link library module"},{"m":"M8","id":"NEW","g":"malware dynamic link library module"},{"m":"M9","id":"NEW","g":"malware dynamic link library module"},{"m":"M10","id":"NEW","g":"scripting language code inside HTML file"},{"m":"M11","id":"E1","g":null}],"e":[{"n":"E65","b":"E1","r":"v"},{"n":"E21","b":"E54","r":"p"},{"n":"E53","b":"E51","r":"p"},{"n":"E12","b":"E6","r":"n"},{"n":"E28","b":"E30","r":"n"},{"n":"E29","b":"E30","r":"n"},{"n":"E31","b":"E30","r":"n"},{"n":"E32","b":"E30","r":"n"},{"n":"E33","b":"E30","r":"n"},{"n":"E34","b":"E30","r":"n"},{"n":"E35","b":"E30","r":"n"},{"n":"E18","b":"E64","r":"n"}]}

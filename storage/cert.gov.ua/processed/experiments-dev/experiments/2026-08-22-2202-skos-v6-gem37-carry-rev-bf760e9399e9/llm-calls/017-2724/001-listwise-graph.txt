@@ -1,0 +1,270 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "Microsoft випустила оновлення, які усувають велику кількість вразливостей." — evidence: <p>Microsoft випустила оновлення, які усувають велику кількість вразливостей, серед яких присутні вразливості нульового дня (zero-day vulnerabilities), які вже експлуатуються хакерськими угрупуваннями.</p><p><a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/a82328f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</
+Entities:
+E1. Mozilla Firefox
+E2. CCleaner.exe
+E3. SQLite.Interop.dll
+E4. Iridium Browser
+E5. Meterpreter
+E6. GammaSteel.NET
+E7. Google Chrome
+E8. installer.exe
+E9. Microsoft Outlook
+E10. Mikrotik
+E11. MISP
+E12. wscript.exe
+E13. Software Restriction Policies (SRP) [aka SRP]
+E14. ConfuserEx
+E15. Opera Browser
+E16. WinSCP
+E17. Chedot Browser
+E18. Citrio Browser
+E19. scandoc.exe
+E20. rfusclient.exe
+E21. MCMDiction.exe
+E22. IceDragon
+E23. Cobalt Strike Beacon
+E24. WS_FTP
+E25. Postbox Credential
+E26. AppLocker
+E27. Remote Utilities - Host
+E28. rutserv.exe
+E29. Trillian
+E30. FIRMACHAGENT
+E31. Thunderbird
+E32. YARA
+E33. CentBrowser
+E34. pfSense
+E35. Comodo Dragon Browser
+E36. jDownloader
+E37. plan_dsns.gov.ua.rar
+E38. Torch Browser
+E39. AgentTesla [aka Agent Tesla]
+E40. Uran Browser
+E41. SmartAssembly .NET [aka SmartAssembly]
+E42. IDCLIPNET_x86.dll
+E43. UkrScanner.rar
+E44. CCleaner.rar
+E45. SIEM
+E46. host_news_mod_mod.msi
+E47. shellcode.x64 (Cobalt Strike Beacon)
+E48. JavaScript
+E49. wsuscr.exe
+E50. QuasarRAT
+E51. Screen.dll
+E52. 360Chrome Browser
+E53. rundll32.exe
+E54. 7Star Browser
+E55. FileZilla
+E56. write.exe
+E57. Coowon Browser
+E58. Claws Mail
+E59. Yandex Browser
+E60. Browser.dll
+E61. shellcode.x64.bin
+E62. chrome_updater.dll
+E63. CredoMap_v2
+E64. GammaLoad.PS1
+E65. stage1.ps1
+E66. shellcode.x86.bin
+E67. killself.bat
+E68. Files.dll
+E69. vaultcli.dll
+E70. z.ps1
+E71. b.exe
+E72. HarvesterX
+E73. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E74. loader.exe
+E75. PowerShell [aka PowerShell (powershell.exe), powershell.exe]
+E76. USB.dll
+E77. SmartFTP
+E78. install.msi
+E79. FTP Commander
+E80. Chromium Browser
+E81. ChromePlus Browser
+E82. CocCoc Browser
+E83. Foxmail
+E84. Sputnik Browser
+E85. Amigo Browser
+E86. Brave Browser
+E87. Orbitum Browser
+E88. Vivaldi Browser
+E89. Kometa Browser
+E90. Elements Browser
+E91. Liebao Browser
+E92. Opera Mail
+E93. Pocomail
+E94. CCleaner.zip
+E95. scan.exe (CredoMap_v2)
+E96. Social.dll
+E97. OpenVPN
+E98. Paltalk
+E99. RemcosRAT [aka Remcos]
+E100. shellcode.x86 (Cobalt Strike Beacon)
+E101. TRYxaEbX
+E102. SPECTR
+E103. FTPGetter
+E104. stage2.ps1
+E105. RemoteUtilities [aka Remote Utilities]
+E106. Microsoft Edge
+E107. Microsoft Windows
+E108. Microsoft Office
+E109. Microsoft Office Services and Web Apps
+E110. ChakraCore
+E111. Adobe Flash Player
+E112. .NET Framework
+E113. Microsoft Exchange Server
+E114. Windows Host Compute Service Shim
+E115. VBScript
+E116. Win32k
+E117. Windows 7
+E118. Windows Server 2008
+E119. CVE-2018-8174
+E120. Double Kill
+E121. CVE-2018-8120
+E122. CVE-2018-0854
+E123. CVE-2018-0958
+E124. CVE-2018-8124
+E125. CVE-2018-8127
+E126. CVE-2018-8129
+E127. CVE-2018-8132
+E128. CVE-2018-8134
+E129. CVE-2018-8136
+E130. CVE-2018-8141
+E131. CVE-2018-8170
+E132. CVE-2018-8897
+E133. RegAsm.exe
+E134. Epic Privacy Browser
+E135. QIP Surf Browser
+E136. Becky!
+E137. Internet Explorer
+Mentions:
+M1. "Internet Explorer" (Software) — options: E1, E2, E3, E4
+M2. "Microsoft Edge" (Software) — options: E9, E137, E10, E11
+M3. "Microsoft Windows" (Software) — options: E9, E16, E10, E137
+M4. "Microsoft Office" (Software) — options: E9, E137, E10, E11
+M5. "Microsoft Office Services and Web Apps" (Software) — options: E9, E23, E24, E22
+M6. "ChakraCore" (Software) — options: E29, E22, E30, E31
+M7. "Adobe Flash Player" (Software) — options: E1, E36, E37, E137
+M8. ".NET Framework" (Software) — options: E20, E6, E3, E41
+M9. "Microsoft Exchange Server" (Software) — options: E9, E137, E1, E43
+M10. "Windows Host Compute Service Shim" (Software) — options: E45, E9, E27, E16
+M11. "VBScript" (Software) — options: E16, E48, E12, E24
+M12. "Win32k" (Software) — options: E16, E137, E10, E52
+M13. "Windows 7" (Software) — options: E137, E16, E9, E33
+M14. "Windows Server 2008" (Software) — options: E16, E60, E20, E14
+M15. "CVE-2018-8174" (Software) — options: E61, E33, E52, E62
+M16. "Double Kill" (Software) — options: E31, E55, E67, E68
+M17. "CVE-2018-8120" (Software) — options: E64, E63, E52, E30
+M18. "CVE-2018-0854" (Software) — options: E39, E33, E52, E50
+M19. "CVE-2018-0958" (Software) — options: E64, E33, E52, E70
+M20. "CVE-2018-8124" (Software) — options: E70, E63, E73, E62
+M21. "CVE-2018-8127" (Software) — options: E70, E63, E52, E64
+M22. "CVE-2018-8129" (Software) — options: E70, E63, E52, E64
+M23. "CVE-2018-8132" (Software) — options: E62, E63, E52, E70
+M24. "CVE-2018-8134" (Software) — options: E70, E33, E52, E62
+M25. "CVE-2018-8136" (Software) — options: E62, E33, E52, E71
+M26. "CVE-2018-8141" (Software) — options: E70, E33, E52, E71
+M27. "CVE-2018-8170" (Software) — options: E64, E33, E52, E66
+M28. "CVE-2018-8897" (Software) — options: E72, E33, E52, E71
+M29. "RegAsm.exe" (Software) — options: E20, E2, E71, E8
+M30. "vaultcli.dll" (Software) — options: E3, E60, E20, E68
+M31. "WinSCP" (Software) — options: E24, E11, E8, E77
+M32. "Google Chrome" (Software) — options: E80, E62, E52, E1
+M33. "Mozilla Firefox" (Software) — options: E15, E14, E55, E7
+M34. "Microsoft Outlook" (Software) — options: E137, E10, E11, E1
+M35. "IceDragon" (Software) — options: E31, E30, E35, E57
+M36. "Yandex Browser" (Software) — options: E84, E85, E86, E52
+M37. "Iridium Browser" (Software) — options: E84, E80, E52, E87
+M38. "Epic Privacy Browser" (Software) — options: E86, E18, E88, E52
+M39. "Chromium Browser" (Software) — options: E7, E81, E4, E52
+M40. "7Star Browser" (Software) — options: E84, E40, E86, E52
+M41. "Torch Browser" (Software) — options: E84, E82, E86, E52
+M42. "ChromePlus Browser" (Software) — options: E80, E52, E7, E54
+M43. "Kometa Browser" (Software) — options: E35, E15, E52, E84
+M44. "Amigo Browser" (Software) — options: E86, E17, E18, E52
+M45. "Brave Browser" (Software) — options: E80, E40, E60, E52
+M46. "CentBrowser" (Software) — options: E80, E17, E90, E18
+M47. "Liebao Browser" (Software) — options: E57, E18, E85, E52
+M48. "Elements Browser" (Software) — options: E80, E89, E33, E52
+M49. "Vivaldi Browser" (Software) — options: E80, E54, E86, E52
+M50. "Citrio Browser" (Software) — options: E4, E91, E85, E52
+M51. "360Chrome Browser" (Software) — options: E80, E81, E54, E7
+M52. "Uran Browser" (Software) — options: E87, E86, E57, E52
+M53. "Chedot Browser" (Software) — options: E80, E33, E52, E84
+M54. "Orbitum Browser" (Software) — options: E15, E4, E80, E52
+M55. "Sputnik Browser" (Software) — options: E59, E18, E86, E52
+M56. "Comodo Dragon Browser" (Software) — options: E89, E57, E22, E52
+M57. "CocCoc Browser" (Software) — options: E57, E52, E84, E17
+M58. "QIP Surf Browser" (Software) — options: E84, E15, E86, E52
+M59. "Coowon Browser" (Software) — options: E82, E35, E52, E17
+M60. "Opera Browser" (Software) — options: E87, E89, E92, E88
+M61. "Thunderbird" (Software) — options: E1, E3, E79, E9
+M62. "Claws Mail" (Software) — options: E93, E92, E83, E9
+M63. "Postbox Credential" (Software) — options: E93, E51, E63, E83
+M64. "Foxmail" (Software) — options: E93, E1, E58, E92
+M65. "Opera Mail" (Software) — options: E15, E58, E83, E93
+M66. "Pocomail" (Software) — options: E83, E58, E92, E25
+M67. "Becky!" (Software) — options: E98, E26, E23, E9
+M68. "OpenVPN" (Software) — options: E15, E92, E16, E102
+M69. "FileZilla" (Software) — options: E1, E68, E34, E83
+M70. "Paltalk" (Software) — options: E34, E69, E8, E9
+M71. "jDownloader" (Software) — options: E103, E57, E74, E8
+M72. "SmartFTP" (Software) — options: E24, E41, E79, E13
+M73. "FTP Commander" (Software) — options: E24, E103, E77, E93
+M74. "WS_FTP" (Software) — options: E77, E79, E16, E13
+M75. "FTPGetter" (Software) — options: E79, E5, E24, E102
+M76. "Trillian" (Software) — options: E101, E1, E40, E31
+
+=== RESPONSE (14.4s, in 5380 / out 1888 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M2","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M3","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M4","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M5","id":"NEW","g":"software receiving security updates from Microsoft","p":"E108","r":"p"},{"m":"M6","id":"NEW","g":"software receiving security updates from Microsoft","p":"E106","r":"p"},{"m":"M7","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M8","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M9","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M10","id":"NEW","g":"software receiving security updates from Microsoft","p":"E107","r":"p"},{"m":"M11","id":"NEW","g":"software receiving security updates from Microsoft","p":null,"r":null},{"m":"M12","id":"NEW","g":"software receiving security updates from Microsoft","p":"E107","r":"p"},{"m":"M13","id":"NEW","g":"operating system receiving security updates from Microsoft","p":"E107","r":"v"},{"m":"M14","id":"NEW","g":"operating system receiving security updates from Microsoft","p":"E107","r":"v"},{"m":"M15","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M16","id":"NEW","g":"vulnerability or exploit patched by Microsoft updates","p":null,"r":null},{"m":"M17","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M18","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M19","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M20","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M21","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M22","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M23","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M24","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M25","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M26","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M27","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M28","id":"NEW","g":"vulnerability patched by Microsoft updates","p":null,"r":null},{"m":"M29","id":"NEW","g":null,"p":"E112","r":"p"},{"m":"M30","id":"NEW","g":null,"p":"E107","r":"p"},{"m":"M31","id":"NEW","g":null,"p":null,"r":null},{"m":"M32","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M33","id":"NEW","g":null,"p":null,"r":null},{"m":"M34","id":"NEW","g":null,"p":"E108","r":"p"},{"m":"M35","id":"NEW","g":null,"p":"E1","r":"n"},{"m":"M36","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M37","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M38","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M39","id":"NEW","g":null,"p":null,"r":null},{"m":"M40","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M41","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M42","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M43","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M44","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M45","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M46","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M47","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M48","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M49","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M50","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M51","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M52","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M53","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M54","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M55","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M56","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M57","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M58","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M59","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M60","id":"NEW","g":null,"p":"E80","r":"n"},{"m":"M61","id":"NEW","g":null,"p":null,"r":null},{"m":"M62","id":"NEW","g":null,"p":null,"r":null},{"m":"M63","id":"NEW","g":null,"p":null,"r":null},{"m":"M64","id":"NEW","g":null,"p":null,"r":null},{"m":"M65","id":"NEW","g":null,"p":null,"r":null},{"m":"M66","id":"NEW","g":null,"p":null,"r":null},{"m":"M67","id":"NEW","g":null,"p":null,"r":null},{"m":"M68","id":"NEW","g":null,"p":null,"r":null},{"m":"M69","id":"NEW","g":null,"p":null,"r":null},{"m":"M70","id":"NEW","g":null,"p":null,"r":null},{"m":"M71","id":"NEW","g":null,"p":null,"r":null},{"m":"M72","id":"NEW","g":null,"p":null,"r":null},{"m":"M73","id":"NEW","g":null,"p":null,"r":null},{"m":"M74","id":"NEW","g":null,"p":null,"r":null},{"m":"M75","id":"NEW","g":null,"p":null,"r":null},{"m":"M76","id":"NEW","g":null,"p":null,"r":null}]}

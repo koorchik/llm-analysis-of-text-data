@@ -248,6 +248,51 @@
   "variables": [],
   "bytes": 4451
  },
+ "listwise-skos-v3": {
+  "file": "prompts/listwise-skos-v3.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: listwise-skos-v1 with rule 2 reframed after the catch-up diagnosis — hierarchy is answered from general knowledge (the source need not state it), `p` explicitly scans the whole E-list rather than the mention's options row (doc 3028: the judge only ever asserted parents that sat inside options), and a run of sibling derivatives under one listed base is named as the common case. Identity rules byte-identical to v1.",
+  "sha256": "fb7c59d6a403f3d27a325a9f6b8fb4087dee41fb22151125b41437c9ac89e13d",
+  "variables": [],
+  "bytes": 5138
+ },
+ "listwise-skos-v4": {
+  "file": "prompts/listwise-skos-v4.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: the set-level ablation — hierarchy moves out of the per-mention row into a top-level `e` edge list judged over the whole E-list after identity, mirroring the catch-up ballot's registry-review framing inside the per-document call. Per-mention `p`/`r` are gone; the parser maps each edge back onto the decision of the mention it anchors.",
+  "sha256": "157b411d7f4c3108cec0cc66bbe94c0f64543445b740e27457448ae42d24cc6f",
+  "variables": [],
+  "bytes": 4514
+ },
+ "listwise-skos-v5": {
+  "file": "prompts/listwise-skos-v5.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: v3 with the gloss moved BEFORE the hierarchy answer — section order and output key order both `m,id,g,p,r`. Motivated by the reverse-order 3028 transcript: the judge wrote 'Chromium-based web browser' as the gloss of 15 mentions while answering p:null on each — the knowledge arrives after the decision it should inform. Adds the explicit contradiction rule: a gloss saying 'X-based'/'component of X' with p:null is inconsistent.",
+  "sha256": "b895e4b751a9a4aeb288726a16b67157b496a1b7ad98775c4e4cbe4418613706",
+  "variables": [],
+  "bytes": 5561
+ },
+ "listwise-skos-v6": {
+  "file": "prompts/listwise-skos-v6.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: v5 plus the `kin:` rule for DOC_SIBLINGS_MODE=kin — each mention's row may carry the E numbers of its embedding-nearest co-mentions as candidate relatives (never identity options; a sibling is not the parent, the shared base is). Splits the doc-sibling mechanism from the identity row after the options-mode ablation cost the shellcode.x64.bin identity link.",
+  "sha256": "ae03ff8a8d784bfcbea765c96132eac28425c9eb9851ed506fc665ab50a4de53",
+  "variables": [],
+  "bytes": 6035
+ },
+ "listwise-skos-v7": {
+  "file": "prompts/listwise-skos-v7.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: v5 plus the vulnerability-identifier rule — a CVE/advisory/exploit identifier is not narrower than the product it affects (a flaw lives IN a product without being a kind, version, or part of it). Motivated by the REASK_CARRY arms: 14 of 26 non-gold edges were CVE-…→product placements once carried CVE orphans were re-asked under the scan-the-E-list epistemics.",
+  "sha256": "6c0be727464b4eff7d7a3463d97ce8ccace5ec4b5dbbca717d232ec27f97fb8c",
+  "variables": [],
+  "bytes": 5896
+ },
  "normalize-country": {
   "file": "prompts/normalize-country.md",
   "extractedFrom": "src/Normalizer/Normalizer.ts",

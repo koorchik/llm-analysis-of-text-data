@@ -694,6 +694,43 @@ describe('ListwiseGraphDecision SKOS ballot', () => {
     assert.equal(second.mentionIsBroader, true);
   });
 
+  it('the set-level `e` list (skos-v4) lands each edge on the mention it anchors', async () => {
+    // Two minted browsers, an edge list naming their shared base (a pooled sibling, E3) — plus a
+    // reversed edge where the mention is the broader side, an E×E edge with no carrying mention
+    // (dropped), and a self-loop (dropped).
+    const llm = fakeLlm([
+      '{"v":[{"m":"M1","id":"NEW","g":null},{"m":"M2","id":"NEW","g":null},{"m":"M3","id":"NEW","g":null}],' +
+        '"e":[{"n":"E1","b":"E3","r":"n"},{"n":"E2","b":"E3","r":"n"},{"n":"E4","b":"M3","r":"v"},' +
+        '{"n":"E5","b":"E6","r":"p"},{"n":"E3","b":"E3","r":"n"}]}',
+    ]);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-skos-v4',
+    });
+    const pool = [
+      { canonical: 'Torch Browser', surfaces: ['Torch Browser'] },
+      { canonical: 'Brave Browser', surfaces: ['Brave Browser'] },
+      { canonical: 'Chromium Browser', surfaces: ['Chromium Browser'] },
+      { canonical: 'Office 2010', surfaces: ['Office 2010'] },
+      { canonical: 'vaultcli.dll', surfaces: ['vaultcli.dll'] },
+      { canonical: 'Microsoft Windows', surfaces: ['Microsoft Windows'] },
+    ];
+    const [torch, brave, office] = await strategy.decide([
+      request('Torch Browser', [], { category: 'Software', pool }),
+      request('Brave Browser', [], { category: 'Software', pool }),
+      request('Office', [candidate('Office 2010', 0.9)], { category: 'Software', pool }),
+    ]);
+    assert.equal(torch.parentCandidate, 'Chromium Browser');
+    assert.equal(torch.broaderType, 'broaderGeneric');
+    assert.ok(!torch.mentionIsBroader);
+    assert.equal(brave.parentCandidate, 'Chromium Browser');
+    // "Office" is the broader endpoint of E4->its own mention: stored swapped.
+    assert.equal(office.kind, 'mint');
+    assert.equal(office.parentCandidate, 'Office 2010');
+    assert.equal(office.broaderType, 'broaderInstantial');
+    assert.equal(office.mentionIsBroader, true);
+  });
+
   it('a stray lvl field in the response is ignored, not applied', async () => {
     const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g2","g":null}]}']);
     const strategy = new ListwiseGraphDecision({

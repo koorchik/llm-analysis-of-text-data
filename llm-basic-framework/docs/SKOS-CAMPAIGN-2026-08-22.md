@@ -98,6 +98,101 @@ its token counts (~397k hidden reasoning). No price entry yet for gemini models
    drift-threshold-is-encoder-relative figure (embeddinggemma .52–.83 vs gembed2 .60–.93;
    cos("Microsoft Office 2007","MS Office") .68 vs .84).
 
+## 5b. Evening session — catch-up replaced by streaming-native mechanisms (2026-08-22, uncommitted)
+
+**User constraint that reshaped §5.1: the stream is never-ending — an end-of-stream pass is
+catch-up relocated, not eliminated. The solution must live inside the per-document loop.**
+
+**Diagnosis** (transcripts, both directions): the judge asserts hierarchy parents it sees in a
+mention's own OPTIONS row and, on large ballots, nowhere else — reverse-order doc 3028 wrote
+"Chromium-based web browser" as 15 glosses while answering 15 null parents, with Chromium at E74.
+Catch-up's whole advantage = dense per-concept retrieval put family into options. K is irrelevant.
+Flash judge is nondeterministic even at TEMPERATURE=0 (v5 numeric .696 vs replicate .377): the
+~25-edge browser-family ballot is a coin flip in every prompt-only variant.
+
+**New knobs** (all runId-folded; code in StreamingNormalizer/ListwiseGraphDecision/bin/app.ts):
+`TEMPERATURE` (now set 0 in all arms); prompts `listwise-skos-v3` (hierarchy from world knowledge,
+scan whole E-list), `-v4` (set-level `e` edge list — no effect, .333), `-v5` (gloss BEFORE p in
+section+key order, contradiction rule), `-v6` (v5 + kin rule); `DOC_SIBLINGS=N` +
+`DOC_SIBLINGS_MODE=options|kin` (top-N embedding-nearest same-category co-mentions into the
+options row / as `kin:` refs); `REASK_PARENTLESS=1` (re-mentioned concept with no broader edge
+returns to the ballot as a hierarchy-only row: self-excluded options, dense retrieval, identity
+verdict ignored — the catch-up row shape, triggered by the stream itself); `SKOS_CONSOLIDATE=end`
+(deterministic full-registry end pass — built and measured as ANCHOR ONLY, rejected as solution
+per the never-ending-stream constraint).
+
+**Gold**: 280 → 296 (`manual-review-2026-08-22b`, backup gold/gold.json.pre-review2-backup):
+Google Chrome/7Star/Amigo/Liebao/Citrio/Opera→Chromium isa, IceDragon→Firefox isa,
+RegAsm.exe→.NET part-of, Equation Editor→MS Office part-of, WinServer 2008/2012→Windows isa
+(2003 precedent), Browser/Files/Screen/Social/USB.dll→SPECTR part-of (ext\ path, doc 6280422).
+Rejected: Office Services and Web Apps→Office; scan.exe (CredoMap_v2)→CredoMap_v2. Annotator
+marked "pending koorchik approval".
+
+**Results vs expanded gold** (dev-software-22, non-reportable; R-reach / P / identity-pairwise;
+arms numeric, numeric-replicate, reverse; all T=0, CATCHUP=0, JUDGE_UNRESOLVED=1):
+
+| config | numeric | replicate | reverse | verdict |
+|---|---|---|---|---|
+| with catch-up (K4/K10 anchors, T default) | .551 / .84 | — | — | old baseline |
+| v1 no-catch-up (pctrl) | .333 / .96 / 1.0 | — | — | family never lands |
+| v3 (T default) | .797→.449 | flip | .319–.449 | coin flip |
+| v5 T0 | .696 | .377 | .406 | coin flip persists |
+| v5+DOC_SIBLINGS options (sib) | .806 | .836 | .768 | 3/3 hierarchy; identity 1/3 miss (shellcode.x64 twin) |
+| v6+kin | .826 | .435 | .768 | annotation ≠ options texture |
+| v5+REASK (reask) | **.826 / .93 / 1.0** | .739 | .377 | reverse has no re-mention of the family |
+| v5+SKOS_CONSOLIDATE=end (ANCHOR) | .779 | .768 | .783 | re-ask guarantee confirmed; rejected per constraint |
+| **v5+REASK+DOC_SIBLINGS options (combo)** | **.754 / .91 / 1.0** | **.797 / .83 / 1.0** | **.731 / .91 / 1.0** | **WINNER: stable, order-robust, identity 1.0 in all three, 22 calls** |
+
+Combo cross-run agreement: edge Jaccard .598 (vs .306 catch-up era), type agreement .942.
+Reverse-order identity dip (.750 pairwise, one c-stratum merge) recurs in EVERY rev arm regardless
+of mechanism — an order effect, notably ABSENT in combo-rev.
+
+**Recommended streaming config** (no catch-up, no end pass): `LISTWISE_PROMPT_ID=listwise-skos-v5
+TEMPERATURE=0 JUDGE_UNRESOLVED=1 REASK_PARENTLESS=1 DOC_SIBLINGS=2 DOC_SIBLINGS_MODE=options
+LISTWISE_K=6 SKOS_CATCHUP_EVERY=0`. Mechanism split: sibling options make the first-shot family
+ballot reliable (in-row texture); re-ask gives every later co-occurrence another chance
+(streaming-native re-review); v5's gloss-before-p supplies the knowledge at decision time.
+
+**Next steps**: replicates ×3+ of combo for CI; gemma4:12b-64k transfer of combo (sequential!);
+full-corpus test split; gold 16-edge batch needs koorchik sign-off; optional: repair-pass
+interplay (REPAIR=1) since StreamingRepairer should catch the sib-mode identity misses.
+
+## 5c. Night session — the one-carry orphan rule + review-frame split; catch-up fully replaced on BOTH judges (2026-08-23)
+
+**User's design (`REASK_CARRY=1`): carry the PREVIOUS document's parentless mints onto the next
+document's ballot as hierarchy-only reask rows — once, ever.** Bounded by construction; one
+document later the co-minted family is in the registry, so dense retrieval prints the right
+parent into the row. Complements `REASK_PARENTLESS=1` (re-mention trigger), which alone cannot
+cover single-occurrence families — measured: the browser family exists ONLY in doc 3028's
+extraction, so no re-mention ever fires for it.
+
+**`REASK_SPLIT=1`**: reask/carried rows go to a SEPARATE source-free "registry review" call (the
+catch-up frame at document cadence; +1 call per carrying document). Motivated by the frame
+finding: gemma asserted MS Word→MS Office on catch-up-framed rows and on none of the same rows
+inside a document ballot. **Prompt `listwise-skos-v7`** = v5 + vulnerability-identifier rule
+(a CVE/advisory is not narrower than the product it affects) — carried CVE orphans otherwise
+placed themselves under products (14 of 26 non-gold edges).
+
+**Final configs** (both no catch-up, no end pass; `SKOS_CATCHUP_EVERY=0 JUDGE_UNRESOLVED=1
+REASK_PARENTLESS=1 REASK_CARRY=1 LISTWISE_PROMPT_ID=listwise-skos-v7`):
+
+| judge | extra | R-reach | P | identity | vs own catch-up baseline |
+|---|---|---|---|---|---|
+| gemini-3.7-flash | `TEMPERATURE=0`, split OFF | .855 / .855 / .797 (num/rep/rev) | .87–.93 | 1.000 all | .551 → +.30; split variant equal but 2× calls |
+| gemma4:12b-64k | default temp (T=0 loops thinking to 64k cap!), `REASK_SPLIT=1` | **.623** | **.694** | 1.000 | **.304 → 2×**, P .553→.694, kind .857→.907 |
+
+gemma-split found 25 Chromium-family edges — the knowledge WAS in the 12b model; every
+document-framed config (including the with-catch-up baseline: 0 family edges) suppressed it.
+Retired: DOC_SIBLINGS options injection (broke gemma identity to .500 — written-form links lost),
+kin annotations (information without row membership does not move the judge), SKOS_CONSOLIDATE=end
+(anchor only — rejected for never-ending streams; its .77–.78 band confirmed the re-ask
+mechanism the streaming devices now deliver incrementally).
+
+**Protocol notes**: TEMPERATURE is NOT folded into the runId (flag for determinism statement);
+gemma must run at default temperature; sibling-free identity rows are load-bearing for small
+judges. Follow-ups: gemma split reverse/replicate arms; combo of split+flash for cost-insensitive
+runs; full-corpus test split; per-mention snippet × carry interplay.
+
 ## 6. Operational notes
 
 - Runner scripts live in the session scratchpad (`run-one-arm.sh`, `run-snippet-arm.sh` + sed

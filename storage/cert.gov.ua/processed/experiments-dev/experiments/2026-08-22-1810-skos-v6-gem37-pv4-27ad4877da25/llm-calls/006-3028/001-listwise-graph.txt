@@ -1,0 +1,188 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. You answer two independent questions: first, for every mention, which entity it is; then, for the entity list as a whole, which hierarchy edges hold between the listed entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `e` — hierarchy edges
+
+When the identities are decided, put the mentions aside and review the entity list `E1…En` as a whole, the way a thesaurus editor reviews a registry: list every pair where one listed entity is genuinely narrower than another. This question is answered from what the entities ARE — your general knowledge of them — not from the source text; the source does not need to state the relation. Options rows play no part here: any listed entity may pair with any other.
+
+Each edge is `{"n": <narrower E number>, "b": <broader E number>, "r": <relation>}` with `r` one of:
+
+- `"v"` — `n` is `b` **with a qualifier added**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision.
+- `"n"` — `n` is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — `n` is a distinct component, member, or subdivision of `b`.
+
+Prefer the **narrowest** `b` genuinely broader than `n`, one edge per `n`. Work through the whole list — when several listed entities are versions, derivatives, components, or members of one base product that is also listed, each of them gets an edge to it; a run of siblings is the commonest case, not an exception. Omit pairs that are merely topical, and pairs whose relation you cannot name — a missing edge is recoverable, a wrong one distorts every later rollup. Never `n` equal to `b`. An empty list is valid.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy edges never depend on the source.
+
+Output one raw JSON object, no markdown fences, no commentary — one `v` entry per mention in order, then the `e` list:
+{"v":[{"m":"M1","id":"E3","g":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}],"e":[{"n":"E7","b":"E1","r":"v"}]}
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: <p class="ql-align-justify"> Урядова команда реагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p class="ql-align-justify"><strong>Agent Tesla </strong>– шкідливе програмне забезпечення (далі – ШПЗ), яке виконує функції кейлогера (keylogger), викрадача інформації (stealer) та є вдосконаленим трояном віддаленого доступу (RAT), що написане мовам
+Entities:
+E1. MS Excel
+E2. Internet Explorer
+E3. MS PowerPoint
+E4. spi.exe
+E5. Adobe Flash Player
+E6. .NET Framework
+E7. Windows Vista
+E8. Petya
+E9. cmd.exe
+E10. CVE-2017-0199
+E11. ckZ89.ExE
+E12. powershell.exe
+E13. major.exe
+E14. Windows 7
+E15. Double Kill
+E16. VBScript
+E17. Microsoft Windows
+E18. До оплати від 11.12.18.lzh
+E19. Win32k
+E20. Misha
+E21. Windows Server 2012
+E22. ChakraCore
+E23. Microsoft Edge
+E24. Microsoft Exchange Server
+E25. MS Office
+E26. Smokeloader
+E27. Microsoft Office 2007 [aka Office 2007]
+E28. MS Word [aka Microsoft Word]
+E29. Microsoft Office
+E30. Microsoft Office 2010 [aka Office 2010]
+E31. Microsoft Equation Editor
+E32. Windows Server 2008
+E33. Microsoft Office Services and Web Apps
+E34. PGMB New Order 18-2077.xlsx
+E35. Windows Host Compute Service Shim
+E36. Microsoft Office 2013 [aka Office 2013]
+E37. RegAsm.exe
+E38. vaultcli.dll
+E39. WinSCP
+E40. Google Chrome
+E41. Mozilla Firefox
+E42. Microsoft Outlook
+E43. IceDragon
+E44. Yandex Browser
+E45. Iridium Browser
+E46. Epic Privacy Browser
+E47. Chromium Browser
+E48. 7Star Browser
+E49. Torch Browser
+E50. ChromePlus Browser
+E51. Kometa Browser
+E52. Amigo Browser
+E53. Brave Browser
+E54. CentBrowser
+E55. Liebao Browser
+E56. Elements Browser
+E57. Vivaldi Browser
+E58. Citrio Browser
+E59. 360Chrome Browser
+E60. Uran Browser
+E61. Chedot Browser
+E62. Orbitum Browser
+E63. Sputnik Browser
+E64. Comodo Dragon Browser
+E65. CocCoc Browser
+E66. QIP Surf Browser
+E67. Coowon Browser
+E68. Opera Browser
+E69. Thunderbird
+E70. Claws Mail
+E71. Postbox Credential
+E72. Foxmail
+E73. Opera Mail
+E74. Pocomail
+E75. Becky!
+E76. OpenVPN
+E77. FileZilla
+E78. Paltalk
+E79. jDownloader
+E80. SmartFTP
+E81. FTP Commander
+E82. WS_FTP
+E83. FTPGetter
+E84. Trillian
+E85. Agent Tesla
+Mentions:
+M1. "Agent Tesla" (Software) — options: E1, E2, E3, E4
+M2. "RegAsm.exe" (Software) — options: E4, E11, E9, E12
+M3. "vaultcli.dll" (Software) — options: E4, E15, E12, E16
+M4. "WinSCP" (Software) — options: E7, E19, E9, E14
+M5. "Google Chrome" (Software) — options: E2, E15, E22, E23
+M6. "Mozilla Firefox" (Software) — options: E2, E15, E23, E25
+M7. "Microsoft Outlook" (Software) — options: E1, E28, E29, E23
+M8. "IceDragon" (Software) — options: E7, E22, E31, E2
+M9. "Yandex Browser" (Software) — options: E2, E14, E21, E23
+M10. "Iridium Browser" (Software) — options: E2, E14, E21, E23
+M11. "Epic Privacy Browser" (Software) — options: E2, E22, E21, E23
+M12. "Chromium Browser" (Software) — options: E2, E22, E21, E23
+M13. "7Star Browser" (Software) — options: E14, E26, E7, E2
+M14. "Torch Browser" (Software) — options: E2, E21, E23, E24
+M15. "ChromePlus Browser" (Software) — options: E2, E26, E21, E23
+M16. "Kometa Browser" (Software) — options: E2, E26, E7, E23
+M17. "Amigo Browser" (Software) — options: E2, E26, E21, E23
+M18. "Brave Browser" (Software) — options: E2, E26, E21, E23
+M19. "CentBrowser" (Software) — options: E2, E14, E21, E23
+M20. "Liebao Browser" (Software) — options: E2, E26, E21, E23
+M21. "Elements Browser" (Software) — options: E2, E1, E21, E23
+M22. "Vivaldi Browser" (Software) — options: E2, E14, E7, E23
+M23. "Citrio Browser" (Software) — options: E2, E21, E23, E17
+M24. "360Chrome Browser" (Software) — options: E2, E26, E21, E23
+M25. "Uran Browser" (Software) — options: E2, E14, E21, E23
+M26. "Chedot Browser" (Software) — options: E2, E21, E23, E17
+M27. "Orbitum Browser" (Software) — options: E2, E14, E21, E23
+M28. "Sputnik Browser" (Software) — options: E2, E26, E21, E23
+M29. "Comodo Dragon Browser" (Software) — options: E2, E31, E35, E23
+M30. "CocCoc Browser" (Software) — options: E2, E26, E21, E23
+M31. "QIP Surf Browser" (Software) — options: E2, E26, E21, E23
+M32. "Coowon Browser" (Software) — options: E2, E14, E21, E23
+M33. "Opera Browser" (Software) — options: E2, E21, E23, E5
+M34. "Thunderbird" (Software) — options: E7, E15, E28, E2
+M35. "Claws Mail" (Software) — options: E7, E13, E28, E5
+M36. "Postbox Credential" (Software) — options: E7, E15, E3, E12
+M37. "Foxmail" (Software) — options: E7, E15, E6, E9
+M38. "Opera Mail" (Software) — options: E24, E8, E13, E7
+M39. "Pocomail" (Software) — options: E12, E15, E3, E7
+M40. "Becky!" (Software) — options: E7, E8, E6, E1
+M41. "OpenVPN" (Software) — options: E7, E8, E6, E14
+M42. "FileZilla" (Software) — options: E7, E15, E1, E27
+M43. "Paltalk" (Software) — options: E7, E8, E6, E28
+M44. "jDownloader" (Software) — options: E2, E26, E9, E5
+M45. "SmartFTP" (Software) — options: E7, E13, E26, E4
+M46. "FTP Commander" (Software) — options: E9, E26, E7, E24
+M47. "WS_FTP" (Software) — options: E1, E16, E6, E7
+M48. "FTPGetter" (Software) — options: E7, E8, E2, E9
+M49. "Trillian" (Software) — options: E7, E20, E15, E1
+
+=== RESPONSE (8.0s, in 3461 / out 896 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"trojan with keylogger and stealer capabilities"},{"m":"M2","id":"NEW","g":null},{"m":"M3","id":"NEW","g":null},{"m":"M4","id":"NEW","g":null},{"m":"M5","id":"NEW","g":null},{"m":"M6","id":"NEW","g":null},{"m":"M7","id":"NEW","g":null},{"m":"M8","id":"NEW","g":null},{"m":"M9","id":"NEW","g":null},{"m":"M10","id":"NEW","g":null},{"m":"M11","id":"NEW","g":null},{"m":"M12","id":"NEW","g":null},{"m":"M13","id":"NEW","g":null},{"m":"M14","id":"NEW","g":null},{"m":"M15","id":"NEW","g":null},{"m":"M16","id":"NEW","g":null},{"m":"M17","id":"NEW","g":null},{"m":"M18","id":"NEW","g":null},{"m":"M19","id":"NEW","g":null},{"m":"M20","id":"NEW","g":null},{"m":"M21","id":"NEW","g":null},{"m":"M22","id":"NEW","g":null},{"m":"M23","id":"NEW","g":null},{"m":"M24","id":"NEW","g":null},{"m":"M25","id":"NEW","g":null},{"m":"M26","id":"NEW","g":null},{"m":"M27","id":"NEW","g":null},{"m":"M28","id":"NEW","g":null},{"m":"M29","id":"NEW","g":null},{"m":"M30","id":"NEW","g":null},{"m":"M31","id":"NEW","g":null},{"m":"M32","id":"NEW","g":null},{"m":"M33","id":"NEW","g":null},{"m":"M34","id":"NEW","g":null},{"m":"M35","id":"NEW","g":null},{"m":"M36","id":"NEW","g":null},{"m":"M37","id":"NEW","g":null},{"m":"M38","id":"NEW","g":null},{"m":"M39","id":"NEW","g":null},{"m":"M40","id":"NEW","g":null},{"m":"M41","id":"NEW","g":null},{"m":"M42","id":"NEW","g":null},{"m":"M43","id":"NEW","g":null},{"m":"M44","id":"NEW","g":null},{"m":"M45","id":"NEW","g":null},{"m":"M46","id":"NEW","g":null},{"m":"M47","id":"NEW","g":null},{"m":"M48","id":"NEW","g":null},{"m":"M49","id":"NEW","g":null}],"e":[{"n":"E7","b":"E17","r":"v"},{"n":"E14","b":"E17","r":"v"},{"n":"E21","b":"E17","r":"v"},{"n":"E32","b":"E17","r":"v"},{"n":"E27","b":"E29","r":"v"},{"n":"E30","b":"E29","r":"v"},{"n":"E36","b":"E29","r":"v"},{"n":"E1","b":"E29","r":"p"},{"n":"E3","b":"E29","r":"p"},{"n":"E28","b":"E29","r":"p"},{"n":"E42","b":"E29","r":"p"},{"n":"E31","b":"E29","r":"p"},{"n":"E20","b":"E8","r":"n"}]}

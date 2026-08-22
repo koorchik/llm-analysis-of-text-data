@@ -1,0 +1,110 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. You answer two independent questions: first, for every mention, which entity it is; then, for the entity list as a whole, which hierarchy edges hold between the listed entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `e` — hierarchy edges
+
+When the identities are decided, put the mentions aside and review the entity list `E1…En` as a whole, the way a thesaurus editor reviews a registry: list every pair where one listed entity is genuinely narrower than another. This question is answered from what the entities ARE — your general knowledge of them — not from the source text; the source does not need to state the relation. Options rows play no part here: any listed entity may pair with any other.
+
+Each edge is `{"n": <narrower E number>, "b": <broader E number>, "r": <relation>}` with `r` one of:
+
+- `"v"` — `n` is `b` **with a qualifier added**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision.
+- `"n"` — `n` is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — `n` is a distinct component, member, or subdivision of `b`.
+
+Prefer the **narrowest** `b` genuinely broader than `n`, one edge per `n`. Work through the whole list — when several listed entities are versions, derivatives, components, or members of one base product that is also listed, each of them gets an edge to it; a run of siblings is the commonest case, not an exception. Omit pairs that are merely topical, and pairs whose relation you cannot name — a missing edge is recoverable, a wrong one distorts every later rollup. Never `n` equal to `b`. An empty list is valid.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy edges never depend on the source.
+
+Output one raw JSON object, no markdown fences, no commentary — one `v` entry per mention in order, then the `e` list:
+{"v":[{"m":"M1","id":"E3","g":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}],"e":[{"n":"E7","b":"E1","r":"v"}]}
+
+--- text ---
+Source: "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження 05.07.2022 електронних листів з темою "Спеціалізованої прокуратури увійськовій та оборонній сфері. Інформація щодо наявності вакансій та їх укомплектування" та вкладенням у вигляді XLS-документу "Інформація щодо наявності вакансій та їх укомплектування.xls".</p><p>Документ містить макрос, активація якого призведе до створення на комп'ютері та запуску файлу "write.exe".</p><p>Згаданий файл виконує роль дропера, забезпечуючи створення
+Entities:
+E1. MS Excel
+E2. До оплати рах.ф. 74 - 2018р.js
+E3. Електронний запит.exe
+E4. UkrScanner.exe (SFX)
+E5. Рахунки за выполненные работы от 11.12.2018.js
+E6. Comodo Dragon Browser
+E7. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E8. SQLite.Interop.dll
+E9. До оплати від 11.12.18.lzh
+E10. Microsoft Equation Editor
+E11. powershell.exe
+E12. spi.exe
+E13. b.exe
+E14. RegAsm.exe
+E15. rutserv.exe
+E16. cmd.exe
+E17. ckZ89.ExE
+E18. WinSCP
+E19. loader.exe
+E20. Trillian
+E21. Thunderbird
+E22. .NET Framework
+E23. Mozilla Firefox
+E24. 360Chrome Browser
+E25. installer.exe
+E26. 7Star Browser
+E27. z.ps1
+E28. Remote Utilities - Host
+E29. Meterpreter
+E30. scan.exe (CredoMap_v2)
+E31. Becky!
+E32. vaultcli.dll
+E33. Chedot Browser
+E34. Paltalk
+E35. Remote Utilities
+E36. Microsoft Office Services and Web Apps
+E37. Coowon Browser
+E38. Microsoft Outlook
+E39. Microsoft Exchange Server
+E40. Orbitum Browser
+E41. write.exe
+E42. TRYxaEbX
+E43. TRYxaEbX.ps1
+E44. TRYxaEbX_2.ps1
+E45. shellcode.x86 (Cobalt Strike Beacon)
+E46. shellcode.x64 (Cobalt Strike Beacon)
+E47. Cobalt Strike Beacon
+E48. Інформація щодо наявності вакансій та їх укомплектування.xls
+Mentions:
+M1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software) — options: E1, E2, E3, E4
+M2. "write.exe" (Software) — options: E11, E12, E13, E14
+M3. "TRYxaEbX" (Software) — options: E20, E21, E22, E23
+M4. "TRYxaEbX.ps1" (Software) — options: E20, E27, E17, E14
+M5. "TRYxaEbX_2.ps1" (Software) — options: E20, E27, E11, E14
+M6. "shellcode.x86 (Cobalt Strike Beacon)" (Software) — options: E25, E28, E11, E29
+M7. "shellcode.x64 (Cobalt Strike Beacon)" (Software) — options: E25, E28, E11, E30
+M8. "Cobalt Strike Beacon" (Software) — options: E21, E36, E37, E20
+
+=== RESPONSE (5.5s, in 2125 / out 232 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"malicious XLS document containing a macro"},{"m":"M2","id":"NEW","g":"dropper executable created and executed via malicious macro"},{"m":"M3","id":"NEW","g":null},{"m":"M4","id":"NEW","g":null},{"m":"M5","id":"NEW","g":null},{"m":"M6","id":"NEW","g":null},{"m":"M7","id":"NEW","g":null},{"m":"M8","id":"NEW","g":"payload used in UAC-0056 cyberattack"}],"e":[{"n":"E45","b":"E47","r":"v"},{"n":"E46","b":"E47","r":"v"},{"n":"E43","b":"E42","r":"v"},{"n":"E28","b":"E35","r":"p"},{"n":"E15","b":"E28","r":"p"},{"n":"E14","b":"E22","r":"p"}]}

@@ -1,0 +1,119 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження електронних листів з тематикою військовополонених, що містили посилання для завантаження архіву "spysok_kursk.zip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програм
+Entities:
+E1. SRP
+E2. MS Excel
+E3. spi.exe
+E4. MISP
+E5. AppLocker
+E6. AgentTesla
+E7. Petya
+E8. pfSense
+E9. SIEM
+E10. CVE-2017-0199
+E11. GammaSteel.NET
+E12. HarvesterX
+E13. Misha
+E14. MS PowerPoint
+E15. YARA
+E16. RemcosRAT
+E17. stage1.ps1
+E18. wscript.exe
+E19. SQLite.Interop.dll
+E20. loader.exe
+E21. shellcode.x86.bin
+E22. rundll32.exe
+E23. PowerShell (powershell.exe) [aka PowerShell, powershell.exe]
+E24. MCMDiction.exe
+E25. ConfuserEx
+E26. Meterpreter
+E27. wsuscr.exe
+E28. baseupd.exe
+E29. Windows Server 2012
+E30. Windows Server 2008
+E31. UkrScanner.rar
+E32. cmd.exe
+E33. Office 2007 [aka Microsoft Office 2007]
+E34. Office 2010 [aka Microsoft Office 2010]
+E35. scan.exe (CredoMap_v2)
+E36. stage2.ps1
+E37. Smokeloader
+E38. b.exe
+E39. GammaSteel.PS1
+E40. Cobalt Strike Beacon
+E41. Microsoft Equation Editor
+E42. UkrScanner.exe (SFX)
+E43. FIRMACHAGENT
+E44. IDCLIPNET_x86.dll
+E45. chrome_updater.dll
+E46. Browser.dll
+E47. Files.dll
+E48. Screen.dll
+E49. Social.dll
+E50. USB.dll
+E51. JavaScript
+E52. Software Restriction Policies (SRP)
+E53. SPECTR
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E8, E11, E6, E12
+M3. "IDCLIPNET_x86.dll" (Software) — options: E18, E19, E20, E21
+M4. "chrome_updater.dll" (Software) — options: E20, E19, E18, E25
+M5. "Browser.dll" (Software) — options: E20, E23, E19, E18
+M6. "Files.dll" (Software) — options: E20, E23, E19, E18
+M7. "Screen.dll" (Software) — options: E27, E19, E18, E35
+M8. "Social.dll" (Software) — options: E20, E19, E18, E23
+M9. "USB.dll" (Software) — options: E27, E19, E18, E22
+M10. "JavaScript" (Software) — options: E18, E1, E23, E11
+M11. "Software Restriction Policies (SRP)" (Software) — options: E1, E24, E8, E40
+
+=== RESPONSE (10.6s, in 2302 / out 282 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"malware tool"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"malware tool used in cyberattacks"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"malicious dynamic link library"},{"m":"M4","id":"NEW","p":null,"r":null,"g":"malicious dynamic link library"},{"m":"M5","id":"NEW","p":"E53","r":"p","g":"malware plugin module"},{"m":"M6","id":"NEW","p":"E53","r":"p","g":"malware plugin module"},{"m":"M7","id":"NEW","p":"E53","r":"p","g":"malware plugin module"},{"m":"M8","id":"NEW","p":"E53","r":"p","g":"malware plugin module"},{"m":"M9","id":"NEW","p":"E53","r":"p","g":"malware plugin module"},{"m":"M10","id":"NEW","p":null,"r":null,"g":"programming language used in scripts"},{"m":"M11","id":"E1","p":null,"r":null,"g":null}]}

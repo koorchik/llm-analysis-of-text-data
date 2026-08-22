@@ -1,0 +1,108 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: <p>Вночі 19.01.2021 відбулася масова розсилка фішингових електронних листів на державні установи України. Листи відправлялися, начебто, від імені Адміністрації Держспецзв’язку з поштової скриньки&nbsp;zapros@dsszzi.gov.ua&nbsp;та містили в собі вкладення зі шкідливим програмним забезпеченням&nbsp;(далі - ШПЗ). Варто зазначити, що поштової скриньки zapros@dsszzi.gov.ua в Держспецзв’язку не існує, як і «департаменту перевірок».&nbsp;</p><p></p><p class="ql-align-center">Мал 1. Зміст фішингового листа</p><p>Усі фішингові листи на різні державні установи відправлялися з однієї ІР-адреси 212.44.151
+Entities:
+E1. Thunderbird
+E2. Microsoft Equation Editor
+E3. RegAsm.exe
+E4. Internet Explorer
+E5. Smokeloader
+E6. Windows Host Compute Service Shim
+E7. WinSCP
+E8. Chedot Browser
+E9. Microsoft Office Services and Web Apps
+E10. Trillian
+E11. .NET Framework
+E12. Adobe Flash Player
+E13. Postbox Credential
+E14. cmd.exe
+E15. Agent Tesla
+E16. До оплати рах.ф. 74 - 2018р.js
+E17. spi.exe
+E18. powershell.exe
+E19. ckZ89.ExE
+E20. major.exe
+E21. Рахунки и новые списки.lzh
+E22. Elements Browser
+E23. jDownloader
+E24. Microsoft Edge
+E25. Mozilla Firefox
+E26. Google Chrome
+E27. Comodo Dragon Browser
+E28. MS Word [aka Microsoft Word]
+E29. WS_FTP
+E30. Microsoft Exchange Server
+E31. vaultcli.dll
+E32. FTPGetter
+E33. Double Kill
+E34. FileZilla
+E35. VBScript
+E36. Misha
+E37. QIP Surf Browser
+E38. Remote Utilities - Host
+E39. Електронний запит.exe
+E40. installer.exe
+E41. host_news_mod_mod.msi
+E42. rutserv.exe
+E43. rfusclient.exe
+E44. killself.bat
+E45. Remote Utilities
+Mentions:
+M1. "Remote Utilities" (Software) — options: E1, E2, E3, E4
+M2. "Remote Utilities - Host" (Software) — options: E6, E11, E9, E3
+M3. "Електронний запит.exe" (Software) — options: E17, E3, E18, E19
+M4. "installer.exe" (Software) — options: E18, E3, E20, E17
+M5. "host_news_mod_mod.msi" (Software) — options: E24, E6, E25, E26
+M6. "rutserv.exe" (Software) — options: E18, E3, E17, E19
+M7. "rfusclient.exe" (Software) — options: E18, E3, E17, E19
+M8. "killself.bat" (Software) — options: E33, E34, E35, E18
+
+=== RESPONSE (6.5s, in 2118 / out 179 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":"E38","r":"b","g":null},{"m":"M2","id":"NEW","p":"E45","r":"p","g":null},{"m":"M3","id":"NEW","p":null,"r":null,"g":null},{"m":"M4","id":"NEW","p":null,"r":null,"g":null},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":"E38","r":"p","g":null},{"m":"M7","id":"NEW","p":"E38","r":"p","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"g":null}]}

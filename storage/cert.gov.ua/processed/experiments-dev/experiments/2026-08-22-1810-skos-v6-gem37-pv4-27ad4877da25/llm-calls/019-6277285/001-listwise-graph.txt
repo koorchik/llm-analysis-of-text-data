@@ -1,0 +1,107 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. You answer two independent questions: first, for every mention, which entity it is; then, for the entity list as a whole, which hierarchy edges hold between the listed entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `e` — hierarchy edges
+
+When the identities are decided, put the mentions aside and review the entity list `E1…En` as a whole, the way a thesaurus editor reviews a registry: list every pair where one listed entity is genuinely narrower than another. This question is answered from what the entities ARE — your general knowledge of them — not from the source text; the source does not need to state the relation. Options rows play no part here: any listed entity may pair with any other.
+
+Each edge is `{"n": <narrower E number>, "b": <broader E number>, "r": <relation>}` with `r` one of:
+
+- `"v"` — `n` is `b` **with a qualifier added**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision.
+- `"n"` — `n` is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — `n` is a distinct component, member, or subdivision of `b`.
+
+Prefer the **narrowest** `b` genuinely broader than `n`, one edge per `n`. Work through the whole list — when several listed entities are versions, derivatives, components, or members of one base product that is also listed, each of them gets an edge to it; a run of siblings is the commonest case, not an exception. Omit pairs that are merely topical, and pairs whose relation you cannot name — a missing edge is recoverable, a wrong one distorts every later rollup. Never `n` equal to `b`. An empty list is valid.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy edges never depend on the source.
+
+Output one raw JSON object, no markdown fences, no commentary — one `v` entry per mention in order, then the `e` list:
+{"v":[{"m":"M1","id":"E3","g":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}],"e":[{"n":"E7","b":"E1","r":"v"}]}
+
+--- text ---
+Source: "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)" — evidence: <p class="ql-align-justify"><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA 22.01.2024 виявлено факти масового розповсюдження електронних листів, начебто, від імені Держспецзв'язку та ДСНС України, що містять RAR-архів або посилання на Bitbucket та присвячені "видаленню вірусу" і "евакуації", відовідно.</p><p>У випадку відкриття будь-якого з файлів, в т.ч., завантажених зі згаданого вебсервісу ("Електронний план евакуації.rar", "plan_dsns.gov.ua.rar", "CCleaner.rar"), в кінцевому випадку буде виконано MSI-інсталятор "inst
+Entities:
+E1. mshta.exe
+E2. installer.exe
+E3. host_news_mod_mod.msi
+E4. MS Excel
+E5. stage1.ps1
+E6. spi.exe
+E7. stage2.ps1
+E8. WinSCP
+E9. wscript.exe
+E10. GammaSteel.PS1
+E11. FileZilla
+E12. loader.exe
+E13. UkrScanner.rar
+E14. cmd.exe
+E15. UkrScanner.exe (SFX)
+E16. jDownloader
+E17. Claws Mail
+E18. QIP Surf Browser
+E19. vaultcli.dll
+E20. SQLite.Interop.dll
+E21. MCMDiction.exe
+E22. powershell.exe [aka PowerShell (powershell.exe), PowerShell]
+E23. RegAsm.exe
+E24. b.exe
+E25. CocCoc Browser
+E26. QuasarRAT
+E27. 7Star Browser
+E28. Mozilla Firefox
+E29. Електронний запит.exe
+E30. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E31. Інформація щодо наявності вакансій та їх укомплектування.xls
+E32. Рахунки и новые списки.lzh
+E33. Meterpreter
+E34. .NET Framework
+E35. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E36. baseupd.exe
+E37. Adobe Flash Player
+E38. Windows Vista
+E39. Yandex Browser
+E40. CCleaner.zip
+E41. CCleaner.exe
+E42. CCleaner.rar
+E43. Електронний план евакуації.rar
+E44. Електронний план евакуації.exe
+E45. plan_dsns.gov.ua.rar
+E46. install.msi
+Mentions:
+M1. "install.msi" (Software) — options: E1, E2, E3, E4
+M2. "CCleaner.zip" (Software) — options: E11, E12, E13, E14
+M3. "CCleaner.exe" (Software) — options: E14, E12, E21, E22
+M4. "CCleaner.rar" (Software) — options: E13, E19, E12, E15
+M5. "Електронний план евакуації.rar" (Software) — options: E15, E29, E13, E30
+M6. "Електронний план евакуації.exe" (Software) — options: E29, E15, E21, E24
+M7. "plan_dsns.gov.ua.rar" (Software) — options: E33, E13, E15, E26
+
+=== RESPONSE (5.6s, in 2091 / out 130 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"MSI installer executed during attack"},{"m":"M2","id":"NEW","g":"archive file used in attack"},{"m":"M3","id":"NEW","g":"executable file used in attack"},{"m":"M4","id":"NEW","g":"RAR archive distributed in phishing emails"},{"m":"M5","id":"NEW","g":"RAR archive distributed in phishing emails"},{"m":"M6","id":"NEW","g":"executable file used in attack"},{"m":"M7","id":"NEW","g":"RAR archive distributed in phishing emails"}],"e":[]}

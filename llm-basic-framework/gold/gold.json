@@ -36566,6 +36566,374 @@
      "annotator": "claude-review (approved by koorchik)"
     }
    ]
+  },
+  {
+   "category": "Software",
+   "from": "Google Chrome",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "g65",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Google Chrome",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium-based browser; Chrome is Google's Chromium build (Agent Tesla stealer target list, doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "7Star Browser",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "s2461",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "7Star Browser",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium-based browser; verifiable Chromium derivative (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Amigo Browser",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "s2481",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Amigo Browser",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium-based browser by Mail.Ru; verifiable Chromium derivative (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Liebao Browser",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "s2753",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Liebao Browser",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium-based browser (Cheetah/Liebao); verifiable Chromium derivative (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Citrio Browser",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "s2615",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Citrio Browser",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium-based browser; verifiable Chromium derivative (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Opera Browser",
+   "to": "Chromium Browser",
+   "kind": "isa",
+   "fromClusterId": "s2826",
+   "toClusterId": "s2604",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Opera Browser",
+      "Chromium Browser"
+     ],
+     "snippet": "Chromium/Blink-based since 2013; stealer targets its Chromium profile store (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "IceDragon",
+   "to": "Mozilla Firefox",
+   "kind": "isa",
+   "fromClusterId": "s2723",
+   "toClusterId": "g75",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "IceDragon",
+      "Mozilla Firefox"
+     ],
+     "snippet": "Comodo IceDragon is a Firefox fork — same pattern as Comodo Dragon under Chromium (doc 3028)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "RegAsm.exe",
+   "to": ".NET Framework",
+   "kind": "part-of",
+   "fromClusterId": "s2885",
+   "toClusterId": "s2452",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "RegAsm.exe",
+      ".NET Framework"
+     ],
+     "snippet": "Assembly Registration Tool shipped as part of the .NET Framework SDK/runtime",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Microsoft Equation Editor",
+   "to": "MS Office",
+   "kind": "part-of",
+   "fromClusterId": "s2782",
+   "toClusterId": "g84",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Microsoft Equation Editor",
+      "MS Office"
+     ],
+     "snippet": "EQNEDT32 component shipped inside Microsoft Office (CVE-2017-11882 context)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Windows Server 2008",
+   "to": "Microsoft Windows",
+   "kind": "isa",
+   "fromClusterId": "s3022",
+   "toClusterId": "g91",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Windows Server 2008",
+      "Microsoft Windows"
+     ],
+     "snippet": "consistent with existing gold: Microsoft Windows Server 2003 -> Microsoft Windows [isa]",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Windows Server 2012",
+   "to": "Microsoft Windows",
+   "kind": "isa",
+   "fromClusterId": "s3023",
+   "toClusterId": "g91",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Windows Server 2012",
+      "Microsoft Windows"
+     ],
+     "snippet": "consistent with existing gold: Microsoft Windows Server 2003 -> Microsoft Windows [isa]",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Browser.dll",
+   "to": "SPECTR",
+   "kind": "part-of",
+   "fromClusterId": "s2508",
+   "toClusterId": "s2911",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Browser.dll",
+      "SPECTR"
+     ],
+     "snippet": "SPECTR plugin module under ext\\ path, steals browser data (doc 6280422); matches gold SPECTR.* part-of set",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Files.dll",
+   "to": "SPECTR",
+   "kind": "part-of",
+   "fromClusterId": "s2668",
+   "toClusterId": "s2911",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Files.dll",
+      "SPECTR"
+     ],
+     "snippet": "SPECTR plugin module under ext\\ path, steals documents (doc 6280422)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Screen.dll",
+   "to": "SPECTR",
+   "kind": "part-of",
+   "fromClusterId": "s2930",
+   "toClusterId": "s2911",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Screen.dll",
+      "SPECTR"
+     ],
+     "snippet": "SPECTR plugin module under ext\\ path, takes screenshots (doc 6280422)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "Social.dll",
+   "to": "SPECTR",
+   "kind": "part-of",
+   "fromClusterId": "s2941",
+   "toClusterId": "s2911",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "Social.dll",
+      "SPECTR"
+     ],
+     "snippet": "SPECTR plugin module under ext\\ path, targets messengers (doc 6280422)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
+  },
+  {
+   "category": "Software",
+   "from": "USB.dll",
+   "to": "SPECTR",
+   "kind": "part-of",
+   "fromClusterId": "g108",
+   "toClusterId": "s2911",
+   "sources": [
+    "manual-review"
+   ],
+   "models": {},
+   "rule": "manual-review-2026-08-22b",
+   "evidence": [
+    {
+     "pair": [
+      "USB.dll",
+      "SPECTR"
+     ],
+     "snippet": "SPECTR plugin module under ext\\ path, harvests removable media (doc 6280422)",
+     "annotator": "claude-review (pending koorchik approval)"
+    }
+   ]
   }
  ],
  "nilLabels": [
