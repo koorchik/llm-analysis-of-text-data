@@ -1,4 +1,4 @@
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { REPLAY_SOURCE, ReplayState, applyEvent, createEmptyState, docOf } from './replayCore';
 import { sortByNumericId } from '../utils/fsUtils';
 import { stripRunDate } from '../Experiment/runDirName';
@@ -8,7 +8,7 @@ import path from 'path';
 
 /**
  * Run playback viewer (SKEIN v2): one self-contained HTML file that replays, document by
- * document, how each processed report changed the ladders and the registry.
+ * document, how each processed report changed the registry.
  *
  * Follows the gold-view idiom (`src/Gold/registryView.ts`): no dependencies, light/dark, every
  * member string escaped, data embedded as JSON — works from `file://`.
@@ -33,22 +33,17 @@ export interface RunViewData {
   events: Array<Record<string, unknown>>;
   /** Per-category canonical names of the final on-disk registry, for the self-check. */
   registryFinal: Record<string, string[]>;
-  /** category → canonical → rung, from the final registry (see loadRunData). */
-  registryRungs: Record<string, Record<string, string>>;
   selfCheck: SelfCheck;
 }
 
 /**
- * Which arm a run is, in the terms the experiment varies along: the condition label, the model
- * that answered the per-document judge calls, and the (possibly different) ladder ensemble. A
- * mixed-window local arm runs `gemma4:e2b-8k` for the judge and `…-16k` for the ladder, so the
- * two are recorded separately rather than collapsed into one "model" string.
+ * Which arm a run is, in the terms the experiment varies along: the condition label and the model
+ * that answered the per-document judge calls.
  */
 export interface ArmId {
   condition: string;
   provider: string;
   model: string;
-  ladderModels: string | null;
 }
 
 export interface SelfCheck {
@@ -99,29 +94,18 @@ export async function loadRunData(runDir: string): Promise<RunViewData> {
   }
 
   const registryFinal: Record<string, string[]> = {};
-  const registryRungs: Record<string, Record<string, string>> = {};
   const registryPath = path.join(runDir, 'registry.json');
   if (existsSync(registryPath)) {
-    const registry = new EntityRegistry({ filePath: registryPath });
+    const registry = new ConceptRegistry({ filePath: registryPath });
     await registry.load();
-    for (const category of registry.categories()) {
-      const records = registry.records(category);
-      registryFinal[category] = Object.keys(records).sort();
-      // Rungs mostly reach the registry through retroactive ladder binding, which emits no
-      // journal event — so the replay alone knows a rung only for the ~114 entities whose
-      // granularity-edge event happened to carry `mentionRung`, out of ~1700 that have one.
-      // Carrying the registry's rungs lets every entity show its level; the page marks these as
-      // final-state, because unlike journal events they are not attributable to a document.
-      for (const [canonical, record] of Object.entries(records)) {
-        const rung = (record as { rung?: unknown }).rung;
-        if (typeof rung === 'string' && rung) (registryRungs[category] ??= {})[canonical] = rung;
-      }
+    for (const category of registry.conceptSchemes()) {
+      registryFinal[category] = Object.keys(registry.concepts(category)).sort();
     }
   }
 
   // The directory carries a `<YYYY-MM-DD>-` presentation prefix; the runId is what follows it.
   let runId = stripRunDate(path.basename(runDir));
-  const arm: ArmId = { condition: runId, provider: 'unknown', model: 'unknown', ladderModels: null };
+  const arm: ArmId = { condition: runId, provider: 'unknown', model: 'unknown' };
   const cardPath = path.join(runDir, 'run-card.json');
   if (existsSync(cardPath)) {
     try {
@@ -130,15 +114,13 @@ export async function loadRunData(runDir: string): Promise<RunViewData> {
       arm.condition = String(card.condition ?? card.config?.condition ?? runId);
       arm.provider = String(card.config?.llm?.provider ?? 'unknown');
       arm.model = String(card.config?.llm?.model ?? 'unknown');
-      const ladderModels = card.config?.extra?.ladder?.ensembleModels;
-      arm.ladderModels = ladderModels ? String(ladderModels) : null;
     } catch {
       /* keep directory name */
     }
   }
 
   const selfCheck = computeSelfCheck(replayAll(events), registryFinal);
-  return { runId, arm, docOrder, events, registryFinal, registryRungs, selfCheck };
+  return { runId, arm, docOrder, events, registryFinal, selfCheck };
 }
 
 export function replayAll(events: Array<Record<string, unknown>>): ReplayState {
@@ -202,7 +184,6 @@ export function renderRunViewHtml(input: RunViewData | RunViewData[]): string {
     runs.map((data) => ({
       runId: data.runId,
       arm: data.arm,
-      registryRungs: data.registryRungs,
       docOrder: data.docOrder,
       events: data.events,
       selfCheck: data.selfCheck,
@@ -267,32 +248,10 @@ export function renderRunViewHtml(input: RunViewData | RunViewData[]): string {
   aside { border-left: 1px solid var(--line); padding: 12px; font-size: 13px; }
   h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
        margin: 14px 0 6px; }
-  .ladder { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
-  .rung { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; flex-wrap: wrap; }
-  .g { font-weight: 700; font-variant-numeric: tabular-nums; width: 26px; }
-  .chip { font-size: 11px; border-radius: 10px; padding: 0 8px; border: 1px solid var(--line); }
-  .chip.preserving { color: var(--chip1); border-color: var(--chip1); }
-  .chip.widening { color: var(--chip2); border-color: var(--chip2); }
-  .chip.disputed { color: var(--chip3); border-color: var(--chip3); }
-  .foldtest { color: var(--muted); font-size: 12px; width: 100%; padding-left: 34px; }
   ul.forest { list-style: none; padding-left: 18px; margin: 4px 0; border-left: 1px solid var(--line); }
   ul.forest > li { padding: 2px 0; }
   .ent { border-radius: 4px; padding: 1px 4px; }
   .ent.changed { background: var(--hl); }
-  /* The level is the first thing on the row and always the same width, so a column of levels can be
-     read down the page. Without that, a g0 and a g1 sibling look identical. */
-  .lvl { display: inline-block; min-width: 30px; font-size: 11px; font-variant-numeric: tabular-nums;
-         color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px;
-         margin-right: 6px; text-align: center; }
-  .lvl.g1 { color: var(--chip1); border-color: var(--chip1); }
-  .lvl.g2 { color: var(--chip2); border-color: var(--chip2); }
-  .lvl.g3 { color: var(--chip3); border-color: var(--chip3); }
-  .lvl.none { opacity: .45; }
-  .lvl.final { border-style: dashed; }
-  /* A child must be FINER than its parent (lower g). Anything else is a broken hierarchy and the
-     page says so rather than drawing it as if it were fine. */
-  .inversion { color: var(--chip3); font-size: 11px; margin-left: 6px; border: 1px solid var(--chip3);
-               border-radius: 10px; padding: 0 6px; }
   .fold { color: var(--muted); font-size: 11px; margin-left: 6px; }
   .ent .deferred { color: var(--chip2); font-size: 11px; margin-left: 4px; }
   .aliases { padding-left: 36px; margin-top: 1px; }
@@ -302,8 +261,9 @@ export function renderRunViewHtml(input: RunViewData | RunViewData[]): string {
             margin: 2px 0 6px; flex-wrap: wrap; }
   .relbar label { cursor: pointer; }
   .edgekind { font-size: 11px; margin-left: 6px; }
-  .edgekind.coarsens-to { color: var(--chip1); }
-  .edgekind.part-of { color: var(--chip2); }
+  .edgekind.broaderInstantial { color: var(--chip1); }
+  .edgekind.broaderGeneric { color: var(--chip3); }
+  .edgekind.broaderPartitive { color: var(--chip2); }
   .repeat { color: var(--muted); font-style: italic; }
   input.filter { width: 100%; margin: 4px 0 8px; padding: 5px 8px; border: 1px solid var(--line);
                  border-radius: 6px; background: var(--bg); color: var(--fg); }
@@ -342,8 +302,6 @@ export function renderRunViewHtml(input: RunViewData | RunViewData[]): string {
   <nav id="cats"></nav>
   <section class="middle">
     <input class="filter" id="filter" placeholder="filter entity names…">
-    <h2>Granularity ladder</h2>
-    <div id="ladder"></div>
     <h2>Registry (granularity forest)</h2>
     <div id="forest"></div>
   </section>
@@ -391,18 +349,6 @@ function bindArm(index, keepDocId) {
   frame = Math.min(previous, frameCount);
 }
 
-/** "a,a,a" → "a ×3" — the ladder ensemble spec repeats one model per member. */
-function collapseModelSpec(spec) {
-  var counts = {}; var order = [];
-  spec.split(',').forEach(function (entry) {
-    var name = entry.trim();
-    if (!name) return;
-    if (counts[name] === undefined) { counts[name] = 0; order.push(name); }
-    counts[name] += 1;
-  });
-  return order.map(function (n) { return counts[n] > 1 ? n + ' \\u00d7' + counts[n] : n; }).join(', ');
-}
-
 function renderArmBar() {
   if (RUNS.length < 2) return;
   var row = document.getElementById('armrow');
@@ -412,9 +358,6 @@ function renderArmBar() {
       esc(r.arm.condition) + ' \\u2014 ' + esc(r.arm.provider) + '/' + esc(r.arm.model) + '</option>';
   }).join('');
   var meta = '<code>' + esc(DATA.runId) + '</code> \\u00b7 ' + DATA.docOrder.length + ' doc(s)';
-  if (DATA.arm.ladderModels) {
-    meta += ' \\u00b7 ladder: <code>' + esc(collapseModelSpec(DATA.arm.ladderModels)) + '</code>';
-  }
   if (!DATA.selfCheck.ok) meta += ' \\u00b7 \\u26a0 journal incomplete';
   document.getElementById('armmeta').innerHTML = meta;
 }
@@ -472,7 +415,6 @@ function render() {
 
   renderBanner();
   renderCategories(state);
-  renderLadder(state);
   renderForest(state, docId);
   renderDocEvents(docId);
 }
@@ -504,45 +446,11 @@ function renderCategories(state) {
   });
 }
 
-function renderLadder(state) {
-  var el = document.getElementById('ladder');
-  var versions = (activeCategory && state.ladders[activeCategory]) || [];
-  if (versions.length === 0) {
-    el.innerHTML = '<div class="empty">no ladder discovered yet' +
-      (activeCategory ? ' for ' + esc(activeCategory) : '') + ' — flat g0 mode</div>';
-    return;
-  }
-  var ladder = versions[versions.length - 1];
-  var html = '<div class="ladder"><div class="sub">version ' + esc(ladder.version) +
-    ' · ' + esc(ladder.runs) + ' run(s) · discovered at doc ' + esc(ladder.discoveredAtDoc) +
-    (versions.length > 1 ? ' · ' + (versions.length - 1) + ' earlier version(s)' : '') + '</div>';
-  (ladder.rungs || []).forEach(function (rung) {
-    var chips = '';
-    if (rung.g > 0) {
-      chips += rung.preserving
-        ? '<span class="chip preserving">preserving · coarsens-to</span>'
-        : '<span class="chip widening">widening · part-of</span>';
-    }
-    if (rung.disputed) chips += ' <span class="chip disputed">disputed</span>';
-    if (rung.move) chips += ' <span class="chip">' + esc(rung.move) + '</span>';
-    html += '<div class="rung"><span class="g">g' + esc(rung.g) + '</span>' +
-      '<span>' + esc(rung.example) + '</span> <span class="sub">(' + esc(rung.alias) + ')</span> ' + chips;
-    if (rung.foldTest) html += '<div class="foldtest">' + esc(rung.foldTest) + '</div>';
-    html += '</div>';
-  });
-  html += '</div>';
-  if ((ladder.rejected || []).length > 0) {
-    html += '<div class="sub">rejected: ' + ladder.rejected.map(function (r) {
-      return esc(r.candidate) + ' (gate ' + esc(r.gate) + ')';
-    }).join(' · ') + '</div>';
-  }
-  el.innerHTML = html;
-}
-
-/** Which relation kinds the forest currently draws — the fold, made interactive. */
-var visibleRelations = { 'coarsens-to': true, 'part-of': true };
-function relationVisible(kind) { return visibleRelations[kind] !== false; }
-function toggleRelation(kind, on) { visibleRelations[kind] = on; render(); }
+/** Which ISO 25964 broader types the forest currently draws — the fold, made interactive. */
+var visibleRelations = { broaderInstantial: true, broaderGeneric: true, broaderPartitive: true };
+function typeOf(edge) { return edge.type || 'broaderGeneric'; }
+function relationVisible(type) { return visibleRelations[type] !== false; }
+function toggleRelation(type, on) { visibleRelations[type] = on; render(); }
 
 function renderForest(state, docId) {
   var el = document.getElementById('forest');
@@ -552,11 +460,11 @@ function renderForest(state, docId) {
 
   var children = {}; var hasParent = {};
   bucket.edges.forEach(function (edge) {
-    (children[edge.to] = children[edge.to] || []).push(edge);
-    hasParent[edge.from] = true;
+    (children[edge.broader] = children[edge.broader] || []).push(edge);
+    hasParent[edge.narrower] = true;
   });
   var inHierarchy = {};
-  bucket.edges.forEach(function (edge) { inHierarchy[edge.from] = true; inHierarchy[edge.to] = true; });
+  bucket.edges.forEach(function (edge) { inHierarchy[edge.narrower] = true; inHierarchy[edge.broader] = true; });
 
   var touched = {};
   if (docId !== null) {
@@ -576,15 +484,6 @@ function renderForest(state, docId) {
     return entity && entity.aliases.some(function (a) { return a.toLowerCase().indexOf(filter) !== -1; });
   }
 
-  // The level of an entity, and whether it came from this document's stream or the final registry.
-  function rungOf(name) {
-    var entity = bucket.entities[name] || {};
-    if (entity.rung) return { g: entity.rung, journal: true };
-    var final = (DATA.registryRungs[activeCategory] || {})[name];
-    return final ? { g: final, journal: false } : { g: null, journal: false };
-  }
-  function rungNumber(g) { var m = /^g(\d+)$/.exec(g || ''); return m ? Number(m[1]) : null; }
-
   /** Surfaces this node would absorb if the visible relations were contracted into it. */
   function subtreeSize(name, guard) {
     guard = guard || {};
@@ -593,11 +492,11 @@ function renderForest(state, docId) {
     var nodes = 0;
     var surfaces = 0;
     (children[name] || []).forEach(function (edge) {
-      if (!relationVisible(edge.kind)) return;
-      var entity = bucket.entities[edge.from] || { aliases: [edge.from] };
+      if (!relationVisible(typeOf(edge))) return;
+      var entity = bucket.entities[edge.narrower] || { aliases: [edge.narrower] };
       nodes += 1;
       surfaces += entity.aliases.length;
-      var deeper = subtreeSize(edge.from, guard);
+      var deeper = subtreeSize(edge.narrower, guard);
       nodes += deeper.nodes;
       surfaces += deeper.surfaces;
     });
@@ -608,30 +507,16 @@ function renderForest(state, docId) {
     var entity = bucket.entities[name] || { aliases: [name] };
     var repeated = seen[name] === true;
     seen[name] = true;
-    var rung = rungOf(name);
     var cls = 'ent' + (touched[name] ? ' changed' : '');
 
-    var lvlCls = 'lvl' + (rung.g ? ' ' + rung.g : ' none') + (rung.g && !rung.journal ? ' final' : '');
-    var lvlTitle = rung.g
-      ? (rung.journal ? 'level from this run\'s stream' : 'level from registry.json — bound by the ladder, not journalled per document')
-      : 'no level assigned';
-    var html = '<li><span class="' + cls + '">' +
-      '<span class="' + lvlCls + '" title="' + lvlTitle + '">' + esc(rung.g || '–') + '</span>' + esc(name);
+    var html = '<li><span class="' + cls + '">' + esc(name);
     if (entity.deferred) html += '<span class="deferred">deferred</span>';
     html += '</span>';
 
-    if (edge) html += '<span class="edgekind ' + esc(edge.kind) + '">' + esc(edge.kind) +
-      (edge.by ? ' · ' + esc(edge.by) : '') + '</span>';
-
-    // A child must be finer than its parent — a lower g. Equal or coarser is a broken hierarchy,
-    // and saying so is more useful than drawing it as though it were fine.
-    if (parentName) {
-      var childG = rungNumber(rung.g);
-      var parentG = rungNumber(rungOf(parentName).g);
-      if (childG !== null && parentG !== null && childG >= parentG) {
-        html += '<span class="inversion" title="a child must sit at a finer level than its parent">' +
-          'level inversion: ' + esc(rung.g) + ' under ' + esc(rungOf(parentName).g) + '</span>';
-      }
+    if (edge) {
+      var sim = typeof edge.similarityScore === 'number' ? ' · sim ' + edge.similarityScore.toFixed(2) : '';
+      html += '<span class="edgekind ' + esc(typeOf(edge)) + '">' + esc(typeOf(edge)) + sim +
+        (edge.by ? ' · ' + esc(edge.by) : '') + '</span>';
     }
 
     var fold = subtreeSize(name);
@@ -649,20 +534,11 @@ function renderForest(state, docId) {
     }
     if (repeated) { html += ' <span class="repeat">↻ repeated</span></li>'; return html; }
 
-    // Coarsest children first, then finest, then by name: the level column reads top-to-bottom
-    // instead of interleaving g1 and g0 siblings in alphabetical order.
-    var kids = (children[name] || []).filter(function (kid) { return relationVisible(kid.kind); });
-    kids = kids.slice().sort(function (a, b) {
-      var ga = rungNumber(rungOf(a.from).g);
-      var gb = rungNumber(rungOf(b.from).g);
-      if (ga === null) ga = -1;
-      if (gb === null) gb = -1;
-      if (ga !== gb) return gb - ga;
-      return a.from < b.from ? -1 : 1;
-    });
+    var kids = (children[name] || []).filter(function (kid) { return relationVisible(typeOf(kid)); });
+    kids = kids.slice().sort(function (a, b) { return a.narrower < b.narrower ? -1 : 1; });
     if (kids.length > 0) {
       html += '<ul class="forest">' + kids.map(function (kid) {
-        return nodeHtml(kid.from, kid, seen, name);
+        return nodeHtml(kid.narrower, kid, seen, name);
       }).join('') + '</ul>';
     }
     return html + '</li>';
@@ -675,10 +551,10 @@ function renderForest(state, docId) {
 
   var seen = {};
   var html = '<div class="relbar">fold along:' +
-    ['coarsens-to', 'part-of'].map(function (kind) {
-      return '<label><input type="checkbox" ' + (relationVisible(kind) ? 'checked' : '') +
-        ' onchange="toggleRelation(\'' + kind + '\', this.checked)"> ' +
-        '<span class="edgekind ' + kind + '">' + kind + '</span></label>';
+    ['version-of', 'narrower-of', 'part-of'].map(function (relation) {
+      return '<label><input type="checkbox" ' + (relationVisible(relation) ? 'checked' : '') +
+        ' onchange="toggleRelation(\\'' + relation + '\\', this.checked)"> ' +
+        '<span class="edgekind ' + relation + '">' + relation + '</span></label>';
     }).join('') +
     '<span>unticking a relation hides those edges and recomputes what each node absorbs</span></div>';
   var shownRoots = roots.filter(matches);
@@ -722,13 +598,22 @@ function renderDocEvents(docId) {
       return '<div class="event"><span class="op ' + cls + '">' + esc(e.decision) + '</span> ' + what +
         ' <span class="why">' + esc(e.category || '') + '</span></div>';
     }
-    if (e.op === 'granularity-edge') {
-      return '<div class="event"><span class="op">edge</span> ' + esc(e.from) + ' —[' + esc(e.kind) + ']→ ' +
-        esc(e.to) + ' <span class="why">' + esc(e.category || '') + (e.by ? ' · ' + esc(e.by) : '') + '</span></div>';
+    if (e.op === 'broader-edge' || e.op === 'granularity-edge') {
+      var narrower = e.narrower !== undefined ? e.narrower : e.from;
+      var broader = e.broader !== undefined ? e.broader : e.to;
+      var typeLabel = e.type || e.relation || e.kind;
+      var simLabel = typeof e.similarityScore === 'number' ? ' · sim ' + e.similarityScore.toFixed(2) : '';
+      return '<div class="event"><span class="op">edge</span> ' + esc(narrower) + ' —[' + esc(typeLabel) + ']→ ' +
+        esc(broader) + ' <span class="why">' + esc(e.category || '') + simLabel + (e.by ? ' · ' + esc(e.by) : '') + '</span></div>';
     }
-    if (e.op === 'discover-ladder') {
-      return '<div class="event"><span class="op">ladder</span> ' + esc(e.category) + ' v' + esc(e.version) +
-        ' — ' + esc(e.outcome) + '</div>';
+    if (e.op === 'skos-catch-up') {
+      return '<div class="event"><span class="op">catch-up</span> ' + esc(e.category) +
+        ' <span class="why">reviewed ' + esc(e.reviewed) + ' · merged ' + esc(e.merged) +
+        ' · edged ' + esc(e.edged) + '</span></div>';
+    }
+    if (e.op === 'merge') {
+      return '<div class="event"><span class="op repair">merge</span> ' + esc(e.from) + ' ⇒ ' + esc(e.into) +
+        ' <span class="why">' + esc(e.category || '') + (e.by ? ' · ' + esc(e.by) : '') + '</span></div>';
     }
     // T11: repair-merge/repair-split/repair-move/repair-distinct/repair-keep are the StreamingRepairer's
     // structural verdicts — same "repair" chip as the older consolidator ops they sit alongside (a T9

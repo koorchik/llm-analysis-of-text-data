@@ -4,7 +4,7 @@ import type { Analyzer } from '../types';
  * The baseline matching key: the surface form, trimmed and case-folded.
  *
  * "Identity" here means the identity *matching* transform, not the untouched string. Case folding is
- * part of it because that is what identity has always meant in this pipeline — `EntityRegistry`'s
+ * part of it because that is what identity has always meant in this pipeline — `ConceptRegistry`'s
  * exact fast path resolves on `name.trim().toLowerCase()`, so an analyzer that preserved case would
  * disagree with the registry's own notion of the same name.
  *

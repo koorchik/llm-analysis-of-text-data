@@ -1,39 +1,44 @@
 #!/usr/bin/env ts-node
 /**
- * Fold a registry along its granularity edges — the operation the graph exists for.
+ * Fold a registry along its skos:broader edges — the roll-up the graph exists for.
  *
  *   npm run fold -- --run <runDir> --category Software
- *   npm run fold -- --run <runDir> --relations coarsens-to      # versions only, keep components
- *   npm run fold -- --run <runDir> --level g1                   # stop at the ladder's product rung
+ *   npm run fold -- --run <runDir> --contract broaderInstantial   # versions only (alias: version-of)
+ *   npm run fold -- --run <runDir> --threshold 0.85               # stop at semantic drift
+ *   npm run fold -- --run <runDir> --threshold 0.85 --rescore max-labels
  *
  * A flat registry answers "how many mentions of `Microsoft Office 2010`". A folded one answers "how
  * many mentions of Office **at product granularity**", which is the question an analysis usually
  * wants, and it is a different answer for every choice of fold — hence a runtime operation over the
  * stored graph rather than a decision baked into the registry.
  *
- * Two knobs, because the two edge kinds mean different things:
+ * Two knobs:
  *
- * - `coarsens-to` preserves the referent (`Office 2010` → `Office`). Following it is a rollup.
- * - `part-of` does not (`MS Word` → `MS Office`, `rfusclient.exe` → `Remote Utilities`). Following
- *   it answers "which system was involved", which is often what a report-level count wants and is
- *   sometimes wrong — so it is opt-in per run, not a default.
+ * - `--contract` folds only the named ISO 25964 broader types (`broaderInstantial`,
+ *   `broaderGeneric`, `broaderPartitive`; the pre-v6 names `version-of`, `narrower-of`, `part-of`
+ *   are accepted as aliases). `--contract broaderInstantial` folds `Office 2010` into `Office`
+ *   and `Photoshop 7` into `Photoshop` in one pass while leaving `MS Word` under `MS Office` alone.
+ * - `--threshold` is the semantic brake: an edge is only followed while its similarity is at or
+ *   above the threshold. That is what keeps "Microsoft Office" from rolling up into an overly
+ *   abstract "Microsoft Products". 0 (the default) folds every edge; edges with no score count as
+ *   below any positive threshold.
+ * - `--rescore max-labels` replaces the stored score (frozen at edge-creation time, name-to-name
+ *   against whichever surface won the canonical slot) with a state-aware one: the MAX cosine over
+ *   all current label pairs of the two endpoints — the blocker's max-over-aliases aggregation,
+ *   immune to the canonical-name lottery. Needs a live encoder (`EMBEDDINGS_PROVIDER`/`_MODEL`,
+ *   default ollama/embeddinggemma; cache at `EMBEDDINGS_CACHE` or `<runDir>/../../embeddings-cache`).
  *
- * `--level` stops the walk at the first ancestor sitting at or above the given ladder rung, which is
- * what makes "show everything at product level" a single flag rather than a hand-written traversal.
+ * The walk itself is `ConceptRegistry.rollupTarget` — the same traversal downstream analyses use —
+ * so the CLI cannot drift from the library semantics. Loading through the registry normalizes
+ * every historical file version (v1–v6) in memory.
  */
-import { promises as fs } from 'fs';
+import { ConceptRegistry, type BroaderEdge, type BroaderType } from '../src/ConceptRegistry/ConceptRegistry';
+import { createEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
+import { cosineNormalized, l2Normalize } from '../src/utils/vectorUtils';
+import dotenv from 'dotenv';
 import path from 'path';
 
-interface Registry {
-  categories?: Record<
-    string,
-    Record<string, { aliases?: Array<{ surface: string } | string>; rung?: string; gloss?: string | null }>
-  >;
-  granularityEdges?: Record<
-    string,
-    Array<{ from: string; to: string; kind: string; relation?: string | null }>
-  >;
-}
+dotenv.config();
 
 const argv = process.argv.slice(2);
 const flag = (name: string, fallback = '') => {
@@ -43,65 +48,74 @@ const flag = (name: string, fallback = '') => {
 
 const RUN = flag('run');
 const CATEGORY = flag('category');
-const RELATIONS = new Set(flag('relations', 'coarsens-to,part-of').split(',').map((s) => s.trim()));
-/**
- * Contract only these finer relations (`version-of`, `narrower-of`, `part-of`), ignoring the stored
- * `kind` entirely. This is the aggregation an analysis usually means: `--contract version-of` folds
- * `Office 2010` into `Office` and `Photoshop 7` into `Photoshop` in one pass, while leaving
- * `MS Word` under `MS Office` alone — and it does that identically for both products no matter how
- * deep either chain runs, which a level index cannot promise.
- */
-const CONTRACT = flag('contract', '')
+const CONTRACT_INPUT = flag('contract', '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
-const LEVEL = flag('level');
+const THRESHOLD = Number(flag('threshold', '0'));
 const TOP = Number(flag('top', '25'));
+const RESCORE = flag('rescore', '');
+
+/** Pre-v6 relation names are accepted as aliases of the ISO 25964 types. */
+const CONTRACT_ALIASES: Record<string, BroaderType> = {
+  broaderInstantial: 'broaderInstantial',
+  broaderGeneric: 'broaderGeneric',
+  broaderPartitive: 'broaderPartitive',
+  'version-of': 'broaderInstantial',
+  'narrower-of': 'broaderGeneric',
+  'part-of': 'broaderPartitive',
+};
 
 async function main() {
-  if (!RUN) throw new Error('usage: fold-registry --run <runDir> [--category X] [--relations coarsens-to,part-of] [--level g1]');
-  const registry = JSON.parse(await fs.readFile(path.join(RUN, 'registry.json'), 'utf8')) as Registry;
+  if (!RUN) throw new Error('usage: fold-registry --run <runDir> [--category X] [--contract broaderInstantial,broaderGeneric,broaderPartitive] [--threshold 0.85]');
 
-  const categories = Object.keys(registry.categories ?? {}).filter(
-    (name) => !CATEGORY || name.toLowerCase() === CATEGORY.toLowerCase()
-  );
-
-  for (const category of categories) {
-    const records = registry.categories![category];
-    const edges = (registry.granularityEdges?.[category] ?? []).filter((edge) =>
-      CONTRACT.length > 0 ? Boolean(edge.relation) && CONTRACT.includes(edge.relation!) : RELATIONS.has(edge.kind)
-    );
-    if (Object.keys(records).length === 0) continue;
-
-    const parent = new Map<string, { to: string; kind: string }>();
-    for (const edge of edges) {
-      // One parent per node keeps the fold a function. A second edge out of the same node is a
-      // multi-parent DAG — real, but it makes "the" folded value ambiguous, so the first wins and
-      // the rest are reported.
-      if (!parent.has(edge.from)) parent.set(edge.from, { to: edge.to, kind: edge.kind });
+  const contract = CONTRACT_INPUT.map((name) => {
+    const mapped = CONTRACT_ALIASES[name];
+    if (!mapped) {
+      throw new Error(
+        `unknown --contract "${name}"; expected one of ${Object.keys(CONTRACT_ALIASES).join(', ')}`
+      );
     }
-    const multiParent = edges.length - parent.size;
+    return mapped;
+  });
 
-    const rungOf = (name: string) => records[name]?.rung ?? 'g0';
-    const rungNumber = (rung: string) => Number(/^g(\d+)$/.exec(rung)?.[1] ?? 0);
-    const stopAt = LEVEL ? rungNumber(LEVEL) : Infinity;
+  if (RESCORE && RESCORE !== 'max-labels') {
+    throw new Error(`unknown --rescore "${RESCORE}"; expected max-labels`);
+  }
 
-    const foldOf = (name: string): string => {
-      const seen = new Set<string>([name]);
-      let current = name;
-      for (;;) {
-        if (rungNumber(rungOf(current)) >= stopAt) return current;
-        const next = parent.get(current);
-        if (!next || seen.has(next.to)) return current;
-        seen.add(next.to);
-        current = next.to;
-      }
-    };
+  const registry = new ConceptRegistry({ filePath: path.join(RUN, 'registry.json') });
+  await registry.load();
 
-    const mentions = (name: string) => (records[name]?.aliases ?? []).length;
+  const score = RESCORE === 'max-labels' ? await maxLabelScores(registry) : undefined;
+  const rollupOptions = {
+    // 0 = the fold-everything default: no brake, null-score edges are followed.
+    threshold: THRESHOLD > 0 ? THRESHOLD : null,
+    contract: contract.length > 0 ? contract : null,
+    ...(score ? { score } : {}),
+  };
+
+  const schemes = registry
+    .conceptSchemes()
+    .filter((name) => !CATEGORY || name.toLowerCase() === CATEGORY.toLowerCase());
+
+  for (const category of schemes) {
+    const records = registry.concepts(category);
+    if (Object.keys(records).length === 0) continue;
+    const edges = registry
+      .broaderEdges(category)
+      .filter((edge) =>
+        contract.length > 0 ? Boolean(edge.type) && contract.includes(edge.type!) : true
+      );
+
+    // Multi-parent DAGs are real, but a fold must be a function — rollupTarget follows the
+    // highest-similarity parent; the rest are reported, not followed.
+    const parentCount = new Set(edges.map((edge) => edge.narrower)).size;
+    const multiParent = edges.length - parentCount;
+
+    const mentions = (name: string) => (records[name]?.labels ?? []).length;
     const folded = new Map<string, { members: string[]; mentions: number }>();
     for (const name of Object.keys(records)) {
-      const target = foldOf(name);
+      const target = registry.rollupTarget(category, name, rollupOptions);
       const bucket = folded.get(target) ?? { members: [], mentions: 0 };
       bucket.members.push(name);
       bucket.mentions += mentions(name);
@@ -111,8 +125,9 @@ async function main() {
     const moved = [...folded.values()].reduce((sum, b) => sum + b.members.length, 0) - folded.size;
     console.log(
       `\n=== ${category}: ${Object.keys(records).length} canonicals, ${edges.length} usable edges ` +
-        `(${CONTRACT.length > 0 ? `relation ${CONTRACT.join('+')}` : [...RELATIONS].join('+')}` +
-        `${LEVEL ? `, stop at ${LEVEL}` : ''})`
+        `(${CONTRACT_INPUT.length > 0 ? `relation ${CONTRACT_INPUT.join('+')}` : 'all relations'}` +
+        `${THRESHOLD > 0 ? `, threshold ${THRESHOLD}` : ''}` +
+        `${RESCORE ? `, rescored ${RESCORE}` : ''})`
     );
     console.log(`    folded to ${folded.size} nodes — ${moved} canonicals absorbed` +
       (multiParent ? `; ${multiParent} extra parent edges ignored (multi-parent)` : ''));
@@ -126,6 +141,64 @@ async function main() {
       console.log(`    ${target}  (${bucket.mentions} surfaces)  <- ${absorbed.join(', ')}`);
     }
   }
+}
+
+/**
+ * State-aware rescoring: for every broader edge, the MAX cosine over all current label pairs of
+ * its endpoints, computed with the configured encoder through the shared on-disk cache. Returns a
+ * scorer for `rollupTarget`'s `score` option.
+ */
+async function maxLabelScores(
+  registry: ConceptRegistry
+): Promise<(edge: BroaderEdge) => number | null> {
+  const provider = process.env.EMBEDDINGS_PROVIDER ?? 'ollama';
+  const model = process.env.EMBEDDINGS_MODEL ?? 'embeddinggemma';
+  const cacheDir = process.env.EMBEDDINGS_CACHE ?? path.resolve(RUN, '../../embeddings-cache');
+  const client = createEmbeddingsClient({ provider, model, cacheDir });
+
+  // Every label surface that participates in any edge, embedded once.
+  const surfaces = new Set<string>();
+  for (const category of registry.conceptSchemes()) {
+    for (const edge of registry.broaderEdges(category)) {
+      for (const endpoint of [edge.narrower, edge.broader]) {
+        for (const surface of registry.labelSurfaces(category, endpoint)) surfaces.add(surface);
+        surfaces.add(endpoint);
+      }
+    }
+  }
+  const texts = [...surfaces].sort();
+  if (texts.length === 0) return () => null;
+  const vectors = await client.embed(texts, { operator: 'fold-rescore' });
+  const vectorOf = new Map(texts.map((text, index) => [text, l2Normalize(vectors[index])]));
+
+  const scores = new Map<string, number>();
+  for (const category of registry.conceptSchemes()) {
+    for (const edge of registry.broaderEdges(category)) {
+      const narrowerSurfaces = [edge.narrower, ...registry.labelSurfaces(category, edge.narrower)];
+      const broaderSurfaces = [edge.broader, ...registry.labelSurfaces(category, edge.broader)];
+      let best = -1;
+      for (const a of new Set(narrowerSurfaces)) {
+        for (const b of new Set(broaderSurfaces)) {
+          const va = vectorOf.get(a);
+          const vb = vectorOf.get(b);
+          if (!va || !vb) continue;
+          best = Math.max(best, cosineNormalized(va, vb));
+        }
+      }
+      if (best >= 0) scores.set(`${category}|${edge.narrower}|${edge.broader}`, best);
+    }
+  }
+  console.error(`rescored ${scores.size} edges with ${provider}/${model} (max over label pairs)`);
+
+  // The scorer is keyed by endpoints; the category is recovered by probing (schemes are disjoint
+  // on concept names in practice, and a miss falls back to the stored score).
+  return (edge) => {
+    for (const category of registry.conceptSchemes()) {
+      const hit = scores.get(`${category}|${edge.narrower}|${edge.broader}`);
+      if (hit !== undefined) return hit;
+    }
+    return edge.similarityScore ?? null;
+  };
 }
 
 main().catch((error) => {

@@ -13,9 +13,7 @@ Use source evidence only when it explicitly establishes an alias, identifier, tr
 
 ### UNRESOLVED MENTIONS AND CANDIDATES
 {{mentionsBatch}}
-(Each mention shows its category's active ladder when one exists. Candidate records show their
-current rung and known aliases. Rung meanings are category-specific; never apply a universal g0-g3
-taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a granularity edge.)
+(Candidate records show their known aliases.)
 
 ---
 
@@ -27,11 +25,10 @@ taxonomy. If no active ladder is shown, use mentionRung "g0" and do not create a
    - target MUST be exactly one of the listed candidate canonical names.
 
 2. **DIFFERENT-LEVEL / HIERARCHY RELATION (MINT with Granularity Edge):**
-   - If the active category ladder and supplied naming evidence establish that the mention is a
-     narrower instance, version, member, or part of a candidate:
+   - If the supplied naming evidence establishes that the mention is a narrower instance, version,
+     member, or part of a candidate:
      - Output verdict: "mint"
-     - Set mentionRung: the level of this mention (e.g. "g0")
-     - Set parentCandidate: the coarser candidate name
+     - Set parentCandidate: the broader candidate name
      - Set edgeKind:
        - "coarsens-to" (if the referent is preserved, just described less precisely)
        - "part-of" (if the mention is a distinct part or member of the parent)
@@ -56,13 +53,12 @@ Output ONLY a single valid raw JSON object (no markdown code fences, no extra co
       "index": 1,
       "mention": "<verbatim mention>",
       "category": "<category>",
-      "mentionRung": "g0" | "g1" | "g2" | "g3",
       "verdict": "link" | "mint" | "defer",
       "target": "<Candidate Canonical Name when linking, else null>",
       "parentCandidate": "<Candidate Canonical Name if minting under a parent, else null>",
       "edgeKind": "coarsens-to" | "part-of" | null,
       "gloss": "<name-independent source description for mint/defer, else null>",
-      "reasoning": "<1 concise sentence explaining the decision and granularity level>"
+      "reasoning": "<1 concise sentence explaining the decision>"
     }
   ]
 }

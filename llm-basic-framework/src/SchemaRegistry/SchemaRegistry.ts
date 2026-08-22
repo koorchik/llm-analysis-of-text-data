@@ -10,54 +10,8 @@ export interface SchemaEntry {
   examples: string[];
   aliases: string[];
   firstSeen: number;
-  /** Cached granularity ladder (categories only) — discovered by LadderDiscovery, versioned. */
-  ladder?: CategoryLadder;
 }
 
-/**
- * One rung of a category's cached granularity ladder (SKEIN v2). `edgeKind` is DERIVED by code
- * from the model's `preserving` verdict (`coarsens-to` ⇔ true, `part-of` ⇔ false) — never asked
- * of the model. Absent on g0, which is the entity itself, not a coarsening.
- */
-export interface CategoryLadderRung {
-  g: number;
-  alias: string;
-  /** Descriptive metadata only (ISO 25964 / SKOS export key); decides nothing downstream. */
-  move?: string;
-  example: string;
-  preserving?: boolean;
-  foldTest?: string;
-  /** Model self-report OR ensemble disagreement — forced true when N runs disagree. */
-  disputed: boolean;
-  edgeKind?: 'coarsens-to' | 'part-of';
-}
-
-export interface CategoryLadderPlacement {
-  surface: string;
-  g: number;
-}
-
-export interface CategoryLadder {
-  /** Increments on every re-fire, so registry structure can name the ladder it was built under. */
-  version: number;
-  /** Registry surface count at discovery time — the ≥2× re-fire trigger compares against this. */
-  exampleCount: number;
-  /** Ensemble size that produced it. */
-  runs: number;
-  models: string[];
-  rungs: CategoryLadderRung[];
-  /**
-   * Where the discovery call placed each surface it was shown. Recorded so the catch-up that gives
-   * pre-ladder entities their rung needs no second call, and so a reader can audit which entities a
-   * ladder actually spoke about.
-   */
-  placements?: CategoryLadderPlacement[];
-  rejected: Array<{ candidate: string; gate: string; reason: string }>;
-  notes: string;
-  /** Human-readable ensemble disagreement notes (why a rung got disputed forced). */
-  disagreements: string[];
-  discoveredAtDoc: number;
-}
 
 export interface PairRuleEndpoint {
   category: string;
@@ -200,24 +154,6 @@ export class SchemaRegistry {
     this.#pairRuleIndex.set(key, rule);
     this.#data.history.push({ doc, op: 'admit-pair-rule', signature: key });
     this.#dirty = true;
-  }
-
-  /** Caches a discovered ladder on its category and records the discovery in history. */
-  setLadder(categoryName: string, ladder: CategoryLadder, doc: number): void {
-    const canonical = this.resolveCategory(categoryName);
-    const entry = this.#data.categories.find((candidate) => candidate.name === canonical);
-    if (!entry) {
-      console.warn(`SchemaRegistry: cannot cache ladder for unknown category "${categoryName}"`);
-      return;
-    }
-    entry.ladder = ladder;
-    this.#data.history.push({ doc, op: 'discover-ladder', name: entry.name });
-    this.#dirty = true;
-  }
-
-  getLadder(categoryName: string): CategoryLadder | undefined {
-    const canonical = this.resolveCategory(categoryName);
-    return this.#data.categories.find((candidate) => candidate.name === canonical)?.ladder;
   }
 
   findSimilarCategories(name: string, minSim = 0.5): Array<{ entry: SchemaEntry; sim: number }> {

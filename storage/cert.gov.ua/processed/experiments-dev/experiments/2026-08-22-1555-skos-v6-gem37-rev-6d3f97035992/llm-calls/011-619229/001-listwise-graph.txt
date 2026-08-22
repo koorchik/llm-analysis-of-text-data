@@ -1,0 +1,146 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "registry review at 53 canonicals"
+Entities:
+E1. Software Restriction Policies (SRP) [aka SRP]
+E2. AppLocker
+E3. AgentTesla
+E4. MISP
+E5. SIEM
+E6. pfSense
+E7. HarvesterX
+E8. AutoIt
+E9. RemcosRAT [aka Remcos]
+E10. GammaSteel.NET
+E11. QuasarRAT
+E12. Files.dll
+E13. YARA
+E14. stage1.ps1
+E15. Browser.dll
+E16. USB.dll
+E17. shellcode.x86.bin
+E18. chrome_updater.dll
+E19. Screen.dll
+E20. Social.dll
+E21. wscript.exe
+E22. CCleaner.exe
+E23. IDCLIPNET_x86.dll
+E24. CCleaner.rar
+E25. PowerShell [aka PowerShell (powershell.exe)]
+E26. FIRMACHAGENT
+E27. wsuscr.exe
+E28. scandoc.exe
+E29. shellcode.x64.bin
+E30. JavaScript
+E31. SPECTR
+E32. GammaLoad.PS1
+E33. Mikrotik
+E34. mshta.exe
+E35. MCMDiction.exe
+E36. RemoteUtilities [aka Remote Utilities]
+E37. Remote Utilities - Host
+E38. rutserv.exe
+E39. oYUuQbXu
+E40. Cobalt Strike Beacon
+E41. stage2.ps1
+E42. GammaSteel.PS1
+E43. CCleaner.zip
+E44. baseupd.exe
+E45. Електронний план евакуації.exe
+E46. plan_dsns.gov.ua.rar
+E47. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E48. Електронний план евакуації.rar
+E49. sgegkseg23mjl.exe
+E50. install.msi
+E51. SmartAssembly .NET [aka SmartAssembly]
+E52. ConfuserEx
+E53. rundll32.exe
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4
+M2. "FIRMACHAGENT" (Software) — options: E6, E10, E3, E7
+M3. "IDCLIPNET_x86.dll" (Software) — options: E15, E16, E17, E18
+M4. "chrome_updater.dll" (Software) — options: E15, E16, E12, E19
+M5. "Files.dll" (Software) — options: E15, E16, E19, E20
+M6. "Screen.dll" (Software) — options: E15, E16, E12, E18
+M7. "Social.dll" (Software) — options: E15, E16, E12, E19
+M8. "PowerShell" (Software) — options: E21, E15, E17, E6
+M9. "JavaScript" (Software) — options: E21, E11, E25, E8
+M10. "AppLocker" (Software) — options: E6, E31, E3, E7
+M11. "YARA" (Software) — options: E7, E11, E3, E6
+M12. "MISP" (Software) — options: E1, E33, E31, E5
+M13. "Mikrotik" (Software) — options: E6, E8, E4, E3
+M14. "SIEM" (Software) — options: E6, E31, E3, E4
+M15. "RemoteUtilities" (Software) — options: E37, E38, E1, E9
+M16. "Remote Utilities - Host" (Software) — options: E38, E36, E1, E9
+M17. "install.msi" (Software) — options: E34, E14, E4, E41
+M18. "CCleaner.zip" (Software) — options: E24, E22, E18, E19
+M19. "CCleaner.exe" (Software) — options: E27, E24, E21, E43
+M20. "Електронний план евакуації.rar" (Software) — options: E45, E46, E24, E47
+M21. "Електронний план евакуації.exe" (Software) — options: E48, E28, E22, E34
+M22. "plan_dsns.gov.ua.rar" (Software) — options: E45, E24, E48, E11
+M23. "QuasarRAT" (Software) — options: E13, E30, E9, E39
+M24. "AutoIt" (Software) — options: E7, E30, E3, E36
+M25. "SmartAssembly .NET" (Software) — options: E10, E30, E42, E23
+M26. "scandoc.exe" (Software) — options: E27, E22, E34, E21
+M27. "AgentTesla" (Software) — options: E26, E6, E10, E7
+M28. "GammaLoad.PS1" (Software) — options: E42, E10, E14, E41
+M29. "GammaSteel.NET" (Software) — options: E42, E6, E51, E32
+M30. "HarvesterX" (Software) — options: E6, E51, E42, E8
+M31. "wscript.exe" (Software) — options: E27, E30, E22, E25
+M32. "ConfuserEx" (Software) — options: E7, E22, E40, E6
+M33. "MCMDiction.exe" (Software) — options: E34, E22, E1, E28
+M34. "sgegkseg23mjl.exe" (Software) — options: E21, E22, E34, E27
+M35. "Cobalt Strike Beacon" (Software) — options: E7, E1, E52, E6
+M36. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software) — options: E46, E45, E1, E48
+M37. "baseupd.exe" (Software) — options: E27, E22, E34, E21
+M38. "stage1.ps1" (Software) — options: E41, E32, E42, E25
+M39. "stage2.ps1" (Software) — options: E14, E32, E42, E25
+M40. "shellcode.x86.bin" (Software) — options: E29, E21, E23, E25
+
+=== RESPONSE (11.4s, in 2873 / out 876 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":null,"r":null,"g":null},{"m":"M3","id":"NEW","p":null,"r":null,"g":null},{"m":"M4","id":"NEW","p":null,"r":null,"g":null},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":null,"r":null,"g":null},{"m":"M7","id":"NEW","p":null,"r":null,"g":null},{"m":"M8","id":"NEW","p":null,"r":null,"g":null},{"m":"M9","id":"NEW","p":null,"r":null,"g":null},{"m":"M10","id":"NEW","p":null,"r":null,"g":null},{"m":"M11","id":"NEW","p":null,"r":null,"g":null},{"m":"M12","id":"NEW","p":null,"r":null,"g":null},{"m":"M13","id":"NEW","p":null,"r":null,"g":null},{"m":"M14","id":"NEW","p":null,"r":null,"g":null},{"m":"M15","id":"NEW","p":null,"r":null,"g":null},{"m":"M16","id":"NEW","p":"E36","r":"p","g":null},{"m":"M17","id":"NEW","p":null,"r":null,"g":null},{"m":"M18","id":"NEW","p":null,"r":null,"g":null},{"m":"M19","id":"NEW","p":null,"r":null,"g":null},{"m":"M20","id":"NEW","p":null,"r":null,"g":null},{"m":"M21","id":"NEW","p":null,"r":null,"g":null},{"m":"M22","id":"NEW","p":null,"r":null,"g":null},{"m":"M23","id":"NEW","p":null,"r":null,"g":null},{"m":"M24","id":"NEW","p":null,"r":null,"g":null},{"m":"M25","id":"NEW","p":null,"r":null,"g":null},{"m":"M26","id":"NEW","p":null,"r":null,"g":null},{"m":"M27","id":"NEW","p":null,"r":null,"g":null},{"m":"M28","id":"NEW","p":null,"r":null,"g":null},{"m":"M29","id":"NEW","p":null,"r":null,"g":null},{"m":"M30","id":"NEW","p":null,"r":null,"g":null},{"m":"M31","id":"NEW","p":null,"r":null,"g":null},{"m":"M32","id":"NEW","p":null,"r":null,"g":null},{"m":"M33","id":"NEW","p":null,"r":null,"g":null},{"m":"M34","id":"NEW","p":null,"r":null,"g":null},{"m":"M35","id":"NEW","p":null,"r":null,"g":null},{"m":"M36","id":"NEW","p":null,"r":null,"g":null},{"m":"M37","id":"NEW","p":null,"r":null,"g":null},{"m":"M38","id":"NEW","p":null,"r":null,"g":null},{"m":"M39","id":"NEW","p":null,"r":null,"g":null},{"m":"M40","id":"NEW","p":null,"r":null,"g":null}]}

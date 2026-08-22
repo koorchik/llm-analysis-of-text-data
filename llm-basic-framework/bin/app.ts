@@ -5,20 +5,19 @@ import { DataExtractor } from '../src/DataProcessors/DataExtractor';
 import { DataGraphBuilder } from '../src/DataProcessors/DataGraphBuilder';
 import { DataNormalizer } from '../src/DataProcessors/DataNormalizer';
 import { StreamingExtractor } from '../src/DataProcessors/StreamingExtractor';
-import { StreamingGraphBuilder, EdgesFrom, parseLambda } from '../src/DataProcessors/StreamingGraphBuilder';
+import { StreamingGraphBuilder, EdgesFrom } from '../src/DataProcessors/StreamingGraphBuilder';
 import { StreamingNormalizer } from '../src/DataProcessors/StreamingNormalizer';
 import { StreamingRepairer } from '../src/DataProcessors/StreamingRepairer';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
 import { createEmbeddingsClient as buildEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { RunCard } from '../src/Experiment/RunCard';
 import { resolveRunConfig, type ResolvedRunConfig } from '../src/Experiment/RunConfig';
 import { resolveRunDir, stripRunDate } from '../src/Experiment/runDirName';
 import { hashInputDir } from '../src/Experiment/inputHash';
 import { FlowManager } from '../src/FlowManager/FlowManager';
-import { LadderDiscovery } from '../src/Ladder/LadderDiscovery';
 import { LlmCallLog } from '../src/LlmClient/LlmCallLog';
 import { loadRunData, renderRunViewHtml } from '../src/RunView/runView';
 import { LlmClient } from '../src/LlmClient/LlmClient';
@@ -39,6 +38,7 @@ import { GlossIndex } from '../src/Repair/GlossIndex';
 import { parseThresholds } from '../src/Repair/SuspectGenerator';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
 import { sortByNumericId } from '../src/utils/fsUtils';
+import { orderFiles, validateOrderSpec } from '../src/utils/orderUtils';
 import { parseCategories } from '../src/utils/validationUtils';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
@@ -50,6 +50,13 @@ dotenv.config();
 const FLOW = process.env.FLOW || 'batch';
 if (!['batch', 'incremental'].includes(FLOW)) {
   throw new Error(`Unknown FLOW: ${FLOW}. Available: batch, incremental`);
+}
+// Fail fast on a malformed ORDER before any run directory is created.
+if (process.env.ORDER) {
+  validateOrderSpec(process.env.ORDER);
+}
+if (process.env.SNIPPET_MODE && !['head', 'none', 'anchored', 'per-mention'].includes(process.env.SNIPPET_MODE)) {
+  throw new Error(`SNIPPET_MODE "${process.env.SNIPPET_MODE}" is not one of: head | none | anchored | per-mention`);
 }
 
 // Configuration from environment or defaults
@@ -75,6 +82,18 @@ const CONFIG = {
   // Incremental flow options
   decisionsLog: process.env.DECISIONS_LOG === '1',
 
+  // Document arrival order (E6/M7 order robustness): numeric-id | reverse | seededShuffle:<seed>.
+  // Folded into the runId via config.order — two orders must never share a run directory.
+  order: process.env.ORDER || 'numeric-id',
+
+  // Judge every unresolved mention, even with zero identity candidates (in-document hierarchy
+  // for first-seen concepts). Folded into the runId.
+  judgeUnresolved: process.env.JUDGE_UNRESOLVED === '1',
+
+  // Judge evidence block (snippet ablation): head | none | anchored | per-mention. Folded into
+  // the runId.
+  snippetMode: (process.env.SNIPPET_MODE as 'head' | 'none' | 'anchored' | 'per-mention') || 'head',
+
   // M6 decision stage. Unset means the built-in link-judge path — the published Ψ_link behaviour
   // the golden fixture pins — so an unset variable never silently changes what the default arm
   // measures. CONDITION only *names* an arm; this is what selects one.
@@ -92,31 +111,20 @@ const CONFIG = {
   candidateMinSim:
     process.env.CANDIDATE_MIN_SIM === undefined ? undefined : Number(process.env.CANDIDATE_MIN_SIM),
 
-  // SKEIN v2 ladder bootstrap. N same-model ensemble runs by default (spec floor 3); a
-  // comma-separated `provider:model` list switches to a multi-model ensemble. All three knobs
-  // fold into the runId — two arms differing only in ladder policy must not share a directory.
-  ladderEnsembleN:
-    process.env.LADDER_ENSEMBLE_N === undefined ? 3 : Number(process.env.LADDER_ENSEMBLE_N),
-  ladderEnsembleModels: process.env.LADDER_ENSEMBLE_MODELS || undefined,
-  ladderMinExamples:
-    process.env.LADDER_MIN_EXAMPLES === undefined ? 8 : Number(process.env.LADDER_MIN_EXAMPLES),
-  // How many surfaces the discovery prompt is allowed to see. Raising the floor without raising
-  // this does nothing: the prompt still reads the first 20 and derives the same thin ladder.
-  ladderMaxExamples:
-    process.env.LADDER_MAX_EXAMPLES === undefined ? 20 : Number(process.env.LADDER_MAX_EXAMPLES),
-  /** Ladder prompt id — `ladder-placed-v2` also returns where each supplied surface sits. */
-  ladderPromptId: process.env.LADDER_PROMPT_ID || undefined,
+  // SKOS graph catch-up: a registry-wide review of a category fires after it has grown this many
+  // new canonicals (0 disables), each pass reviewing at most `skosCatchupWidth` canonicals. Both
+  // knobs fold into the runId — two arms differing only in catch-up policy must not share a
+  // directory.
+  skosCatchupEvery:
+    process.env.SKOS_CATCHUP_EVERY === undefined ? 25 : Number(process.env.SKOS_CATCHUP_EVERY),
+  skosCatchupWidth:
+    process.env.SKOS_CATCHUP_WIDTH === undefined ? 40 : Number(process.env.SKOS_CATCHUP_WIDTH),
 
   // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
   embeddings: process.env.EMBEDDINGS === '1',
 
   edgesFrom: (process.env.EDGES_FROM as EdgesFrom) || 'extracted',
-
-  // SKEIN v2 λ: merge granularity at fold time (streamingGraphBuilder only, zero LLM calls).
-  // e.g. LAMBDA="Software=g2,default=g0"; LAMBDA_INTERPRETIVE=1 opts into folding part-of edges.
-  lambda: process.env.LAMBDA || undefined,
-  lambdaInterpretive: process.env.LAMBDA_INTERPRETIVE === '1',
 
   // T9 repair pass: synchronous per-document registry repair, riding inside streamingNormalizer's
   // processFile. Default ON — the incremental flow's normal behaviour. REPAIR=0 is the RQ3 NAIVE
@@ -193,7 +201,7 @@ async function main() {
     embeddings: { provider: CONFIG.embeddingsProvider, model: CONFIG.embeddingsModel },
     sampling,
     seed: CONFIG.seed,
-    order: 'numeric-id', // M7 replaces this with chronological | seededShuffle
+    order: CONFIG.order, // document arrival order (E6/M7) — numeric-id | reverse | seededShuffle:<seed>
     // Every prompt on disk, not just the ones this step happens to use: a run card that recorded
     // only the used subset would make an unused-prompt edit invisible, and the next run of a
     // different step would then reuse this runId despite a genuinely different prompt set.
@@ -212,13 +220,12 @@ async function main() {
       candidateK: CONFIG.candidateK ?? null,
       candidateMinSim: CONFIG.candidateMinSim ?? null,
       embeddings: CONFIG.embeddings,
-      ladder: {
-        ensembleN: CONFIG.ladderEnsembleN,
-        ensembleModels: CONFIG.ladderEnsembleModels ?? null,
-        minExamples: CONFIG.ladderMinExamples,
-        maxExamples: CONFIG.ladderMaxExamples,
-        promptId: CONFIG.ladderPromptId,
+      skos: {
+        catchupEvery: CONFIG.skosCatchupEvery,
+        catchupWidth: CONFIG.skosCatchupWidth,
       },
+      snippetMode: CONFIG.snippetMode,
+      judgeUnresolved: CONFIG.judgeUnresolved,
       // T9 repair pass: on/off and every threshold/knob that changes what it does. REPAIR=0 (the
       // RQ3 NAIVE arm) must not share a runId with a repaired arm, and two repaired arms differing
       // only by threshold must not share one either — same argument as `decisionStrategy` above.
@@ -541,7 +548,7 @@ function createProcessors(
   // Shared state instances: one schema/registry per run keeps the interleaved
   // extract→normalize step coherent (disk is write-only during a run)
   const schemaRegistry = new SchemaRegistry({ filePath: `${incrementalDir}/schema.json` });
-  const entityRegistry = new EntityRegistry({ filePath: `${incrementalDir}/registry.json` });
+  const conceptRegistry = new ConceptRegistry({ filePath: `${incrementalDir}/registry.json` });
 
   const streamingExtractor = new StreamingExtractor({
     inputDir,
@@ -550,41 +557,7 @@ function createProcessors(
     llmClient,
     schemaRegistry,
     decisionLog,
-  });
-
-  // SKEIN v2 ladder bootstrap. Ensemble members: either LADDER_ENSEMBLE_MODELS
-  // ("provider:model,provider:model" — the gold annotator's spec format) or N runs of the
-  // session model. Member clients share the run's cost meter, so ladder calls are priced.
-  const ladderMembers = CONFIG.ladderEnsembleModels
-    ?.split(',')
-    .map((spec) => spec.trim())
-    .filter(Boolean)
-    .map((spec) => {
-      const [provider, ...modelParts] = spec.split(':');
-      const model = modelParts.join(':');
-      if (!provider || !model) {
-        throw new Error(
-          `LADDER_ENSEMBLE_MODELS entry "${spec}" is not provider:model (e.g. anthropic:claude-opus-5)`
-        );
-      }
-      return {
-        label: spec,
-        client: costMeter
-          ? createLlmClient(buildLlmBackend({ provider, model }), costMeter, callLog)
-          : llmClient,
-      };
-    });
-
-  const ladderDiscovery = new LadderDiscovery({
-    llmClient,
-    schemaRegistry,
-    entityRegistry,
-    decisionLog,
-    ensembleN: CONFIG.ladderEnsembleN,
-    ...(ladderMembers && ladderMembers.length > 0 ? { members: ladderMembers } : {}),
-    minExamples: CONFIG.ladderMinExamples,
-    maxExamples: CONFIG.ladderMaxExamples,
-    promptId: CONFIG.ladderPromptId,
+    fileOrder: (files) => orderFiles(files, CONFIG.order),
   });
 
   // T9: synchronous per-document repair pass. GlossIndex is built from the run's own
@@ -605,7 +578,7 @@ function createProcessors(
         artifactsDir: `${incrementalDir}/artifacts`,
         llmClient,
         schemaRegistry,
-        entityRegistry,
+        conceptRegistry,
         decisionLog,
         glossIndex,
         promptId: CONFIG.repairPromptId,
@@ -631,11 +604,18 @@ function createProcessors(
     outputDir: `${incrementalDir}/artifacts`,
     llmClient,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
     sourceDir: inputDir,
     preprocessor,
-    ladderDiscovery,
+    fileOrder: (files) => orderFiles(files, CONFIG.order),
+    snippetMode: CONFIG.snippetMode,
+    judgeUnresolved: CONFIG.judgeUnresolved,
+    // SKOS graph: every hierarchy edge carries the cosine similarity of its endpoint names,
+    // computed through the run's shared embeddings client and cache.
+    embeddingsClient,
+    skosCatchupEvery: CONFIG.skosCatchupEvery,
+    skosCatchupWidth: CONFIG.skosCatchupWidth,
     decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
     // M5: previously hardcoded to StringSimilarityGenerator inside the normalizer, which left every
     // generator M4 shipped with no live caller.
@@ -652,10 +632,8 @@ function createProcessors(
     inputDir: streamingNormalizer.outputDir,
     outputDir: `${incrementalDir}/graph`,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     edgesFrom: CONFIG.edgesFrom,
-    lambda: parseLambda(CONFIG.lambda),
-    interpretive: CONFIG.lambdaInterpretive,
   });
 
   // Artifacts are a strict superset of normalized/NN.json — DataAnalyzer reused unchanged
@@ -681,8 +659,9 @@ function createProcessors(
 // Spec §5: per document, extract → normalize (interleaved) so that after any
 // document the artifacts + state files are complete for everything seen so far
 async function runStreamingPipeline(processors: ReturnType<typeof createProcessors>) {
-  const files = sortByNumericId(
-    (await fs.readdir(CONFIG.inputDir)).filter((file) => file.endsWith('.json'))
+  const files = orderFiles(
+    (await fs.readdir(CONFIG.inputDir)).filter((file) => file.endsWith('.json')),
+    CONFIG.order
   );
 
   let consecutiveFailures = 0;

@@ -292,22 +292,18 @@ export function normalizeStreamingExtraction(data: RawData): StreamingExtraction
   return validData as StreamingExtraction;
 }
 
-export const MENTION_RUNGS = ['g0', 'g1', 'g2', 'g3'] as const;
-export type MentionRung = (typeof MENTION_RUNGS)[number];
-
 const LINK_VERDICTS = ['link', 'mint', 'defer'] as const;
 const LINK_EDGE_KINDS = ['coarsens-to', 'part-of'] as const;
 
 /**
  * One verdict of the SKEIN v2 streaming linking judge (prompts/link-judge.md, copied verbatim
- * from the wiki prompt library 2026-08-04). Optional structure beyond the verdict: the mention's
- * rung on its category ladder, and — on `mint` — a `parentCandidate` + `edgeKind` that code turns
- * into a granularity edge. Empty strings mean "absent" throughout (the LIVR default idiom).
+ * from the wiki prompt library 2026-08-04). Optional structure beyond the verdict, on `mint`: a
+ * `parentCandidate` + `edgeKind` that code turns into a granularity edge. Empty strings mean
+ * "absent" throughout (the LIVR default idiom).
  */
 export interface LinkVerdict {
   mention: string;
   category: string;
-  mentionRung: MentionRung | '';
   verdict: 'link' | 'mint' | 'defer';
   target: string;
   parentCandidate: string;
@@ -325,7 +321,6 @@ const linkVerdictsValidator = new LIVR.Validator({
         {
           mention: [{ default: '' }, 'string'],
           category: [{ default: '' }, 'string'],
-          mentionRung: [{ default: '' }, 'string'],
           verdict: [{ default: 'mint' }, 'string', { oneOf: [...LINK_VERDICTS] }],
           target: [{ default: '' }, 'string'],
           parentCandidate: [{ default: '' }, 'string'],
@@ -348,11 +343,8 @@ export function normalizeLinkVerdicts(data: RawData): LinkVerdict[] | undefined 
         verdict.verdict = 'mint'; // conservative default, per the prompt's own instruction
       }
       // Nulls are the prompt's own "absent" spelling; LIVR strings want ''.
-      for (const field of ['mentionRung', 'target', 'parentCandidate', 'edgeKind', 'gloss', 'reasoning']) {
+      for (const field of ['target', 'parentCandidate', 'edgeKind', 'gloss', 'reasoning']) {
         if (verdict[field] === null || verdict[field] === undefined) verdict[field] = '';
-      }
-      if (verdict.mentionRung && !MENTION_RUNGS.includes(verdict.mentionRung)) {
-        verdict.mentionRung = '';
       }
       if (verdict.edgeKind && !LINK_EDGE_KINDS.includes(verdict.edgeKind)) {
         verdict.edgeKind = '';
@@ -729,167 +721,3 @@ export function normalizePairLabelVerdicts(data: RawData): PairLabelVerdict[] | 
   });
 }
 
-// ============================================================================
-// Granularity-ladder proposal (SKEIN v2, prompts/ladder.md)
-//
-// Parse layer only: structural validation and enum/boolean pre-coercion. The
-// semantic gates (ordering, gate-3 star/part-of, foldTest consistency) are
-// code validators in src/Ladder/LadderDiscovery.ts, per the prompt's wiring
-// contract — never ask the model for edgeKind/foldByDefault; code derives them
-// from `preserving`.
-// ============================================================================
-
-export const LADDER_MOVES = ['drop-qualifier', 'grouped-by', 'part-of', 'kind-of'] as const;
-export type LadderMove = (typeof LADDER_MOVES)[number];
-
-export interface LadderRungProposal {
-  g: number;
-  alias: string;
-  /** Descriptive metadata only — never decides folding or the edge kind. */
-  move: LadderMove | '';
-  example: string;
-  /** The one LLM-owned semantic judgment (fact-rewrite test). Absent on g0. */
-  preserving?: boolean;
-  foldTest: string;
-  /** Model self-report; the ensemble ORs its own disagreement on top. */
-  disputed: boolean;
-}
-
-export interface LadderRejection {
-  candidate: string;
-  gate: string;
-  reason: string;
-}
-
-/** Where one supplied example sits on the ladder that was just derived from it. */
-export interface LadderPlacement {
-  surface: string;
-  g: number;
-}
-
-export interface LadderProposal {
-  category: string;
-  ladder: LadderRungProposal[];
-  /** Absent on a model that ignores the field; the caller treats that as "nothing placed". */
-  placements?: LadderPlacement[];
-  rejected: LadderRejection[];
-  notes: string;
-}
-
-const ladderValidator = new LIVR.Validator({
-  category: [{ default: '' }, 'string'],
-  ladder: [
-    { default: [] },
-    {
-      listOfObjects: [
-        {
-          g: [{ default: -1 }, 'integer'],
-          alias: [{ default: '' }, 'string'],
-          move: [{ default: '' }, 'string'],
-          example: [{ default: '' }, 'string'],
-          // No boolean rule in LIVR, and a field with no rules is dropped from the output —
-          // the `default` modifier is what keeps these described. Booleans are pre-coerced
-          // below and pass through; null marks "absent" and maps back to undefined after.
-          preserving: [{ default: null }],
-          foldTest: [{ default: '' }, 'string'],
-          disputed: [{ default: false }],
-        },
-      ],
-    },
-  ],
-  // Where each supplied example sits on the ladder just derived. The discovery call has already
-  // read those surfaces, so placing them costs nothing extra and gives the catch-up pass its
-  // answers without a second call.
-  placements: [
-    { default: [] },
-    {
-      listOfObjects: [
-        {
-          surface: [{ default: '' }, 'string'],
-          g: [{ default: -1 }, 'integer'],
-        },
-      ],
-    },
-  ],
-  rejected: [
-    { default: [] },
-    {
-      listOfObjects: [
-        {
-          candidate: [{ default: '' }, 'string'],
-          gate: [{ default: '' }, 'string'],
-          reason: [{ default: '' }, 'string'],
-        },
-      ],
-    },
-  ],
-  notes: [{ default: '' }, 'string'],
-});
-
-function coerceBool(value: unknown): boolean | undefined {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'string') {
-    const folded = value.trim().toLowerCase();
-    if (folded === 'true') return true;
-    if (folded === 'false') return false;
-  }
-  return undefined;
-}
-
-export function normalizeLadderProposal(data: RawData): LadderProposal | undefined {
-  if (!data || typeof data !== 'object') return;
-
-  if (Array.isArray(data.ladder)) {
-    for (const rung of data.ladder) {
-      if (!rung || typeof rung !== 'object') continue;
-      // Pre-coercion: one malformed field must not sink the whole ladder.
-      if (typeof rung.g === 'string' && /^\d+$/.test(rung.g.trim())) rung.g = Number(rung.g.trim());
-      if (typeof rung.gate === 'string') delete rung.gate; // stray field some models add
-      rung.preserving = coerceBool(rung.preserving);
-      rung.disputed = coerceBool(rung.disputed) ?? false;
-      if (rung.move !== undefined && !LADDER_MOVES.includes(rung.move)) rung.move = '';
-    }
-  }
-  // LIVR's `default` does not fire ahead of `listOfObjects` for an absent field, and a model that
-  // ignores the placements field is normal rather than an error — normalize before validating.
-  if (data.placements === undefined || data.placements === null) data.placements = [];
-  if (Array.isArray(data.placements)) {
-    for (const placement of data.placements) {
-      if (!placement || typeof placement !== 'object') continue;
-      if (typeof placement.g === 'string') {
-        const digits = /^g?(\d+)$/i.exec(placement.g.trim());
-        placement.g = digits ? Number(digits[1]) : -1;
-      }
-    }
-  }
-  // Same LIVR gap as `placements` above, same consequence: a model that derives a perfectly good
-  // ladder and simply omits the optional `rejected` array had the whole run thrown out with
-  // `{ rejected: 'FORMAT_ERROR' }`, silently narrowing a 3-member ensemble to 2.
-  if (data.rejected === undefined || data.rejected === null) data.rejected = [];
-  if (Array.isArray(data.rejected)) {
-    for (const rejection of data.rejected) {
-      if (rejection && typeof rejection === 'object' && typeof rejection.gate === 'number') {
-        rejection.gate = String(rejection.gate);
-      }
-    }
-  }
-
-  const validData = ladderValidator.validate(data);
-  if (!validData) {
-    console.log({ ERROR: ladderValidator.getErrors() });
-    return;
-  }
-
-  // Structural floor: rungs need a g in 0..3 and a non-empty example; junk rows drop here so the
-  // semantic validators upstream see only shaped rungs.
-  validData.ladder = validData.ladder.filter(
-    (rung: LadderRungProposal) =>
-      Number.isInteger(rung.g) && rung.g >= 0 && rung.g <= 3 && rung.example?.trim()
-  );
-  for (const rung of validData.ladder) {
-    if (rung.preserving === null) rung.preserving = undefined;
-  }
-  validData.rejected = validData.rejected.filter((r: LadderRejection) => r.candidate?.trim());
-
-  return validData as LadderProposal;
-}

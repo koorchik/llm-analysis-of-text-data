@@ -1,4 +1,4 @@
-import { EntityRegistry, GranularityEdge, Rung } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId } from '../utils/fsUtils';
 import { StreamingArtifact, StreamingEntity } from '../utils/validationUtils';
@@ -8,32 +8,6 @@ export type EdgesFrom = 'layered' | 'extracted' | 'cooccurrence';
 
 /** Edge *provenance* — not to be confused with the registry's granularity edge kinds. */
 type EdgeKind = 'extracted' | 'inferred';
-
-/**
- * Merge granularity as a fold-time parameter (SKEIN v2): a per-category rung choice, parsed from
- * `LAMBDA` ("Software=g2,default=g0"). Artifacts always stamp g0; every coarser view is computed
- * here at fold time and never stored — so views cannot drift.
- */
-export interface LambdaSpec {
-  default: Rung;
-  perCategory: Record<string, Rung>;
-}
-
-const RUNG_ORDER: Record<Rung, number> = { g0: 0, g1: 1, g2: 2, g3: 3 };
-
-export function parseLambda(value: string | undefined): LambdaSpec {
-  const spec: LambdaSpec = { default: 'g0', perCategory: {} };
-  if (!value?.trim()) return spec;
-  for (const part of value.split(',')) {
-    const [rawKey, rawRung] = part.split('=').map((piece) => piece?.trim());
-    if (!rawKey || !rawRung || !(rawRung in RUNG_ORDER)) {
-      throw new Error(`LAMBDA entry "${part}" is not <category|default>=<g0..g3>`);
-    }
-    if (rawKey === 'default') spec.default = rawRung as Rung;
-    else spec.perCategory[rawKey] = rawRung as Rung;
-  }
-  return spec;
-}
 
 interface GraphNode {
   id: number;
@@ -58,16 +32,9 @@ interface Params {
   outputDir: string; // .../graph
   schemaRegistry: SchemaRegistry;
   edgesFrom?: EdgesFrom;
-  /** Identity graph holding the granularity edges λ folds along. Optional: no registry, no fold. */
-  entityRegistry?: EntityRegistry;
-  /** Per-category rung choice. Default λ = g0 everywhere — the unfolded, detailed view. */
-  lambda?: LambdaSpec;
-  /**
-   * Opt-in to folding `part-of` (widening) edges. Such a view is an INTERPRETATION — attribution
-   * widening ("Unit 74455 did X" read as "the GRU did X") — so every fold through a `part-of`
-   * edge marks the touched edges `inferred`, and `lambda.json` labels the view interpretive.
-   */
-  interpretive?: boolean;
+  /** Identity graph. Loaded for parity with the pipeline; the builder emits the unfolded view —
+   * coarser views are produced downstream by `npm run fold` / `ConceptRegistry.rollupTarget`. */
+  conceptRegistry?: ConceptRegistry;
 }
 
 export class StreamingGraphBuilder {
@@ -75,28 +42,21 @@ export class StreamingGraphBuilder {
   public readonly outputDir: string;
 
   #schemaRegistry: SchemaRegistry;
-  #entityRegistry?: EntityRegistry;
+  #conceptRegistry?: ConceptRegistry;
   #edgesFrom: EdgesFrom;
-  #lambda: LambdaSpec;
-  #interpretive: boolean;
-  /** (category → canonical → projection), built once per run from the registry's edge layer. */
-  #projection = new Map<string, Map<string, { label: string; widened: boolean }>>();
 
   constructor(params: Params) {
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#schemaRegistry = params.schemaRegistry;
-    this.#entityRegistry = params.entityRegistry;
+    this.#conceptRegistry = params.conceptRegistry;
     this.#edgesFrom = params.edgesFrom ?? 'extracted';
-    this.#lambda = params.lambda ?? { default: 'g0', perCategory: {} };
-    this.#interpretive = params.interpretive ?? false;
   }
 
   async run() {
     await ensureDir(this.outputDir);
     await this.#schemaRegistry.load();
-    if (this.#entityRegistry) await this.#entityRegistry.load();
-    this.#buildProjection();
+    if (this.#conceptRegistry) await this.#conceptRegistry.load();
 
     const files = sortByNumericId(await fs.readdir(this.inputDir));
     const allData: StreamingArtifact[] = [];
@@ -109,80 +69,13 @@ export class StreamingGraphBuilder {
   }
 
   /**
-   * λ-projection along the registry's granularity layer, computed once per fold.
-   *
-   * Per canonical: climb finer→coarser edges toward the category's λ rung, **rounding down to the
-   * nearest populated rung** (the climb stops rather than overshoot, and stops when no eligible
-   * edge continues). `coarsens-to` edges fold freely; `part-of` only when the view is
-   * interpretive. Diamonds (several eligible parents) resolve deterministically: the oldest edge
-   * (lowest docId, then lexicographic target) wins — a documented path choice, so the fold is
-   * reproducible.
+   * The builder emits the unfolded graph — every canonical is its own node. Coarser views are a
+   * downstream fold (`npm run fold`, `ConceptRegistry.rollupTarget`), never baked into the CSVs.
+   * The identity projection is kept as a seam so a fold-at-build-time variant stays a one-function
+   * change.
    */
-  #buildProjection(): void {
-    this.#projection.clear();
-    if (!this.#entityRegistry) return;
-
-    for (const category of this.#entityRegistry.categories()) {
-      const target = this.#lambda.perCategory[category] ?? this.#lambda.default;
-      if (RUNG_ORDER[target] === 0) continue; // λ=g0: nothing folds, projection is identity
-
-      const edges = this.#entityRegistry.granularityEdges(category);
-      if (edges.length === 0) continue;
-      const eligible = edges.filter(
-        (edge) => edge.kind === 'coarsens-to' || (this.#interpretive && edge.kind === 'part-of')
-      );
-      if (eligible.length === 0) continue;
-
-      const byFrom = new Map<string, GranularityEdge[]>();
-      for (const edge of eligible) {
-        byFrom.set(edge.from, [...(byFrom.get(edge.from) ?? []), edge]);
-      }
-
-      const registry = this.#entityRegistry;
-      const rungIndex = (name: string): number | undefined => {
-        const rung = registry.rungOf(category, name);
-        return rung === undefined ? undefined : RUNG_ORDER[rung];
-      };
-
-      const map = new Map<string, { label: string; widened: boolean }>();
-      for (const canonical of Object.keys(registry.records(category))) {
-        let current = canonical;
-        let widened = false;
-        const seen = new Set<string>([current]);
-
-        for (;;) {
-          const options = byFrom.get(current);
-          if (!options || options.length === 0) break;
-          const chosen = [...options].sort(
-            (a, b) => a.docId - b.docId || (a.to < b.to ? -1 : a.to > b.to ? 1 : 0)
-          )[0];
-          // Round down: never climb PAST the λ rung. An unknown parent rung counts as one step
-          // coarser than the current node, so unrung chains still terminate at the target.
-          const currentIndex = rungIndex(current) ?? 0;
-          const parentIndex = rungIndex(chosen.to) ?? currentIndex + 1;
-          if (parentIndex > RUNG_ORDER[target]) break;
-          if (seen.has(chosen.to)) break; // acyclicity is checked on write; belt and braces
-          seen.add(chosen.to);
-          if (chosen.kind === 'part-of') widened = true;
-          current = chosen.to;
-          if (parentIndex === RUNG_ORDER[target]) break;
-        }
-
-        if (current !== canonical) map.set(canonical, { label: current, widened });
-      }
-      if (map.size > 0) this.#projection.set(category, map);
-    }
-
-    const folded = [...this.#projection.values()].reduce((sum, map) => sum + map.size, 0);
-    if (folded > 0) {
-      console.log(
-        `λ-fold: ${folded} canonical(s) project coarser (interpretive=${this.#interpretive})`
-      );
-    }
-  }
-
-  #project(category: string, name: string): { label: string; widened: boolean } {
-    return this.#projection.get(category)?.get(name) ?? { label: name, widened: false };
+  #project(_category: string, name: string): { label: string; widened: boolean } {
+    return { label: name, widened: false };
   }
 
   // Copied from DataGraphBuilder — emergent categories fall through to the default branches
@@ -564,21 +457,6 @@ export class StreamingGraphBuilder {
       );
     }
     await fs.writeFile(`${this.outputDir}/edges.csv`, edgesContent.join('\n'));
-
-    // Record which fold produced these CSVs — λ is a fold-time parameter, never stored state, so
-    // the view's parameters travel beside it rather than inside the runId.
-    await fs.writeFile(
-      `${this.outputDir}/lambda.json`,
-      JSON.stringify(
-        {
-          lambda: this.#lambda,
-          interpretive: this.#interpretive,
-          foldedCanonicals: [...this.#projection.values()].reduce((sum, map) => sum + map.size, 0),
-        },
-        undefined,
-        2
-      )
-    );
 
     console.log(`Graph built with ${nodes.length} nodes and ${aggregatedEdges.length} edges`);
     console.log(`Output files: ${this.outputDir}/nodes.csv and ${this.outputDir}/edges.csv`);

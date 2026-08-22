@@ -1,7 +1,7 @@
 /**
  * Union-find with path compression and union by rank.
  *
- * Needed by gold closure (Phase 2.4), by repair (M8), and by `EntityRegistry.applyMerges`, whose
+ * Needed by gold closure (Phase 2.4), by repair (M8), and by `ConceptRegistry.applyMerges`, whose
  * v1 implementation applied `from→into` sequentially behind a `records[from] && records[into]`
  * guard and therefore dropped chained merges depending on their order: `[{A→B},{B→C}]` succeeded
  * while `[{B→C},{A→B}]` silently lost `A→B`. Order-dependence is worse than plain breakage,

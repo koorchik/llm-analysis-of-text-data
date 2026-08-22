@@ -11,15 +11,23 @@
 
 export interface ReplayEntity {
   aliases: string[];
-  rung?: string;
   deferred?: boolean;
   firstDoc: number;
 }
 
 export interface ReplayEdge {
+  narrower: string;
+  broader: string;
+  /** ISO 25964 typing (broaderGeneric | broaderPartitive | broaderInstantial) or null (untyped). */
+  type?: string | null;
+  similarityScore?: number | null;
+  by?: string;
+  doc: number;
+}
+
+export interface ReplayRename {
   from: string;
   to: string;
-  kind: string;
   by?: string;
   doc: number;
 }
@@ -27,13 +35,11 @@ export interface ReplayEdge {
 export interface ReplayCategoryState {
   entities: Record<string, ReplayEntity>;
   edges: ReplayEdge[];
-  renames: ReplayEdge[];
+  renames: ReplayRename[];
 }
 
 export interface ReplayState {
   categories: Record<string, ReplayCategoryState>;
-  /** category → ladder versions in discovery order (each the full cached payload). */
-  ladders: Record<string, unknown[]>;
   counts: { links: number; mints: number; defers: number };
   /**
    * T11: telemetry for the `StreamingRepairer` events that carry no structural fold of their own —
@@ -45,7 +51,7 @@ export interface ReplayState {
   repairCounts: { suspects: number; distinct: number; spillover: number; glossFlagged: number };
   /**
    * T14 review fix: bridges a StreamingRepairer `category-correction` event to the `repair-merge`
-   * event that immediately follows it. `EntityRegistry#move` relocates the record under ITS OWN
+   * event that immediately follows it. `ConceptRegistry#move` relocates the record under ITS OWN
    * name (see `#merge`, StreamingRepairer.ts:1027-1036), so the category-correction fold alone
    * cannot finish the operation — the merge is folded by the following `repair-merge` event. That
    * event's survivor is chosen by `canonicalPolicy` and may turn out to be the JUST-MOVED entity's
@@ -60,7 +66,6 @@ export interface ReplayState {
 export const createEmptyState = function (): ReplayState {
   return {
     categories: {},
-    ladders: {},
     counts: { links: 0, mints: 0, defers: 0 },
     repairCounts: { suspects: 0, distinct: 0, spillover: 0, glossFlagged: 0 },
     pendingCrossCategoryMerge: null,
@@ -111,22 +116,40 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
       state.counts.defers += 1;
       entity.deferred = true;
     }
-    if (event.mentionRung && !entity.rung) entity.rung = event.mentionRung;
     return;
   }
 
-  if (event.op === 'granularity-edge' && event.category) {
+  // Dual-read: new journals write `broader-edge` with narrower/broader/type; 158 committed run
+  // dirs carry `granularity-edge` with from/to/relation (and the oldest only from/to/kind), which
+  // normalize through the same value map the registry loaders use.
+  if ((event.op === 'broader-edge' || event.op === 'granularity-edge') && event.category) {
+    const narrower = event.narrower !== undefined ? event.narrower : event.from;
+    const broader = event.broader !== undefined ? event.broader : event.to;
+    const type =
+      event.type !== undefined
+        ? event.type
+        : event.relation === 'version-of'
+          ? 'broaderInstantial'
+          : event.relation === 'narrower-of'
+            ? 'broaderGeneric'
+            : event.relation === 'part-of' || event.kind === 'part-of'
+              ? 'broaderPartitive'
+              : null;
     const bucket = category(event.category);
     const exists = bucket.edges.some(function (edge) {
-      return edge.from === event.from && edge.to === event.to && edge.kind === event.kind;
+      return edge.narrower === narrower && edge.broader === broader;
     });
     if (!exists) {
-      ensureEntity(event.category, event.from, doc);
-      ensureEntity(event.category, event.to, doc);
-      bucket.edges.push({ from: event.from, to: event.to, kind: event.kind, by: event.by, doc });
-    }
-    if (event.mentionRung && bucket.entities[event.from] && !bucket.entities[event.from].rung) {
-      bucket.entities[event.from].rung = event.mentionRung;
+      ensureEntity(event.category, narrower, doc);
+      ensureEntity(event.category, broader, doc);
+      bucket.edges.push({
+        narrower: narrower,
+        broader: broader,
+        type: type,
+        similarityScore: event.similarityScore,
+        by: event.by,
+        doc: doc,
+      });
     }
     return;
   }
@@ -135,13 +158,7 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     const bucket = category(event.category);
     ensureEntity(event.category, event.from, doc);
     ensureEntity(event.category, event.to, doc);
-    bucket.renames.push({ from: event.from, to: event.to, kind: 'renamed-to', by: event.by, doc });
-    return;
-  }
-
-  if (event.op === 'discover-ladder' && event.category && event.outcome === 'cached') {
-    if (!state.ladders[event.category]) state.ladders[event.category] = [];
-    state.ladders[event.category].push(event.ladder);
+    bucket.renames.push({ from: event.from, to: event.to, by: event.by, doc: doc });
     return;
   }
 
@@ -184,7 +201,8 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
 
   // `repair-merge` (real doc id) folds exactly like `merge-canonical` (doc -1) — same field names
   // (category/from/into), just a different origin.
-  if ((event.op === 'merge-canonical' || event.op === 'repair-merge') && event.category) {
+  // `merge` is the catch-up pass's own op — same structural fields (category/from/into).
+  if ((event.op === 'merge-canonical' || event.op === 'repair-merge' || event.op === 'merge') && event.category) {
     const bucket = category(event.category);
     const pending = state.pendingCrossCategoryMerge;
     const degenerate =
@@ -206,7 +224,6 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
       for (const alias of source.aliases) {
         if (target.aliases.indexOf(alias) === -1) target.aliases.push(alias);
       }
-      if (!target.rung && source.rung) target.rung = source.rung;
       delete bucket.entities[absorbedName];
     }
     const project = function (name: string): string {
@@ -214,12 +231,19 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     };
     bucket.edges = bucket.edges
       .map(function (edge) {
-        return { from: project(edge.from), to: project(edge.to), kind: edge.kind, by: edge.by, doc: edge.doc };
+        return {
+          narrower: project(edge.narrower),
+          broader: project(edge.broader),
+          type: edge.type,
+          similarityScore: edge.similarityScore,
+          by: edge.by,
+          doc: edge.doc,
+        };
       })
       .filter(function (edge) {
-        return edge.from !== edge.to;
+        return edge.narrower !== edge.broader;
       });
-    // Renames are LEFT ALONE, deliberately — mirrors `EntityRegistry#rewriteAfterMerge`, which never
+    // Renames are LEFT ALONE, deliberately — mirrors `ConceptRegistry#rewriteAfterMerge`, which never
     // touches rename edges in either direction (user ruling 2026-08-05). The `renamed` verdict path
     // logs `rename-edge(A→B)` immediately followed by `repair-merge(A→B)` as dual-replayable history;
     // projecting A→B through this merge would turn it into a B→B self-loop and the same filter above
@@ -250,11 +274,11 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
     if (!entity) return;
     delete fromBucket.entities[event.from.canonical];
     fromBucket.edges = fromBucket.edges.filter(function (edge) {
-      return edge.from !== event.from.canonical && edge.to !== event.from.canonical;
+      return edge.narrower !== event.from.canonical && edge.broader !== event.from.canonical;
     });
 
     if (event.by === 'StreamingRepairer') {
-      // Mirrors `EntityRegistry#move` (StreamingRepairer.ts:1027-1036): relocate the record into the
+      // Mirrors `ConceptRegistry#move` (StreamingRepairer.ts:1027-1036): relocate the record into the
       // target category UNDER ITS OWN NAME, carrying its aliases. The merge under the REQUESTED name
       // (if any) is a separate step (`applyMerges`) that the `repair-merge` event immediately
       // following this one folds — pre-empting that merge here, under the requested name, is exactly
@@ -266,7 +290,6 @@ export const applyEvent = function (state: ReplayState, event: Record<string, an
         for (const alias of entity.aliases) {
           if (existing.aliases.indexOf(alias) === -1) existing.aliases.push(alias);
         }
-        if (!existing.rung && entity.rung) existing.rung = entity.rung;
       } else {
         targetBucket.entities[event.from.canonical] = entity;
       }

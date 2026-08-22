@@ -1,0 +1,138 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: S1. "ip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програми SPECTR (здійснює викрадення документів, знімків екрану, даних Інтернет-браузерів та ін.) та нової програми FIRMACHAGENT ("chrome_updater.dll"; основним завданням якої є вивантаження викрадених даних на сервер управління), а також створення запланованих задач для запуску оркестратору "IDCLIPNET_x86.dll" (управляє плагінами SPECTR) та FIRMACHAGENT.</p><p>Зменшення вірогідності реалізації кіберзагрози досягається шляхом скорочення поверхні атаки за ра" S2. "&nbsp; chrome_updater.txt f8efa529dff81b0e02a786fc766ffca3&nbsp; &nbsp; 21c33c8365218b7fb1bbb0d45af77926877fb33384ef58fbbb6db04b9df55eb6&nbsp; &nbsp; Browser.dll ef123bc71a5f0e323b6a5c809d17d048&nbsp; &nbsp; 087158ad28080ef438047b88896dfa1962d1cd6fed8fce06e35c25f91ad5f1ff&nbsp; &nbsp; Files.dll 2972616c870bffdb1978b487df290dfe&nbsp; &nbsp; b95ef984bfb22c55881931b134deaf1b848fbfda4180fc393b9f532f51089cbb&nbsp; &nbsp; Screen.dll 7dc1016e78f8c243b3b0fa59eb648567&nbsp; &nbsp; f00c85d9db7a2a2bf248771b8d81d978fa6d2153e6a3095d9c5896b604e9d00d&nbsp; &nbsp; Social.dll a973224da0ebfca023ab3e55913447a9&nbsp; &nbsp; 6a18392e3e062ce0fcd4688c0b09e482855cf709eb178437d8fe2cdc9cfdf51f&nbsp; &nbsp; USB.dll a9261e37a5a2fadbf58c71f"
+Entities:
+E1. SIEM
+E2. FTPGetter
+E3. spi.exe
+E4. Meterpreter
+E5. MS Excel
+E6. Sputnik Browser
+E7. Petya
+E8. AppLocker
+E9. .NET Framework
+E10. CredoMap_v2
+E11. Agent Tesla [aka AgentTesla]
+E12. IceDragon
+E13. HarvesterX
+E14. GammaSteel.NET
+E15. Mozilla Firefox
+E16. rfusclient.exe
+E17. Microsoft Exchange Server
+E18. FileZilla
+E19. TRYxaEbX
+E20. Foxmail
+E21. vaultcli.dll
+E22. SQLite.Interop.dll
+E23. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin]
+E24. UkrScanner.exe (SFX)
+E25. CCleaner.exe
+E26. MCMDiction.exe
+E27. CCleaner.rar
+E28. rundll32.exe
+E29. scan.exe (CredoMap_v2)
+E30. baseupd.exe
+E31. Google Chrome
+E32. ChromePlus Browser
+E33. installer.exe
+E34. Chromium Browser
+E35. Internet Explorer
+E36. 360Chrome Browser
+E37. Brave Browser
+E38. 7Star Browser
+E39. Amigo Browser
+E40. Uran Browser
+E41. RegAsm.exe
+E42. powershell.exe [aka PowerShell (powershell.exe), PowerShell]
+E43. Double Kill
+E44. Postbox Credential
+E45. wscript.exe
+E46. scandoc.exe
+E47. rutserv.exe
+E48. wsuscr.exe
+E49. Paltalk
+E50. Pocomail
+E51. b.exe
+E52. VBScript
+E53. ChakraCore
+E54. QuasarRAT
+E55. AutoIt
+E56. CVE-2018-8170
+E57. SRP
+E58. Remote Utilities [aka RemoteUtilities]
+E59. Microsoft Equation Editor
+E60. Windows Server 2008
+E61. Remote Utilities - Host
+E62. Windows Server 2012
+E63. Cobalt Strike Beacon
+E64. FIRMACHAGENT
+E65. IDCLIPNET_x86.dll
+E66. chrome_updater.dll
+E67. Browser.dll
+E68. Files.dll
+E69. Screen.dll
+E70. Social.dll
+E71. USB.dll
+E72. JavaScript
+E73. Software Restriction Policies (SRP)
+E74. SPECTR
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4, E5, E6, E7, E8, E9, E10 — ctx: S1
+M2. "FIRMACHAGENT" (Software) — options: E11, E12, E13, E14, E15, E16, E17, E18, E19, E20 — ctx: S1
+M3. "IDCLIPNET_x86.dll" (Software) — options: E21, E22, E23, E24, E16, E25, E26, E27, E28, E29 — ctx: S1
+M4. "chrome_updater.dll" (Software) — options: E30, E31, E32, E24, E21, E33, E25, E34, E22, E27 — ctx: S1
+M5. "Browser.dll" (Software) — options: E35, E36, E37, E21, E14, E38, E22, E34, E39, E40 — ctx: S2
+M6. "Files.dll" (Software) — options: E22, E18, E21, E24, E41, E42, E28, E25, E43, E15 — ctx: S2
+M7. "Screen.dll" (Software) — options: E16, E21, E22, E44, E29, E24, E45, E46, E47, E48 — ctx: S2
+M8. "Social.dll" (Software) — options: E21, E22, E9, E20, E28, E41, E49, E44, E26, E50 — ctx: S2
+M9. "USB.dll" (Software) — options: E16, E21, E24, E22, E48, E28, E47, E51, E43, E42 — ctx: S2
+M10. "JavaScript" (Software) — options: E52, E53, E54, E45, E35, E55, E48, E56, E57, E9 — ctx: S1
+M11. "Software Restriction Policies (SRP)" (Software) — options: E8, E57, E26, E17, E58, E59, E60, E61, E62, E63
+
+=== RESPONSE (7.2s, in 3222 / out 311 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"malware that steals documents, screenshots, and browser data"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"malware designed to exfiltrate stolen data to C2"},{"m":"M3","id":"NEW","p":"E74","r":"p","g":"SPECTR plugin orchestrator"},{"m":"M4","id":"NEW","p":"E64","r":"p","g":"executable file for FIRMACHAGENT malware"},{"m":"M5","id":"NEW","p":"E74","r":"p","g":"plugin component of SPECTR malware"},{"m":"M6","id":"NEW","p":"E74","r":"p","g":"plugin component of SPECTR malware"},{"m":"M7","id":"NEW","p":"E74","r":"p","g":"plugin component of SPECTR malware"},{"m":"M8","id":"NEW","p":"E74","r":"p","g":"plugin component of SPECTR malware"},{"m":"M9","id":"NEW","p":"E74","r":"p","g":"plugin component of SPECTR malware"},{"m":"M10","id":"NEW","p":null,"r":null,"g":"programming and scripting language"},{"m":"M11","id":"E57","p":null,"r":null,"g":null}]}

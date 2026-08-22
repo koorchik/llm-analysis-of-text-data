@@ -1,6 +1,6 @@
 import { applyEvent, createEmptyState } from './replayCore';
 import { computeSelfCheck, loadRunData, renderRunViewHtml, replayAll } from './runView';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import assert from 'node:assert/strict';
 import crypto from 'crypto';
 import fs from 'fs/promises';
@@ -23,9 +23,7 @@ test('the reducer folds the full event vocabulary into a consistent state', () =
     { op: 'decision', decision: 'mint', category: 'HackerGroup', mention: 'Sandworm', target: 'Sandworm', docId: 1 },
     { op: 'decision', decision: 'link', category: 'HackerGroup', mention: 'Voodoo Bear', target: 'Sandworm', docId: 2 },
     { op: 'decision', decision: 'defer', category: 'HackerGroup', mention: 'UAC-0002', target: null, mintedAs: 'UAC-0002', docId: 3 },
-    { op: 'granularity-edge', category: 'HackerGroup', from: 'UAC-0002', to: 'Sandworm', kind: 'part-of', doc: 3 },
-    { op: 'discover-ladder', category: 'HackerGroup', outcome: 'cached', version: 1, doc: 3,
-      ladder: { version: 1, rungs: [{ g: 0, alias: 'designator', example: 'UAC-0002', disputed: false }] } },
+    { op: 'granularity-edge', category: 'HackerGroup', from: 'UAC-0002', to: 'Sandworm', kind: 'broadMatch', relation: 'part-of', similarityScore: 0.42, doc: 3 },
     { op: 'merge-canonical', category: 'HackerGroup', from: 'Sandworm Team', into: 'Sandworm', doc: -1 },
   ];
   // A pre-merge mint so the merge has something to fold.
@@ -38,7 +36,8 @@ test('the reducer folds the full event vocabulary into a consistent state', () =
   assert.ok(bucket.entities.Sandworm.aliases.includes('Sandworm Team'), 'merge folded aliases in');
   assert.equal(bucket.entities['UAC-0002'].deferred, true);
   assert.equal(bucket.edges.length, 1);
-  assert.equal(state.ladders.HackerGroup.length, 1);
+  assert.equal(bucket.edges[0].type, 'broaderPartitive', 'legacy relation normalized to the ISO 25964 type');
+  assert.equal(bucket.edges[0].similarityScore, 0.42);
   assert.deepEqual(state.counts, { links: 1, mints: 2, defers: 1 });
 });
 
@@ -49,12 +48,12 @@ test('merge rewrites edges to the survivor; split detaches aliases; category cor
     { op: 'decision', decision: 'mint', category: 'C', mention: 'B', target: 'B', docId: 1 },
     { op: 'decision', decision: 'mint', category: 'C', mention: 'P', target: 'P', docId: 1 },
     { op: 'decision', decision: 'link', category: 'C', mention: 'a-alias', target: 'A', docId: 2 },
-    { op: 'granularity-edge', category: 'C', from: 'B', to: 'P', kind: 'coarsens-to', doc: 2 },
+    { op: 'granularity-edge', category: 'C', from: 'B', to: 'P', kind: 'broadMatch', relation: 'narrower-of', doc: 2 },
   ];
   for (const event of seed) applyEvent(state, event as never);
 
   applyEvent(state, { op: 'merge-canonical', category: 'C', from: 'P', into: 'A', doc: -1 } as never);
-  assert.equal(state.categories.C.edges[0].to, 'A', 'edge followed the survivor');
+  assert.equal(state.categories.C.edges[0].broader, 'A', 'edge followed the survivor');
 
   applyEvent(state, { op: 'split-canonical', category: 'C', canonical: 'A', detached: ['a-alias'], newCanonical: 'a-alias', doc: -1 } as never);
   assert.ok(state.categories.C.entities['a-alias'], 'detached alias became its own entity');
@@ -71,7 +70,7 @@ test('merge rewrites edges to the survivor; split detaches aliases; category cor
 });
 
 test('cross-category merge (StreamingRepairer): category-correction relocates under its OWN name, repair-merge finishes the fold even when canonicalPolicy keeps the MOVED name as survivor (T14 review fix)', () => {
-  // Registry's real sequence: EntityRegistry.move(a -> catB) keeps the name `a`, THEN applyMerges
+  // Registry's real sequence: ConceptRegistry.move(a -> catB) keeps the name `a`, THEN applyMerges
   // picks the survivor by canonicalPolicy — which may be `a` itself, not the requested `into`. The
   // old fold pre-empted the merge under the requested name inside category-correction, so when
   // canonicalPolicy kept `a`, the following repair-merge fold found `bucket.entities[a]` undefined
@@ -140,7 +139,7 @@ test('repair-merge folds like merge-canonical: mint -> suspect -> repair-merge y
 test('rename-edge survives a following repair-merge untouched — the routine renamed-verdict path (review fix)', () => {
   // StreamingRepairer's `renamed` case logs rename-edge(A→B) immediately followed by
   // repair-merge(A→B) as dual-replayable history (design note). The merge fold must NOT project
-  // rename edges through from→into: EntityRegistry#rewriteAfterMerge deliberately never touches
+  // rename edges through from→into: ConceptRegistry#rewriteAfterMerge deliberately never touches
   // rename edges in either direction (user ruling 2026-08-05), and a merge fold that did would turn
   // {from:A,to:B} into a B→B self-loop and the edge self-loop filter would then delete it —
   // silently erasing the rename from the Renames panel on the ROUTINE path, not an edge case.
@@ -231,7 +230,7 @@ test('self-check passes when the replay reproduces the registry, and localizes a
 test('loadRunData + renderRunViewHtml produce a self-contained page from a real run directory', async () => {
   const dir = await scratch();
 
-  const registry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const registry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await registry.load();
   registry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
   await registry.save();
@@ -344,12 +343,11 @@ async function fakeRun(options: {
   condition: string;
   provider: string;
   model: string;
-  ladderModels?: string;
   canonical: string;
   docIds: number[];
 }): Promise<string> {
   const dir = await scratch();
-  const registry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const registry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await registry.load();
   registry.mint('HackerGroup', options.canonical, { doc: options.docIds[0], date: '01.01.2024' });
   await registry.save();
@@ -377,7 +375,6 @@ async function fakeRun(options: {
       condition: options.condition,
       config: {
         llm: { provider: options.provider, model: options.model },
-        extra: { ladder: { ensembleModels: options.ladderModels ?? null } },
       },
     })
   );
@@ -387,15 +384,12 @@ async function fakeRun(options: {
 test('loadRunData reads the arm identity off the run card', async () => {
   const dir = await fakeRun({
     condition: 'psi-link-gemma', provider: 'ollama', model: 'gemma4:e2b-8k',
-    ladderModels: 'ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k,ollama:gemma4:e2b-16k',
     canonical: 'Sandworm', docIds: [1],
   });
   const data = await loadRunData(dir);
   assert.equal(data.arm.condition, 'psi-link-gemma');
   assert.equal(data.arm.provider, 'ollama');
   assert.equal(data.arm.model, 'gemma4:e2b-8k');
-  // The mixed-window arm's ladder model is kept distinct from the judge model.
-  assert.match(data.arm.ladderModels!, /gemma4:e2b-16k/);
 });
 
 test('several arms render into one page behind a switcher, each keeping its own journal', async () => {

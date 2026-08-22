@@ -58,7 +58,10 @@ for (const runDir of process.argv.slice(2)) {
       t.out += e.completionTokens || 0;
     }
     if (e.op === 'decision' && decisions[e.decision] !== undefined) decisions[e.decision] += 1;
-    if (e.op === 'granularity-edge') edges[e.kind] = (edges[e.kind] || 0) + 1;
+    if (e.op === 'broader-edge' || e.op === 'granularity-edge') {
+      const label = e.type ?? e.relation ?? e.kind ?? 'untyped';
+      edges[label] = (edges[label] || 0) + 1;
+    }
   }
 
   const nDocs = docs.size;

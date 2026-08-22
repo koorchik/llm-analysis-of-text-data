@@ -1,6 +1,6 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { DeferredPair, EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { DeferredPair, ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import {
   confusableSkeletonAnalyzer,
   transliterateAnalyzer,
@@ -16,7 +16,7 @@ interface Params {
   artifactsDir: string;
   llmClient: LlmClient;
   schemaRegistry: SchemaRegistry;
-  entityRegistry: EntityRegistry;
+  conceptRegistry: ConceptRegistry;
   decisionLog: DecisionLog;
   suspectSim?: number;
   /**
@@ -105,7 +105,7 @@ export class RegistryConsolidator {
   #artifactsDir: string;
   #llmClient: LlmClient;
   #schemaRegistry: SchemaRegistry;
-  #entityRegistry: EntityRegistry;
+  #conceptRegistry: ConceptRegistry;
   #decisionLog: DecisionLog;
   #suspectSim: number;
 
@@ -116,14 +116,14 @@ export class RegistryConsolidator {
     this.#artifactsDir = params.artifactsDir;
     this.#llmClient = params.llmClient;
     this.#schemaRegistry = params.schemaRegistry;
-    this.#entityRegistry = params.entityRegistry;
+    this.#conceptRegistry = params.conceptRegistry;
     this.#decisionLog = params.decisionLog;
     this.#suspectSim = params.suspectSim ?? 0.7;
   }
 
   async run() {
     await this.#schemaRegistry.load();
-    await this.#entityRegistry.load();
+    await this.#conceptRegistry.load();
 
     console.time('CONSOLIDATE registry pass');
     await this.#registryPass();
@@ -137,7 +137,7 @@ export class RegistryConsolidator {
     await this.#schemaPass();
     console.timeEnd('CONSOLIDATE schema pass');
 
-    await this.#entityRegistry.save();
+    await this.#conceptRegistry.save();
     await this.#schemaRegistry.save();
 
     console.time('CONSOLIDATE re-stamp');
@@ -145,7 +145,7 @@ export class RegistryConsolidator {
     // pre-extraction private method, which printed nothing on that early-return path).
     const { changed, total } = await restampArtifacts({
       artifactsDir: this.#artifactsDir,
-      entityRegistry: this.#entityRegistry,
+      conceptRegistry: this.#conceptRegistry,
       schemaRegistry: this.#schemaRegistry,
     });
     console.log(`Re-stamped ${changed}/${total} artifacts`);
@@ -159,22 +159,22 @@ export class RegistryConsolidator {
   // merge-only greedy is a known-weak configuration, gruenheid2014incremental).
   async #registryPass() {
     const deferredByCategory = new Map<string, DeferredPair[]>();
-    for (const entry of this.#entityRegistry.deferred()) {
+    for (const entry of this.#conceptRegistry.deferred()) {
       deferredByCategory.set(entry.category, [
         ...(deferredByCategory.get(entry.category) ?? []),
         entry,
       ]);
     }
 
-    for (const category of this.#entityRegistry.categories()) {
-      const records = this.#entityRegistry.records(category);
+    for (const category of this.#conceptRegistry.conceptSchemes()) {
+      const records = this.#conceptRegistry.concepts(category);
       const canonicals = Object.keys(records);
       const suspects = new Set<string>();
 
       // v2 stores alias records; similarity and the judge prompt both want plain surfaces.
       // Cached per canonical so the O(n²) sweep below does not re-project on every comparison.
       const surfaces = new Map<string, string[]>(
-        canonicals.map((canonical) => [canonical, this.#entityRegistry.aliasSurfaces(category, canonical)])
+        canonicals.map((canonical) => [canonical, this.#conceptRegistry.labelSurfaces(category, canonical)])
       );
 
       for (let i = 0; i < canonicals.length; i++) {
@@ -204,7 +204,7 @@ export class RegistryConsolidator {
       );
 
       const valid = review.merges.filter((merge) => records[merge.from] && records[merge.into]);
-      this.#entityRegistry.applyMerges(category, valid);
+      this.#conceptRegistry.applyMerges(category, valid);
       for (const merge of valid) {
         console.log(`MERGE ${category}: "${merge.from}" -> "${merge.into}"`);
         await this.#decisionLog.log({
@@ -219,35 +219,40 @@ export class RegistryConsolidator {
 
       for (const edge of review.edges) {
         // Endpoints may have just merged — re-resolve before writing.
-        const finer = this.#entityRegistry.resolve(category, edge.finer);
-        const coarser = this.#entityRegistry.resolve(category, edge.coarser);
+        const finer = this.#conceptRegistry.resolve(category, edge.finer);
+        const coarser = this.#conceptRegistry.resolve(category, edge.coarser);
         if (!finer || !coarser || finer === coarser) continue;
-        const added = this.#entityRegistry.addGranularityEdge(category, {
-          from: finer,
-          to: coarser,
-          kind: edge.kind,
+        // The consolidator's review prompt still answers in the legacy kind vocabulary (frozen
+        // LLM-output dialect); it maps onto the ISO 25964 typing here. No embeddings client in
+        // this path → null similarityScore.
+        const type = edge.kind === 'coarsens-to' ? ('broaderGeneric' as const) : ('broaderPartitive' as const);
+        const added = this.#conceptRegistry.addBroaderEdge(category, {
+          narrower: finer,
+          broader: coarser,
+          type,
+          similarityScore: null,
           docId: -1,
           decision: 'consolidator',
         });
         if (added) {
-          console.log(`EDGE ${category}: "${finer}" -[${edge.kind}]-> "${coarser}"`);
+          console.log(`EDGE ${category}: "${finer}" -[${type}]-> "${coarser}"`);
           await this.#decisionLog.log({
             doc: -1,
-            op: 'granularity-edge',
+            op: 'broader-edge',
             category,
-            from: finer,
-            to: coarser,
-            kind: edge.kind,
+            narrower: finer,
+            broader: coarser,
+            type,
             by: 'RegistryConsolidator',
           });
         }
       }
 
       for (const rename of review.renames) {
-        const from = this.#entityRegistry.resolve(category, rename.old);
-        const to = this.#entityRegistry.resolve(category, rename.new);
+        const from = this.#conceptRegistry.resolve(category, rename.old);
+        const to = this.#conceptRegistry.resolve(category, rename.new);
         if (!from || !to || from === to) continue;
-        if (this.#entityRegistry.addRenameEdge(category, {
+        if (this.#conceptRegistry.addRenameEdge(category, {
           from,
           to,
           docId: -1,
@@ -267,7 +272,7 @@ export class RegistryConsolidator {
 
       for (const split of review.splits) {
         if (!records[split.canonical] || split.detach.length === 0) continue;
-        const result = this.#entityRegistry.split(category, split.canonical, split.detach);
+        const result = this.#conceptRegistry.split(category, split.canonical, split.detach);
         if (result) {
           console.log(
             `SPLIT ${category}: "${split.canonical}" detached [${result.moved.join(', ')}] -> "${result.newCanonical}"`
@@ -286,7 +291,7 @@ export class RegistryConsolidator {
 
       // Reviewed = consumed, whatever the verdict; pairs the review left alone were judged
       // distinct-enough and must not re-queue forever.
-      if (deferredHere.length > 0) this.#entityRegistry.clearDeferred(deferredHere);
+      if (deferredHere.length > 0) this.#conceptRegistry.clearDeferred(deferredHere);
     }
   }
 
@@ -298,11 +303,11 @@ export class RegistryConsolidator {
    * merges and records the category correction.
    */
   async #crossCategorySweep() {
-    const categories = this.#entityRegistry.categories();
+    const categories = this.#conceptRegistry.conceptSchemes();
     const bySurface = new Map<string, Array<{ category: string; canonical: string }>>();
     for (const category of categories) {
-      for (const [canonical, record] of Object.entries(this.#entityRegistry.records(category))) {
-        for (const alias of record.aliases) {
+      for (const [canonical, record] of Object.entries(this.#conceptRegistry.concepts(category))) {
+        for (const alias of record.labels) {
           const key = alias.surface.trim().toLowerCase();
           if (!key) continue;
           const owners = bySurface.get(key) ?? [];
@@ -328,7 +333,7 @@ export class RegistryConsolidator {
       'canonical entities that appear under MORE THAN ONE category of a cyber-incident knowledge base (each entry is "Category/Name"; a merge means the two entries are one real-world entity and "into" names its CORRECT category)',
       [...suspects.values()].map((owner) => ({
         name: `${owner.category}/${owner.canonical}`,
-        aliases: this.#entityRegistry.aliasSurfaces(owner.category, owner.canonical),
+        aliases: this.#conceptRegistry.labelSurfaces(owner.category, owner.canonical),
       }))
     );
 
@@ -339,10 +344,10 @@ export class RegistryConsolidator {
         continue;
       }
       if (from.category !== into.category) {
-        if (!this.#entityRegistry.move(from.category, from.canonical, into.category)) continue;
+        if (!this.#conceptRegistry.move(from.category, from.canonical, into.category)) continue;
       }
       if (from.canonical !== into.canonical) {
-        this.#entityRegistry.applyMerges(into.category, [
+        this.#conceptRegistry.applyMerges(into.category, [
           { from: from.canonical, into: into.canonical },
         ]);
       }
@@ -406,7 +411,7 @@ export class RegistryConsolidator {
       this.#schemaRegistry.mergeEntries(kind, merge.from, merge.into, -1);
       if (kind === 'category') {
         // Registry buckets are keyed by canonical category — must follow the merge
-        this.#entityRegistry.moveCategory(merge.from, merge.into);
+        this.#conceptRegistry.moveCategory(merge.from, merge.into);
       }
       await this.#decisionLog.log({
         doc: -1,

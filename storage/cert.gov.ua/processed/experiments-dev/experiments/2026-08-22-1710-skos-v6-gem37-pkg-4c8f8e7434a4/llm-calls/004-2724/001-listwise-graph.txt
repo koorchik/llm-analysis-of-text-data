@@ -1,0 +1,111 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "registry review at 29 canonicals"
+Entities:
+E1. MS Word [aka Microsoft Word]
+E2. MS Excel
+E3. Microsoft Office 2010 [aka Office 2010]
+E4. MS PowerPoint
+E5. Microsoft Office 2013 [aka Office 2013]
+E6. Microsoft Office 2016 [aka Office 2016]
+E7. Microsoft Office 2007 [aka Office 2007]
+E8. Microsoft Equation Editor
+E9. major.exe
+E10. MS Office [aka Microsoft Office]
+E11. Microsoft Windows
+E12. PGMB New Order 18-2077.xlsx
+E13. Smokeloader
+E14. CVE-2017-0199
+E15. cmd.exe
+E16. CVE-2017-11882
+E17. powershell.exe
+E18. До оплати від 11.12.18.lzh
+E19. Misha
+E20. До оплати рах.ф. 74 - 2018р.js
+E21. spi.exe
+E22. ckZ89.ExE
+E23. Petya
+E24. Windows Server 2008
+E25. Windows Server 2012
+E26. Windows Vista
+E27. Windows 7
+E28. Рахунки и новые списки.lzh
+E29. Рахунки за выполненные работы от 11.12.2018.js
+Mentions:
+M1. "MS Office" (Software) — options: E1, E2, E3, E4, E5, E6, E7, E8, E9
+M2. "MS Word" (Software) — options: E10, E2, E4, E8, E11, E12, E6, E13, E14
+M3. "MS Excel" (Software) — options: E1, E10, E4, E12, E15, E14, E6, E13, E16
+M4. "MS PowerPoint" (Software) — options: E1, E2, E17, E10, E6, E8, E11, E14, E13
+M5. "CVE-2017-11882" (Software) — options: E8, E14, E18, E12, E6, E3, E19, E20, E5
+M6. "major.exe" (Software) — options: E21, E22, E15, E17, E8, E19, E10, E14, E23
+M7. "PGMB New Order 18-2077.xlsx" (Software) — options: E2, E1, E13, E18, E4, E24, E14, E10, E25
+M8. "Microsoft Equation Editor" (Software) — options: E1, E11, E10, E3, E7, E2, E5, E4, E6
+M9. "Microsoft Office 2016" (Software) — options: E10, E3, E7, E1, E5, E11, E2, E8, E4
+M10. "Microsoft Office 2013" (Software) — options: E10, E1, E3, E7, E6, E11, E2, E8, E4
+M11. "Microsoft Office 2010" (Software) — options: E10, E5, E7, E1, E6, E11, E2, E8, E4
+M12. "Microsoft Office 2007" (Software) — options: E10, E3, E1, E5, E6, E2, E4, E11, E8
+M13. "Petya" (Software) — options: E19, E14, E8, E13, E16, E18, E4, E2, E17
+M14. "Misha" (Software) — options: E23, E26, E11, E10, E27, E3, E1, E5, E2
+M15. "CVE-2017-0199" (Software) — options: E8, E16, E12, E6, E3, E19, E5, E9, E13
+M16. "Microsoft Windows" (Software) — options: E10, E1, E27, E25, E26, E24, E7, E3, E5
+M17. "Windows 7" (Software) — options: E24, E26, E11, E25, E1, E10, E19, E14, E16
+M18. "Windows Vista" (Software) — options: E24, E27, E11, E25, E10, E4, E14, E1, E19
+M19. "Windows Server 2008" (Software) — options: E25, E27, E26, E11, E7, E2, E3, E13, E1
+M20. "Windows Server 2012" (Software) — options: E24, E11, E26, E27, E1, E17, E3, E19, E5
+M21. "Smokeloader" (Software) — options: E21, E2, E12, E15, E1, E25, E22, E24, E17
+M22. "spi.exe" (Software) — options: E22, E15, E9, E17, E13, E14, E19, E2, E16
+M23. "ckZ89.ExE" (Software) — options: E21, E15, E9, E19, E17, E8, E10, E14, E16
+M24. "До оплати від 11.12.18.lzh" (Software) — options: E20, E28, E29, E12, E16, E14, E22, E3, E19
+M25. "Рахунки и новые списки.lzh" (Software) — options: E18, E29, E20, E12, E4, E26, E14, E22, E2
+M26. "Рахунки за выполненные работы от 11.12.2018.js" (Software) — options: E20, E18, E28, E12, E3, E16, E24, E5, E2
+M27. "До оплати рах.ф. 74 - 2018р.js" (Software) — options: E29, E18, E28, E3, E12, E5, E19, E6, E22
+M28. "cmd.exe" (Software) — options: E17, E21, E22, E25, E9, E19, E24, E2, E14
+M29. "powershell.exe" (Software) — options: E15, E22, E4, E21, E9, E19, E2, E13, E24
+
+=== RESPONSE (15.9s, in 2921 / out 660 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E10","r":"p","g":null},{"m":"M3","id":"NEW","p":"E10","r":"p","g":null},{"m":"M4","id":"NEW","p":"E10","r":"p","g":null},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":null,"r":null,"g":null},{"m":"M7","id":"NEW","p":null,"r":null,"g":null},{"m":"M8","id":"NEW","p":"E10","r":"p","g":null},{"m":"M9","id":"NEW","p":"E10","r":"v","g":null},{"m":"M10","id":"NEW","p":"E10","r":"v","g":null},{"m":"M11","id":"NEW","p":"E10","r":"v","g":null},{"m":"M12","id":"NEW","p":"E10","r":"v","g":null},{"m":"M13","id":"NEW","p":null,"r":null,"g":null},{"m":"M14","id":"NEW","p":null,"r":null,"g":null},{"m":"M15","id":"NEW","p":null,"r":null,"g":null},{"m":"M16","id":"NEW","p":null,"r":null,"g":null},{"m":"M17","id":"NEW","p":"E11","r":"v","g":null},{"m":"M18","id":"NEW","p":"E11","r":"v","g":null},{"m":"M19","id":"NEW","p":"E11","r":"v","g":null},{"m":"M20","id":"NEW","p":"E11","r":"v","g":null},{"m":"M21","id":"NEW","p":null,"r":null,"g":null},{"m":"M22","id":"NEW","p":null,"r":null,"g":null},{"m":"M23","id":"NEW","p":null,"r":null,"g":null},{"m":"M24","id":"NEW","p":null,"r":null,"g":null},{"m":"M25","id":"NEW","p":null,"r":null,"g":null},{"m":"M26","id":"NEW","p":null,"r":null,"g":null},{"m":"M27","id":"NEW","p":null,"r":null,"g":null},{"m":"M28","id":"NEW","p":"E11","r":"p","g":null},{"m":"M29","id":"NEW","p":"E11","r":"p","g":null}]}

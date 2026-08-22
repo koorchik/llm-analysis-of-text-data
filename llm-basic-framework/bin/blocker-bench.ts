@@ -18,10 +18,13 @@
  *
  * No LLM calls. Embedding calls are served by the shared on-disk cache after the first run.
  */
+import dotenv from 'dotenv';
 import { promises as fs } from 'fs';
 import path from 'path';
 
 import { createEmbeddingsClient } from '../src/EmbeddingsClient/createEmbeddingsClient';
+
+dotenv.config();
 import { resolveGenerator } from '../src/Normalization/candidates';
 import type {
   CandidateGenerator,

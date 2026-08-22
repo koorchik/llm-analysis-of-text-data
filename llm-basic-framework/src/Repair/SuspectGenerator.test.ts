@@ -1,8 +1,9 @@
-import { EntityRegistry, type EntityRef } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry, type ConceptRef } from '../ConceptRegistry/ConceptRegistry';
 import type { GlossIndex } from './GlossIndex';
 import { eventsForDoc, parseThresholds, SuspectGenerator, type RegistryEvent } from './SuspectGenerator';
 import type { Candidate, CandidateGenerator, CandidateQuery } from '../Normalization/types';
 import assert from 'node:assert/strict';
+import crypto from 'crypto';
 import { test } from 'node:test';
 import fs from 'fs/promises';
 import os from 'os';
@@ -11,12 +12,12 @@ import path from 'path';
 /**
  * TDD for T6 `SuspectGenerator` — pure code, no LLM. Fakes stand in for T6's two collaborators
  * (`CandidateGenerator` blocker, `GlossIndex`); the registry is real, seeded via mint/link, matching
- * `GlossIndex.test.ts`'s `seeded()` pattern (`EntityRegistry.test.ts`'s convention too).
+ * `GlossIndex.test.ts`'s `seeded()` pattern (`ConceptRegistry.test.ts`'s convention too).
  */
 
-async function tmpRegistry(): Promise<EntityRegistry> {
+async function tmpRegistry(): Promise<ConceptRegistry> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'suspect-generator-'));
-  const registry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const registry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await registry.load();
   return registry;
 }
@@ -43,20 +44,20 @@ function fakeBlocker(
 }
 
 function fakeGlossIndex(opts: {
-  nearest?: (ref: EntityRef, k: number) => Array<{ ref: EntityRef; sim: number }>;
-  aliasCoherence?: (ref: EntityRef, alias: string) => number;
-}): GlossIndex & { coherenceCalls: Array<{ ref: EntityRef; alias: string }> } {
-  const coherenceCalls: Array<{ ref: EntityRef; alias: string }> = [];
+  nearest?: (ref: ConceptRef, k: number) => Array<{ ref: ConceptRef; sim: number }>;
+  aliasCoherence?: (ref: ConceptRef, alias: string) => number;
+}): GlossIndex & { coherenceCalls: Array<{ ref: ConceptRef; alias: string }> } {
+  const coherenceCalls: Array<{ ref: ConceptRef; alias: string }> = [];
   return {
     coherenceCalls,
-    async nearest(ref: EntityRef, k: number) {
+    async nearest(ref: ConceptRef, k: number) {
       return opts.nearest ? opts.nearest(ref, k) : [];
     },
-    async aliasCoherence(ref: EntityRef, alias: string) {
+    async aliasCoherence(ref: ConceptRef, alias: string) {
       coherenceCalls.push({ ref, alias });
       return opts.aliasCoherence ? opts.aliasCoherence(ref, alias) : 1;
     },
-  } as unknown as GlossIndex & { coherenceCalls: Array<{ ref: EntityRef; alias: string }> };
+  } as unknown as GlossIndex & { coherenceCalls: Array<{ ref: ConceptRef; alias: string }> };
 }
 
 const noThresholds = () => ({
@@ -113,8 +114,8 @@ test('an adjudicated "distinct" pair with an unchanged signature is suppressed',
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
   registry.mint('HackerGroup', 'APT29', { doc: 0, date: '2024-01-01' });
-  const a: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
-  const b: EntityRef = { category: 'HackerGroup', canonical: 'APT29' };
+  const a: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const b: ConceptRef = { category: 'HackerGroup', canonical: 'APT29' };
   const signature = SuspectGenerator.signature(registry, a, b);
   registry.pushAdjudicated({ a, b, signature, verdict: 'distinct', docId: 0 });
 
@@ -132,8 +133,8 @@ test('a new alias on one member changes the signature, so the adjudicated pair r
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
   registry.mint('HackerGroup', 'APT29', { doc: 0, date: '2024-01-01' });
-  const a: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
-  const b: EntityRef = { category: 'HackerGroup', canonical: 'APT29' };
+  const a: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const b: ConceptRef = { category: 'HackerGroup', canonical: 'APT29' };
   const signature = SuspectGenerator.signature(registry, a, b);
   registry.pushAdjudicated({ a, b, signature, verdict: 'distinct', docId: 0 });
 
@@ -155,8 +156,8 @@ test('a retained suspect with the "" sentinel signature always re-fires, even wi
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
   registry.mint('HackerGroup', 'APT29', { doc: 0, date: '2024-01-01' });
-  const a: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
-  const b: EntityRef = { category: 'HackerGroup', canonical: 'APT29' };
+  const a: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const b: ConceptRef = { category: 'HackerGroup', canonical: 'APT29' };
   registry.pushAdjudicated({ a, b, signature: '', verdict: 'distinct', docId: 0 });
 
   const blocker = fakeBlocker({ HackerGroup: [{ canonical: 'APT29', sim: 0.95 }] });
@@ -210,9 +211,9 @@ test('gloss-ann threshold is keyed by the NEIGHBOUR\'s own category, not the pro
   registry.mint('Software', 'SomeTool', { doc: 0, date: '2024-01-01' });
   registry.mint('Country', 'Elbonia', { doc: 0, date: '2024-01-01' });
 
-  const eventRef: EntityRef = { category: 'HackerGroup', canonical: 'NewGroup' };
-  const softwareRef: EntityRef = { category: 'Software', canonical: 'SomeTool' };
-  const countryRef: EntityRef = { category: 'Country', canonical: 'Elbonia' };
+  const eventRef: ConceptRef = { category: 'HackerGroup', canonical: 'NewGroup' };
+  const softwareRef: ConceptRef = { category: 'Software', canonical: 'SomeTool' };
+  const countryRef: ConceptRef = { category: 'Country', canonical: 'Elbonia' };
 
   const blocker = fakeBlocker({});
   const glossIndex = fakeGlossIndex({
@@ -293,7 +294,7 @@ test('a threshold map missing "default" fails safe: the category is silenced (un
 test('a drifted alias-add produces a single-entity coherence suspect; a mint never triggers coherence at all', async () => {
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
-  const ref: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const ref: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
 
   const blocker = fakeBlocker({});
   const glossIndex = fakeGlossIndex({
@@ -322,7 +323,7 @@ test('a drifted alias-add produces a single-entity coherence suspect; a mint nev
 test('a coherent alias-add (above the coherence threshold) produces no suspect', async () => {
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
-  const ref: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const ref: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
 
   const blocker = fakeBlocker({});
   const glossIndex = fakeGlossIndex({ aliasCoherence: () => 0.95 });
@@ -338,10 +339,10 @@ test('a coherent alias-add (above the coherence threshold) produces no suspect',
 
 test('signature(a, b) === signature(b, a) — member order never matters', async () => {
   const registry = await tmpRegistry();
-  registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' }, { gloss: 'a group' });
+  registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' }, { definition: 'a group' });
   registry.mint('Software', 'EvilTool', { doc: 0, date: '2024-01-01' });
-  const a: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
-  const b: EntityRef = { category: 'Software', canonical: 'EvilTool' };
+  const a: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const b: ConceptRef = { category: 'Software', canonical: 'EvilTool' };
 
   assert.equal(SuspectGenerator.signature(registry, a, b), SuspectGenerator.signature(registry, b, a));
 });
@@ -350,8 +351,8 @@ test('signature changes when an alias surface is added to either member', async 
   const registry = await tmpRegistry();
   registry.mint('HackerGroup', 'APT28', { doc: 0, date: '2024-01-01' });
   registry.mint('HackerGroup', 'APT29', { doc: 0, date: '2024-01-01' });
-  const a: EntityRef = { category: 'HackerGroup', canonical: 'APT28' };
-  const b: EntityRef = { category: 'HackerGroup', canonical: 'APT29' };
+  const a: ConceptRef = { category: 'HackerGroup', canonical: 'APT28' };
+  const b: ConceptRef = { category: 'HackerGroup', canonical: 'APT29' };
 
   const before = SuspectGenerator.signature(registry, a, b);
   registry.link('HackerGroup', 'APT28', 'Fancy Bear', { docId: 1 });
@@ -440,4 +441,29 @@ test('parseThresholds requires a "default" entry when a spec string is given', (
 
 test('parseThresholds rejects a malformed entry', () => {
   assert.throws(() => parseThresholds('Domain=notanumber,default=0.85', 'glossAnn'));
+});
+
+test('signature keeps the frozen v5 serialization keys — persisted adjudications must not go stale', async () => {
+  // The literal `gloss`/`surfaces` JSON keys ship inside `repair.adjudicated[].signature` strings
+  // in 158 committed registries; renaming them would mark every stored adjudication stale and
+  // re-fire re-adjudication across the corpus. This pins the dialect: the sha256 over the frozen
+  // serialization of known content must never move.
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'sig-freeze-'));
+  const registry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
+  await registry.load();
+  registry.mint('C', 'A', { doc: 1, date: '' });
+  registry.mint('C', 'B', { doc: 2, date: '' });
+  registry.setDefinition('C', 'A', 'a definition');
+
+  const expectedHalfA = JSON.stringify({ surfaces: ['a'], gloss: 'a definition' });
+  const expectedHalfB = JSON.stringify({ surfaces: ['b'], gloss: null });
+  const expected = crypto
+    .createHash('sha256')
+    .update([expectedHalfA, expectedHalfB].sort().join(' '))
+    .digest('hex');
+  assert.equal(
+    SuspectGenerator.signature(registry, { category: 'C', canonical: 'A' }, { category: 'C', canonical: 'B' }),
+    expected,
+    'the persisted-signature dialect is frozen at the v5 vocabulary'
+  );
 });

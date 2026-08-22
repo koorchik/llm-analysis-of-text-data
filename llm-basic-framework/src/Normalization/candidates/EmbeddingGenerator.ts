@@ -44,7 +44,7 @@ interface CategoryIndex {
  *
  * **`name+gloss` writes real glosses since 2026-08-05.** The link-judge emits a one-line `gloss`
  * on every mint/defer (code-validated, one re-ask on a bad gloss, `gloss-flagged` on retry
- * failure), and `StreamingNormalizer` passes it through `EntityRegistry.mint`'s `extras.gloss` —
+ * failure), and `StreamingNormalizer` passes it through `ConceptRegistry.mint`'s `extras.gloss` —
  * not via `setGloss()`, which still has no caller. **Any registry from before 2026-08-05**
  * (including both committed baseline arms) still has every canonical's gloss null, so this
  * representation still degrades to plain `name` on those specific run directories, and this class
@@ -153,7 +153,7 @@ export class EmbeddingGenerator implements CandidateGenerator {
     const perCanonical = new Map<string, string[]>();
     for (const entry of entries) {
       const unique = [...new Set(entry.surfaces)].map((surface) =>
-        this.#textFor(surface, category, entry.gloss ?? null)
+        this.#textFor(surface, category, entry.definition ?? null)
       );
       perCanonical.set(entry.canonical, [...new Set(unique)]);
       texts.push(...perCanonical.get(entry.canonical)!);
@@ -202,7 +202,7 @@ export class EmbeddingGenerator implements CandidateGenerator {
 
   #warnAboutGlossOnce(entries: SnapshotEntry[]): void {
     if (this.#representation !== 'name+gloss' || this.#warnedAboutGloss) return;
-    if (entries.length === 0 || entries.some((entry) => entry.gloss)) return;
+    if (entries.length === 0 || entries.some((entry) => entry.definition)) return;
 
     this.#warnedAboutGloss = true;
     console.warn(

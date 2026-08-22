@@ -73,35 +73,13 @@
   ],
   "bytes": 2322
  },
- "ladder": {
-  "file": "prompts/ladder.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Ladder/LadderDiscovery.ts",
-  "note": "2026-08-17: replaced corpus-specific worked examples with a domain-neutral contract derived only from category definitions and observed surfaces. Same-day fix: the first neutral fold test ('<finer> is recorded') carried no attribution, so preserving vs part-of was undecidable from the rewrite; replaced with an attribution-rewrite test over a placeholder event ('<finer> was involved in an event') plus the collection-vs-thing tiebreak — neutral, but the subject can still visibly widen.",
-  "sha256": "db594b471762abec3e693fb58c7889f0bf87cfa6bd5db345ffb3b8a7f78123c9",
-  "variables": [
-   {
-    "placeholder": "CATEGORY",
-    "source": "category name from schema.json"
-   },
-   {
-    "placeholder": "DEFINITION",
-    "source": "one-line category definition from schema.json"
-   },
-   {
-    "placeholder": "EXAMPLES",
-    "source": "8–20 real surface forms sampled from the registry, first-seen order"
-   }
-  ],
-  "bytes": 4572
- },
  "link-judge": {
   "file": "prompts/link-judge.md",
   "extractedFrom": null,
   "authoredFor": "src/DataProcessors/StreamingNormalizer.ts",
   "copiedFrom": "originally dissert/wiki/notes/prompts.md § Document entities streaming linking judge (Ψ_link) (replaced the pre-redesign two-verdict prompt 2026-08-04); diverged 2026-08-17 — the repo copy is now the source of truth",
-  "note": "2026-08-17: made domain-neutral. Structured roles are never rendered; source context may establish only explicit naming identity, not identity from behavior or relationships.",
-  "sha256": "eeba95805bf5772e2fe1d6a1ae901bca18d7fa5d7603fabef654b39a67002c6f",
+  "note": "2026-08-22: ladder/rung vocabulary removed for the SKOS graph branch — mentions carry no mentionRung and candidates render no rung; hierarchy is expressed only as parentCandidate + edgeKind. 2026-08-17: made domain-neutral. Structured roles are never rendered; source context may establish only explicit naming identity, not identity from behavior or relationships.",
+  "sha256": "0050bd8119205861269ef839896ed229945a6bd769e806e1ce8517fe4a8cc599",
   "variables": [
    {
     "placeholder": "docTitle",
@@ -116,7 +94,79 @@
     "source": "numbered unresolved mentions with candidate sets (canonical, rung, aliases)"
    }
   ],
-  "bytes": 3478
+  "bytes": 3073
+ },
+ "listwise-graph-compact-v3": {
+  "file": "prompts/listwise-graph-compact-v3.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: compact dialect — one E-numbered entity list shared by identity and parents, M-numbered mentions, single-letter keys, and a level code so entities get rungs. Cuts the repeated name/category strings that dominate the verbose dialect output.",
+  "sha256": "81f9766ed4e5b8f1ea5e853bbc59842c1870b6d5023087325f3de69ac502ef3f",
+  "variables": [],
+  "bytes": 3762
+ },
+ "listwise-graph-compact-v4": {
+  "file": "prompts/listwise-graph-compact-v4.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: compact-v3 plus the two rules its errors called for — a written-form variant is identity and never a parent edge (the pool run expressed two gold merges as edges instead), and a substitution test separating narrower-of from part-of (it labelled components as coarsenings).",
+  "sha256": "7251c9e593079b01d5adf13610662e407ec49204407cc00e8e3fcef9abd934e8",
+  "variables": [],
+  "bytes": 4566
+ },
+ "listwise-graph-compact-v5": {
+  "file": "prompts/listwise-graph-compact-v5.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v4 with the identifier-precedence rule restored in full. Compressing it to one clause cost HackerGroup identity 1.000 -> 0.500 — the judge linked APT28 (UAC-0028) to the bare label APT28 instead of to UAC-0028, which is the half of the rule the compression dropped.",
+  "sha256": "164419042b65163a7eb21efcce0a8441749f2b4b6fa42a50b1e077afab3c1efe",
+  "variables": [],
+  "bytes": 4839
+ },
+ "listwise-graph-compact-v6": {
+  "file": "prompts/listwise-graph-compact-v6.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v4 with the identifier-precedence rule restored to its VERBATIM nameform-v6 wording. v5 tried a stronger phrasing (never the bare label; it belongs in the parent slot) which fixed HackerGroup and destroyed Software — 4 links instead of 15, identity 0.000.",
+  "sha256": "458735cde71e4ae6fdb24d695e6188669d0eb03d49e05b91cfde5bb7f68c76ce",
+  "variables": [],
+  "bytes": 4774
+ },
+ "listwise-graph-compact-v7": {
+  "file": "prompts/listwise-graph-compact-v7.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: the lean correct variant — compact-v3 structure with ONLY the identifier-precedence rule restored to its verbatim nameform-v6 wording. v4 added an anti-collapse clause and a substitution test on top; this drops both, to test whether they earn their place or merely load the prompt.",
+  "sha256": "3037b740a19cd9ccedb4fa6f0ed449eaa9c4a2bc1f539a6c3bba06abcaf5586a",
+  "variables": [],
+  "bytes": 3970
+ },
+ "listwise-graph-compact-v8": {
+  "file": "prompts/listwise-graph-compact-v8.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-21: v7 plus a third relation, `v` — the parent is the mention with a version/edition/platform qualifier removed. Splits the overloaded coarsens-to so an analysis can contract exactly the version step (Office 2010 -> Office, Photoshop 7 -> Photoshop) without folding components into their systems. Stores as coarsens-to; the finer reading rides in `relation`.",
+  "sha256": "73a09cb8988ef5a132dff423e1874a82c8160461c500229526dd569a9d22ffa9",
+  "variables": [],
+  "bytes": 4268
+ },
+ "listwise-graph-v1": {
+  "file": "prompts/listwise-graph-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: identity ballot (nameform-v6 rules) plus the granularity half — parent option number, relation, and gloss — so one call per document decides both the partition and the edges between its clusters.",
+  "sha256": "d4d4dc3bf9f6609caa3d6a4bd91a6458f9b8b9f4a44e818d0e2fdabd4621f194",
+  "variables": [],
+  "bytes": 4949
+ },
+ "listwise-graph-v2": {
+  "file": "prompts/listwise-graph-v2.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-20: v1 plus the document-scoped parent pool. Parents are chosen by P-number from every entity the source put on the table, because 14 of 24 reachable gold edges had a parent the identity blocker never retrieved at any depth.",
+  "sha256": "d5e2140bb3d3039a61fe00fa20427eb4d974e5ad836f334315488421c6ee8e42",
+  "variables": [],
+  "bytes": 5556
  },
  "listwise-select": {
   "file": "prompts/listwise-select.md",
@@ -125,6 +175,15 @@
   "sha256": "86c55200158baa55f5f0f29ea8c7a959e95a428fc37842e1fd60fdae72f07d59",
   "variables": [],
   "bytes": 1124
+ },
+ "listwise-select-balanced-v3": {
+  "file": "prompts/listwise-select-balanced-v3.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-18 prompt-optimization arm: balanced positive abbreviation and negative version examples while preserving named complete choices.",
+  "sha256": "6a57a768e9dde69e70acc19b986a2c669f5580337b7c84fbbe98ef31f6d1ed6d",
+  "variables": [],
+  "bytes": 790
  },
  "listwise-select-compact-v1": {
   "file": "prompts/listwise-select-compact-v1.md",
@@ -144,14 +203,50 @@
   "variables": [],
   "bytes": 793
  },
- "listwise-select-balanced-v3": {
-  "file": "prompts/listwise-select-balanced-v3.md",
+ "listwise-select-nameform-v4": {
+  "file": "prompts/listwise-select-nameform-v4.md",
   "extractedFrom": null,
   "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-  "note": "2026-08-18 prompt-optimization arm: balanced positive abbreviation and negative version examples while preserving named complete choices.",
-  "sha256": "6a57a768e9dde69e70acc19b986a2c669f5580337b7c84fbbe98ef31f6d1ed6d",
+  "note": "2026-08-19 judge-size study: baseline text plus explicit written-form identity rules (vendor prefix, punctuation, bracketed descriptor, extension/platform suffix, generic type word, acronym, transliteration/translation) and the matching non-identity rules (version/edition, part-of, artifact-vs-program, different base name).",
+  "sha256": "afa615d01fee3642f7f8f652c9960bd3dd4b0b5db39d1bff5572c9ea4eb9435b",
   "variables": [],
-  "bytes": 790
+  "bytes": 2391
+ },
+ "listwise-select-nameform-v5": {
+  "file": "prompts/listwise-select-nameform-v5.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-19: v4 plus identifier precedence — a structured identifier paired with a descriptive label carries the identity, the bare label is a broader entity. Fixes HackerGroup, regresses Software (x86/x64 confusion).",
+  "sha256": "f64a2ea1cd12891590ea7c95e394d3266566d0dd49fd1b55302ab5d9c12be68c",
+  "variables": [],
+  "bytes": 2699
+ },
+ "listwise-select-nameform-v6": {
+  "file": "prompts/listwise-select-nameform-v6.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
+  "note": "2026-08-19: v5 plus exact-identifier matching when options differ only by a code, number, or few characters. Best local arm: pairwise F1 1.000 on Software and HackerGroup dev probes and 1.000 on the Country test probe at k=6, with gemma4:12b-16k.",
+  "sha256": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
+  "variables": [],
+  "bytes": 2950
+ },
+ "listwise-skos-v1": {
+  "file": "prompts/listwise-skos-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: listwise-graph-compact-v8 restated as a strict SKOS ballot — the Levels/`lvl` field (ladder) is gone, and `r` gains `b` (the mention is BROADER than the listed entity; the edge is stored reversed, listed->mention). Identity = skos:exactMatch (alias), `v`/`n`/`p` = the mention is the narrower side, kept trinary so the stored `relation` survives for kind agreement and contract folds.",
+  "sha256": "7d3c989ff084d5a1f0bb42ce3d88d19d66f59b65ac2a27de6f037ed16d05d6ef",
+  "variables": [],
+  "bytes": 4423
+ },
+ "listwise-skos-v2": {
+  "file": "prompts/listwise-skos-v2.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-22: listwise-skos-v1 with word-valued relation codes (version|narrower|part|broader instead of v|n|p|b) — the ablation isolating whether single-letter codes cost relation-type accuracy. Rules and ballot structure byte-identical to v1.",
+  "sha256": "b7c3ee35f717f9e015dd21248f3625acdccf5301565312f59ab9bbd6c064443b",
+  "variables": [],
+  "bytes": 4451
  },
  "normalize-country": {
   "file": "prompts/normalize-country.md",
@@ -231,126 +326,5 @@
   "sha256": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16",
   "variables": [],
   "bytes": 632
- },
- "listwise-select-nameform-v4": {
-  "file": "prompts/listwise-select-nameform-v4.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-  "note": "2026-08-19 judge-size study: baseline text plus explicit written-form identity rules (vendor prefix, punctuation, bracketed descriptor, extension/platform suffix, generic type word, acronym, transliteration/translation) and the matching non-identity rules (version/edition, part-of, artifact-vs-program, different base name).",
-  "sha256": "afa615d01fee3642f7f8f652c9960bd3dd4b0b5db39d1bff5572c9ea4eb9435b",
-  "variables": [],
-  "bytes": 2391
- },
- "listwise-select-nameform-v5": {
-  "file": "prompts/listwise-select-nameform-v5.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-  "note": "2026-08-19: v4 plus identifier precedence — a structured identifier paired with a descriptive label carries the identity, the bare label is a broader entity. Fixes HackerGroup, regresses Software (x86/x64 confusion).",
-  "sha256": "f64a2ea1cd12891590ea7c95e394d3266566d0dd49fd1b55302ab5d9c12be68c",
-  "variables": [],
-  "bytes": 2699
- },
- "listwise-select-nameform-v6": {
-  "file": "prompts/listwise-select-nameform-v6.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseMintCandidateDecision.ts",
-  "note": "2026-08-19: v5 plus exact-identifier matching when options differ only by a code, number, or few characters. Best local arm: pairwise F1 1.000 on Software and HackerGroup dev probes and 1.000 on the Country test probe at k=6, with gemma4:12b-16k.",
-  "sha256": "8dc4515504e4b02d83a0cd8db126c5babf5427d1ef4dbc0f6044bf3c49a66725",
-  "variables": [],
-  "bytes": 2950
- },
- "listwise-graph-v1": {
-  "file": "prompts/listwise-graph-v1.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: identity ballot (nameform-v6 rules) plus the granularity half — parent option number, relation, and gloss — so one call per document decides both the partition and the edges between its clusters.",
-  "sha256": "d4d4dc3bf9f6609caa3d6a4bd91a6458f9b8b9f4a44e818d0e2fdabd4621f194",
-  "variables": [],
-  "bytes": 4949
- },
- "listwise-graph-v2": {
-  "file": "prompts/listwise-graph-v2.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: v1 plus the document-scoped parent pool. Parents are chosen by P-number from every entity the source put on the table, because 14 of 24 reachable gold edges had a parent the identity blocker never retrieved at any depth.",
-  "sha256": "d5e2140bb3d3039a61fe00fa20427eb4d974e5ad836f334315488421c6ee8e42",
-  "variables": [],
-  "bytes": 5556
- },
- "listwise-graph-compact-v3": {
-  "file": "prompts/listwise-graph-compact-v3.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: compact dialect — one E-numbered entity list shared by identity and parents, M-numbered mentions, single-letter keys, and a level code so entities get rungs. Cuts the repeated name/category strings that dominate the verbose dialect output.",
-  "sha256": "81f9766ed4e5b8f1ea5e853bbc59842c1870b6d5023087325f3de69ac502ef3f",
-  "variables": [],
-  "bytes": 3762
- },
- "listwise-graph-compact-v4": {
-  "file": "prompts/listwise-graph-compact-v4.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: compact-v3 plus the two rules its errors called for — a written-form variant is identity and never a parent edge (the pool run expressed two gold merges as edges instead), and a substitution test separating narrower-of from part-of (it labelled components as coarsenings).",
-  "sha256": "7251c9e593079b01d5adf13610662e407ec49204407cc00e8e3fcef9abd934e8",
-  "variables": [],
-  "bytes": 4566
- },
- "listwise-graph-compact-v5": {
-  "file": "prompts/listwise-graph-compact-v5.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: v4 with the identifier-precedence rule restored in full. Compressing it to one clause cost HackerGroup identity 1.000 -> 0.500 — the judge linked APT28 (UAC-0028) to the bare label APT28 instead of to UAC-0028, which is the half of the rule the compression dropped.",
-  "sha256": "164419042b65163a7eb21efcce0a8441749f2b4b6fa42a50b1e077afab3c1efe",
-  "variables": [],
-  "bytes": 4839
- },
- "listwise-graph-compact-v6": {
-  "file": "prompts/listwise-graph-compact-v6.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: v4 with the identifier-precedence rule restored to its VERBATIM nameform-v6 wording. v5 tried a stronger phrasing (never the bare label; it belongs in the parent slot) which fixed HackerGroup and destroyed Software — 4 links instead of 15, identity 0.000.",
-  "sha256": "458735cde71e4ae6fdb24d695e6188669d0eb03d49e05b91cfde5bb7f68c76ce",
-  "variables": [],
-  "bytes": 4774
- },
- "listwise-graph-compact-v7": {
-  "file": "prompts/listwise-graph-compact-v7.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-20: the lean correct variant — compact-v3 structure with ONLY the identifier-precedence rule restored to its verbatim nameform-v6 wording. v4 added an anti-collapse clause and a substitution test on top; this drops both, to test whether they earn their place or merely load the prompt.",
-  "sha256": "3037b740a19cd9ccedb4fa6f0ed449eaa9c4a2bc1f539a6c3bba06abcaf5586a",
-  "variables": [],
-  "bytes": 3970
- },
- "ladder-placed-v2": {
-  "file": "prompts/ladder-placed-v2.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Ladder/LadderDiscovery.ts",
-  "note": "2026-08-21: the ladder prompt plus placements — where each supplied example sits on the ladder it just derived. The call has already read those surfaces, so the catch-up pass that gives pre-ladder entities their rungs costs no extra LLM call.",
-  "sha256": "de434e048d2440f7e7813d8ae4b7636bbb2d37aefaaf60c14f443df6b47e62d4",
-  "variables": [
-   {
-    "placeholder": "CATEGORY",
-    "source": "category"
-   },
-   {
-    "placeholder": "DEFINITION",
-    "source": "definition"
-   },
-   {
-    "placeholder": "EXAMPLES",
-    "source": "examples"
-   }
-  ],
-  "bytes": 5011
- },
- "listwise-graph-compact-v8": {
-  "file": "prompts/listwise-graph-compact-v8.md",
-  "extractedFrom": null,
-  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
-  "note": "2026-08-21: v7 plus a third relation, `v` — the parent is the mention with a version/edition/platform qualifier removed. Splits the overloaded coarsens-to so an analysis can contract exactly the version step (Office 2010 -> Office, Photoshop 7 -> Photoshop) without folding components into their systems. Stores as coarsens-to; the finer reading rides in `relation`.",
-  "sha256": "73a09cb8988ef5a132dff423e1874a82c8160461c500229526dd569a9d22ffa9",
-  "variables": [],
-  "bytes": 4268
  }
 }

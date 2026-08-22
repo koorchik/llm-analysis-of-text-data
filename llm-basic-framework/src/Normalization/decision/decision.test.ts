@@ -583,19 +583,6 @@ describe('ListwiseGraphDecision', () => {
     assert.equal(decisions[1].parentCandidate, 'MS Office');
   });
 
-  it('renders the ladder and each candidate rung, so the judge can tell a level from an identity', async () => {
-    const llm = fakeLlm(['{"choices":[{"mention":"x","category":"Software","choice":2,"parent":null,"relation":null,"gloss":null}]}']);
-    const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
-    await strategy.decide([
-      request('x', [{ canonical: 'A', sim: 0.9, surfaces: ['A'], channel: 'test', rung: 'g1' }], {
-        category: 'Software',
-        ladder: 'g0 instance < g1 product',
-      }),
-    ]);
-    assert.match(llm.calls[0].text, /\[level g1\]/);
-    assert.match(llm.calls[0].text, /levels: g0 instance < g1 product/);
-  });
-
   it('ignores a parent on a mention it linked — an entity cannot be both the same and narrower', async () => {
     const llm = fakeLlm(['{"choices":[{"mention":"x","category":"Software","choice":1,"parent":2,"relation":"part-of"}]}']);
     const strategy = new ListwiseGraphDecision({ llmClient: llm.client });
@@ -639,47 +626,87 @@ describe('ListwiseGraphDecision', () => {
       }),
     ]);
     assert.equal(decision.parentCandidate, 'Remote Utilities');
-    assert.equal(decision.relation, 'part-of');
+    assert.equal(decision.broaderType, 'broaderPartitive');
     assert.match(llm.calls[0].text, /P2\. Remote Utilities/);
   });
 });
 
-describe('ListwiseGraphDecision ladder rendering', () => {
-  it('labels each category ladder, so a mixed-category document cannot cross them', async () => {
+describe('ListwiseGraphDecision SKOS ballot', () => {
+  it('never renders a Levels block or rung labels — the SKOS ballot has no ladder', async () => {
     const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW"},{"m":"M2","id":"NEW"}]}']);
     const strategy = new ListwiseGraphDecision({
       llmClient: llm.client,
-      promptId: 'listwise-graph-compact-v7',
+      promptId: 'listwise-skos-v1',
     });
     await strategy.decide([
       request('x', [candidate('A', 0.9)], {
         category: 'Software',
-        ladder: 'g0=versioned-software | g1=software-product',
         pool: [{ canonical: 'A', surfaces: ['A'] }],
       }),
       request('y', [candidate('B', 0.9)], {
         category: 'Domain',
-        ladder: 'g0=host | g1=registrable-domain',
         pool: [{ canonical: 'B', surfaces: ['B'] }],
       }),
     ]);
-    assert.match(llm.calls[0].text, /Domain: g0=host/);
-    assert.match(llm.calls[0].text, /Software: g0=versioned-software/);
+    assert.doesNotMatch(llm.calls[0].text, /Levels/);
+    assert.doesNotMatch(llm.calls[0].text, /<g\d+>/);
   });
 
-  it('omits the levels block entirely when no category has a ladder', async () => {
-    const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW"}]}']);
+  it('r:"b" reverses the edge: relation narrower-of with mentionIsBroader set', async () => {
+    const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW","p":"E1","r":"b","g":"a product family"}]}']);
     const strategy = new ListwiseGraphDecision({
       llmClient: llm.client,
-      promptId: 'listwise-graph-compact-v7',
+      promptId: 'listwise-skos-v1',
     });
-    await strategy.decide([
+    const [decision] = await strategy.decide([
+      request('Office', [candidate('Office 2010', 0.9)], {
+        category: 'Software',
+        pool: [{ canonical: 'Office 2010', surfaces: ['Office 2010'] }],
+      }),
+    ]);
+    assert.equal(decision.kind, 'mint');
+    assert.equal(decision.parentCandidate, 'Office 2010');
+    assert.equal(decision.broaderType, 'broaderGeneric');
+    assert.equal(decision.mentionIsBroader, true);
+  });
+
+  it('word-valued relation codes (the skos-v2 ablation) map like their single-letter twins', async () => {
+    const llm = fakeLlm([
+      '{"v":[{"m":"M1","id":"NEW","p":"E1","r":"version","g":null},{"m":"M2","id":"NEW","p":"E2","r":"broader","g":null}]}',
+    ]);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-skos-v2',
+    });
+    const pool = [
+      { canonical: 'Office', surfaces: ['Office'] },
+      { canonical: 'Office 2010', surfaces: ['Office 2010'] },
+    ];
+    const [first, second] = await strategy.decide([
+      request('Office 2013', [candidate('Office', 0.9)], { category: 'Software', pool }),
+      request('Office Suite', [candidate('Office 2010', 0.9)], { category: 'Software', pool }),
+    ]);
+    assert.equal(first.parentCandidate, 'Office');
+    assert.equal(first.broaderType, 'broaderInstantial');
+    assert.ok(!first.mentionIsBroader);
+    assert.equal(second.parentCandidate, 'Office 2010');
+    assert.equal(second.broaderType, 'broaderGeneric');
+    assert.equal(second.mentionIsBroader, true);
+  });
+
+  it('a stray lvl field in the response is ignored, not applied', async () => {
+    const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g2","g":null}]}']);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-skos-v1',
+    });
+    const [decision] = await strategy.decide([
       request('x', [candidate('A', 0.9)], {
         category: 'Software',
-        ladder: '(none; use g0)',
         pool: [{ canonical: 'A', surfaces: ['A'] }],
       }),
     ]);
-    assert.doesNotMatch(llm.calls[0].text, /Levels/);
+    assert.equal(decision.kind, 'mint');
+    assert.equal('mentionRung' in decision, false, 'no rung field survives on a Decision');
   });
 });

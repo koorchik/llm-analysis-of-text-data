@@ -1,5 +1,5 @@
 import { closure } from '../Evaluation/unionFind';
-import type { EntityRef, SuspectPair } from '../EntityRegistry/EntityRegistry';
+import type { ConceptRef, SuspectPair } from '../ConceptRegistry/ConceptRegistry';
 
 /**
  * Component scoping + token cap + spillover (T7) — pure code, no LLM, no registry access. `T9`
@@ -14,25 +14,25 @@ import type { EntityRef, SuspectPair } from '../EntityRegistry/EntityRegistry';
  * this component but are never pair edges — they ride along with whichever entity they're about. */
 export interface SuspectComponent {
   pairs: SuspectPair[];
-  entities: EntityRef[];
-  coherence: EntityRef[];
+  entities: ConceptRef[];
+  coherence: ConceptRef[];
 }
 
 /** Separator-free encoding — a plain `"${category} ${canonical}"` join is not collision-safe (the
  * real category domain already contains "Government Body", and `{category:'A', canonical:'B C'}` /
  * `{category:'A B', canonical:'C'}` would both join to `"A B C"`), and a collision here would
  * silently fold two distinct entities into one union-find node with zero error signal. */
-function refKey(ref: EntityRef): string {
+function refKey(ref: ConceptRef): string {
   return JSON.stringify([ref.category, ref.canonical]);
 }
 
-function refEquals(a: EntityRef, b: EntityRef): boolean {
+function refEquals(a: ConceptRef, b: ConceptRef): boolean {
   return a.category === b.category && a.canonical === b.canonical;
 }
 
 /** Total order over refs, used everywhere below so output never depends on Map/Set iteration
  * order — only on the (category, canonical) values themselves. */
-function compareRefs(a: EntityRef, b: EntityRef): number {
+function compareRefs(a: ConceptRef, b: ConceptRef): number {
   if (a.category !== b.category) return a.category < b.category ? -1 : 1;
   if (a.canonical !== b.canonical) return a.canonical < b.canonical ? -1 : 1;
   return 0;
@@ -42,9 +42,9 @@ function comparePairs(x: SuspectPair, y: SuspectPair): number {
   return compareRefs(x.a, y.a) || compareRefs(x.b, y.b) || x.score - y.score;
 }
 
-function dedupeRefs(refs: EntityRef[]): EntityRef[] {
+function dedupeRefs(refs: ConceptRef[]): ConceptRef[] {
   const seen = new Set<string>();
-  const out: EntityRef[] = [];
+  const out: ConceptRef[] = [];
   for (const ref of refs) {
     const key = refKey(ref);
     if (seen.has(key)) continue;
@@ -65,8 +65,8 @@ function dedupeRefs(refs: EntityRef[]): EntityRef[] {
  * an entity only reachable through the evicted edge must not be silently dropped, so connectivity
  * is recomputed from scratch here rather than patched incrementally).
  */
-function scope(entities: EntityRef[], edges: SuspectPair[], coherence: EntityRef[]): SuspectComponent[] {
-  const refByKey = new Map<string, EntityRef>();
+function scope(entities: ConceptRef[], edges: SuspectPair[], coherence: ConceptRef[]): SuspectComponent[] {
+  const refByKey = new Map<string, ConceptRef>();
   for (const ref of entities) if (!refByKey.has(refKey(ref))) refByKey.set(refKey(ref), ref);
 
   const closurePairs: Array<[string, string]> = edges.map((e) => [refKey(e.a), refKey(e.b)]);
@@ -98,7 +98,7 @@ function scope(entities: EntityRef[], edges: SuspectPair[], coherence: EntityRef
 /**
  * Splits `pairs` into connected components (transitive closure over shared entities, via
  * `src/Evaluation/unionFind.ts`'s `closure`). Coherence suspects (`b` deep-equal `a` — same
- * category+canonical, per `EntityRegistry.SuspectPair`) never contribute an edge: a self-pair is a
+ * category+canonical, per `ConceptRegistry.SuspectPair`) never contribute an edge: a self-pair is a
  * no-op for connectivity (`unionFind.test.ts`: "self-pairs do not create spurious merges"), so they
  * are pulled out up front and reattached as `coherence` entries of whichever component contains
  * their entity — or their own singleton component, if that entity has no other suspect at all.
@@ -108,8 +108,8 @@ function scope(entities: EntityRef[], edges: SuspectPair[], coherence: EntityRef
  */
 export function buildComponents(pairs: SuspectPair[]): SuspectComponent[] {
   const edges: SuspectPair[] = [];
-  const coherenceRefs: EntityRef[] = [];
-  const entities: EntityRef[] = [];
+  const coherenceRefs: ConceptRef[] = [];
+  const entities: ConceptRef[] = [];
 
   for (const p of pairs) {
     if (refEquals(p.a, p.b)) {

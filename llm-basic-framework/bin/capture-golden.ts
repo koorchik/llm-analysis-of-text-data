@@ -7,7 +7,7 @@
  *
  * WHY THIS EXISTS, AND WHY NOW
  *
- * M4 deletes `EntityRegistry.candidates()` and replaces it with `StringSimilarityGenerator`. The
+ * M4 deletes `ConceptRegistry.candidates()` and replaces it with `StringSimilarityGenerator`. The
  * only way to know that swap preserved behaviour is to compare against a reference captured
  * beforehand — and the reference can only be captured while the v1 registry format and the original
  * `candidates()` both still exist. M3 replaces the format, so this must land before M3. Captured
@@ -21,7 +21,7 @@
  * to `(-sim, canonicalName)` in the same migration, deliberately *before* capture, so the reference
  * does not enshrine the bug. Diagnostics below quantify how much that changes.
  */
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { identityAnalyzer } from '../src/Normalization/analyzers/identity';
 import { StringSimilarityGenerator } from '../src/Normalization/candidates/StringSimilarityGenerator';
 import { maxLevDice } from '../src/Normalization/metrics/stringMetrics';
@@ -130,7 +130,7 @@ async function analyseQuery(
   minSim: number
 ) {
   // Since M4 the reference is produced by the generator rather than the removed
-  // EntityRegistry.candidates(). The gate proves the two are byte-identical on every frozen pair, so
+  // ConceptRegistry.candidates(). The gate proves the two are byte-identical on every frozen pair, so
   // the artifact this script writes is unchanged.
   const full = (
     await generator.candidates({ mention: query.name, category: query.category, k: Infinity, minSim })
@@ -209,7 +209,7 @@ async function main() {
   // --- 2. score every query against the COMMITTED fixture ---
   // Loading from disk rather than reusing the in-memory build proves the committed artifact is
   // loadable and is what the golden file is actually defined against.
-  const registry = new EntityRegistry({ filePath: fixturePath });
+  const registry = new ConceptRegistry({ filePath: fixturePath });
   await registry.load();
 
   const generator = new StringSimilarityGenerator({
@@ -222,10 +222,10 @@ async function main() {
   // similarity alone fell back to before the M2.5 tie-break fix. Needed to reconstruct that old
   // ordering for the impact diagnostics.
   const haystackIndex = new Map<string, Map<string, number>>();
-  for (const category of registry.categories()) {
+  for (const category of registry.conceptSchemes()) {
     haystackIndex.set(
       category,
-      new Map(Object.keys(registry.records(category)).map((name, index) => [name, index]))
+      new Map(Object.keys(registry.concepts(category)).map((name, index) => [name, index]))
     );
   }
 
@@ -274,7 +274,7 @@ async function main() {
     version: GOLDEN_VERSION,
     generatedBy: 'bin/capture-golden.ts',
     note:
-      'Reference output of EntityRegistry.candidates() with the (-sim, canonicalName) tie-break, ' +
+      'Reference output of ConceptRegistry.candidates() with the (-sim, canonicalName) tie-break, ' +
       'captured before the M3 registry-v2 format change. M4 must reproduce this exactly.',
     input: {
       contentHash: (await hashInputDir(inputDir)).contentHash,

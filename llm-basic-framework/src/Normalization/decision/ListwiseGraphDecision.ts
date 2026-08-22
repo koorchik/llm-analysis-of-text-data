@@ -35,7 +35,6 @@ interface CompactVerdict {
   id: string;
   p?: string | null;
   r?: string | null;
-  lvl?: string | null;
   g?: string | null;
 }
 
@@ -53,10 +52,11 @@ interface CompactVerdict {
  * option *n+1* rather than the unmarked default, an option number instead of an echoed name. The
  * parent is a second option number on the same ballot, so it is equally un-inventable.
  *
- * **The model proposes; the ladder disposes where it can.** `StreamingNormalizer` derives the
- * stored `edgeKind` from the rung the parent sits on, and only when the category has no ladder yet
- * does it fall back to the `relation` the model stated. Either way the parent must be an option
- * that was actually on the ballot, so a strategy can never invent an endpoint.
+ * The relation is stated in SKOS / ISO 25964 terms: identity is a link (exact match), and
+ * `v`/`n`/`p` make the mention the narrower side of a skos:broader edge (typed BTI/BTG/BTP) while
+ * `b` makes it the broader side (`mentionIsBroader`, endpoints swapped by the caller at write
+ * time). Either way the parent must be an option that was actually on the ballot, so a strategy
+ * can never invent an endpoint.
  *
  * Never returns `defer`, for the reason `ListwiseMintCandidateDecision` documents.
  */
@@ -77,7 +77,8 @@ export class ListwiseGraphDecision implements DecisionStrategy {
     this.#prompts = params.prompts ?? defaultPrompts;
     this.#k = params.k ?? 4;
     this.#promptId = params.promptId ?? 'listwise-graph-v2';
-    this.#compact = this.#promptId.includes('compact');
+    // The SKOS ballot speaks the compact dialect (E-numbered entities, {"v":[...]}) by design.
+    this.#compact = this.#promptId.includes('compact') || this.#promptId.includes('skos');
 
     if (this.#k < 1) throw new Error(`ListwiseGraphDecision: k must be >= 1, got ${this.#k}`);
 
@@ -97,9 +98,12 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       reason,
     });
 
+    // Zero-candidate requests stay on the ballot when the caller sent them (judgeUnresolved):
+    // their identity options render as "none" (id must be NEW — links are only ever accepted to
+    // shown options), but `p` may point anywhere in the shared entity list.
     const askable = requests
       .map((request, index) => ({ request, index }))
-      .filter((entry) => entry.request.candidates.length > 0);
+      .filter((entry) => entry.request.candidates.length > 0 || entry.request.pool?.length);
 
     const decisions: Decision[] = requests.map(() => mintOf('no candidates'));
     if (askable.length === 0) return decisions;
@@ -111,13 +115,10 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       const rendered = shown
         .map(
           (candidate, option) =>
-            `     ${option + 1}. ${candidate.canonical}${
-              candidate.rung ? ` [level ${candidate.rung}]` : ''
-            } [aliases: ${candidate.surfaces.join(', ')}]`
+            `     ${option + 1}. ${candidate.canonical} [aliases: ${candidate.surfaces.join(', ')}]`
         )
         .join('\n');
-      const ladder = request.ladder && request.ladder !== '(none; use g0)' ? `; levels: ${request.ladder}` : '';
-      return `${position + 1}. "${request.mention}" (${request.category})${ladder}\n${rendered}\n     ${shown.length + 1}. NEW ENTITY`;
+      return `${position + 1}. "${request.mention}" (${request.category})\n${rendered}\n     ${shown.length + 1}. NEW ENTITY`;
     });
 
     const first = askable[0].request;
@@ -126,7 +127,7 @@ export class ListwiseGraphDecision implements DecisionStrategy {
 
     // One pool for the whole call, numbered P1…Pn. Parents are chosen from it by number for the
     // same reason identity is: a number cannot name something that was never offered.
-    const pool: Array<{ canonical: string; surfaces: string[]; rung?: string }> = [];
+    const pool: Array<{ canonical: string; surfaces: string[] }> = [];
     const seen = new Set<string>();
     for (const { request } of askable) {
       for (const entry of request.pool ?? []) {
@@ -138,10 +139,7 @@ export class ListwiseGraphDecision implements DecisionStrategy {
     }
     const poolBlock = pool.length
       ? `Known entities in this source (possible parents):\n${pool
-          .map(
-            (entry, index) =>
-              `  P${index + 1}. ${entry.canonical}${entry.rung ? ` [level ${entry.rung}]` : ''}`
-          )
+          .map((entry, index) => `  P${index + 1}. ${entry.canonical}`)
           .join('\n')}\n`
       : '';
 
@@ -218,9 +216,7 @@ export class ListwiseGraphDecision implements DecisionStrategy {
         const aliases = entity.surfaces.filter(
           (surface) => surface.toLowerCase() !== entity.canonical.toLowerCase()
         );
-        return `E${index + 1}. ${entity.canonical}${aliases.length ? ` [aka ${aliases.join(', ')}]` : ''}${
-          entity.rung ? ` <${entity.rung}>` : ''
-        }`;
+        return `E${index + 1}. ${entity.canonical}${aliases.length ? ` [aka ${aliases.join(', ')}]` : ''}`;
       })
       .join('\n');
 
@@ -231,40 +227,21 @@ export class ListwiseGraphDecision implements DecisionStrategy {
           .map((canonical) => numberOf.get(canonical.toLowerCase()))
           .filter((number): number is number => Boolean(number))
           .map((number) => `E${number}`);
+        const ctx = request.contextRef ? ` — ctx: ${request.contextRef}` : '';
         return `M${position + 1}. "${request.mention}" (${request.category}) — options: ${
           refs.length ? refs.join(', ') : 'none'
-        }`;
+        }${ctx}`;
       })
       .join('\n');
 
-    // One line per category that has a ladder, each labelled. Pooling them unlabelled — which this
-    // did until 2026-08-21 — shows a mention of one category the granularity vocabulary of another,
-    // with nothing to tell them apart once a document mixes categories.
-    const laddersByCategory = new Map<string, string>();
-    for (const { request } of askable) {
-      if (request.ladder && request.ladder !== '(none; use g0)') {
-        laddersByCategory.set(request.category, request.ladder);
-      }
-    }
-    const ladders = [...laddersByCategory.entries()]
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-      .map(([category, ladder]) => `${category}: ${ladder}`);
-
-    return [
-      header,
-      `Entities:\n${entityBlock}`,
-      ladders.length ? `Levels (per category):\n${ladders.map((line) => `  ${line}`).join('\n')}` : '',
-      `Mentions:\n${mentionBlock}`,
-    ]
-      .filter(Boolean)
-      .join('\n');
+    return [header, `Entities:\n${entityBlock}`, `Mentions:\n${mentionBlock}`].join('\n');
   }
 
   /** The document's entity list: every pooled entity, in first-seen order so numbering is stable. */
   #entityList(
     askable: Array<{ request: DecisionRequest; index: number }>
-  ): Array<{ canonical: string; surfaces: string[]; rung?: string }> {
-    const entities: Array<{ canonical: string; surfaces: string[]; rung?: string }> = [];
+  ): Array<{ canonical: string; surfaces: string[] }> {
+    const entities: Array<{ canonical: string; surfaces: string[] }> = [];
     const seen = new Set<string>();
     for (const { request } of askable) {
       for (const entry of request.pool ?? []) {
@@ -328,28 +305,36 @@ export class ListwiseGraphDecision implements DecisionStrategy {
 
       const proposed = entityAt(verdict.p);
       const parent = proposed && fold(proposed) !== fold(request.mention) ? proposed : null;
-      const relation =
-        verdict.r === 'v'
-          ? 'version-of'
-          : verdict.r === 'n'
-            ? 'narrower-of'
-            : verdict.r === 'p'
-              ? 'part-of'
+      // Codes come in two dialects — single letters (v|n|p|b, the measured winner) and full words
+      // (version|narrower|part|broader, the skos-v2 ablation). They map onto the ISO 25964
+      // broader-term typology: v = BTI (instance/version), n = BTG (generic/is-a), p = BTP
+      // (partitive). `b`/`broader` reverses the edge: the mention is the broader side, so it
+      // stores as BTG with the endpoints swapped by the caller (parent → mention).
+      const code = typeof verdict.r === 'string' ? verdict.r.trim().toLowerCase() : '';
+      const broaderType =
+        code === 'v' || code === 'version'
+          ? ('broaderInstantial' as const)
+          : code === 'n' || code === 'narrower' || code === 'b' || code === 'broader'
+            ? ('broaderGeneric' as const)
+            : code === 'p' || code === 'part'
+              ? ('broaderPartitive' as const)
               : null;
+      const mentionIsBroader = code === 'b' || code === 'broader';
       const gloss = typeof verdict.g === 'string' && verdict.g.trim() ? verdict.g.trim() : null;
-      const rung = typeof verdict.lvl === 'string' && /^g\d+$/i.test(verdict.lvl.trim())
-        ? verdict.lvl.trim().toLowerCase()
-        : null;
 
       decisions[index] = {
         kind: 'mint',
         target: null,
         confidence: null,
-        reason: parent ? `judge chose NEW under ${verdict.p} (${relation ?? 'unspecified'})` : 'judge chose NEW',
+        reason: parent
+          ? mentionIsBroader
+            ? `judge chose NEW above ${verdict.p} (broader)`
+            : `judge chose NEW under ${verdict.p} (${broaderType ?? 'unspecified'})`
+          : 'judge chose NEW',
         gloss,
         parentCandidate: parent,
-        relation,
-        mentionRung: rung,
+        broaderType,
+        ...(mentionIsBroader ? { mentionIsBroader } : {}),
       };
     });
 
@@ -390,12 +375,16 @@ function decisionForChoice(
         : 'judge chose NEW ENTITY'
       : `choice ${option} out of range 1..${shown.length + 1}`;
 
-  const relation =
-    choice.relation === 'version-of' ||
-    choice.relation === 'narrower-of' ||
-    choice.relation === 'part-of'
-      ? choice.relation
-      : null;
+  // The verbose prompts (listwise-graph-v1/v2) answer in the legacy relation vocabulary — a
+  // frozen LLM-output dialect, mapped onto the ISO 25964 typing here.
+  const broaderType =
+    choice.relation === 'version-of'
+      ? ('broaderInstantial' as const)
+      : choice.relation === 'narrower-of'
+        ? ('broaderGeneric' as const)
+        : choice.relation === 'part-of'
+          ? ('broaderPartitive' as const)
+          : null;
 
   return {
     kind: 'mint',
@@ -404,7 +393,7 @@ function decisionForChoice(
     reason,
     gloss,
     parentCandidate: parent,
-    relation,
+    broaderType,
   };
 }
 

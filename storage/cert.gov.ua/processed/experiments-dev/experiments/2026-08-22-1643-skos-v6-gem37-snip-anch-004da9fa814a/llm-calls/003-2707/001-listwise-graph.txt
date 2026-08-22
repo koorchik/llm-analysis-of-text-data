@@ -1,0 +1,90 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використову … t="_blank" style="color: rgb(0, 123, 255);">правила кібергігієни&nbsp;</a>.</li></ul><p><strong>Cхема:</strong></p><p>email attach (lzh) &gt; js &gt; cmd.exe &gt; powershell.exe &gt; (new-object system.net.webclient).downloadfile &gt;&nbsp;%Temp%ckZ89.ExE</p><p><strong>Індикатори компрометації (IOC):</strong></p><p><strong>Шкідливі домени та ІР (C2):</strong></p><p>http://chubanomania[.]icu/prima/spi.exe?rCuz&nbsp;(IP:&nbsp;93.179.69.41)</p><p><br></p><p><strong>Шкідливі файли:</strong></p><p>Payload:&nbsp;<strong>spi.exe</strong>&nbsp;(зберігається&n … "color: rgb(0, 123, 255);">https://www.virustotal.com/#/file/71e64237e53f95096710854badd1d348</a></p><p>&nbsp;</p><p>Прикріплений архів:&nbsp;<strong>До оплати від 11.12.18.lzh</strong></p><p>MD5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3d6880d23b31ce467ede70ea2bd33fa5</p><p>SHA-1&nbsp;&nbsp;&nbsp;&nbsp;2dd6e49ff82816e191e00d31ab2 
+Entities:
+E1. MS Excel
+E2. PGMB New Order 18-2077.xlsx
+E3. MS Office [aka Microsoft Office]
+E4. MS Word [aka Microsoft Word]
+E5. Windows Server 2012
+E6. MS PowerPoint
+E7. Windows Server 2008
+E8. CVE-2017-0199
+E9. major.exe
+E10. Microsoft Equation Editor
+E11. CVE-2017-11882
+E12. Microsoft Office 2007 [aka Office 2007]
+E13. Microsoft Office 2010 [aka Office 2010]
+E14. Microsoft Windows
+E15. Petya
+E16. Microsoft Office 2013 [aka Office 2013]
+E17. Microsoft Office 2016 [aka Office 2016]
+E18. Windows Vista
+E19. Misha
+E20. spi.exe
+E21. ckZ89.ExE
+E22. До оплати від 11.12.18.lzh
+E23. Рахунки и новые списки.lzh
+E24. Рахунки за выполненные работы от 11.12.2018.js
+E25. До оплати рах.ф. 74 - 2018р.js
+E26. cmd.exe
+E27. powershell.exe
+E28. Smokeloader
+Mentions:
+M1. "Smokeloader" (Software) — options: E1, E2, E3, E4
+M2. "spi.exe" (Software) — options: E3, E9, E1, E8
+M3. "ckZ89.ExE" (Software) — options: E1, E9, E3, E8
+M4. "До оплати від 11.12.18.lzh" (Software) — options: E11, E2, E8, E13
+M5. "Рахунки и новые списки.lzh" (Software) — options: E3, E2, E6, E8
+M6. "Рахунки за выполненные работы от 11.12.2018.js" (Software) — options: E11, E2, E13, E17
+M7. "До оплати рах.ф. 74 - 2018р.js" (Software) — options: E2, E13, E15, E16
+M8. "cmd.exe" (Software) — options: E3, E9, E1, E8
+M9. "powershell.exe" (Software) — options: E3, E9, E6, E1
+
+=== RESPONSE (6.4s, in 2286 / out 233 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"malware downloaded to Temp directory"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"malicious payload executable downloaded from C2"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"malicious executable downloaded to Temp directory"},{"m":"M4","id":"NEW","p":null,"r":null,"g":"malicious archive attached to email"},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":null,"r":null,"g":null},{"m":"M7","id":"NEW","p":null,"r":null,"g":null},{"m":"M8","id":"NEW","p":"E14","r":"p","g":"command prompt interpreter used in execution chain"},{"m":"M9","id":"NEW","p":"E14","r":"p","g":"PowerShell utility used to download malicious payload"}]}

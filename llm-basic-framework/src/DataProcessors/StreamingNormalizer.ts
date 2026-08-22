@@ -1,16 +1,17 @@
 import { PromptProvider, prompts } from '../Normalization/PromptProvider';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry, GranularityEdgeKind } from '../EntityRegistry/EntityRegistry';
-import { LadderDiscovery, spreadSample } from '../Ladder/LadderDiscovery';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { StringSimilarityGenerator } from '../Normalization/candidates/StringSimilarityGenerator';
 import type { CandidateGenerator, Decision, DecisionRequest, DecisionStrategy } from '../Normalization/types';
+import type { EmbeddingsClient } from '../EmbeddingsClient/EmbeddingsClient';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
-import { SchemaRegistry, type CategoryLadder } from '../SchemaRegistry/SchemaRegistry';
+import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { ensureDir, sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
+import { spreadSample } from '../utils/sampleUtils';
+import { cosineNormalized, l2Normalize } from '../utils/vectorUtils';
 import {
   LinkVerdict,
-  MentionRung,
   StreamingEntity,
   StreamingExtraction,
   extractAndParseJson,
@@ -29,7 +30,7 @@ interface Params {
   outputDir: string; // artifacts/
   llmClient: LlmClient;
   schemaRegistry: SchemaRegistry;
-  entityRegistry: EntityRegistry;
+  conceptRegistry: ConceptRegistry;
   decisionLog: DecisionLog;
   sourceDir?: string;
   preprocessor?: Preprocessor;
@@ -50,23 +51,56 @@ interface Params {
   prompts?: PromptProvider;
   /**
    * The decision stage (M6). Omitted means the built-in `link-judge` path — since 2026-08-04 the
-   * SKEIN v2 three-verdict judge (link | mint | defer with rung + parent-edge structure).
+   * SKEIN v2 three-verdict judge (link | mint | defer with parent-edge structure).
    *
    * Set it to run E1/E3/E8's alternative decision rules live. `bin/app.ts` wires it from
    * `DECISION_STRATEGY`.
    */
   decisionStrategy?: DecisionStrategy;
   /**
-   * Granularity-ladder bootstrap (SKEIN v2). Optional so ladder-free arms remain runnable;
-   * `bin/app.ts` wires it for the incremental flow.
+   * Embeds the two endpoint names of every hierarchy edge so the edge can carry its
+   * `similarityScore` (SKOS graph). Optional so embedding-free tests remain runnable — without it
+   * every edge stores a null score, which `rollupTarget` treats as below any threshold.
    */
-  ladderDiscovery?: LadderDiscovery;
+  embeddingsClient?: EmbeddingsClient;
+  /**
+   * Catch-up cadence: run a registry-wide review of a category after it has grown this many new
+   * canonicals since the last pass. 0 disables the pass.
+   */
+  skosCatchupEvery?: number;
+  /** How many canonicals one catch-up reviews — bounded so the ballot cannot grow with the registry. */
+  skosCatchupWidth?: number;
   /**
    * Phase 2 of the synchronous per-document pipeline (T9's StreamingRepairer). Optional so
    * repairer-free arms and existing tests remain runnable; when present, `processFile` calls it
    * once this document's registry writes have landed — the repair pass sees a state it can trust.
    */
   repairer?: { processDoc(file: string, docId: number): Promise<void> };
+  /**
+   * Document arrival order for `run()` (E6/M7 order robustness). Defaults to numeric-id order;
+   * `bin/app.ts` wires the ORDER-driven permutation. `processFile` callers are unaffected.
+   */
+  fileOrder?: (files: string[]) => string[];
+  /**
+   * Put unresolved mentions with ZERO identity candidates on the judge's ballot too (strategy
+   * path only). Without this they mint silently and the hierarchy question is never asked — a
+   * first-seen family (20 browsers + their base co-mentioned in one document) produces no edges
+   * even though the ballot's pool contains everything needed. Costs ballot size, buys in-document
+   * hierarchy for first-seen concepts; the catch-up pass exists to compensate when this is off.
+   */
+  judgeUnresolved?: boolean;
+  /**
+   * What the judge's `evidence:` block contains (snippet ablation):
+   * - `head` (default) — the source document's first 600 characters, the historical behaviour.
+   * - `none` — no source evidence at all.
+   * - `anchored` — mention-anchored windows: ±150 characters around each judged mention's first
+   *   occurrence in the source, overlapping windows merged, capped — so the evidence actually
+   *   contains the mentions being judged instead of whatever the document led with.
+   * - `per-mention` — the anchored windows, but numbered (`S1. …`) with each judge request
+   *   carrying a `contextRef` naming the window(s) that contain its mention, so the ballot binds
+   *   evidence to mentions explicitly and no window is silently truncated away from its mention.
+   */
+  snippetMode?: 'head' | 'none' | 'anchored' | 'per-mention';
 }
 
 /** What the judge (built-in or strategy port) decided for one mention. */
@@ -74,12 +108,12 @@ interface JudgeOutcome {
   kind: 'link' | 'mint' | 'defer';
   /** Validated candidate canonical, only for `link`. */
   target?: string;
-  mentionRung?: MentionRung;
-  /** Validated candidate canonical the mint sits under, when the judge related them. */
+  /** Validated candidate canonical the mint is related to, when the judge related them. */
   parentCandidate?: string;
-  edgeKind?: GranularityEdgeKind;
-  /** The judge's finer reading of the edge, when it gave one — see `Decision.relation`. */
-  relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
+  /** The ISO 25964 typing of the edge, when the judge gave one — see `Decision.broaderType`. */
+  broaderType?: 'broaderGeneric' | 'broaderPartitive' | 'broaderInstantial' | null;
+  /** True when the mention is the BROADER side: the stored edge runs parentCandidate → mention. */
+  mentionIsBroader?: boolean;
   /** 1-line name-independent description (prompts/link-judge.md rule 4), mint/defer only. */
   gloss?: string;
   reasoning?: string;
@@ -89,7 +123,7 @@ interface MentionPlan {
   entity: StreamingEntity;
   category: string; // canonical
   canonical?: string; // resolution result once known
-  candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string; rung?: string }>;
+  candidates: Array<{ name: string; sim: number; aliases: string[]; channel?: string }>;
   action: 'resolved' | 'mint' | 'judge';
   outcome?: JudgeOutcome;
 }
@@ -118,7 +152,7 @@ export class StreamingNormalizer {
 
   #llmClient: LlmClient;
   #schemaRegistry: SchemaRegistry;
-  #entityRegistry: EntityRegistry;
+  #conceptRegistry: ConceptRegistry;
   #decisionLog: DecisionLog;
   #sourceDir?: string;
   #candidateK: number;
@@ -131,26 +165,31 @@ export class StreamingNormalizer {
 
   #prompts: PromptProvider;
   #decisionStrategy?: DecisionStrategy;
-  #ladderDiscovery?: LadderDiscovery;
-  /** Last ladder version per category, so a catch-up runs once per version rather than per document. */
-  #ladderVersions = new Map<string, number>();
-  /**
-   * How many canonicals a catch-up reviews in one call. Bounded so the ballot cannot grow with the
-   * registry: at 2x-growth re-fires an unbounded pass would eventually send hundreds of mentions.
-   */
-  #ladderCatchUpWidth = Number(process.env.LADDER_CATCHUP_WIDTH ?? 40);
+  #embeddingsClient?: EmbeddingsClient;
+  #skosCatchupEvery: number;
+  #skosCatchupWidth: number;
+  /** Canonical count per category at its last catch-up, so the pass fires on growth, not per doc. */
+  #catchUpAt = new Map<string, number>();
   #repairer?: Params['repairer'];
+  #fileOrder: (files: string[]) => string[];
+  #snippetMode: 'head' | 'none' | 'anchored' | 'per-mention';
+  #judgeUnresolved: boolean;
 
   constructor(params: Params) {
     this.#prompts = params.prompts ?? prompts;
     this.#decisionStrategy = params.decisionStrategy;
-    this.#ladderDiscovery = params.ladderDiscovery;
+    this.#embeddingsClient = params.embeddingsClient;
+    this.#skosCatchupEvery = params.skosCatchupEvery ?? 25;
+    this.#skosCatchupWidth = params.skosCatchupWidth ?? 40;
     this.#repairer = params.repairer;
+    this.#fileOrder = params.fileOrder ?? sortByNumericId;
+    this.#snippetMode = params.snippetMode ?? 'head';
+    this.#judgeUnresolved = params.judgeUnresolved ?? false;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
     this.#llmClient = params.llmClient;
     this.#schemaRegistry = params.schemaRegistry;
-    this.#entityRegistry = params.entityRegistry;
+    this.#conceptRegistry = params.conceptRegistry;
     this.#decisionLog = params.decisionLog;
     this.#sourceDir = params.sourceDir;
     this.#candidateK = params.candidateK ?? 5;
@@ -165,7 +204,7 @@ export class StreamingNormalizer {
 
   async run() {
     await ensureDir(this.outputDir);
-    const files = sortByNumericId(await fs.readdir(this.inputDir));
+    const files = this.#fileOrder(await fs.readdir(this.inputDir));
     for (const file of files) {
       await this.processFile(file);
     }
@@ -179,10 +218,10 @@ export class StreamingNormalizer {
         // Crash recovery: a previous run can die between this document's artifact write and its
         // repairer call below — the artifact exists, but phase 2 never ran for it. Catch that up
         // here instead of silently skipping it forever.
-        await this.#entityRegistry.load();
+        await this.#conceptRegistry.load();
         const artifact = JSON.parse((await fs.readFile(outputFile)).toString()) as StreamingExtraction;
         const docId = resolveDocId(artifact.metadata, file);
-        if (this.#entityRegistry.repairState().repairedThrough < docId) {
+        if (this.#conceptRegistry.repairState().repairedThrough < docId) {
           await this.#repairer.processDoc(file, docId);
         }
       }
@@ -197,12 +236,12 @@ export class StreamingNormalizer {
 
     await ensureDir(this.outputDir);
     await this.#schemaRegistry.load();
-    await this.#entityRegistry.load();
+    await this.#conceptRegistry.load();
 
     if (!this.#generatorPrepared) {
       // The snapshot is a live view over the registry, so preparing once is correct; index-bearing
       // generators are kept current by the onRegistryChange notifications below.
-      await this.#candidateGenerator.prepare(this.#entityRegistry.snapshot());
+      await this.#candidateGenerator.prepare(this.#conceptRegistry.snapshot());
       this.#generatorPrepared = true;
     }
 
@@ -240,24 +279,25 @@ export class StreamingNormalizer {
       return { entity, category, candidates: [], action: 'mint' as const };
     });
 
-    // Ladder bootstrap (SKEIN v2): fire/refresh the granularity ladder for every category this
-    // document touches, before judging — the judge's candidate lists label rungs from it.
-    if (this.#ladderDiscovery) {
+    // SKOS catch-up: once a category has grown enough new canonicals, review a sample of them
+    // registry-wide, before judging this document — the judge then sees the post-merge registry.
+    if (this.#skosCatchupEvery > 0) {
       for (const category of new Set(plans.map((plan) => plan.category))) {
-        const ladder = await this.#ladderDiscovery.maybeDiscover(category, docId);
-        // A ladder that has just appeared (or been re-derived) is the first global view this run has
-        // had of the category. Everything minted before it exists without a level, and duplicates
-        // that no single document could see are visible for the first time — so review the sample.
-        if (ladder && this.#ladderVersions.get(category) !== ladder.version) {
-          this.#ladderVersions.set(category, ladder.version);
-          await this.#ladderCatchUp(category, ladder, docId);
+        const count = Object.keys(this.#conceptRegistry.concepts(category)).length;
+        const last = this.#catchUpAt.get(category) ?? 0;
+        if (count - last >= this.#skosCatchupEvery) {
+          await this.#skosCatchUp(category, docId);
+          this.#catchUpAt.set(
+            category,
+            Object.keys(this.#conceptRegistry.concepts(category)).length
+          );
         }
       }
     }
 
     // Exact fast path, then candidates
     for (const plan of plans) {
-      const resolved = this.#entityRegistry.resolve(plan.category, plan.entity.name);
+      const resolved = this.#conceptRegistry.resolve(plan.category, plan.entity.name);
       if (resolved) {
         plan.canonical = resolved;
         plan.action = 'resolved';
@@ -277,10 +317,14 @@ export class StreamingNormalizer {
         sim: candidate.sim,
         aliases: candidate.surfaces,
         channel: candidate.channel,
-        // Rung-aware candidates: the judge's list labels which ladder rung each candidate sits on.
-        rung: this.#entityRegistry.rungOf(plan.category, candidate.canonical),
       }));
-      plan.action = plan.candidates.length > 0 ? 'judge' : 'mint';
+      // Zero-candidate mentions historically minted without a judge call — silently skipping the
+      // hierarchy question. With judgeUnresolved (strategy path only) they go on the ballot too:
+      // identity is trivially NEW, but the parent can come from the shared pool (co-mentions).
+      plan.action =
+        plan.candidates.length > 0 || (this.#judgeUnresolved && this.#decisionStrategy)
+          ? 'judge'
+          : 'mint';
     }
 
     // Link-judge: ONE batched call for all unresolved mentions with candidates.
@@ -311,20 +355,20 @@ export class StreamingNormalizer {
 
     // ---- Phase B: mutate + save + write ----
 
+    // Endpoints are surface names until resolution below: either side may be another mention of
+    // this same document, which does not exist as a canonical until its own plan lands.
     const pendingEdges: Array<{
       category: string;
-      from: string;
-      parent: string;
-      kind: GranularityEdgeKind;
-      relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
-      mentionRung: string | null;
+      narrower: string;
+      broader: string;
+      type: 'broaderGeneric' | 'broaderPartitive' | 'broaderInstantial';
       evidence: string | null;
     }> = [];
 
     for (const plan of plans) {
       if (plan.canonical && plan.action !== 'resolved') {
         // link verdict
-        this.#entityRegistry.link(plan.category, plan.canonical, plan.entity.name, {
+        this.#conceptRegistry.link(plan.category, plan.canonical, plan.entity.name, {
           docId,
           evidence: plan.outcome?.reasoning ?? null,
         });
@@ -348,45 +392,35 @@ export class StreamingNormalizer {
         // and it scores as a withheld decision (protocol §5), so the decision event stays `defer`
         // with a null target.
         const deferred = plan.outcome?.kind === 'defer';
-        plan.canonical = this.#entityRegistry.mint(
+        plan.canonical = this.#conceptRegistry.mint(
           plan.category,
           plan.entity.name,
           { doc: docId, date: docDate },
-          { gloss: plan.outcome?.gloss ?? null }
+          { definition: plan.outcome?.gloss ?? null }
         );
-        // A per-mention level answer may only *fill* a rung, never replace one. `mint` is idempotent
-        // on a name already in the registry, so without this guard a later mention of a known entity
-        // re-stamps it with whatever level that document's judge happened to answer — and that
-        // answer is g0 by default. Measured: the ladder placed `Microsoft Windows` at g1 from a
-        // 50-surface sample, then a later mention overwrote it to g0 while `MS Office`, never
-        // re-mentioned, kept g1. Two entities of identical granularity, two different levels.
-        if (plan.outcome?.mentionRung && !this.#entityRegistry.rungOf(plan.category, plan.canonical)) {
-          this.#entityRegistry.setRung(plan.category, plan.canonical, plan.outcome.mentionRung);
-        }
         this.#candidateGenerator.onRegistryChange({
           type: 'mint',
           category: plan.category,
           canonical: plan.canonical,
         });
 
-        // A mint may carry a validated parent candidate — the "hard non-merge plus a connecting
-        // edge" outcome. Held until every plan in this document has been written: the parent may be
-        // another mention of the same document, which does not exist as a canonical until its own
-        // plan lands, and `addGranularityEdge` requires both endpoints to exist.
-        if (!deferred && plan.outcome?.parentCandidate && plan.outcome.edgeKind) {
+        // A mint may carry a validated related entity — the "hard non-merge plus a connecting
+        // edge" outcome. Held until every plan in this document has been written, because either
+        // endpoint may be another mention of the same document, and `addBroaderEdge` requires
+        // both endpoints to exist. A `b` verdict swaps the direction: the mint is the broader side.
+        if (!deferred && plan.outcome?.parentCandidate && plan.outcome.broaderType) {
+          const broaderSide = Boolean(plan.outcome.mentionIsBroader);
           pendingEdges.push({
             category: plan.category,
-            from: plan.canonical,
-            parent: plan.outcome.parentCandidate,
-            kind: plan.outcome.edgeKind,
-            relation: plan.outcome.relation ?? null,
-            mentionRung: plan.outcome.mentionRung ?? null,
+            narrower: broaderSide ? plan.outcome.parentCandidate : plan.canonical,
+            broader: broaderSide ? plan.canonical : plan.outcome.parentCandidate,
+            type: plan.outcome.broaderType,
             evidence: plan.outcome.reasoning ?? null,
           });
         }
 
         if (deferred) {
-          this.#entityRegistry.pushDeferred({
+          this.#conceptRegistry.pushDeferred({
             category: plan.category,
             mention: plan.entity.name,
             mintedAs: plan.canonical,
@@ -432,35 +466,40 @@ export class StreamingNormalizer {
       inner.set(plan.entity.name, plan.canonical!);
     }
 
-    // Parent edges, once every mint in this document exists. A parent named here can be another
-    // mention of the same document; resolving it through the plans is what makes "A is part of B"
-    // storable when A and B are first seen together.
+    // Hierarchy edges, once every mint in this document exists. Either endpoint named here can be
+    // another mention of the same document; resolving both through the plans is what makes "A is
+    // part of B" storable when A and B are first seen together.
     for (const edge of pendingEdges) {
-      const parentPlan = plans.find(
-        (plan) =>
-          plan.category === edge.category &&
-          plan.entity.name.trim().toLowerCase() === edge.parent.trim().toLowerCase()
-      );
-      const to = parentPlan?.canonical ?? edge.parent;
-      if (to === edge.from) continue; // the parent resolved to the mention's own canonical
-      const added = this.#entityRegistry.addGranularityEdge(edge.category, {
-        from: edge.from,
-        to,
-        kind: edge.kind,
-        relation: edge.relation ?? null,
+      const resolveEndpoint = (name: string): string => {
+        const plan = plans.find(
+          (candidate) =>
+            candidate.category === edge.category &&
+            candidate.entity.name.trim().toLowerCase() === name.trim().toLowerCase()
+        );
+        return plan?.canonical ?? name;
+      };
+      const narrower = resolveEndpoint(edge.narrower);
+      const broader = resolveEndpoint(edge.broader);
+      if (broader === narrower) continue; // both sides resolved to the same canonical
+      const similarityScore = await this.#similarity(narrower, broader);
+      const added = this.#conceptRegistry.addBroaderEdge(edge.category, {
+        narrower,
+        broader,
+        type: edge.type,
+        similarityScore,
         docId,
         decision: 'judge',
         evidence: edge.evidence,
       });
       if (added) {
         await this.#decisionLog.log({
-          op: 'granularity-edge',
+          op: 'broader-edge',
           doc: docId,
           category: edge.category,
-          from: edge.from,
-          to,
-          kind: edge.kind,
-          mentionRung: edge.mentionRung,
+          narrower,
+          broader,
+          type: edge.type,
+          similarityScore,
           evidence: edge.evidence,
         });
       }
@@ -473,7 +512,7 @@ export class StreamingNormalizer {
       // The registry surface this mention hit, in stored casing — what a StreamingRepairer (this
       // document's phase 2; the duplicate lives ≤1 document) split reassigns by. Registry writes
       // above guarantee the lookup now resolves.
-      plan.entity.matchedVia = this.#entityRegistry.matchedSurface(plan.category, plan.entity.name);
+      plan.entity.matchedVia = this.#conceptRegistry.matchedSurface(plan.category, plan.entity.name);
     }
 
     // A relation with a filtered-out endpoint has no resolvable normalizedHead/Tail — drop it.
@@ -498,7 +537,7 @@ export class StreamingNormalizer {
     }
 
     // State files before the artifact: idempotent mutations make crash-retry safe
-    await this.#entityRegistry.save();
+    await this.#conceptRegistry.save();
     await this.#schemaRegistry.save();
     await writeJsonAtomic(outputFile, {
       entities: keptEntities,
@@ -523,7 +562,7 @@ export class StreamingNormalizer {
     const fromDoc = docMap.get(category)?.get(name);
     if (fromDoc) return fromDoc;
 
-    const fromRegistry = this.#entityRegistry.resolve(category, name);
+    const fromRegistry = this.#conceptRegistry.resolve(category, name);
     if (fromRegistry) return fromRegistry;
 
     console.warn(
@@ -537,8 +576,7 @@ export class StreamingNormalizer {
    *
    * Returns the same `mentionKey → JudgeOutcome` shape `#linkJudge` does, so the caller is
    * identical either way. A strategy `defer` gets the same provisional-mint + defer-queue
-   * treatment as the built-in judge's (scored per §5 of docs/statistical-protocol.md); strategy
-   * ports carry no rung/parent structure.
+   * treatment as the built-in judge's (scored per §5 of docs/statistical-protocol.md).
    */
   async #strategyJudge(
     batch: MentionPlan[],
@@ -548,18 +586,23 @@ export class StreamingNormalizer {
   ): Promise<Map<string, JudgeOutcome>> {
     const strategy = this.#decisionStrategy!;
     const title = String(extraction.metadata?.title || 'untitled');
-    const snippet = await this.#loadSnippet(file);
+    const perMention =
+      this.#snippetMode === 'per-mention'
+        ? await this.#indexedSnippet(file, batch.map((plan) => plan.entity.name))
+        : null;
+    const snippet = perMention
+      ? perMention.evidence
+      : await this.#loadSnippet(file, batch.map((plan) => plan.entity.name));
 
     // Every entity this document has put on the table: the candidates retrieved for any mention,
     // plus the other mentions being decided in this same call. A mention minted here can be the
     // parent of another mention in the same document, so both halves are needed.
-    const pool = new Map<string, { canonical: string; surfaces: string[]; rung?: string }>();
+    const pool = new Map<string, { canonical: string; surfaces: string[] }>();
     for (const plan of batch) {
       for (const candidate of plan.candidates) {
         pool.set(`${plan.category}|${candidate.name.toLowerCase()}`, {
           canonical: candidate.name,
           surfaces: candidate.aliases,
-          rung: candidate.rung,
         });
       }
     }
@@ -574,9 +617,9 @@ export class StreamingNormalizer {
       docId,
       docTitle: title,
       docSnippet: snippet,
-      // The ladder and the candidates' rungs are what let a graph-building strategy separate "same
-      // entity" from "one level narrower"; flat strategies simply ignore both fields.
-      ladder: renderLadder(plan.category, this.#schemaRegistry),
+      ...(perMention?.refs.get(plan.entity.name.trim().toLowerCase())
+        ? { contextRef: perMention.refs.get(plan.entity.name.trim().toLowerCase()) }
+        : {}),
       // A mention is never its own parent, and the registry stores edges within one category, so
       // the shared pool is filtered per request.
       pool: [...pool.entries()]
@@ -591,7 +634,6 @@ export class StreamingNormalizer {
         sim: candidate.sim,
         surfaces: candidate.aliases,
         channel: candidate.channel ?? 'string-sim',
-        rung: candidate.rung,
       })),
     }));
 
@@ -631,27 +673,16 @@ export class StreamingNormalizer {
       }
 
       // mint/defer — the graph half, validated exactly as `#linkJudge` validates the built-in
-      // judge's: the parent must be a candidate we actually showed, and the edge kind comes from
-      // the ladder rung that parent sits on, never from the model.
-      const mentionRung = this.#validatedMentionRung(
-        plan.category,
-        (decision.mentionRung as MentionRung) ?? ''
-      );
-      // The parent may be any entity this document knows — another mention's candidate, or another
-      // mention being decided in this same call — not only a candidate of this mention.
+      // judge's: the related entity must be one this document actually put on the table — another
+      // mention's candidate, or another mention being decided in this same call.
       const parentKey = decision.parentCandidate
         ? `${plan.category}|${decision.parentCandidate.trim().toLowerCase()}`
         : undefined;
       const parent = parentKey ? pool.get(parentKey) : undefined;
-      // The ladder decides the kind whenever it can place the parent. When the category has no
-      // ladder yet — the common case early in a stream, and permanently for ladder-free arms — fall
-      // back to the relation the judge stated rather than discarding a correct parent.
-      const edgeKind = parent
-        ? this.#edgeKindForParent(plan.category, parent.rung) ?? relationEdgeKind(decision.relation)
-        : undefined;
-      if (decision.parentCandidate && (!parent || !edgeKind)) {
+      const broaderType = decision.broaderType ?? null;
+      if (decision.parentCandidate && (!parent || !broaderType)) {
         console.warn(
-          `DECISION (${strategy.id}): parentCandidate "${decision.parentCandidate}" for "${plan.entity.name}" is not supported by the active ladder and candidate list — edge dropped, mint stands`
+          `DECISION (${strategy.id}): parentCandidate "${decision.parentCandidate}" for "${plan.entity.name}" is not in this document's pool or carries no relation — edge dropped, mint stands`
         );
       }
       // A gloss that only restates the mention gives the duplicate finder nothing; drop it rather
@@ -659,10 +690,9 @@ export class StreamingNormalizer {
       const gloss = decision.gloss?.trim();
       outcomeMap.set(key, {
         kind: decision.kind === 'defer' ? 'defer' : 'mint',
-        mentionRung,
-        parentCandidate: edgeKind ? parent?.canonical : undefined,
-        edgeKind,
-        relation: decision.relation ?? null,
+        parentCandidate: parent && broaderType ? parent.canonical : undefined,
+        broaderType,
+        mentionIsBroader: decision.mentionIsBroader,
         gloss: gloss && !glossRestatesMention(gloss, plan.entity.name) ? gloss : undefined,
         reasoning: decision.reason,
       });
@@ -690,11 +720,11 @@ export class StreamingNormalizer {
     file: string
   ): Promise<Map<string, JudgeOutcome>> {
     const title = String(extraction.metadata?.title || 'untitled');
-    const snippet = await this.#loadSnippet(file);
+    const snippet = await this.#loadSnippet(file, batch.map((plan) => plan.entity.name));
     const instructions = this.#prompts.render('link-judge', {
       docTitle: title,
       docSnippet: snippet,
-      mentionsBatch: renderMentionLines(batch, this.#schemaRegistry),
+      mentionsBatch: renderMentionLines(batch),
     });
 
     const started = Date.now();
@@ -750,19 +780,17 @@ export class StreamingNormalizer {
             (candidate) => candidate.name.toLowerCase() === name.trim().toLowerCase()
           );
 
-        const mentionRung = this.#validatedMentionRung(plan.category, verdict.mentionRung);
         if (verdict.verdict === 'link') {
           const target = findCandidate(verdict.target);
           if (target) {
             outcomeMap.set(key, {
               kind: 'link',
               target: target.name,
-              mentionRung,
               reasoning: verdict.reasoning || undefined,
             });
           } else {
             // Strict candidate matching: a link to an unlisted name is demoted to mint.
-            outcomeMap.set(key, { kind: 'mint', mentionRung });
+            outcomeMap.set(key, { kind: 'mint' });
           }
           continue;
         }
@@ -770,30 +798,33 @@ export class StreamingNormalizer {
         if (verdict.verdict === 'defer') {
           outcomeMap.set(key, {
             kind: 'defer',
-            mentionRung,
             gloss: verdict.gloss || undefined,
             reasoning: verdict.reasoning || undefined,
           });
           continue;
         }
 
-        // mint — possibly under a validated parent candidate
+        // mint — possibly under a validated parent candidate. The built-in prompt still answers in
+        // the legacy edgeKind vocabulary (frozen LLM-output dialect); it maps onto the ISO 25964
+        // typing here.
         const parent = verdict.parentCandidate
           ? findCandidate(verdict.parentCandidate)
           : undefined;
-        const edgeKind = parent
-          ? this.#edgeKindForParent(plan.category, parent.rung)
-          : undefined;
-        if (verdict.parentCandidate && (!parent || !edgeKind)) {
+        const broaderType =
+          verdict.edgeKind === 'part-of'
+            ? ('broaderPartitive' as const)
+            : verdict.edgeKind === 'coarsens-to'
+              ? ('broaderGeneric' as const)
+              : null;
+        if (verdict.parentCandidate && (!parent || !broaderType)) {
           console.warn(
-            `LINK-JUDGE: parentCandidate "${verdict.parentCandidate}" for "${verdict.mention}" is not supported by the active ladder and candidate list — edge dropped, mint stands`
+            `LINK-JUDGE: parentCandidate "${verdict.parentCandidate}" for "${verdict.mention}" is not a listed candidate or carries no edge kind — edge dropped, mint stands`
           );
         }
         outcomeMap.set(key, {
           kind: 'mint',
-          mentionRung,
-          parentCandidate: edgeKind ? parent?.name : undefined,
-          edgeKind,
+          parentCandidate: parent && broaderType ? parent.name : undefined,
+          broaderType,
           gloss: verdict.gloss || undefined,
           reasoning: verdict.reasoning || undefined,
         });
@@ -830,31 +861,31 @@ export class StreamingNormalizer {
 
 
   /**
-   * Review a category once its ladder appears, reusing the ordinary linking judge.
+   * Registry-wide review of a category, reusing the ordinary graph judge.
    *
-   * The per-document judge only ever sees one report. A ladder landing is the first moment the run
-   * has a category-wide view, and two things are visible in it that no document could show:
-   * duplicates minted far apart in the stream, and the level each entity sits at. This asks the
-   * same graph judge the same question it answers every document, with the registry's own
-   * canonicals as the mentions.
+   * The per-document judge only ever sees one report. This pass is the run's category-wide view,
+   * and two things are visible in it that no document could show: duplicates minted far apart in
+   * the stream, and hierarchy edges between entities no document co-mentioned. It asks the same
+   * graph judge the same question it answers every document, with the registry's own canonicals as
+   * the mentions. Fired on growth (`skosCatchupEvery` new canonicals), not per document.
    *
    * Three things differ from a document pass, and each is deliberate:
    *
    * 1. **A canonical is never offered itself.** Its own name is an exact match, so leaving it in the
    *    options makes every verdict a no-op.
    * 2. **A `link` verdict applies as a merge, not a link.** Both sides are canonicals carrying
-   *    aliases, documents, glosses, rungs and edges; `EntityRegistry.applyMerges` is the operation
-   *    that folds those, picking the survivor under `canonicalPolicy`.
+   *    aliases, documents, glosses and edges; `ConceptRegistry.applyMerges` is the operation that
+   *    folds those, picking the survivor under `canonicalPolicy`.
    * 3. **There is no source document**, so the judge works from names, aliases and glosses alone.
    *    The prompt's rules already forbid treating context as identity evidence, so nothing is lost
    *    beyond the alias/transliteration evidence a real document sometimes supplies.
    */
-  async #ladderCatchUp(category: string, ladder: CategoryLadder, docId: number): Promise<void> {
+  async #skosCatchUp(category: string, docId: number): Promise<void> {
     if (!this.#decisionStrategy) return;
 
-    const canonicals = Object.keys(this.#entityRegistry.records(category));
+    const canonicals = Object.keys(this.#conceptRegistry.concepts(category));
     if (canonicals.length < 2) return;
-    const sample = spreadSample(canonicals, this.#ladderCatchUpWidth);
+    const sample = spreadSample(canonicals, this.#skosCatchupWidth);
 
     const requests: DecisionRequest[] = [];
     for (const canonical of sample) {
@@ -871,19 +902,16 @@ export class StreamingNormalizer {
         mention: canonical,
         category,
         docId,
-        docTitle: `registry review after ladder v${ladder.version}`,
-        ladder: renderLadder(category, this.#schemaRegistry),
+        docTitle: `registry review at ${canonicals.length} canonicals`,
         pool: options.map((candidate) => ({
           canonical: candidate.canonical,
           surfaces: candidate.surfaces,
-          rung: this.#entityRegistry.rungOf(category, candidate.canonical),
         })),
         candidates: options.map((candidate) => ({
           canonical: candidate.canonical,
           sim: candidate.sim,
           surfaces: candidate.surfaces,
           channel: candidate.channel,
-          rung: this.#entityRegistry.rungOf(category, candidate.canonical),
         })),
       });
     }
@@ -893,50 +921,41 @@ export class StreamingNormalizer {
     try {
       decisions = await this.#decisionStrategy.decide(requests);
     } catch (error) {
-      console.error(`LADDER CATCH-UP failed for ${category}:`, error);
+      console.error(`SKOS CATCH-UP failed for ${category}:`, error);
       return;
     }
     if (decisions.length !== requests.length) return;
 
     const merges: Array<{ from: string; into: string; evidence?: string | null }> = [];
-    let runged = 0;
-    let edged = 0;
+    const edges: Array<{
+      narrower: string;
+      broader: string;
+      type: 'broaderGeneric' | 'broaderPartitive' | 'broaderInstantial';
+      evidence: string | null;
+    }> = [];
 
     decisions.forEach((decision, index) => {
-      const from = requests[index].mention;
+      const mention = requests[index].mention;
 
-      if (decision.kind === 'link' && decision.target && decision.target !== from) {
-        merges.push({ from, into: decision.target, evidence: decision.reason });
+      if (decision.kind === 'link' && decision.target && decision.target !== mention) {
+        merges.push({ from: mention, into: decision.target, evidence: decision.reason });
         return;
       }
 
-      const rung = this.#validatedMentionRung(category, (decision.mentionRung as MentionRung) ?? '');
-      if (rung) {
-        this.#entityRegistry.setRung(category, from, rung);
-        runged += 1;
-      }
-
-      if (decision.parentCandidate && decision.parentCandidate !== from) {
-        const parentRung = this.#entityRegistry.rungOf(category, decision.parentCandidate);
-        const kind = this.#edgeKindForParent(category, parentRung) ?? relationEdgeKind(decision.relation);
-        if (kind) {
-          const added = this.#entityRegistry.addGranularityEdge(category, {
-            from,
-            to: decision.parentCandidate,
-            kind,
-            relation: decision.relation ?? null,
-            docId,
-            decision: 'judge',
-            evidence: decision.reason ?? null,
-          });
-          if (added) edged += 1;
-        }
+      if (decision.parentCandidate && decision.parentCandidate !== mention && decision.broaderType) {
+        const broaderSide = Boolean(decision.mentionIsBroader);
+        edges.push({
+          narrower: broaderSide ? decision.parentCandidate : mention,
+          broader: broaderSide ? mention : decision.parentCandidate,
+          type: decision.broaderType,
+          evidence: decision.reason ?? null,
+        });
       }
     });
 
     let merged = 0;
     if (merges.length > 0) {
-      const summary = this.#entityRegistry.applyMerges(category, merges);
+      const summary = this.#conceptRegistry.applyMerges(category, merges);
       merged = summary.removed.length;
       for (const merge of merges) {
         await this.#decisionLog.log({
@@ -945,40 +964,71 @@ export class StreamingNormalizer {
           category,
           from: merge.from,
           into: merge.into,
-          by: 'ladder-catch-up',
+          by: 'skos-catch-up',
           evidence: merge.evidence ?? null,
         });
       }
     }
 
+    // Edges land after the merges so an endpoint absorbed above resolves to its survivor.
+    let edged = 0;
+    for (const edge of edges) {
+      const narrower = this.#conceptRegistry.resolve(category, edge.narrower) ?? edge.narrower;
+      const broader = this.#conceptRegistry.resolve(category, edge.broader) ?? edge.broader;
+      if (narrower === broader) continue;
+      // `addBroaderEdge` is idempotent-true on a repeat, which would inflate `edged` and
+      // double-journal — only genuinely new edges count and log.
+      if (this.#conceptRegistry.broaderOf(category, narrower).some((existing) => existing.broader === broader)) {
+        continue;
+      }
+      const similarityScore = await this.#similarity(narrower, broader);
+      const added = this.#conceptRegistry.addBroaderEdge(category, {
+        narrower,
+        broader,
+        type: edge.type,
+        similarityScore,
+        docId,
+        decision: 'judge',
+        evidence: edge.evidence,
+      });
+      if (added) {
+        edged += 1;
+        // Journaled per edge (unlike the ladder-era pass, which only kept counters) so the run
+        // view's replay forest carries the catch-up's edges too, not just the per-document ones.
+        await this.#decisionLog.log({
+          op: 'broader-edge',
+          doc: docId,
+          category,
+          narrower,
+          broader,
+          type: edge.type,
+          similarityScore,
+          by: 'skos-catch-up',
+          evidence: edge.evidence,
+        });
+      }
+    }
+
     await this.#decisionLog.log({
-      op: 'ladder-catch-up',
+      op: 'skos-catch-up',
       doc: docId,
       category,
-      version: ladder.version,
       reviewed: requests.length,
       merged,
-      runged,
       edged,
     });
   }
 
-  #validatedMentionRung(category: string, requested: MentionRung | ''): MentionRung {
-    const ladder = this.#schemaRegistry.getLadder(category);
-    if (!ladder) return 'g0';
-    const available = new Set(ladder.rungs.map((rung) => `g${rung.g}`));
-    return requested && available.has(requested) ? requested : 'g0';
-  }
-
-  #edgeKindForParent(
-    category: string,
-    parentRung: string | undefined
-  ): GranularityEdgeKind | undefined {
-    if (!parentRung) return undefined;
-    const rung = this.#schemaRegistry
-      .getLadder(category)
-      ?.rungs.find((candidate) => `g${candidate.g}` === parentRung);
-    return rung?.edgeKind;
+  /**
+   * Cosine similarity between the embeddings of two canonical names — the `similarityScore` every
+   * hierarchy edge carries. Cached by the EmbeddingCache, so repeats are free. Null without an
+   * embeddings client; an embedding failure is fatal by design (a silently null score would make
+   * every rollup stop at this edge and read as a semantic verdict rather than an outage).
+   */
+  async #similarity(a: string, b: string): Promise<number | null> {
+    if (!this.#embeddingsClient) return null;
+    const [va, vb] = await this.#embeddingsClient.embed([a, b], { operator: 'edge-similarity' });
+    return cosineNormalized(l2Normalize(va), l2Normalize(vb));
   }
 
   /**
@@ -1017,7 +1067,7 @@ export class StreamingNormalizer {
     const instructions = this.#prompts.render('link-judge', {
       docTitle: title,
       docSnippet: snippet,
-      mentionsBatch: renderMentionLines(failing, this.#schemaRegistry),
+      mentionsBatch: renderMentionLines(failing),
     });
 
     const started = Date.now();
@@ -1058,16 +1108,130 @@ export class StreamingNormalizer {
     }
   }
 
-  async #loadSnippet(file: string): Promise<string> {
+  async #loadSnippet(file: string, mentions: string[] = []): Promise<string> {
+    if (this.#snippetMode === 'none') return '(no source evidence available)';
     if (!this.#sourceDir) return '(no source evidence available)';
     try {
       const content = await fs.readFile(`${this.#sourceDir}/${file}`);
       const { text } = await this.#preprocessor(content.toString());
+      if (this.#snippetMode === 'anchored' || this.#snippetMode === 'per-mention') {
+        return anchoredSnippet(text, mentions);
+      }
+      // 'head' — the historical behaviour, byte-identical: the document's first 600 characters.
       return text.slice(0, 600).replace(/\s+/g, ' ').trim();
     } catch {
       return '(no source evidence available)';
     }
   }
+
+  /**
+   * Per-mention evidence: the anchored windows, numbered `S1…Sn`, plus a mention → "S2"-style
+   * reference map so the ballot can bind each mention to the window(s) containing it. Falls back
+   * to null (caller uses the plain snippet path) when nothing anchors.
+   */
+  async #indexedSnippet(
+    file: string,
+    mentions: string[]
+  ): Promise<{ evidence: string; refs: Map<string, string> } | null> {
+    if (!this.#sourceDir) return null;
+    try {
+      const content = await fs.readFile(`${this.#sourceDir}/${file}`);
+      const { text } = await this.#preprocessor(content.toString());
+      return indexedWindows(text, mentions);
+    } catch {
+      return null;
+    }
+  }
+}
+
+/**
+ * Mention-anchored evidence: ±150-character windows around each mention's first occurrence
+ * (case-insensitive), overlapping windows merged, joined with an ellipsis, capped at ~1200
+ * characters. Mentions the document does not literally contain (extraction paraphrases) simply
+ * contribute no window; when nothing anchors, fall back to the head so the judge is never worse
+ * off than the historical behaviour.
+ */
+function anchoredSnippet(text: string, mentions: string[], radius = 150, cap = 1200): string {
+  const folded = text.toLowerCase();
+  const windows: Array<[number, number]> = [];
+  for (const mention of mentions) {
+    const needle = mention.trim().toLowerCase();
+    if (!needle) continue;
+    const at = folded.indexOf(needle);
+    if (at === -1) continue;
+    windows.push([Math.max(0, at - radius), Math.min(text.length, at + needle.length + radius)]);
+  }
+  if (windows.length === 0) return text.slice(0, 600).replace(/\s+/g, ' ').trim();
+
+  windows.sort((a, b) => a[0] - b[0]);
+  const merged: Array<[number, number]> = [windows[0]];
+  for (const [start, end] of windows.slice(1)) {
+    const last = merged[merged.length - 1];
+    if (start <= last[1]) last[1] = Math.max(last[1], end);
+    else merged.push([start, end]);
+  }
+
+  let out = merged
+    .map(([start, end]) => text.slice(start, end).replace(/\s+/g, ' ').trim())
+    .join(' … ');
+  if (out.length > cap) out = out.slice(0, cap);
+  return out;
+}
+
+/**
+ * Numbered mention-anchored windows plus a mention → window-reference map (`per-mention` snippet
+ * mode). Windows are built exactly like {@link anchoredSnippet}'s (±150 chars, merged when
+ * overlapping) but each merged window keeps an id, so evidence is printed once and referenced per
+ * mention — explicit binding without duplicated text.
+ */
+function indexedWindows(
+  text: string,
+  mentions: string[],
+  radius = 150,
+  cap = 1500
+): { evidence: string; refs: Map<string, string> } | null {
+  const folded = text.toLowerCase();
+  const hits: Array<{ mention: string; start: number; end: number }> = [];
+  for (const mention of mentions) {
+    const needle = mention.trim().toLowerCase();
+    if (!needle) continue;
+    const at = folded.indexOf(needle);
+    if (at === -1) continue;
+    hits.push({
+      mention: needle,
+      start: Math.max(0, at - radius),
+      end: Math.min(text.length, at + needle.length + radius),
+    });
+  }
+  if (hits.length === 0) return null;
+
+  hits.sort((a, b) => a.start - b.start);
+  const windows: Array<{ start: number; end: number; mentions: string[] }> = [];
+  for (const hit of hits) {
+    const last = windows[windows.length - 1];
+    if (last && hit.start <= last.end) {
+      last.end = Math.max(last.end, hit.end);
+      last.mentions.push(hit.mention);
+    } else {
+      windows.push({ start: hit.start, end: hit.end, mentions: [hit.mention] });
+    }
+  }
+
+  const refs = new Map<string, string>();
+  const parts: string[] = [];
+  let used = 0;
+  windows.forEach((window, index) => {
+    const id = `S${index + 1}`;
+    let body = text.slice(window.start, window.end).replace(/\s+/g, ' ').trim();
+    if (used + body.length > cap) body = body.slice(0, Math.max(0, cap - used));
+    used += body.length;
+    if (body) parts.push(`${id}. "${body}"`);
+    for (const mention of window.mentions) {
+      refs.set(mention, refs.has(mention) ? `${refs.get(mention)},${id}` : id);
+    }
+  });
+
+  return { evidence: parts.join(' '), refs };
 }
 
 /**
@@ -1100,52 +1264,16 @@ function unambiguousPlan(batch: MentionPlan[], mention: string): MentionPlan | u
  * placeholder. Shared by the primary call and the one-shot gloss retry so a retry is provably the
  * same rendering, just over a smaller batch.
  */
-function renderMentionLines(plans: MentionPlan[], schemaRegistry: SchemaRegistry): string {
+function renderMentionLines(plans: MentionPlan[]): string {
   return plans
     .map((plan, index) => {
-      const ladder = renderLadder(plan.category, schemaRegistry);
       const candidates =
         plan.candidates
-          .map((candidate) => {
-            const rung = candidate.rung ? ` [${candidate.rung}]` : ' [rung unknown]';
-            return `${candidate.name}${rung} (aliases: ${candidate.aliases.join(', ')})`;
-          })
+          .map((candidate) => `${candidate.name} (aliases: ${candidate.aliases.join(', ')})`)
           .join('; ') || '(none)';
-      return `${index + 1}. "${plan.entity.name}" (${plan.category}); ladder: ${ladder}; candidates: ${candidates}`;
+      return `${index + 1}. "${plan.entity.name}" (${plan.category}); candidates: ${candidates}`;
     })
     .join('\n');
-}
-
-/**
- * The ladder as the judge sees it.
- *
- * **Compact by necessity.** A document mixing eight categories renders eight ladders into a prompt
- * whose whole advantage is being small, so each rung contributes its level and its name and nothing
- * else — the move, the preserving flag and the example are provenance for a reader of `schema.json`,
- * not evidence the judge acts on. `>` orders finest to coarsest so the direction is readable without
- * a legend.
- */
-function renderLadder(category: string, schemaRegistry: SchemaRegistry): string {
-  const ladder = schemaRegistry.getLadder(category);
-  if (!ladder) return '(none; use g0)';
-  return ladder.rungs
-    .slice()
-    .sort((a, b) => a.g - b.g)
-    .map((rung) => `g${rung.g}=${rung.alias}`)
-    .join(' > ');
-}
-
-/**
- * The judge's own reading of the relation, mapped onto the registry's edge vocabulary. Used only
- * when the ladder cannot place the parent; `coarsens-to` is the registry's word for "same referent,
- * stated less precisely".
- */
-function relationEdgeKind(relation: string | null | undefined): GranularityEdgeKind | undefined {
-  // `version-of` stores as `coarsens-to` — it IS a coarsening, and widening the stored vocabulary
-  // would change what every existing registry means. The finer reading rides along in `relation`.
-  if (relation === 'version-of' || relation === 'narrower-of') return 'coarsens-to';
-  if (relation === 'part-of') return 'part-of';
-  return undefined;
 }
 
 /** Find the verdict for one plan in a gloss-retry response without conflating categories. */

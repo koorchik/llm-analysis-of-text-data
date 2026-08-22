@@ -20,6 +20,8 @@ type Preprocessor = (
 ) => Promise<{ text: string; metadata: Record<string, string | number> }>;
 
 interface Params {
+  /** Document arrival order for `run()` (E6/M7); defaults to numeric-id. */
+  fileOrder?: (files: string[]) => string[];
   inputDir: string;
   outputDir: string;
   llmClient: LlmClient;
@@ -53,7 +55,10 @@ export class StreamingExtractor {
 
   #prompts: PromptProvider;
 
+  #fileOrder?: (files: string[]) => string[];
+
   constructor(params: Params) {
+    this.#fileOrder = params.fileOrder;
     this.#prompts = params.prompts ?? prompts;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
@@ -69,7 +74,7 @@ export class StreamingExtractor {
 
   async run() {
     await ensureDir(this.outputDir);
-    const files = sortByNumericId(await fs.readdir(this.inputDir));
+    const files = (this.#fileOrder ?? sortByNumericId)(await fs.readdir(this.inputDir));
     for (const file of files) {
       await this.processFile(file);
     }

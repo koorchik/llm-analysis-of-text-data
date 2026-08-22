@@ -1,5 +1,5 @@
 import type { CandidateGenerator } from '../Normalization/types';
-import { EntityRegistry, type EntityRef, type SuspectPair } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry, type ConceptRef, type SuspectPair } from '../ConceptRegistry/ConceptRegistry';
 import type { GlossIndex } from './GlossIndex';
 import crypto from 'crypto';
 
@@ -18,34 +18,34 @@ import crypto from 'crypto';
  * the repairer's own output, not input to suspect generation. */
 export interface RegistryEvent {
   type: 'mint' | 'alias-add';
-  ref: EntityRef;
+  ref: ConceptRef;
   surface: string;
 }
 
 /**
  * Derives document `d`'s registry events from persisted state rather than a live log — crash-safe
- * and replayable, since it is a pure function of whatever `EntityRegistry.load()` produced (design
+ * and replayable, since it is a pure function of whatever `ConceptRegistry.load()` produced (design
  * R5; wiki rule 10 — nothing reads `decisions.jsonl` at runtime).
  *
  * - **mint** = every canonical whose `firstSeen.doc === d`, one event per canonical, `surface` its
  *   own name.
  * - **alias-add** = every `AliasRecord` with `docId === d && decision === 'link'`.
  *
- * `mint`'s own self-alias (`EntityRegistry.mint` always stores the canonical as `aliases[0]` with
+ * `mint`'s own self-alias (`ConceptRegistry.mint` always stores the canonical as `aliases[0]` with
  * `decision: 'mint'`, `docId: firstSeen.doc`) is deliberately NOT read here — it would double the
  * mint into a phantom alias-add on the same document. Any other alias decision (`merge`, `split`,
  * `move`, `migrated`) is repair provenance, not an organic mention, and is excluded even when its
  * `docId` happens to equal `d`.
  */
-export function eventsForDoc(registry: EntityRegistry, docId: number): RegistryEvent[] {
+export function eventsForDoc(registry: ConceptRegistry, docId: number): RegistryEvent[] {
   const events: RegistryEvent[] = [];
-  for (const category of registry.categories()) {
-    for (const [canonical, record] of Object.entries(registry.records(category))) {
-      const ref: EntityRef = { category, canonical };
+  for (const category of registry.conceptSchemes()) {
+    for (const [canonical, record] of Object.entries(registry.concepts(category))) {
+      const ref: ConceptRef = { category, canonical };
       if (record.firstSeen.doc === docId) {
         events.push({ type: 'mint', ref, surface: canonical });
       }
-      for (const alias of record.aliases) {
+      for (const alias of record.labels) {
         if (alias.docId === docId && alias.decision === 'link') {
           events.push({ type: 'alias-add', ref, surface: alias.surface });
         }
@@ -128,18 +128,18 @@ function thresholdFor(map: Map<string, number>, category: string): number {
   return value;
 }
 
-function refKey(ref: EntityRef): string {
+function refKey(ref: ConceptRef): string {
   return `${ref.category} ${ref.canonical}`;
 }
 
-function refEquals(a: EntityRef, b: EntityRef): boolean {
+function refEquals(a: ConceptRef, b: ConceptRef): boolean {
   return a.category === b.category && a.canonical === b.canonical;
 }
 
 // --- SuspectGenerator --------------------------------------------------------------------------
 
 export interface SuspectGeneratorParams {
-  registry: EntityRegistry;
+  registry: ConceptRegistry;
   glossIndex: GlossIndex;
   /** Already `prepare()`d by the caller — this class only ever calls `candidates()` on it. */
   blocker: CandidateGenerator;
@@ -150,7 +150,7 @@ export interface SuspectGeneratorParams {
 }
 
 export class SuspectGenerator {
-  #registry: EntityRegistry;
+  #registry: ConceptRegistry;
   #glossIndex: GlossIndex;
   #blocker: CandidateGenerator;
   #thresholds: SuspectThresholds;
@@ -166,7 +166,7 @@ export class SuspectGenerator {
 
   /**
    * Probes every event for candidate duplicates and, for alias-adds, a coherence drift — then
-   * short-circuits every resulting pair against `EntityRegistry.findAdjudicated` before returning it.
+   * short-circuits every resulting pair against `ConceptRegistry.findAdjudicated` before returning it.
    *
    * Two signals per event:
    * - **union-blocker** — `blocker.candidates({mention: surface, category: c, k, minSim})` for
@@ -191,7 +191,7 @@ export class SuspectGenerator {
    * `signature` computation.
    */
   async suspectsFor(events: RegistryEvent[], docId: number): Promise<SuspectPair[]> {
-    const categories = this.#registry.categories();
+    const categories = this.#registry.conceptSchemes();
     const seen = new Set<string>();
     const suspects: SuspectPair[] = [];
 
@@ -221,7 +221,7 @@ export class SuspectGenerator {
           minSim,
         });
         for (const candidate of candidates) {
-          const b: EntityRef = { category, canonical: candidate.canonical };
+          const b: ConceptRef = { category, canonical: candidate.canonical };
           if (refEquals(b, event.ref)) continue; // self-hit
           emit({ a: event.ref, b, signal: 'union-blocker', score: candidate.sim, docId });
         }
@@ -256,12 +256,15 @@ export class SuspectGenerator {
    * the caller happened to pass as `a` vs `b` never changes the digest. A member unknown to the
    * registry (already absorbed elsewhere) serializes as an empty surface set + null gloss — harmless
    * here, since `findAdjudicated` prunes stale entries naming a dead canonical before this is ever
-   * compared against one (`EntityRegistry.#pruneAdjudicated`).
+   * compared against one (`ConceptRegistry.#pruneAdjudicated`).
    */
-  static signature(registry: EntityRegistry, a: EntityRef, b: EntityRef): string {
-    const half = (ref: EntityRef): string => {
-      const surfaces = [...new Set(registry.aliasSurfaces(ref.category, ref.canonical).map((s) => s.trim().toLowerCase()))].sort();
-      const gloss = registry.records(ref.category)[ref.canonical]?.gloss ?? null;
+  static signature(registry: ConceptRegistry, a: ConceptRef, b: ConceptRef): string {
+    const half = (ref: ConceptRef): string => {
+      const surfaces = [...new Set(registry.labelSurfaces(ref.category, ref.canonical).map((s) => s.trim().toLowerCase()))].sort();
+      // Persisted-signature dialect, FROZEN at the v5 vocabulary: the literal `gloss` key ships
+      // inside `repair.adjudicated[].signature` strings in committed registries — renaming it
+      // would mark every stored adjudication stale and re-fire re-adjudication across the corpus.
+      const gloss = registry.concepts(ref.category)[ref.canonical]?.definition ?? null;
       return JSON.stringify({ surfaces, gloss });
     };
     const halves = [half(a), half(b)].sort();

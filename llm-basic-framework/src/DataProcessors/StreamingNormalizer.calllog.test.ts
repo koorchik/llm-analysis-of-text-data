@@ -1,5 +1,5 @@
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { LlmCallLog } from '../LlmClient/LlmCallLog';
 import { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmBackendBase } from '../LlmClient/LlmClientBackendBase';
@@ -53,15 +53,14 @@ describe('link-judge transcript outcome', () => {
     );
 
     const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-    const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+    const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
     await schemaRegistry.load();
-    await entityRegistry.load();
+    await conceptRegistry.load();
     schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
     // A near-miss candidate so the judge is actually consulted.
-    entityRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
-    entityRegistry.setRung('HackerGroup', 'UAC-0002x', 'g1');
+    conceptRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
     await schemaRegistry.save();
-    await entityRegistry.save();
+    await conceptRegistry.save();
 
     const callLog = new LlmCallLog({ dir: path.join(dir, 'llm-calls') });
     // Valid HTTP, useless body — the exact failure mode the feature exists for.
@@ -73,7 +72,7 @@ describe('link-judge transcript outcome', () => {
       outputDir: path.join(dir, 'artifacts'),
       llmClient,
       schemaRegistry,
-      entityRegistry,
+      conceptRegistry,
       decisionLog,
     });
 

@@ -22,7 +22,7 @@ interface Params {
  * the paper has no result. It is also the arm with no false merges by construction, which makes it
  * the precision ceiling as well as the recall floor.
  *
- * With `identity` it is equivalent to `EntityRegistry.resolve()`, expressed as a candidate list.
+ * With `identity` it is equivalent to `ConceptRegistry.resolve()`, expressed as a candidate list.
  * It becomes genuinely useful with other analyzers: `identifier-regex` turns it into "same UAC
  * designation", which M2.5 showed string similarity cannot achieve at any threshold.
  */

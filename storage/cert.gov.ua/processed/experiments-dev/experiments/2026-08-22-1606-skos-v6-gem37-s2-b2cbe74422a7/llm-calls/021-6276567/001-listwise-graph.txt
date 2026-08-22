@@ -1,0 +1,238 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "registry review at 174 canonicals"
+Entities:
+E1. GammaSteel.PS1
+E2. loader.exe
+E3. TRYxaEbX.ps1
+E4. GammaSteel.NET
+E5. stage1.ps1
+E6. z.ps1
+E7. stage2.ps1
+E8. TRYxaEbX_2.ps1
+E9. spi.exe
+E10. wscript.exe
+E11. CCleaner.exe
+E12. MS PowerPoint
+E13. cmd.exe
+E14. MCMDiction.exe
+E15. shellcode.x86.bin
+E16. installer.exe
+E17. RegAsm.exe
+E18. shellcode.x64.bin
+E19. MISP
+E20. SmartFTP
+E21. .NET Framework
+E22. pfSense
+E23. VBScript
+E24. 360Chrome Browser
+E25. WS_FTP
+E26. 7Star Browser
+E27. Mozilla Firefox
+E28. PowerShell (powershell.exe) [aka PowerShell, powershell.exe]
+E29. rfusclient.exe
+E30. SIEM
+E31. ConfuserEx
+E32. Petya
+E33. CVE-2018-8129
+E34. CVE-2017-11882
+E35. CVE-2018-8897
+E36. CVE-2018-8124
+E37. CVE-2018-0854
+E38. CVE-2018-8120
+E39. CVE-2018-0958
+E40. CVE-2018-8170
+E41. Microsoft Outlook
+E42. Office 2010 [aka Microsoft Office 2010]
+E43. Microsoft Office [aka MS Office]
+E44. Office 2013 [aka Microsoft Office 2013]
+E45. Office 2016 [aka Microsoft Office 2016]
+E46. MS Excel
+E47. Windows Server 2008
+E48. Windows 7
+E49. Microsoft Windows
+E50. WinSCP
+E51. Windows Server 2012
+E52. Vivaldi Browser
+E53. Google Chrome
+E54. mshta.exe
+E55. b.exe
+E56. SRP [aka Software Restriction Policies (SRP)]
+E57. GammaLoad.PS1
+E58. FileZilla
+E59. ckZ89.ExE
+E60. Microsoft Word [aka MS Word]
+E61. Pocomail
+E62. TRYxaEbX
+E63. HarvesterX
+E64. Foxmail
+E65. Paltalk
+E66. shellcode.x64 (Cobalt Strike Beacon)
+E67. shellcode.x86 (Cobalt Strike Beacon)
+E68. killself.bat
+E69. Windows Host Compute Service Shim
+E70. CCleaner.zip
+E71. До оплати від 11.12.18.lzh
+E72. Рахунки и новые списки.lzh
+E73. До оплати рах.ф. 74 - 2018р.js
+E74. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E75. plan_dsns.gov.ua.rar
+E76. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E77. UkrScanner.exe (SFX)
+E78. CCleaner.rar
+E79. jDownloader
+E80. wsuscr.exe
+E81. Електронний план евакуації.rar
+E82. IceDragon
+E83. AgentTesla [aka Agent Tesla]
+E84. Microsoft Exchange Server
+E85. Files.dll
+E86. vaultcli.dll
+E87. Browser.dll
+E88. SQLite.Interop.dll
+E89. Screen.dll
+E90. USB.dll
+E91. Social.dll
+E92. Remote Utilities - Host
+E93. Meterpreter
+E94. RemcosRAT [aka Remcos]
+E95. FTPGetter
+E96. Smokeloader
+E97. AutoIt
+E98. Microsoft Equation Editor
+E99. UkrScanner.rar
+E100. Claws Mail
+E101. Електронний план евакуації.exe
+E102. Електронний запит.exe
+E103. QuasarRAT
+E104. Adobe Flash Player
+E105. Windows Vista
+E106. Comodo Dragon Browser
+E107. Cobalt Strike Beacon
+E108. IDCLIPNET_x86.dll
+E109. scan.exe (CredoMap_v2)
+E110. Office 2007 [aka Microsoft Office 2007]
+E111. Microsoft Edge
+E112. Microsoft Office Services and Web Apps
+E113. Thunderbird
+E114. Trillian
+E115. Postbox Credential
+E116. CVE-2018-8134
+E117. CVE-2018-8127
+E118. CVE-2018-8141
+E119. CVE-2018-8174
+E120. CVE-2018-8132
+E121. CVE-2018-8136
+E122. Opera Browser
+E123. Double Kill
+E124. FIRMACHAGENT
+E125. Chromium Browser
+E126. Torch Browser
+E127. Sputnik Browser
+E128. Orbitum Browser
+E129. Amigo Browser
+E130. Brave Browser
+E131. Chedot Browser
+E132. Elements Browser
+E133. chrome_updater.dll
+E134. Citrio Browser
+E135. Uran Browser
+E136. Coowon Browser
+E137. Iridium Browser
+E138. Liebao Browser
+E139. Yandex Browser
+E140. CocCoc Browser
+E141. CredoMap_v2
+E142. Opera Mail
+E143. SPECTR
+E144. SmartAssembly .NET
+E145. FTP Commander
+Mentions:
+M1. "GammaLoad.PS1" (Software) — options: E1, E2, E3, E4
+M2. "PowerShell (powershell.exe)" (Software) — options: E10, E11, E12, E13
+M3. "SRP" (Software) — options: E19, E20, E21, E22
+M4. "pfSense" (Software) — options: E27, E28, E21, E29
+M5. "CVE-2017-0199" (Software) — options: E32, E33, E34, E35
+M6. "Office 2007" (Software) — options: E41, E42, E43, E10
+M7. "Windows Vista" (Software) — options: E41, E48, E49, E50
+M8. "MCMDiction.exe" (Software) — options: E13, E11, E54, E28
+M9. "z.ps1" (Software) — options: E1, E57, E7, E28
+M10. "MS PowerPoint" (Software) — options: E46, E28, E41, E43
+M11. "oYUuQbXu" (Software) — options: E62, E21, E63, E3
+M12. "shellcode.x64.bin" (Software) — options: E15, E66, E67, E28
+M13. "spi.exe" (Software) — options: E10, E55, E11, E16
+M14. "Рахунки за выполненные работы от 11.12.2018.js" (Software) — options: E71, E72, E73, E39
+M15. "UkrScanner.rar" (Software) — options: E77, E78, E79, E80
+M16. "major.exe" (Software) — options: E9, E2, E11, E10
+M17. "FIRMACHAGENT" (Software) — options: E64, E82, E83, E27
+M18. "Files.dll" (Software) — options: E86, E58, E87, E88
+M19. "RemoteUtilities" (Software) — options: E92, E50, E93, E94
+M20. "CCleaner.zip" (Software) — options: E11, E78, E16, E2
+M21. "plan_dsns.gov.ua.rar" (Software) — options: E101, E78, E81, E102
+M22. "rfusclient.exe" (Software) — options: E80, E10, E11, E16
+M23. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software) — options: E102, E76, E101, E73
+M24. "shellcode.x86 (Cobalt Strike Beacon)" (Software) — options: E66, E15, E107, E18
+M25. "Microsoft Office Services and Web Apps" (Software) — options: E41, E43, E46, E110
+M26. "Microsoft Exchange Server" (Software) — options: E41, E46, E111, E47
+M27. "Double Kill" (Software) — options: E113, E58, E68, E85
+M28. "CVE-2018-8124" (Software) — options: E33, E38, E37, E116
+M29. "CVE-2018-8134" (Software) — options: E121, E36, E120, E37
+M30. "RegAsm.exe" (Software) — options: E80, E11, E55, E29
+M31. "Mozilla Firefox" (Software) — options: E122, E31, E58, E53
+M32. "Iridium Browser" (Software) — options: E127, E125, E24, E128
+M33. "ChromePlus Browser" (Software) — options: E125, E24, E53, E26
+M34. "CentBrowser" (Software) — options: E125, E131, E132, E134
+M35. "Citrio Browser" (Software) — options: E137, E138, E129, E24
+M36. "Sputnik Browser" (Software) — options: E139, E134, E130, E24
+M37. "Coowon Browser" (Software) — options: E140, E135, E24, E106
+M38. "Postbox Credential" (Software) — options: E61, E89, E141, E64
+M39. "OpenVPN" (Software) — options: E122, E142, E50, E32
+M40. "SmartFTP" (Software) — options: E25, E56, E144, E145
+
+=== RESPONSE (9.8s, in 4023 / out 887 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":null,"r":null,"g":null},{"m":"M3","id":"NEW","p":null,"r":null,"g":null},{"m":"M4","id":"NEW","p":null,"r":null,"g":null},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":"E43","r":"v","g":null},{"m":"M7","id":"NEW","p":"E49","r":"v","g":null},{"m":"M8","id":"NEW","p":null,"r":null,"g":null},{"m":"M9","id":"NEW","p":null,"r":null,"g":null},{"m":"M10","id":"NEW","p":"E43","r":"p","g":null},{"m":"M11","id":"NEW","p":null,"r":null,"g":null},{"m":"M12","id":"NEW","p":null,"r":null,"g":null},{"m":"M13","id":"NEW","p":null,"r":null,"g":null},{"m":"M14","id":"NEW","p":null,"r":null,"g":null},{"m":"M15","id":"NEW","p":null,"r":null,"g":null},{"m":"M16","id":"NEW","p":null,"r":null,"g":null},{"m":"M17","id":"NEW","p":null,"r":null,"g":null},{"m":"M18","id":"NEW","p":null,"r":null,"g":null},{"m":"M19","id":"NEW","p":"E92","r":"b","g":null},{"m":"M20","id":"NEW","p":null,"r":null,"g":null},{"m":"M21","id":"NEW","p":null,"r":null,"g":null},{"m":"M22","id":"NEW","p":null,"r":null,"g":null},{"m":"M23","id":"NEW","p":null,"r":null,"g":null},{"m":"M24","id":"NEW","p":"E107","r":"v","g":null},{"m":"M25","id":"NEW","p":"E43","r":"p","g":null},{"m":"M26","id":"NEW","p":null,"r":null,"g":null},{"m":"M27","id":"NEW","p":null,"r":null,"g":null},{"m":"M28","id":"NEW","p":null,"r":null,"g":null},{"m":"M29","id":"NEW","p":null,"r":null,"g":null},{"m":"M30","id":"NEW","p":null,"r":null,"g":null},{"m":"M31","id":"NEW","p":null,"r":null,"g":null},{"m":"M32","id":"NEW","p":null,"r":null,"g":null},{"m":"M33","id":"NEW","p":null,"r":null,"g":null},{"m":"M34","id":"NEW","p":null,"r":null,"g":null},{"m":"M35","id":"NEW","p":null,"r":null,"g":null},{"m":"M36","id":"NEW","p":null,"r":null,"g":null},{"m":"M37","id":"NEW","p":null,"r":null,"g":null},{"m":"M38","id":"NEW","p":null,"r":null,"g":null},{"m":"M39","id":"NEW","p":null,"r":null,"g":null},{"m":"M40","id":"NEW","p":null,"r":null,"g":null}]}

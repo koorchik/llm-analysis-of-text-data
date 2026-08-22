@@ -1,5 +1,5 @@
 import { restampArtifacts } from './restampArtifacts';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import assert from 'node:assert/strict';
 import crypto from 'crypto';
@@ -27,10 +27,10 @@ async function scratchDir(): Promise<string> {
 
 async function registries(dir: string) {
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
-  return { schemaRegistry, entityRegistry };
+  await conceptRegistry.load();
+  return { schemaRegistry, conceptRegistry };
 }
 
 function baseArtifact(entities: any[], relations: any[] = []) {
@@ -52,10 +52,10 @@ async function readArtifact(dir: string, file: string) {
 
 test('missing artifactsDir is a no-op', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'nope'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
   });
   assert.deepEqual(result, { changed: 0, total: 0 });
@@ -63,11 +63,11 @@ test('missing artifactsDir is a no-op', async () => {
 
 test('re-stamps entities via matchedVia first, falling back to entity.name', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
+  await conceptRegistry.save();
 
   await writeArtifact(
     dir,
@@ -82,7 +82,7 @@ test('re-stamps entities via matchedVia first, falling back to entity.name', asy
 
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'artifacts'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
   });
 
@@ -95,15 +95,15 @@ test('re-stamps entities via matchedVia first, falling back to entity.name', asy
 
 test('re-stamps relation endpoints and corrects drifted categories via schemaRegistry', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 1 });
   schemaRegistry.admitCategory({ name: 'HackerGroups', definition: '', doc: 1 });
   schemaRegistry.mergeEntries('category', 'HackerGroups', 'HackerGroup', -1);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.mint('HackerGroup', 'Ukraine Ministry', { doc: 1, date: '01.01.2024' });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.mint('HackerGroup', 'Ukraine Ministry', { doc: 1, date: '01.01.2024' });
+  await conceptRegistry.save();
   await schemaRegistry.save();
 
   await writeArtifact(
@@ -125,7 +125,7 @@ test('re-stamps relation endpoints and corrects drifted categories via schemaReg
 
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'artifacts'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
   });
 
@@ -138,10 +138,10 @@ test('re-stamps relation endpoints and corrects drifted categories via schemaReg
 
 test('changed-only writes: an artifact already at its correct stamp is left untouched', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  await conceptRegistry.save();
 
   await writeArtifact(
     dir,
@@ -154,7 +154,7 @@ test('changed-only writes: an artifact already at its correct stamp is left unto
 
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'artifacts'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
   });
 
@@ -166,11 +166,11 @@ test('changed-only writes: an artifact already at its correct stamp is left unto
 
 test('files restriction: only the named files are read or written', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
+  await conceptRegistry.save();
 
   const stale = baseArtifact([
     { name: 'Voodoo Bear', category: 'HackerGroup', role: 'Attacker', matchedVia: 'Voodoo Bear' },
@@ -181,7 +181,7 @@ test('files restriction: only the named files are read or written', async () => 
 
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'artifacts'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
     files: ['1.json'],
   });
@@ -200,11 +200,11 @@ test('files restriction: only the named files are read or written', async () => 
 
 test('files restriction: a stale/missing entry is skipped with a warning, not thrown, and siblings still process', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 1 });
+  await conceptRegistry.save();
 
   await writeArtifact(
     dir,
@@ -225,7 +225,7 @@ test('files restriction: a stale/missing entry is skipped with a warning, not th
   try {
     result = await restampArtifacts({
       artifactsDir: path.join(dir, 'artifacts'),
-      entityRegistry,
+      conceptRegistry,
       schemaRegistry,
       files: ['1.json', '999.json'],
     });
@@ -244,12 +244,12 @@ test('files restriction: a stale/missing entry is skipped with a warning, not th
 
 test('matchedVia-first: a split sends two mentions of the same canonical to different canonicals', async () => {
   const dir = await scratchDir();
-  const { schemaRegistry, entityRegistry } = await registries(dir);
+  const { schemaRegistry, conceptRegistry } = await registries(dir);
 
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 1 });
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 2 });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 2 });
+  await conceptRegistry.save();
 
   await writeArtifact(
     dir,
@@ -267,13 +267,13 @@ test('matchedVia-first: a split sends two mentions of the same canonical to diff
   );
 
   // Split "Voodoo Bear" off Sandworm into its own canonical.
-  const split = entityRegistry.split('HackerGroup', 'Sandworm', ['Voodoo Bear']);
+  const split = conceptRegistry.split('HackerGroup', 'Sandworm', ['Voodoo Bear']);
   assert.ok(split, 'split applied');
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   const result = await restampArtifacts({
     artifactsDir: path.join(dir, 'artifacts'),
-    entityRegistry,
+    conceptRegistry,
     schemaRegistry,
   });
 

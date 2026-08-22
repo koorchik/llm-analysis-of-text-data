@@ -1,0 +1,109 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide three things: which entity it is, which broader entity it sits under, and what level of detail it is stated at.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the broader entity
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the **narrowest** listed entity that is genuinely broader than the mention — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. Set `r` to one of three:
+
+- `"v"` — the parent is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the same claim stated less precisely for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the parent, only vaguer.
+- `"p"` — a distinct component, member, or subdivision of the parent.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `lvl` — level of detail
+
+Choose the level from the `Levels:` line that matches how precisely this mention names its referent, and answer its `g` code. If no levels are listed, answer `"g0"`.
+
+## 4. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"lvl":"g0","g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","lvl":"g0","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA відслідковується активність групи UAC-0010 (Armageddon).</p><p>Протягом першого півріччя 2022 року основним способом реалізації зловмисного задуму є розповсюдження засобами електронної пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автент
+Entities:
+E1. loader.exe <g0>
+E2. TRYxaEbX.ps1 <g0>
+E3. z.ps1 <g0>
+E4. stage1.ps1 <g0>
+E5. stage2.ps1 <g0>
+E6. spi.exe <g0>
+E7. MCMDiction.exe <g0>
+E8. TRYxaEbX_2.ps1 <g0>
+E9. powershell.exe <g0>
+E10. Smokeloader <g1>
+E11. Agent Tesla [aka AgentTesla] <g1>
+E12. FTP Commander <g1>
+E13. .NET Framework <g1>
+E14. Internet Explorer <g1>
+E15. Microsoft Edge <g1>
+E16. MS Excel <g0>
+E17. RegAsm.exe <g0>
+E18. 360Chrome Browser <g1>
+E19. Win32k <g1>
+E20. FTPGetter <g1>
+E21. Meterpreter <g1>
+E22. ConfuserEx <g1>
+E23. Microsoft Exchange Server <g1>
+E24. TRYxaEbX <g0>
+E25. Windows Server 2012 <g0>
+E26. Remote Utilities <g1>
+E27. Windows Server 2008 <g0>
+E28. MS PowerPoint <g0>
+E29. cmd.exe <g0>
+E30. shellcode.x64 (Cobalt Strike Beacon) [aka shellcode.x64.bin] <g0>
+E31. VBScript <g1>
+E32. b.exe <g0>
+E33. shellcode.x86 (Cobalt Strike Beacon) [aka shellcode.x86.bin] <g0>
+E34. write.exe <g0>
+E35. rfusclient.exe <g0>
+E36. installer.exe <g0>
+E37. major.exe <g0>
+E38. GammaSteel.PS1
+E39. GammaSteel.NET
+E40. HarvesterX
+E41. PowerShell (powershell.exe)
+E42. wscript.exe
+E43. mshta.exe
+E44. GammaLoad.PS1
+Levels (per category):
+  Software: g0=software-item > g1=product > g2=suite
+Mentions:
+M1. "GammaLoad.PS1" (Software) — options: E1, E2, E3, E4
+M2. "GammaSteel.PS1" (Software) — options: E4, E2, E3, E5
+M3. "GammaSteel.NET" (Software) — options: E13, E14, E11, E15
+M4. "HarvesterX" (Software) — options: E14, E20, E21, E15
+M5. "PowerShell (powershell.exe)" (Software) — options: E9, E3, E7, E28
+M6. "wscript.exe" (Software) — options: E9, E34, E31, E7
+M7. "mshta.exe" (Software) — options: E36, E37, E32, E7
+
+=== RESPONSE (5.9s, in 2096 / out 216 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malicious program delivered via HTM droppers"},{"m":"M2","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malicious program used by UAC-0010"},{"m":"M3","id":"NEW","p":null,"r":null,"lvl":"g0","g":"malicious program used by UAC-0010"},{"m":"M4","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M5","id":"E9","p":null,"r":null,"lvl":"g0","g":null},{"m":"M6","id":"NEW","p":null,"r":null,"lvl":"g0","g":null},{"m":"M7","id":"NEW","p":null,"r":null,"lvl":"g0","g":null}]}

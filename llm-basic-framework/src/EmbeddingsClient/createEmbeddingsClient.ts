@@ -1,4 +1,5 @@
 import { EmbeddingCache } from './EmbeddingCache';
+import { EmbeddingsBackendGemini } from './EmbeddingsBackendGemini';
 import { EmbeddingsBackendHttp } from './EmbeddingsBackendHttp';
 import { EmbeddingsBackendOllama } from './EmbeddingsBackendOllama';
 import { EmbeddingsBackendOpenAi } from './EmbeddingsBackendOpenAi';
@@ -26,6 +27,15 @@ export function createEmbeddingsClient(params: {
       backend = new EmbeddingsBackendOpenAi({
         model: params.model,
         apiKey: process.env.OPENAI_API_KEY!,
+      });
+      break;
+
+    // Google AI Studio (GEMINI_API_KEY) — the encoder-side sibling of the 'gemini' LLM provider;
+    // distinct from 'vertexai', which needs a GCP project.
+    case 'gemini':
+      backend = new EmbeddingsBackendGemini({
+        model: params.model,
+        apiKey: process.env.GEMINI_API_KEY!,
       });
       break;
 

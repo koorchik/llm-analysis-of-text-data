@@ -1,0 +1,111 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)" — evidence: <p><strong>Загальна інформація</strong></p><p>Урядовою командою реагування на комп'ютерні надзвичайні події України CERT-UA отримано інформацію щодо розповсюдження 05.07.2022 електронних листів з темою "Спеціалізованої прокуратури увійськовій та оборонній сфері. Інформація щодо наявності вакансій та їх укомплектування" та вкладенням у вигляді XLS-документу "Інформація щодо наявності вакансій та їх укомплектування.xls".</p><p>Документ містить макрос, активація якого призведе до створення на комп'ютері та запуску файлу "write.exe".</p><p>Згаданий файл виконує роль дропера, забезпечуючи створення
+Entities:
+E1. Електронний запит.exe
+E2. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E3. Електронний план евакуації.exe
+E4. До оплати рах.ф. 74 - 2018р.js
+E5. Електронний план евакуації.rar
+E6. Microsoft Equation Editor
+E7. MS Excel
+E8. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E9. UkrScanner.exe (SFX)
+E10. Рахунки за выполненные работы от 11.12.2018.js
+E11. wscript.exe
+E12. SQLite.Interop.dll
+E13. CCleaner.exe
+E14. PowerShell (powershell.exe) [aka PowerShell, powershell.exe]
+E15. mshta.exe
+E16. b.exe
+E17. MCMDiction.exe
+E18. spi.exe
+E19. cmd.exe
+E20. rfusclient.exe
+E21. oYUuQbXu
+E22. HarvesterX
+E23. AgentTesla
+E24. AppLocker
+E25. ckZ89.ExE
+E26. FIRMACHAGENT
+E27. AutoIt
+E28. YARA
+E29. Browser.dll
+E30. stage1.ps1
+E31. GammaLoad.PS1
+E32. z.ps1
+E33. GammaSteel.PS1
+E34. stage2.ps1
+E35. SmartAssembly .NET
+E36. pfSense
+E37. shellcode.x86.bin
+E38. Cobalt Strike Beacon
+E39. shellcode.x64.bin
+E40. IDCLIPNET_x86.dll
+E41. ConfuserEx
+E42. scan.exe (CredoMap_v2)
+E43. Remote Utilities - Host
+E44. RemoteUtilities [aka Remote Utilities]
+E45. write.exe
+E46. TRYxaEbX
+E47. TRYxaEbX.ps1
+E48. TRYxaEbX_2.ps1
+E49. shellcode.x86 (Cobalt Strike Beacon)
+E50. shellcode.x64 (Cobalt Strike Beacon)
+E51. Інформація щодо наявності вакансій та їх укомплектування.xls
+Mentions:
+M1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software) — options: E1, E2, E3, E4
+M2. "write.exe" (Software) — options: E11, E12, E13, E14
+M3. "TRYxaEbX" (Software) — options: E21, E22, E23, E13
+M4. "TRYxaEbX.ps1" (Software) — options: E30, E31, E32, E33
+M5. "TRYxaEbX_2.ps1" (Software) — options: E34, E31, E30, E32
+M6. "shellcode.x86 (Cobalt Strike Beacon)" (Software) — options: E37, E38, E39, E40
+M7. "shellcode.x64 (Cobalt Strike Beacon)" (Software) — options: E39, E38, E37, E41
+
+=== RESPONSE (9.3s, in 2158 / out 184 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"malicious XLS document containing dropping macros"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"dropper executable activated by macro"},{"m":"M3","id":"NEW","p":null,"r":null,"g":null},{"m":"M4","id":"NEW","p":null,"r":null,"g":null},{"m":"M5","id":"NEW","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":"E38","r":"p","g":"x86 shellcode payload for Cobalt Strike Beacon"},{"m":"M7","id":"NEW","p":"E38","r":"p","g":"x64 shellcode payload for Cobalt Strike Beacon"}]}

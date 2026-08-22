@@ -5,12 +5,11 @@ import { extractIdentifiers } from '../Normalization/analyzers/identifierRegex';
 import { transliterateAnalyzer } from '../Normalization/analyzers/transliterate';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
 import {
-  EntityRegistry,
+  ConceptRegistry,
   type DeferredPair,
-  type EntityRef,
-  type GranularityEdgeKind,
+  type ConceptRef,
   type SuspectPair,
-} from '../EntityRegistry/EntityRegistry';
+} from '../ConceptRegistry/ConceptRegistry';
 import type { CandidateGenerator, RegistryChange } from '../Normalization/types';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import type { LlmResponse } from '../LlmClient/LlmClientBackendBase';
@@ -38,7 +37,7 @@ interface Params {
   artifactsDir: string;
   llmClient: LlmClient;
   schemaRegistry: SchemaRegistry;
-  entityRegistry: EntityRegistry;
+  conceptRegistry: ConceptRegistry;
   decisionLog: DecisionLog;
   glossIndex: GlossIndex;
   /**
@@ -72,7 +71,7 @@ interface Params {
  * than string-joined, for the same collision reason `Repair/components.ts` documents: the real
  * category domain contains spaces, so `"A B C"` is ambiguous.
  */
-export function suspectPairKey(a: EntityRef, b: EntityRef): string {
+export function suspectPairKey(a: ConceptRef, b: ConceptRef): string {
   const left = JSON.stringify([a.category, a.canonical]);
   const right = JSON.stringify([b.category, b.canonical]);
   return left <= right ? `${left}|${right}` : `${right}|${left}`;
@@ -132,9 +131,9 @@ interface AcceptedOp {
   /** Index into the `due` component list. */
   component: number;
   /** merge.from · distinct.pair[0] · rung.finer · renamed.from · split.outOf · move.from · keep.entity */
-  a: EntityRef;
+  a: ConceptRef;
   /** merge.into · distinct.pair[1] · rung.coarser · renamed.into · move.to — absent for split/keep. */
-  b?: EntityRef;
+  b?: ConceptRef;
 }
 
 const PAIR_OPS = new Set(['merge', 'distinct', 'rung', 'renamed']);
@@ -157,14 +156,14 @@ const PAIR_OPS = new Set(['merge', 'distinct', 'rung', 'renamed']);
  *    `files` restriction T8 offers is deliberately unused: an artifact is affected by an op whenever
  *    it stamped one of the touched surfaces, and there is no cheap way to know which artifacts those
  *    are. The tempting derivation — the `docId`s on the touched canonical's alias records — is
- *    WRONG, because `EntityRegistry.link` is idempotent: a document mentioning an already-known
+ *    WRONG, because `ConceptRegistry.link` is idempotent: a document mentioning an already-known
  *    surface adds no alias record at all, so only the document that FIRST introduced a surface would
  *    be re-stamped and every repeat mention would keep pointing at a deleted canonical (measured at
  *    711/4,071 stamped mentions, 17.5%, on the baseline corpus). Per-alias mention-doc tracking
  *    would fix that properly and is a registry-level change; until then this pays O(corpus) reads on
  *    the documents that actually apply an op — the same order `#gatherEvidence` already pays — and
  *    matches what the consolidator's full-corpus pass guaranteed.
- * 8. Bookkeeping and ONE `entityRegistry.save()`.
+ * 8. Bookkeeping and ONE `conceptRegistry.save()`.
  * 9. Assert I1/I2 in memory (wiki rule 10: nothing reads `decisions.jsonl` at runtime).
  *
  * **Crash consistency.** The normalizer has already committed this document's artifact and registry
@@ -192,7 +191,7 @@ export class StreamingRepairer {
   #artifactsDir: string;
   #llmClient: LlmClient;
   #schemaRegistry: SchemaRegistry;
-  #entityRegistry: EntityRegistry;
+  #conceptRegistry: ConceptRegistry;
   #decisionLog: DecisionLog;
   #glossIndex: GlossIndex;
   #prompts: PromptProvider;
@@ -212,7 +211,7 @@ export class StreamingRepairer {
     this.#artifactsDir = params.artifactsDir;
     this.#llmClient = params.llmClient;
     this.#schemaRegistry = params.schemaRegistry;
-    this.#entityRegistry = params.entityRegistry;
+    this.#conceptRegistry = params.conceptRegistry;
     this.#decisionLog = params.decisionLog;
     this.#glossIndex = params.glossIndex;
     this.#prompts = params.prompts ?? prompts;
@@ -223,7 +222,7 @@ export class StreamingRepairer {
     this.#onRegistryChange = params.onRegistryChange;
 
     this.#suspects = new SuspectGenerator({
-      registry: params.entityRegistry,
+      registry: params.conceptRegistry,
       glossIndex: params.glossIndex,
       blocker: params.blocker,
       thresholds:
@@ -251,21 +250,21 @@ export class StreamingRepairer {
    */
   async run(): Promise<void> {
     await this.#schemaRegistry.load();
-    await this.#entityRegistry.load();
+    await this.#conceptRegistry.load();
     if (!existsSync(this.#artifactsDir)) return;
 
     const files = sortByNumericId(await fs.readdir(this.#artifactsDir));
     for (const file of files) {
       const docId = await this.#docIdOf(file);
       if (docId === undefined) continue;
-      if (docId <= this.#entityRegistry.repairState().repairedThrough) continue;
+      if (docId <= this.#conceptRegistry.repairState().repairedThrough) continue;
       await this.processDoc(file, docId);
     }
   }
 
   async processDoc(file: string, docId: number): Promise<void> {
     await this.#schemaRegistry.load();
-    await this.#entityRegistry.load();
+    await this.#conceptRegistry.load();
 
     // Elapsed-time instrumentation via a timestamp rather than `console.time`: console timers are
     // keyed on a process-global label, and this method is legitimately re-entered for the same
@@ -275,8 +274,8 @@ export class StreamingRepairer {
     try {
       // ---- Phase A: read-only + LLM ------------------------------------------------------------
 
-      await this.#glossIndex.sync(this.#entityRegistry);
-      const events = eventsForDoc(this.#entityRegistry, docId);
+      await this.#glossIndex.sync(this.#conceptRegistry);
+      const events = eventsForDoc(this.#conceptRegistry, docId);
 
       const { gathered, consumedDeferred } = await this.#gather(events, docId);
       for (const pair of gathered) {
@@ -310,7 +309,7 @@ export class StreamingRepairer {
               pair.a,
               pair.b,
               docId,
-              SuspectGenerator.signature(this.#entityRegistry, pair.a, pair.b)
+              SuspectGenerator.signature(this.#conceptRegistry, pair.a, pair.b)
             );
             autoApplied.add(key);
             return false;
@@ -389,14 +388,14 @@ export class StreamingRepairer {
         // alias record to derive an "affected documents" set from. Class comment, step 7.
         await restampArtifacts({
           artifactsDir: this.#artifactsDir,
-          entityRegistry: this.#entityRegistry,
+          conceptRegistry: this.#conceptRegistry,
           schemaRegistry: this.#schemaRegistry,
         });
       }
 
-      if (consumedDeferred.length > 0) this.#entityRegistry.clearDeferred(consumedDeferred);
-      this.#entityRegistry.pushSpillover(spilled);
-      this.#entityRegistry.setRepairedThrough(docId);
+      if (consumedDeferred.length > 0) this.#conceptRegistry.clearDeferred(consumedDeferred);
+      this.#conceptRegistry.pushSpillover(spilled);
+      this.#conceptRegistry.setRepairedThrough(docId);
 
       // ---- Invariants (in-memory; nothing reads decisions.jsonl at runtime) ---------------------
       // Checked BEFORE the save, deliberately: a violated boundary invariant must not be the thing
@@ -408,7 +407,7 @@ export class StreamingRepairer {
       // ONE save for every mutation above (global constraint: state written once per document).
       // The schema registry is never mutated here — the re-stamp only *reads* `resolveCategory` —
       // so there is nothing of ours to persist in it.
-      await this.#entityRegistry.save();
+      await this.#conceptRegistry.save();
     } finally {
       console.log(`REPAIR ${file}: ${elapsed(started)}`);
     }
@@ -442,17 +441,17 @@ export class StreamingRepairer {
       gathered.push(pair);
     };
 
-    for (const pair of this.#entityRegistry.drainSpillover()) admit(pair, false);
+    for (const pair of this.#conceptRegistry.drainSpillover()) admit(pair, false);
 
     const consumedDeferred: DeferredPair[] = [];
-    for (const entry of this.#entityRegistry.deferred()) {
+    for (const entry of this.#conceptRegistry.deferred()) {
       // Reviewed = consumed, whatever the verdict — the consolidator's rule
       // (`RegistryConsolidator.ts:275-277`): a pair left unpaired here must not re-queue forever.
       consumedDeferred.push(entry);
-      const minted = this.#entityRegistry.resolve(entry.category, entry.mintedAs);
+      const minted = this.#conceptRegistry.resolve(entry.category, entry.mintedAs);
       if (!minted) continue; // the provisional mint was already absorbed — nothing left to decide
       for (const candidate of entry.candidates) {
-        const resolved = this.#entityRegistry.resolve(entry.category, candidate);
+        const resolved = this.#conceptRegistry.resolve(entry.category, candidate);
         if (!resolved || resolved === minted) continue;
         admit(
           {
@@ -476,15 +475,15 @@ export class StreamingRepairer {
   /** Live members, and not already adjudicated under their current signature. */
   #stillSuspect(pair: SuspectPair): boolean {
     if (!this.#isLive(pair.a) || !this.#isLive(pair.b)) return false;
-    const existing = this.#entityRegistry.findAdjudicated(pair.a, pair.b);
+    const existing = this.#conceptRegistry.findAdjudicated(pair.a, pair.b);
     if (!existing) return true;
     // '' is the "no computable signature" sentinel and must never compare equal to anything,
     // including itself — a sha256 hex digest never equals '', so `!==` already gives it that.
-    return SuspectGenerator.signature(this.#entityRegistry, pair.a, pair.b) !== existing.signature;
+    return SuspectGenerator.signature(this.#conceptRegistry, pair.a, pair.b) !== existing.signature;
   }
 
-  #isLive(ref: EntityRef): boolean {
-    return this.#entityRegistry.records(ref.category)[ref.canonical] !== undefined;
+  #isLive(ref: ConceptRef): boolean {
+    return this.#conceptRegistry.concepts(ref.category)[ref.canonical] !== undefined;
   }
 
   // --- step 4: render + call ---------------------------------------------------------------------
@@ -642,14 +641,14 @@ export class StreamingRepairer {
     const lines = [`Component ${index} of ${total} · signal: ${renderSignals(component)}`];
 
     for (const ref of component.entities) {
-      const record = this.#entityRegistry.records(ref.category)[ref.canonical];
-      const aliases = this.#entityRegistry
-        .aliasSurfaces(ref.category, ref.canonical)
+      const record = this.#conceptRegistry.concepts(ref.category)[ref.canonical];
+      const aliases = this.#conceptRegistry
+        .labelSurfaces(ref.category, ref.canonical)
         // `mint` stores the canonical as its own first alias; the note's `aliases: []` for a
         // freshly-minted entity is what that exclusion looks like.
         .filter((surface) => surface.trim().toLowerCase() !== ref.canonical.trim().toLowerCase());
       const minted = record ? `d${record.firstSeen.doc}` : 'unknown';
-      const gloss = record?.gloss ? `"${record.gloss}"` : '(none)';
+      const gloss = record?.definition ? `"${record.definition}"` : '(none)';
 
       lines.push(`  ${letters.get(refKey(ref))}. ${ref.canonical} (${ref.category})`);
       lines.push(`     aliases: [${aliases.join(', ')}]  · minted ${minted}`);
@@ -697,7 +696,7 @@ export class StreamingRepairer {
    * the re-stamp pays on documents that apply an op.
    */
   async #gatherEvidence(components: SuspectComponent[]): Promise<Map<string, string[]>> {
-    const wanted = new Map<string, EntityRef>();
+    const wanted = new Map<string, ConceptRef>();
     for (const component of components) {
       for (const ref of component.entities) wanted.set(refKey(ref), ref);
     }
@@ -960,7 +959,7 @@ export class StreamingRepairer {
         }
 
         case 'distinct': {
-          this.#adjudicateDistinct(a, b!, docId, SuspectGenerator.signature(this.#entityRegistry, a, b!));
+          this.#adjudicateDistinct(a, b!, docId, SuspectGenerator.signature(this.#conceptRegistry, a, b!));
           await this.#logDistinct(a, b!, docId, verdict);
           applied.add(suspectPairKey(a, b!));
           break;
@@ -972,11 +971,15 @@ export class StreamingRepairer {
             await spill(op, 'cross-category-rung');
             break;
           }
-          const kind: GranularityEdgeKind = verdict.edgeKind || 'part-of';
-          const added = this.#entityRegistry.addGranularityEdge(a.category, {
-            from: a.canonical,
-            to: b!.canonical,
-            kind,
+          // The repair judge still answers in the legacy edgeKind vocabulary (frozen LLM-output
+          // dialect); it maps onto the ISO 25964 typing here. No embeddings client in this path →
+          // null similarityScore.
+          const type = verdict.edgeKind === 'coarsens-to' ? ('broaderGeneric' as const) : ('broaderPartitive' as const);
+          const added = this.#conceptRegistry.addBroaderEdge(a.category, {
+            narrower: a.canonical,
+            broader: b!.canonical,
+            type,
+            similarityScore: null,
             docId,
             decision: 'repairer',
             evidence: verdict.evidence || null,
@@ -988,14 +991,14 @@ export class StreamingRepairer {
           // Deviation from the design note, deliberate (§4.3 design R4): the pair is also recorded as
           // adjudicated. Without it a rung verdict leaves the pair unruled, so the same two entities
           // re-fire on every future signal and pay for a judge call that can only say `rung` again.
-          this.#entityRegistry.pushAdjudicated({ a, b: b!, signature: SuspectGenerator.signature(this.#entityRegistry, a, b!), verdict: 'rung', docId });
+          this.#conceptRegistry.pushAdjudicated({ a, b: b!, signature: SuspectGenerator.signature(this.#conceptRegistry, a, b!), verdict: 'rung', docId });
           await this.#decisionLog.log({
             doc: docId,
-            op: 'granularity-edge',
+            op: 'broader-edge',
             category: a.category,
-            from: a.canonical,
-            to: b!.canonical,
-            kind,
+            narrower: a.canonical,
+            broader: b!.canonical,
+            type,
             evidence: verdict.evidence || null,
             by: 'StreamingRepairer',
           });
@@ -1016,7 +1019,7 @@ export class StreamingRepairer {
           }
           // User ruling 1: a rename absorbs through `renameInto`, whose survivor is ALWAYS `to` —
           // canonicalPolicy has no opinion on which name is *current* and must not overrule it.
-          if (!this.#entityRegistry.renameInto(a.category, { from: a.canonical, to: b!.canonical, docId, evidence: verdict.evidence || null })) {
+          if (!this.#conceptRegistry.renameInto(a.category, { from: a.canonical, to: b!.canonical, docId, evidence: verdict.evidence || null })) {
             await spill(op, 'rename-refused');
             break;
           }
@@ -1050,7 +1053,7 @@ export class StreamingRepairer {
             applied.add(suspectPairKey(a, a));
             break;
           }
-          const result = this.#entityRegistry.split(a.category, a.canonical, [verdict.alias], {
+          const result = this.#conceptRegistry.split(a.category, a.canonical, [verdict.alias], {
             docId,
             evidence: verdict.evidence || null,
           });
@@ -1080,7 +1083,7 @@ export class StreamingRepairer {
             applied.add(suspectPairKey(a, a));
             break;
           }
-          if (!this.#entityRegistry.moveAlias(a, b!, verdict.alias, { docId, evidence: verdict.evidence || null })) {
+          if (!this.#conceptRegistry.moveLabel(a, b!, verdict.alias, { docId, evidence: verdict.evidence || null })) {
             await spill(op, 'move-refused');
             break;
           }
@@ -1102,10 +1105,10 @@ export class StreamingRepairer {
         }
 
         case 'keep': {
-          this.#entityRegistry.pushAdjudicated({
+          this.#conceptRegistry.pushAdjudicated({
             a,
             b: a,
-            signature: SuspectGenerator.signature(this.#entityRegistry, a, a),
+            signature: SuspectGenerator.signature(this.#conceptRegistry, a, a),
             verdict: 'keep',
             docId,
           });
@@ -1135,18 +1138,18 @@ export class StreamingRepairer {
    * signature changes), and the alternative — a transactional two-registry primitive — is a T3-level
    * change, not a T9 one.
    */
-  #merge(a: EntityRef, b: EntityRef, verdict: RepairOpVerdict): string | undefined {
+  #merge(a: ConceptRef, b: ConceptRef, verdict: RepairOpVerdict): string | undefined {
     if (a.category !== b.category) {
       // Upstream extraction misassigns categories (prompt rule 5); the correction is a `move` of the
       // whole record into the target category, then an ordinary same-category merge.
-      if (!this.#entityRegistry.move(a.category, a.canonical, b.category)) return undefined;
+      if (!this.#conceptRegistry.move(a.category, a.canonical, b.category)) return undefined;
       this.#changed('move', b.category, a.canonical);
       // `move` folds into an identically-named record when one already exists there, so the merge
       // may already be done by the time we get here.
       if (a.canonical === b.canonical) return b.canonical;
     }
 
-    const summary = this.#entityRegistry.applyMerges(b.category, [
+    const summary = this.#conceptRegistry.applyMerges(b.category, [
       {
         from: a.canonical,
         into: b.canonical,
@@ -1159,7 +1162,7 @@ export class StreamingRepairer {
   }
 
   /** A model may propose a merge, but only deterministic naming evidence authorizes mutation. */
-  #hasDeterministicIdentityEvidence(a: EntityRef, b: EntityRef): boolean {
+  #hasDeterministicIdentityEvidence(a: ConceptRef, b: ConceptRef): boolean {
     // Canonicals only. Phase-1 aliases are model decisions and may already be polluted; using them
     // as authorization lets one bad link bootstrap a second destructive merge.
     const left = [a.canonical];
@@ -1187,11 +1190,11 @@ export class StreamingRepairer {
     return false;
   }
 
-  #adjudicateDistinct(a: EntityRef, b: EntityRef, docId: number, signature: string): void {
-    this.#entityRegistry.pushAdjudicated({ a, b, signature, verdict: 'distinct', docId });
+  #adjudicateDistinct(a: ConceptRef, b: ConceptRef, docId: number, signature: string): void {
+    this.#conceptRegistry.pushAdjudicated({ a, b, signature, verdict: 'distinct', docId });
   }
 
-  async #logDistinct(a: EntityRef, b: EntityRef, docId: number, verdict: RepairOpVerdict): Promise<void> {
+  async #logDistinct(a: ConceptRef, b: ConceptRef, docId: number, verdict: RepairOpVerdict): Promise<void> {
     await this.#decisionLog.log({
       doc: docId,
       op: 'repair-distinct',
@@ -1270,7 +1273,7 @@ export class StreamingRepairer {
 /** The registry's own `confidence` column is numeric; the judge's is a three-valued enum. */
 const CONFIDENCE_SCORE: Record<string, number> = { high: 1, medium: 0.5, low: 0 };
 
-function refKey(ref: EntityRef): string {
+function refKey(ref: ConceptRef): string {
   return JSON.stringify([ref.category, ref.canonical]);
 }
 

@@ -22,7 +22,7 @@ interface Params {
  * Brute-force similarity over every canonical in the category.
  *
  * This is the generator the M2.5 gate is scored against: with the `identity` analyzer and
- * `max(levenshtein, tokenDice)` it must reproduce the pre-M4 `EntityRegistry.candidates()` output
+ * `max(levenshtein, tokenDice)` it must reproduce the pre-M4 `ConceptRegistry.candidates()` output
  * byte for byte on all 3,392 frozen pairs. Every detail below that looks incidental is load-bearing
  * for that equality.
  *

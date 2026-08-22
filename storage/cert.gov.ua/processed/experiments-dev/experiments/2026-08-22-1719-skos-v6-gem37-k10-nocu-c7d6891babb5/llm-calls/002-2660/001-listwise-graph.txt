@@ -1,0 +1,93 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Нові спроби використання вразливості 2017 року Microsoft Office" — evidence: <p>Всі памʼятають масові атаки шифрувальників Petya та Misha у 2017 для поширення яких використовувалася вразливість для віддаленого виконання коду, а саме CVE-2017-0199.</p><p>При отриманні листів з посиланнями на ресурс для завантаження Microsoft Word документу або ж просто з прикріпленим документом (наприклад з розширенням .rtf, .docx) потрібно бути особливо пильними, оскільки документ з розширенням .rtf може містити вбудований ole-обʼєкт, а документ з розширенням .docx - посилання на інший файл. Зазначимо, що ole-обʼєкт може завантажити і виконати сторонню Microsoft Windows програму, в том
+Entities:
+E1. MS Office
+E2. MS PowerPoint
+E3. CVE-2017-11882
+E4. MS Excel
+E5. major.exe
+E6. Microsoft Equation Editor
+E7. PGMB New Order 18-2077.xlsx
+E8. MS Word
+E9. Microsoft Office 2010
+E10. Microsoft Office 2007
+E11. Microsoft Office 2013
+E12. Microsoft Office 2016
+E13. Misha
+E14. CVE-2017-0199
+E15. Microsoft Word
+E16. Microsoft Office
+E17. Microsoft Windows
+E18. Office 2007
+E19. Office 2013
+E20. Office 2010
+E21. Office 2016
+E22. Windows 7
+E23. Windows Vista
+E24. Windows Server 2008
+E25. Windows Server 2012
+E26. Petya
+Mentions:
+M1. "Petya" (Software) — options: E1, E2, E3, E4, E5, E6, E7, E8, E9, E10
+M2. "Misha" (Software) — options: E1, E6, E9, E4, E8, E11, E2, E10, E12, E5
+M3. "CVE-2017-0199" (Software) — options: E3, E12, E7, E9, E11, E1, E6, E4, E10, E2
+M4. "Microsoft Word" (Software) — options: E8, E1, E6, E9, E4, E10, E11, E2, E12, E7
+M5. "Microsoft Office" (Software) — options: E1, E10, E9, E8, E11, E4, E12, E2, E6, E3
+M6. "Microsoft Windows" (Software) — options: E1, E10, E9, E6, E8, E11, E4, E12, E2, E3
+M7. "Office 2007" (Software) — options: E10, E9, E1, E11, E8, E12, E2, E7, E3, E4
+M8. "Office 2013" (Software) — options: E11, E1, E9, E12, E10, E8, E4, E6, E3, E7
+M9. "Office 2010" (Software) — options: E9, E11, E1, E12, E10, E8, E6, E3, E4, E7
+M10. "Office 2016" (Software) — options: E12, E1, E9, E11, E10, E8, E2, E6, E3, E4
+M11. "Windows 7" (Software) — options: E10, E3, E1, E2, E4, E7, E9, E8, E11, E12
+M12. "Windows Vista" (Software) — options: E1, E2, E3, E6, E4, E10, E9, E8, E11, E12
+M13. "Windows Server 2008" (Software) — options: E10, E1, E9, E7, E11, E4, E12, E2, E8, E3
+M14. "Windows Server 2012" (Software) — options: E11, E9, E1, E4, E12, E10, E7, E2, E3, E8
+
+=== RESPONSE (4.1s, in 2219 / out 344 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"ransomware used in cyberattacks"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"ransomware used in cyberattacks"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"remote code execution vulnerability"},{"m":"M4","id":"E8","p":null,"r":null,"g":null},{"m":"M5","id":"E1","p":null,"r":null,"g":null},{"m":"M6","id":"NEW","p":null,"r":null,"g":"operating system"},{"m":"M7","id":"E10","p":null,"r":null,"g":null},{"m":"M8","id":"E11","p":null,"r":null,"g":null},{"m":"M9","id":"E9","p":null,"r":null,"g":null},{"m":"M10","id":"E12","p":null,"r":null,"g":null},{"m":"M11","id":"NEW","p":"E17","r":"v","g":"operating system version"},{"m":"M12","id":"NEW","p":"E17","r":"v","g":"operating system version"},{"m":"M13","id":"NEW","p":"E17","r":"v","g":"server operating system version"},{"m":"M14","id":"NEW","p":"E17","r":"v","g":"server operating system version"}]}

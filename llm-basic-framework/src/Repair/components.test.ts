@@ -1,4 +1,4 @@
-import type { EntityRef, SuspectPair } from '../EntityRegistry/EntityRegistry';
+import type { ConceptRef, SuspectPair } from '../ConceptRegistry/ConceptRegistry';
 import { buildComponents, capComponents, type SuspectComponent } from './components';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -9,10 +9,10 @@ import { test } from 'node:test';
  * `src/Evaluation/unionFind.ts:closure`, already covered by its own tests.
  */
 
-const ref = (category: string, canonical: string): EntityRef => ({ category, canonical });
+const ref = (category: string, canonical: string): ConceptRef => ({ category, canonical });
 
 let nextDoc = 0;
-function pair(a: EntityRef, b: EntityRef, opts: { signal?: SuspectPair['signal']; score?: number } = {}): SuspectPair {
+function pair(a: ConceptRef, b: ConceptRef, opts: { signal?: SuspectPair['signal']; score?: number } = {}): SuspectPair {
   return { a, b, signal: opts.signal ?? 'union-blocker', score: opts.score ?? 0.9, docId: nextDoc++ };
 }
 
@@ -110,7 +110,7 @@ test('refKey must not collide across a category/canonical boundary (e.g. "A"/"B 
   const components = buildComponents([pair(ref1, other1, { score: 0.9 }), pair(ref2, other2, { score: 0.9 })]);
 
   assert.equal(components.length, 2, 'a colliding string key must not fold unrelated entities into one component');
-  const componentOf = (target: EntityRef) =>
+  const componentOf = (target: ConceptRef) =>
     components.find((c) => c.entities.some((e) => e.category === target.category && e.canonical === target.canonical));
   const c1 = componentOf(ref1);
   const c2 = componentOf(ref2);

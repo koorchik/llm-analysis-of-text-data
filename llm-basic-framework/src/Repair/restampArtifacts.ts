@@ -1,4 +1,4 @@
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { sortByNumericId, writeJsonAtomic } from '../utils/fsUtils';
 import { StreamingArtifact } from '../utils/validationUtils';
@@ -7,7 +7,7 @@ import fs from 'fs/promises';
 
 export interface RestampArtifactsParams {
   artifactsDir: string;
-  entityRegistry: EntityRegistry;
+  conceptRegistry: ConceptRegistry;
   schemaRegistry: SchemaRegistry;
   /**
    * Restrict re-stamping to exactly these basenames within `artifactsDir`. Omitted = every artifact
@@ -37,7 +37,7 @@ export interface RestampArtifactsParams {
 export async function restampArtifacts(
   params: RestampArtifactsParams
 ): Promise<{ changed: number; total: number }> {
-  const { artifactsDir, entityRegistry, schemaRegistry } = params;
+  const { artifactsDir, conceptRegistry, schemaRegistry } = params;
   if (!existsSync(artifactsDir)) return { changed: 0, total: 0 };
 
   const files = sortByNumericId(params.files ?? (await fs.readdir(artifactsDir)));
@@ -68,8 +68,8 @@ export async function restampArtifacts(
       // now-ambiguous canonical. This is what keeps a split LOCAL: detached aliases now resolve
       // to the split-off canonical, and exactly their mentions follow.
       const canonical =
-        (entity.matchedVia && entityRegistry.resolve(entity.category, entity.matchedVia)) ||
-        entityRegistry.resolve(entity.category, entity.name);
+        (entity.matchedVia && conceptRegistry.resolve(entity.category, entity.matchedVia)) ||
+        conceptRegistry.resolve(entity.category, entity.name);
       if (canonical) entity.normalizedName = canonical;
     }
 
@@ -78,9 +78,9 @@ export async function restampArtifacts(
         schemaRegistry.resolveCategory(relation.headCategory) || relation.headCategory;
       relation.tailCategory =
         schemaRegistry.resolveCategory(relation.tailCategory) || relation.tailCategory;
-      const head = entityRegistry.resolve(relation.headCategory, relation.head);
+      const head = conceptRegistry.resolve(relation.headCategory, relation.head);
       if (head) relation.normalizedHead = head;
-      const tail = entityRegistry.resolve(relation.tailCategory, relation.tail);
+      const tail = conceptRegistry.resolve(relation.tailCategory, relation.tail);
       if (tail) relation.normalizedTail = tail;
     }
 

@@ -1,0 +1,188 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: еагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p clas … дковувати та збирати дані вводу з клавіатури, робити скріншоти та отримувати облікові дані, що використовуються в різних програмах системи (наприклад Google Chrome, Mozilla Firefox, Microsoft Outlook, IceDragon, FILEZILLA, тощо). З’явився Agent Tesla в 2014 році і виконував функції кейлогера та викрадача паролів. Дане ШПЗ є комерційним, ліцензію на його використання мо … йл перевіряє наявність іншого екземпляру ШПЗ Agent Tesla та завершує його роботу, якщо він присутній у системі. Далі програма запускає системний файл RegAsm.exe (https://docs.microsoft.com/en-us/dotnet/framework/tools/regasm-exe-assembly-registration-tool):</p><p class="ql-align-justify"></p><p class="ql-alig … lass="ql-align-justify">Наприклад, для отримання збережених облікових даних у браузері <em>Internet </em>Explorer використовується виклики бібліотеки vaultcli.dll</p><p class="ql-align-justify">&nbsp
+Entities:
+E1. MS Office [aka Microsoft Office]
+E2. Internet Explorer
+E3. MS PowerPoint
+E4. MS Excel
+E5. Adobe Flash Player
+E6. .NET Framework
+E7. Petya
+E8. Windows Vista
+E9. CVE-2017-0199
+E10. MS Word [aka Microsoft Word]
+E11. ckZ89.ExE
+E12. cmd.exe
+E13. spi.exe
+E14. major.exe
+E15. powershell.exe
+E16. Double Kill
+E17. VBScript
+E18. Microsoft Windows
+E19. До оплати від 11.12.18.lzh
+E20. Win32k
+E21. Windows 7
+E22. Misha
+E23. ChakraCore
+E24. Microsoft Exchange Server
+E25. Microsoft Edge
+E26. Smokeloader
+E27. Microsoft Office 2007 [aka Office 2007]
+E28. Microsoft Office 2010 [aka Office 2010]
+E29. Microsoft Equation Editor
+E30. Microsoft Office 2013 [aka Office 2013]
+E31. Microsoft Office Services and Web Apps
+E32. Windows Server 2012
+E33. Windows Server 2008
+E34. PGMB New Order 18-2077.xlsx
+E35. Windows Host Compute Service Shim
+E36. Microsoft Office 2016 [aka Office 2016]
+E37. CVE-2017-11882
+E38. RegAsm.exe
+E39. vaultcli.dll
+E40. WinSCP
+E41. Google Chrome
+E42. Mozilla Firefox
+E43. Microsoft Outlook
+E44. IceDragon
+E45. Yandex Browser
+E46. Iridium Browser
+E47. Epic Privacy Browser
+E48. Chromium Browser
+E49. 7Star Browser
+E50. Torch Browser
+E51. ChromePlus Browser
+E52. Kometa Browser
+E53. Amigo Browser
+E54. Brave Browser
+E55. CentBrowser
+E56. Liebao Browser
+E57. Elements Browser
+E58. Vivaldi Browser
+E59. Citrio Browser
+E60. 360Chrome Browser
+E61. Uran Browser
+E62. Chedot Browser
+E63. Orbitum Browser
+E64. Sputnik Browser
+E65. Comodo Dragon Browser
+E66. CocCoc Browser
+E67. QIP Surf Browser
+E68. Coowon Browser
+E69. Opera Browser
+E70. Thunderbird
+E71. Claws Mail
+E72. Postbox Credential
+E73. Foxmail
+E74. Opera Mail
+E75. Pocomail
+E76. Becky!
+E77. OpenVPN
+E78. FileZilla
+E79. Paltalk
+E80. jDownloader
+E81. SmartFTP
+E82. FTP Commander
+E83. WS_FTP
+E84. FTPGetter
+E85. Trillian
+E86. Agent Tesla
+Mentions:
+M1. "Agent Tesla" (Software) — options: E1, E2, E3, E4
+M2. "RegAsm.exe" (Software) — options: E4, E11, E12, E1
+M3. "vaultcli.dll" (Software) — options: E15, E16, E1, E17
+M4. "WinSCP" (Software) — options: E1, E20, E4, E21
+M5. "Google Chrome" (Software) — options: E2, E16, E23, E1
+M6. "Mozilla Firefox" (Software) — options: E2, E16, E1, E6
+M7. "Microsoft Outlook" (Software) — options: E1, E18, E25, E4
+M8. "IceDragon" (Software) — options: E2, E23, E29, E4
+M9. "Yandex Browser" (Software) — options: E2, E21, E32, E25
+M10. "Iridium Browser" (Software) — options: E2, E21, E32, E25
+M11. "Epic Privacy Browser" (Software) — options: E2, E23, E32, E25
+M12. "Chromium Browser" (Software) — options: E2, E23, E32, E25
+M13. "7Star Browser" (Software) — options: E2, E26, E8, E25
+M14. "Torch Browser" (Software) — options: E2, E32, E25, E24
+M15. "ChromePlus Browser" (Software) — options: E2, E26, E32, E4
+M16. "Kometa Browser" (Software) — options: E2, E26, E8, E25
+M17. "Amigo Browser" (Software) — options: E2, E26, E32, E25
+M18. "Brave Browser" (Software) — options: E2, E26, E32, E25
+M19. "CentBrowser" (Software) — options: E2, E21, E32, E1
+M20. "Liebao Browser" (Software) — options: E2, E26, E32, E25
+M21. "Elements Browser" (Software) — options: E2, E4, E32, E25
+M22. "Vivaldi Browser" (Software) — options: E2, E21, E8, E25
+M23. "Citrio Browser" (Software) — options: E2, E32, E25, E18
+M24. "360Chrome Browser" (Software) — options: E2, E26, E32, E25
+M25. "Uran Browser" (Software) — options: E2, E21, E32, E25
+M26. "Chedot Browser" (Software) — options: E2, E32, E25, E18
+M27. "Orbitum Browser" (Software) — options: E2, E21, E32, E1
+M28. "Sputnik Browser" (Software) — options: E2, E26, E32, E25
+M29. "Comodo Dragon Browser" (Software) — options: E2, E29, E35, E25
+M30. "CocCoc Browser" (Software) — options: E2, E26, E32, E23
+M31. "QIP Surf Browser" (Software) — options: E2, E26, E32, E25
+M32. "Coowon Browser" (Software) — options: E2, E21, E32, E25
+M33. "Opera Browser" (Software) — options: E2, E32, E1, E5
+M34. "Thunderbird" (Software) — options: E1, E16, E10, E2
+M35. "Claws Mail" (Software) — options: E1, E8, E14, E10
+M36. "Postbox Credential" (Software) — options: E1, E16, E3, E4
+M37. "Foxmail" (Software) — options: E1, E16, E6, E4
+M38. "Opera Mail" (Software) — options: E1, E7, E14, E24
+M39. "Pocomail" (Software) — options: E1, E16, E3, E7
+M40. "Becky!" (Software) — options: E4, E7, E6, E1
+M41. "OpenVPN" (Software) — options: E1, E7, E6, E4
+M42. "FileZilla" (Software) — options: E4, E16, E1, E27
+M43. "Paltalk" (Software) — options: E10, E7, E6, E3
+M44. "jDownloader" (Software) — options: E2, E26, E5, E32
+M45. "SmartFTP" (Software) — options: E3, E14, E26, E4
+M46. "FTP Commander" (Software) — options: E1, E26, E4, E24
+M47. "WS_FTP" (Software) — options: E4, E17, E6, E1
+M48. "FTPGetter" (Software) — options: E2, E7, E4, E26
+M49. "Trillian" (Software) — options: E1, E22, E16, E4
+
+=== RESPONSE (8.8s, in 3637 / out 1278 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"commercial keylogger and password stealing malware"},{"m":"M2","id":"NEW","p":"E6","r":"p","g":".NET Framework assembly registration tool"},{"m":"M3","id":"NEW","p":"E18","r":"p","g":"Windows system library for credential management"},{"m":"M4","id":"NEW","p":null,"r":null,"g":"file transfer client targeted for credentials"},{"m":"M5","id":"NEW","p":null,"r":null,"g":"web browser targeted for stored credentials"},{"m":"M6","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential harvesting"},{"m":"M7","id":"NEW","p":"E1","r":"p","g":"email client targeted for credentials"},{"m":"M8","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential extraction"},{"m":"M9","id":"NEW","p":null,"r":null,"g":"web browser targeted for credentials"},{"m":"M10","id":"NEW","p":null,"r":null,"g":"privacy browser targeted for credential theft"},{"m":"M11","id":"NEW","p":null,"r":null,"g":"privacy-focused web browser"},{"m":"M12","id":"NEW","p":null,"r":null,"g":"open-source web browser"},{"m":"M13","id":"NEW","p":null,"r":null,"g":"web browser targeted for credentials"},{"m":"M14","id":"NEW","p":null,"r":null,"g":"media-oriented web browser"},{"m":"M15","id":"NEW","p":null,"r":null,"g":"web browser targeted by malware"},{"m":"M16","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential extraction"},{"m":"M17","id":"NEW","p":null,"r":null,"g":"web browser targeted by Agent Tesla"},{"m":"M18","id":"NEW","p":null,"r":null,"g":"privacy browser targeted for credentials"},{"m":"M19","id":"NEW","p":null,"r":null,"g":"Chromium-based web browser"},{"m":"M20","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential theft"},{"m":"M21","id":"NEW","p":null,"r":null,"g":"web browser targeted by malware"},{"m":"M22","id":"NEW","p":null,"r":null,"g":"customizable web browser"},{"m":"M23","id":"NEW","p":null,"r":null,"g":"web browser targeted for credentials"},{"m":"M24","id":"NEW","p":null,"r":null,"g":"dual-engine web browser"},{"m":"M25","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential harvesting"},{"m":"M26","id":"NEW","p":null,"r":null,"g":"web browser targeted by malware"},{"m":"M27","id":"NEW","p":null,"r":null,"g":"social networking web browser"},{"m":"M28","id":"NEW","p":null,"r":null,"g":"web browser targeted for credentials"},{"m":"M29","id":"NEW","p":null,"r":null,"g":"security-oriented web browser"},{"m":"M30","id":"NEW","p":null,"r":null,"g":"web browser targeted for credentials"},{"m":"M31","id":"NEW","p":null,"r":null,"g":"web browser targeted by malware"},{"m":"M32","id":"NEW","p":null,"r":null,"g":"gaming-focused web browser"},{"m":"M33","id":"NEW","p":null,"r":null,"g":"web browser targeted for credential theft"},{"m":"M34","id":"NEW","p":null,"r":null,"g":"email client targeted for credentials"},{"m":"M35","id":"NEW","p":null,"r":null,"g":"lightweight email client"},{"m":"M36","id":"NEW","p":null,"r":null,"g":"email client targeted for credential harvesting"},{"m":"M37","id":"NEW","p":null,"r":null,"g":"email client software"},{"m":"M38","id":"NEW","p":null,"r":null,"g":"email client targeted by malware"},{"m":"M39","id":"NEW","p":null,"r":null,"g":"email client targeted for credentials"},{"m":"M40","id":"NEW","p":null,"r":null,"g":"email client application"},{"m":"M41","id":"NEW","p":null,"r":null,"g":"virtual private network client"},{"m":"M42","id":"NEW","p":null,"r":null,"g":"FTP client targeted for stored credentials"},{"m":"M43","id":"NEW","p":null,"r":null,"g":"instant messaging and group chat software"},{"m":"M44","id":"NEW","p":null,"r":null,"g":"download manager application"},{"m":"M45","id":"NEW","p":null,"r":null,"g":"FTP client targeted for credential extraction"},{"m":"M46","id":"NEW","p":null,"r":null,"g":"FTP client application"},{"m":"M47","id":"NEW","p":null,"r":null,"g":"file transfer client targeted by malware"},{"m":"M48","id":"NEW","p":null,"r":null,"g":"automated FTP client software"},{"m":"M49","id":"NEW","p":null,"r":null,"g":"instant messaging application"}]}

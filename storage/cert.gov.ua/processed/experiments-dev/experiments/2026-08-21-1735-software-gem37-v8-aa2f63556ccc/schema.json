@@ -7,8 +7,8 @@
       "aliases": [],
       "firstSeen": 20,
       "ladder": {
-        "version": 3,
-        "exampleCount": 59,
+        "version": 4,
+        "exampleCount": 121,
         "runs": 3,
         "models": [
           "run-1",
@@ -18,36 +18,38 @@
         "rungs": [
           {
             "g": 0,
-            "alias": "release",
-            "example": "Microsoft Office 2016",
+            "alias": "software-item",
+            "example": "Windows Server 2008",
             "disputed": false
           },
           {
             "g": 1,
             "alias": "product",
-            "example": "Microsoft Office",
-            "disputed": true,
+            "example": "Microsoft Windows",
+            "disputed": false,
             "move": "drop-qualifier",
             "preserving": true,
-            "foldTest": "'Microsoft Office 2016 was involved in an event' -> 'Microsoft Office was involved in an event': same claim, less detail",
+            "foldTest": "'Windows Server 2008 was involved in an event' -> 'Microsoft Windows was involved in an event': same claim, less detail",
             "edgeKind": "coarsens-to"
+          },
+          {
+            "g": 2,
+            "alias": "suite",
+            "example": "MS Office",
+            "disputed": true,
+            "move": "part-of",
+            "preserving": false,
+            "foldTest": "'MS Word was involved in an event' -> 'MS Office was involved in an event': attributed to a distinct containing referent",
+            "edgeKind": "part-of"
           }
         ],
         "placements": [
           {
             "surface": "MS Office",
-            "g": 1
-          },
-          {
-            "surface": "Microsoft Office",
-            "g": 1
+            "g": 2
           },
           {
             "surface": "MS Word",
-            "g": 1
-          },
-          {
-            "surface": "Microsoft Word",
             "g": 1
           },
           {
@@ -55,28 +57,12 @@
             "g": 1
           },
           {
-            "surface": "MS PowerPoint",
-            "g": 1
-          },
-          {
             "surface": "major.exe",
-            "g": 0
-          },
-          {
-            "surface": "PGMB New Order 18-2077.xlsx",
             "g": 0
           },
           {
             "surface": "Microsoft Equation Editor",
             "g": 1
-          },
-          {
-            "surface": "Microsoft Office 2016",
-            "g": 0
-          },
-          {
-            "surface": "Office 2016",
-            "g": 0
           },
           {
             "surface": "Microsoft Office 2013",
@@ -87,23 +73,11 @@
             "g": 0
           },
           {
-            "surface": "Office 2010",
-            "g": 0
-          },
-          {
             "surface": "Microsoft Office 2007",
             "g": 0
           },
           {
-            "surface": "Office 2007",
-            "g": 0
-          },
-          {
-            "surface": "Petya",
-            "g": 1
-          },
-          {
-            "surface": "CVE-2017-0199",
+            "surface": "Misha",
             "g": 0
           },
           {
@@ -111,35 +85,15 @@
             "g": 1
           },
           {
-            "surface": "Windows 7",
-            "g": 0
-          },
-          {
-            "surface": "Windows Vista",
-            "g": 0
-          },
-          {
             "surface": "Windows Server 2008",
             "g": 0
           },
           {
-            "surface": "Windows Server 2012",
-            "g": 0
-          },
-          {
-            "surface": "spi.exe",
-            "g": 0
-          },
-          {
-            "surface": "ckZ89.ExE",
+            "surface": "Smokeloader",
             "g": 0
           },
           {
             "surface": "До оплати від 11.12.18.lzh",
-            "g": 0
-          },
-          {
-            "surface": "Рахунки и новые списки.lzh",
             "g": 0
           },
           {
@@ -151,51 +105,23 @@
             "g": 0
           },
           {
-            "surface": "powershell.exe",
+            "surface": "Microsoft Edge",
             "g": 0
           },
           {
-            "surface": "Internet Explorer",
-            "g": 1
-          },
-          {
-            "surface": "Microsoft Edge",
-            "g": 1
-          },
-          {
-            "surface": "Microsoft Office Services and Web Apps",
-            "g": 1
-          },
-          {
             "surface": "ChakraCore",
-            "g": 1
-          },
-          {
-            "surface": ".NET Framework",
-            "g": 1
+            "g": 0
           },
           {
             "surface": "Microsoft Exchange Server",
-            "g": 1
-          },
-          {
-            "surface": "Windows Host Compute Service Shim",
-            "g": 1
+            "g": 0
           },
           {
             "surface": "VBScript",
-            "g": 1
+            "g": 0
           },
           {
-            "surface": "Win32k",
-            "g": 1
-          },
-          {
-            "surface": "Double Kill",
-            "g": 1
-          },
-          {
-            "surface": "CVE-2018-8120",
+            "surface": "CVE-2018-8174",
             "g": 0
           },
           {
@@ -203,15 +129,7 @@
             "g": 0
           },
           {
-            "surface": "CVE-2018-0958",
-            "g": 0
-          },
-          {
             "surface": "CVE-2018-8124",
-            "g": 0
-          },
-          {
-            "surface": "CVE-2018-8127",
             "g": 0
           },
           {
@@ -219,39 +137,131 @@
             "g": 0
           },
           {
-            "surface": "CVE-2018-8134",
-            "g": 0
-          },
-          {
             "surface": "CVE-2018-8136",
             "g": 0
           },
           {
-            "surface": "CVE-2018-8141",
+            "surface": "CVE-2018-8897",
             "g": 0
           },
           {
-            "surface": "CVE-2018-8170",
+            "surface": "RegAsm.exe",
+            "g": 0
+          },
+          {
+            "surface": "WinSCP",
+            "g": 0
+          },
+          {
+            "surface": "Microsoft Outlook",
+            "g": 1
+          },
+          {
+            "surface": "Yandex Browser",
+            "g": 0
+          },
+          {
+            "surface": "Chromium Browser",
+            "g": 0
+          },
+          {
+            "surface": "Torch Browser",
+            "g": 0
+          },
+          {
+            "surface": "Amigo Browser",
+            "g": 0
+          },
+          {
+            "surface": "CentBrowser",
+            "g": 0
+          },
+          {
+            "surface": "Elements Browser",
+            "g": 0
+          },
+          {
+            "surface": "360Chrome Browser",
+            "g": 0
+          },
+          {
+            "surface": "Chedot Browser",
+            "g": 0
+          },
+          {
+            "surface": "Comodo Dragon Browser",
+            "g": 0
+          },
+          {
+            "surface": "QIP Surf Browser",
+            "g": 0
+          },
+          {
+            "surface": "Opera Browser",
+            "g": 0
+          },
+          {
+            "surface": "Postbox Credential",
+            "g": 0
+          },
+          {
+            "surface": "Opera Mail",
+            "g": 0
+          },
+          {
+            "surface": "OpenVPN",
+            "g": 0
+          },
+          {
+            "surface": "Paltalk",
+            "g": 0
+          },
+          {
+            "surface": "FTP Commander",
+            "g": 0
+          },
+          {
+            "surface": "FTPGetter",
+            "g": 0
+          },
+          {
+            "surface": "Remote Utilities",
+            "g": 0
+          },
+          {
+            "surface": "installer.exe",
+            "g": 0
+          },
+          {
+            "surface": "rutserv.exe",
+            "g": 0
+          },
+          {
+            "surface": "Meterpreter",
+            "g": 0
+          },
+          {
+            "surface": "b.exe",
             "g": 0
           }
         ],
         "rejected": [
           {
-            "candidate": "Software Suite",
+            "candidate": "Chromium-based Browsers",
             "gate": "3",
-            "reason": "Software suites like Microsoft Office are already represented as base product entities at g1; adding an extra suite layer creates inconsistent nesting across standalone applications."
+            "reason": "Synthetic grouping category not represented by a concrete containing entity in the registry."
           },
           {
-            "candidate": "Vulnerability / CVE Identifier",
+            "candidate": "Vulnerability",
             "gate": "1",
-            "reason": "CVE records denote security flaws and vulnerability entries, not software products or components."
+            "reason": "Vulnerabilities (such as CVE identifiers) belong to a separate category from Software."
           }
         ],
-        "notes": "Versioned releases, specific build executables, and delivery scripts reside at g0. Removing version, year, and edition qualifiers yields the product-level referent at g1.",
+        "notes": "CVE identifiers are included in the supplied examples and placed at g0 as leaf-level specific inputs, though conceptually they describe vulnerability advisories rather than software entities.",
         "disagreements": [
-          "g1 \"Microsoft Office\": preserving true vs false (run 2)"
+          "g2 \"MS Office\": preserving false vs true (run 2)"
         ],
-        "discoveredAtDoc": 3028
+        "discoveredAtDoc": 40102
       }
     }
   ],
@@ -275,6 +285,11 @@
     },
     {
       "doc": 3028,
+      "op": "discover-ladder",
+      "name": "Software"
+    },
+    {
+      "doc": 40102,
       "op": "discover-ladder",
       "name": "Software"
     }

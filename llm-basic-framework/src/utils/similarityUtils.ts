@@ -32,7 +32,7 @@ export function stringSimilarity(a: string, b: string): number {
 /**
  * `bestMatches` was **removed in M4**.
  *
- * Its two importers are migrated: `EntityRegistry` now exposes `snapshot()` for
+ * Its two importers are migrated: `ConceptRegistry` now exposes `snapshot()` for
  * `StringSimilarityGenerator`, and `SchemaRegistry` uses `Normalization/matchStrings`. Both share the
  * `(-sim, key)` tie-break M2.5 established, so neither can reintroduce the insertion-order leak that
  * made 37.6% of candidate lists run-dependent.

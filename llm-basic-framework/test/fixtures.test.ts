@@ -1,4 +1,4 @@
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { StringSimilarityGenerator } from '../src/Normalization/candidates/StringSimilarityGenerator';
 import {
   buildFixtureRegistry,
@@ -15,7 +15,7 @@ import path from 'path';
  * M2.5 — guards on the behaviour-preservation fixture that M4's gate is scored against.
  *
  * These tests protect a reference that cannot be re-derived later: M3 replaces the registry format
- * and M4 deletes `EntityRegistry.candidates()`, so if the fixture or golden file drifts before then,
+ * and M4 deletes `ConceptRegistry.candidates()`, so if the fixture or golden file drifts before then,
  * there is nothing to fall back on. Regenerate with `npm run capture-golden`; check with
  * `npm run capture-golden -- --verify`.
  */
@@ -107,10 +107,10 @@ test(
   }
 );
 
-test('the committed fixture loads through EntityRegistry', { skip: !fixtureAvailable }, async () => {
-  const registry = new EntityRegistry({ filePath: FIXTURE });
+test('the committed fixture loads through ConceptRegistry', { skip: !fixtureAvailable }, async () => {
+  const registry = new ConceptRegistry({ filePath: FIXTURE });
   await registry.load();
-  assert.equal(registry.categories().length, 10);
+  assert.equal(registry.conceptSchemes().length, 10);
   // A spot check that the alias index was built, so `resolve()` works case-insensitively.
   assert.ok(registry.resolve('HackerGroup', 'uac-0010'), 'case-folded resolve must hit');
 });
@@ -236,9 +236,9 @@ test(
     //
     // The exact per-query comparison against the golden lists lives in test/gate.test.ts, which runs
     // all 3,392 pairs through StringSimilarityGenerator — the M4 replacement for the removed
-    // EntityRegistry.candidates(). A sampled copy of it here would be redundant.
+    // ConceptRegistry.candidates(). A sampled copy of it here would be redundant.
     const doc = loadGolden();
-    const registry = new EntityRegistry({ filePath: FIXTURE });
+    const registry = new ConceptRegistry({ filePath: FIXTURE });
     await registry.load();
     const generator = new StringSimilarityGenerator();
     await generator.prepare(registry.snapshot());

@@ -1,5 +1,5 @@
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { StreamingNormalizer } from './StreamingNormalizer';
@@ -83,41 +83,14 @@ async function setup(
   );
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
+  await conceptRegistry.load();
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
-  schemaRegistry.setLadder(
-    'HackerGroup',
-    {
-      version: 1,
-      exampleCount: 2,
-      runs: 1,
-      models: ['fake'],
-      rungs: [
-        { g: 0, alias: 'specific record', example: 'UAC-0002', disputed: false },
-        {
-          g: 1,
-          alias: 'primary entity',
-          example: 'UAC-0002x',
-          move: 'drop-qualifier',
-          preserving: true,
-          disputed: false,
-          edgeKind: 'coarsens-to',
-        },
-      ],
-      rejected: [],
-      notes: '',
-      disagreements: [],
-      discoveredAtDoc: 0,
-    },
-    0
-  );
   // A near-miss candidate so the judge is consulted (string-sim retrieves it).
-  entityRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
-  entityRegistry.setRung('HackerGroup', 'UAC-0002x', 'g1');
+  conceptRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
   await schemaRegistry.save();
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   const llm = cannedLlm(reply);
   const decisionLog = new DecisionLog({ filePath: path.join(dir, 'decisions.jsonl'), enabled: true });
@@ -126,11 +99,11 @@ async function setup(
     outputDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
     repairer: options.repairer,
   });
-  return { dir, normalizer, llm, entityRegistry, decisionLog, schemaRegistry };
+  return { dir, normalizer, llm, conceptRegistry, decisionLog, schemaRegistry };
 }
 
 async function setupGlossRetry(tag: string, replies: string[]) {
@@ -149,16 +122,14 @@ async function setupGlossRetry(tag: string, replies: string[]) {
   );
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
+  await conceptRegistry.load();
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
-  entityRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
-  entityRegistry.setRung('HackerGroup', 'UAC-0002x', 'g1');
-  entityRegistry.mint('HackerGroup', 'UAC-0099x', { doc: 0, date: '2023-01-01' });
-  entityRegistry.setRung('HackerGroup', 'UAC-0099x', 'g1');
+  conceptRegistry.mint('HackerGroup', 'UAC-0002x', { doc: 0, date: '2023-01-01' });
+  conceptRegistry.mint('HackerGroup', 'UAC-0099x', { doc: 0, date: '2023-01-01' });
   await schemaRegistry.save();
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   const llm = cannedLlmSequence(replies);
   const decisionLog = new DecisionLog({ filePath: path.join(dir, 'decisions.jsonl'), enabled: true });
@@ -167,10 +138,10 @@ async function setupGlossRetry(tag: string, replies: string[]) {
     outputDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
   });
-  return { dir, normalizer, llm, entityRegistry };
+  return { dir, normalizer, llm, conceptRegistry };
 }
 
 async function readDecisions(dir: string): Promise<Array<Record<string, unknown>>> {
@@ -188,7 +159,6 @@ const verdict = (extra: Record<string, unknown>) =>
         index: 1,
         mention: 'UAC-0002',
         category: 'HackerGroup',
-        mentionRung: 'g0',
         verdict: 'mint',
         target: null,
         parentCandidate: null,
@@ -205,8 +175,8 @@ describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
     await normalizer.processFile('1.json');
     const judgePrompt = llm.prompts.find((prompt) => prompt.includes('UNRESOLVED MENTIONS'));
     assert.ok(judgePrompt, 'link-judge prompt rendered');
-    assert.ok(judgePrompt!.includes('UAC-0002x [g1]'), 'candidate labelled with its rung');
-    assert.ok(judgePrompt!.includes('g0=specific record'), 'active category ladder is rendered');
+    assert.ok(judgePrompt!.includes('UAC-0002x'), 'candidate rendered');
+    assert.ok(!judgePrompt!.includes('ladder'), 'no ladder vocabulary in the prompt');
     assert.ok(judgePrompt!.includes('(HackerGroup)'), 'category remains available');
     assert.ok(judgePrompt!.includes('test report'), 'generic source evidence remains available');
     assert.ok(!judgePrompt!.includes('Attacker'), 'incident role is not matching evidence');
@@ -214,61 +184,50 @@ describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
     assert.ok(!/\{\{\w+\}\}/.test(judgePrompt!), 'no unrendered placeholder');
   });
 
-  it('mints at the judged rung', async () => {
-    const { normalizer, entityRegistry } = await setup('rung', verdict({ mentionRung: 'g0' }));
-    await normalizer.processFile('1.json');
-    assert.equal(entityRegistry.rungOf('HackerGroup', 'UAC-0002'), 'g0');
-  });
-
-  it('demotes a rung that is absent from the active category ladder to g0', async () => {
-    const { normalizer, entityRegistry } = await setup('invalid-rung', verdict({ mentionRung: 'g3' }));
-    await normalizer.processFile('1.json');
-    assert.equal(entityRegistry.rungOf('HackerGroup', 'UAC-0002'), 'g0');
-  });
-
-  it('a mint carrying a valid parentCandidate records a granularity edge with judge provenance', async () => {
-    const { normalizer, entityRegistry } = await setup(
+  it('a mint carrying a valid parentCandidate records a broadMatch edge with judge provenance', async () => {
+    const { normalizer, conceptRegistry } = await setup(
       'parent',
       verdict({ parentCandidate: 'UAC-0002x', edgeKind: 'part-of' })
     );
     await normalizer.processFile('1.json');
 
-    const edges = entityRegistry.granularityEdges('HackerGroup');
+    const edges = conceptRegistry.broaderEdges('HackerGroup');
     assert.equal(edges.length, 1, 'the hard-non-merge-plus-edge outcome');
-    assert.equal(edges[0].from, 'UAC-0002');
-    assert.equal(edges[0].to, 'UAC-0002x');
-    assert.equal(edges[0].kind, 'coarsens-to', 'edge kind is derived from the active ladder');
+    assert.equal(edges[0].narrower, 'UAC-0002');
+    assert.equal(edges[0].broader, 'UAC-0002x');
+    assert.equal(edges[0].type, 'broaderPartitive', 'the legacy edgeKind answer maps onto the ISO 25964 typing');
+    assert.equal(edges[0].similarityScore, null, 'no embeddings client injected: null score');
     assert.equal(edges[0].decision, 'judge');
     assert.equal(edges[0].evidence, 'test');
     // Still two distinct canonicals — the edge is a connection, never a merge.
-    assert.equal(entityRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002');
+    assert.equal(conceptRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002');
   });
 
   it('a parentCandidate not in the candidate list is dropped; the mint stands', async () => {
-    const { normalizer, entityRegistry } = await setup(
+    const { normalizer, conceptRegistry } = await setup(
       'badparent',
       verdict({ parentCandidate: 'Sandworm', edgeKind: 'part-of' })
     );
     await normalizer.processFile('1.json');
-    assert.equal(entityRegistry.granularityEdges('HackerGroup').length, 0);
-    assert.equal(entityRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002');
+    assert.equal(conceptRegistry.broaderEdges('HackerGroup').length, 0);
+    assert.equal(conceptRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002');
   });
 
   it('a link to an unlisted target is demoted to mint (strict candidate matching)', async () => {
-    const { normalizer, entityRegistry } = await setup(
+    const { normalizer, conceptRegistry } = await setup(
       'strict',
       verdict({ verdict: 'link', target: 'Sandworm' })
     );
     await normalizer.processFile('1.json');
-    assert.equal(entityRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002', 'minted, not linked');
+    assert.equal(conceptRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002', 'minted, not linked');
   });
 
   it('defer mints provisionally, queues the pair, and logs a defer decision with a null target', async () => {
-    const { normalizer, entityRegistry, dir } = await setup('defer', verdict({ verdict: 'defer' }));
+    const { normalizer, conceptRegistry, dir } = await setup('defer', verdict({ verdict: 'defer' }));
     await normalizer.processFile('1.json');
 
-    assert.equal(entityRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002', 'provisional mint');
-    const queued = entityRegistry.deferred();
+    assert.equal(conceptRegistry.resolve('HackerGroup', 'UAC-0002'), 'UAC-0002', 'provisional mint');
+    const queued = conceptRegistry.deferred();
     assert.equal(queued.length, 1);
     assert.equal(queued[0].mintedAs, 'UAC-0002');
 
@@ -298,40 +257,40 @@ describe('StreamingNormalizer built-in judge (SKEIN v2)', () => {
 
 describe('StreamingNormalizer matching metadata', () => {
   it('stores a source-grounded gloss for later candidate retrieval', async () => {
-    const { normalizer, entityRegistry } = await setup(
+    const { normalizer, conceptRegistry } = await setup(
       'gloss-mint',
       verdict({ gloss: 'Group linked to a wave of energy-sector intrusions' })
     );
     await normalizer.processFile('1.json');
-    const entries = entityRegistry.snapshot().entries('HackerGroup');
+    const entries = conceptRegistry.snapshot().entries('HackerGroup');
     const uac2 = entries.find((e) => e.canonical === 'UAC-0002');
-    assert.equal(uac2?.gloss, 'Group linked to a wave of energy-sector intrusions');
+    assert.equal(uac2?.definition, 'Group linked to a wave of energy-sector intrusions');
   });
 
   it("a link verdict's gloss is ignored — no gloss validation, no retry", async () => {
-    const { normalizer, llm, entityRegistry, dir } = await setup(
+    const { normalizer, llm, conceptRegistry, dir } = await setup(
       'gloss-link-ignored',
       verdict({ verdict: 'link', target: 'UAC-0002x', gloss: 'irrelevant text' })
     );
     await normalizer.processFile('1.json');
     assert.equal(llm.prompts.length, 1, 'no retry for a link verdict');
-    const entries = entityRegistry.snapshot().entries('HackerGroup');
+    const entries = conceptRegistry.snapshot().entries('HackerGroup');
     const uac2x = entries.find((e) => e.canonical === 'UAC-0002x');
-    assert.equal(uac2x?.gloss, null, 'link never writes a gloss');
+    assert.equal(uac2x?.definition, null, 'link never writes a gloss');
 
     const log = await readDecisions(dir);
     assert.ok(!log.some((e) => e.op === 'gloss-flagged'));
   });
 
   it('stores a source-grounded gloss on a deferred provisional mint', async () => {
-    const { normalizer, entityRegistry } = await setup(
+    const { normalizer, conceptRegistry } = await setup(
       'gloss-defer',
       verdict({ verdict: 'defer', gloss: 'Suspected alias of a known group; evidence insufficient' })
     );
     await normalizer.processFile('1.json');
-    const entries = entityRegistry.snapshot().entries('HackerGroup');
+    const entries = conceptRegistry.snapshot().entries('HackerGroup');
     const uac2 = entries.find((e) => e.canonical === 'UAC-0002');
-    assert.equal(uac2?.gloss, 'Suspected alias of a known group; evidence insufficient');
+    assert.equal(uac2?.definition, 'Suspected alias of a known group; evidence insufficient');
   });
 
   const batchReply = (gloss: unknown) =>
@@ -358,21 +317,21 @@ describe('StreamingNormalizer matching metadata', () => {
     });
 
   it('accepts an explicit null gloss as "no name-independent evidence" without a retry or flag', async () => {
-    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('null-ok', [
+    const { normalizer, llm, conceptRegistry, dir } = await setupGlossRetry('null-ok', [
       batchReply(null),
     ]);
     await normalizer.processFile('1.json');
 
     assert.equal(llm.prompts.length, 1, 'a null gloss is a sanctioned answer, not a retry trigger');
-    const record = entityRegistry.snapshot().entries('HackerGroup')
+    const record = conceptRegistry.snapshot().entries('HackerGroup')
       .find((entry) => entry.canonical === 'UAC-0002');
-    assert.equal(record?.gloss, null);
+    assert.equal(record?.definition, null);
     const log = await readDecisions(dir);
     assert.ok(!log.some((event) => event.op === 'gloss-flagged'), 'null is not a failure');
   });
 
   it('retries a name-restating gloss once for only the failing mention', async () => {
-    const { normalizer, llm, entityRegistry } = await setupGlossRetry('retry-ok', [
+    const { normalizer, llm, conceptRegistry } = await setupGlossRetry('retry-ok', [
       batchReply('UAC-0002'),
       retryReply('Organization identified by a stable external designation'),
     ]);
@@ -381,22 +340,22 @@ describe('StreamingNormalizer matching metadata', () => {
     assert.equal(llm.prompts.length, 2);
     assert.ok(llm.prompts[1].includes('"UAC-0002"'));
     assert.ok(!llm.prompts[1].includes('"UAC-0099"'));
-    const record = entityRegistry.snapshot().entries('HackerGroup')
+    const record = conceptRegistry.snapshot().entries('HackerGroup')
       .find((entry) => entry.canonical === 'UAC-0002');
-    assert.equal(record?.gloss, 'Organization identified by a stable external designation');
+    assert.equal(record?.definition, 'Organization identified by a stable external designation');
   });
 
   it('drops a still-restating gloss after one retry and records the failure', async () => {
-    const { normalizer, llm, entityRegistry, dir } = await setupGlossRetry('retry-bad', [
+    const { normalizer, llm, conceptRegistry, dir } = await setupGlossRetry('retry-bad', [
       batchReply('uac-0002'),
       retryReply('UAC-0002'),
     ]);
     await normalizer.processFile('1.json');
 
     assert.equal(llm.prompts.length, 2, 'never loops');
-    const record = entityRegistry.snapshot().entries('HackerGroup')
+    const record = conceptRegistry.snapshot().entries('HackerGroup')
       .find((entry) => entry.canonical === 'UAC-0002');
-    assert.equal(record?.gloss, null);
+    assert.equal(record?.definition, null);
     const log = await readDecisions(dir);
     assert.ok(log.some((event) => event.op === 'gloss-flagged' && event.mention === 'UAC-0002'));
   });
@@ -423,7 +382,7 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
   });
 
   it('invokes the repairer on the SKIP-exists branch when repair has not caught up to this doc', async () => {
-    const { dir, normalizer, entityRegistry, decisionLog, llm, schemaRegistry } = await setup(
+    const { dir, normalizer, conceptRegistry, decisionLog, llm, schemaRegistry } = await setup(
       'repairer-skip-behind',
       verdict({})
     );
@@ -440,7 +399,7 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
       outputDir: path.join(dir, 'artifacts'),
       llmClient: llm.client,
       schemaRegistry,
-      entityRegistry,
+      conceptRegistry,
       decisionLog,
       repairer,
     });
@@ -453,13 +412,13 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
   });
 
   it('does not invoke the repairer on the SKIP-exists branch once repair has caught up', async () => {
-    const { dir, normalizer, entityRegistry, decisionLog, llm, schemaRegistry } = await setup(
+    const { dir, normalizer, conceptRegistry, decisionLog, llm, schemaRegistry } = await setup(
       'repairer-skip-caughtup',
       verdict({})
     );
     await normalizer.processFile('1.json');
-    entityRegistry.setRepairedThrough(1);
-    await entityRegistry.save();
+    conceptRegistry.setRepairedThrough(1);
+    await conceptRegistry.save();
 
     const calls: number[] = [];
     const repairer: RepairerStub = {
@@ -472,7 +431,7 @@ describe('StreamingNormalizer repairer hook (T5 phase-2)', () => {
       outputDir: path.join(dir, 'artifacts'),
       llmClient: llm.client,
       schemaRegistry,
-      entityRegistry,
+      conceptRegistry,
       decisionLog,
       repairer,
     });

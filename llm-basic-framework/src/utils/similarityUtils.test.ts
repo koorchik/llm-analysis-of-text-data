@@ -127,7 +127,7 @@ test('a candidate scores by its BEST string, over canonical plus aliases', () =>
 });
 
 test('a duplicated string in the candidate does not change its score', () => {
-  // EntityRegistry.mint() stores the canonical inside its own alias list, so `candidates()` passes
+  // ConceptRegistry.mint() stores the canonical inside its own alias list, so `candidates()` passes
   // [canonical, canonical, …]. max over a multiset equals max over the set.
   const deduped = matchStrings('apt28', [{ key: 'k', strings: ['apt28'] }]);
   const duplicated = matchStrings('apt28', [{ key: 'k', strings: ['apt28', 'apt28'] }]);

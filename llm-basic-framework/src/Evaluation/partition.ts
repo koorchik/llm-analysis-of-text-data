@@ -1,4 +1,5 @@
 import type { DecisionEvent } from '../DecisionLog/DecisionLog';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { UnionFind } from './unionFind';
 
 /**
@@ -152,51 +153,23 @@ export class Partition {
   }
 }
 
-// --- Source 1: an EntityRegistry on disk ------------------------------------------------------
-
-/** v1 registry shape: category → canonical → { aliases }. v2 (M3) adds objects per alias. */
-export interface RegistryLikeV1 {
-  [category: string]: {
-    [canonical: string]: { aliases: string[] };
-  };
-}
-
-interface RegistryV2Record {
-  aliases: Array<{ surface: string } | string>;
-}
-
-export interface RegistryLikeV2 {
-  /** v2 and every later version; v3 (SKEIN v2) adds rungs, edge layers and a defer queue. */
-  version: number;
-  categories: { [category: string]: { [canonical: string]: RegistryV2Record } };
-}
+// --- Source 1: an ConceptRegistry on disk ------------------------------------------------------
 
 /**
- * Accepts v1 and every versioned registry. The canonical name is included as a member because
- * `mint` stores it in its own alias list; including it twice is harmless (members are
- * de-duplicated).
- *
- * The version is deliberately NOT compared against a fixed number. A predicate pinned to
- * `version === 2` kept parsing when v3 landed but read the whole file as the category map, so
- * `granularityEdges`/`deferQueue` became phantom clusters and every real cluster went unscored —
- * a silent wrong answer, not a crash. Presence of a `categories` map is the honest test: it is
- * exactly what distinguishes a wrapped registry from the bare v1 category→canonical map.
+ * Accepts every registry version (v1–v6) by routing through `ConceptRegistry.parse`, the single
+ * shape normalizer — the earlier hand-rolled version sniffing here once read a whole v3 file as
+ * the category map, so `granularityEdges`/`deferQueue` became phantom clusters and every real
+ * cluster went unscored (a silent wrong answer, not a crash). The canonical name is included as a
+ * member because `mint` stores it in its own label list; including it twice is harmless (members
+ * are de-duplicated).
  */
-export function fromRegistry(
-  data: RegistryLikeV1 | RegistryLikeV2,
-  options: KeyOptions = {}
-): Partition {
-  const wrapped = (data as RegistryLikeV2).categories;
-  const categories: Record<string, Record<string, { aliases: unknown[] }>> =
-    wrapped && typeof wrapped === 'object' ? (wrapped as never) : (data as never);
+export function fromRegistry(data: unknown, options: KeyOptions = {}): Partition {
+  const { conceptSchemes } = ConceptRegistry.parse(data);
 
   const groups: Array<{ id: string; members: ElementKey[] }> = [];
-  for (const [category, records] of Object.entries(categories ?? {})) {
+  for (const [category, records] of Object.entries(conceptSchemes)) {
     for (const [canonical, record] of Object.entries(records ?? {})) {
-      const surfaces = [canonical];
-      for (const alias of record?.aliases ?? []) {
-        surfaces.push(typeof alias === 'string' ? alias : (alias as { surface: string }).surface);
-      }
+      const surfaces = [canonical, ...record.labels.map((label) => label.surface)];
       groups.push({
         id: `${category}|${canonical}`,
         members: surfaces

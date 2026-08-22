@@ -1,0 +1,214 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "registry review at 144 canonicals"
+Entities:
+E1. shellcode.x86.bin
+E2. FTPGetter
+E3. pfSense
+E4. Kometa Browser
+E5. Internet Explorer
+E6. WinSCP
+E7. 7Star Browser
+E8. shellcode.x64.bin
+E9. Elements Browser
+E10. installer.exe
+E11. CCleaner.exe
+E12. loader.exe
+E13. powershell.exe [aka PowerShell]
+E14. MCMDiction.exe
+E15. major.exe
+E16. rfusclient.exe
+E17. RegAsm.exe
+E18. rutserv.exe
+E19. b.exe
+E20. Opera Browser
+E21. ConfuserEx
+E22. FileZilla
+E23. Google Chrome
+E24. Double Kill
+E25. FIRMACHAGENT
+E26. Foxmail
+E27. Chromium Browser
+E28. Sputnik Browser
+E29. 360Chrome Browser
+E30. Orbitum Browser
+E31. Amigo Browser
+E32. Brave Browser
+E33. Torch Browser
+E34. Browser.dll
+E35. Uran Browser
+E36. Citrio Browser
+E37. Chedot Browser
+E38. Liebao Browser
+E39. CocCoc Browser
+E40. Coowon Browser
+E41. Yandex Browser
+E42. ChromePlus Browser
+E43. Iridium Browser
+E44. Mozilla Firefox
+E45. chrome_updater.dll
+E46. FTP Commander
+E47. Microsoft Outlook
+E48. Microsoft Word
+E49. Pocomail
+E50. Claws Mail
+E51. Opera Mail
+E52. .NET Framework
+E53. Thunderbird
+E54. Petya
+E55. SPECTR
+E56. WS_FTP
+E57. SmartAssembly
+E58. SRP [aka Software Restriction Policies (SRP)]
+E59. stage1.ps1
+E60. stage2.ps1
+E61. Meterpreter
+E62. SmartFTP
+E63. jDownloader
+E64. AppLocker
+E65. ChakraCore
+E66. Paltalk
+E67. CCleaner.rar
+E68. SIEM
+E69. Remote Utilities [aka RemoteUtilities]
+E70. Windows Host Compute Service Shim
+E71. host_news_mod_mod.msi
+E72. RemcosRAT [aka Remcos]
+E73. rundll32.exe
+E74. Becky!
+E75. Windows Vista
+E76. Windows 7
+E77. Microsoft Edge
+E78. Windows Server 2008
+E79. MS Office [aka Microsoft Office]
+E80. Windows Server 2012
+E81. Office 2013 [aka Microsoft Office 2013]
+E82. Office 2007 [aka Microsoft Office 2007]
+E83. Office 2016 [aka Microsoft Office 2016]
+E84. Microsoft Office Services and Web Apps
+E85. Microsoft Exchange Server
+E86. Microsoft Windows
+E87. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E88. plan_dsns.gov.ua.rar
+E89. Електронний план евакуації.exe
+E90. Microsoft Equation Editor
+E91. PGMB New Order 18-2077.xlsx
+E92. Cobalt Strike Beacon
+E93. Електронний план евакуації.rar
+E94. CVE-2018-8124
+E95. z.ps1
+E96. AgentTesla [aka Agent Tesla]
+E97. install.msi
+E98. MISP
+E99. vaultcli.dll
+E100. Files.dll
+E101. Screen.dll
+E102. Social.dll
+E103. IDCLIPNET_x86.dll
+E104. scandoc.exe
+E105. baseupd.exe
+E106. Office 2010 [aka Microsoft Office 2010]
+E107. IceDragon
+E108. Mikrotik
+E109. CVE-2018-0958
+E110. CVE-2018-8120
+E111. CVE-2018-8170
+E112. CVE-2018-8134
+E113. CVE-2018-8174
+E114. CVE-2018-8141
+E115. CVE-2018-8127
+E116. CVE-2018-8129
+E117. CVE-2018-0854
+E118. CVE-2018-8132
+E119. CVE-2018-8136
+E120. CVE-2017-11882
+E121. CCleaner.zip
+Mentions:
+M1. "Meterpreter" (Software) — options: E1, E2, E3, E4
+M2. "b.exe" (Software) — options: E10, E11, E12, E13
+M3. "scandoc.exe" (Software) — options: E18, E12, E19, E11
+M4. "RegAsm.exe" (Software) — options: E18, E11, E19, E16
+M5. "Mozilla Firefox" (Software) — options: E20, E21, E22, E23
+M6. "Iridium Browser" (Software) — options: E28, E27, E29, E30
+M7. "7Star Browser" (Software) — options: E28, E35, E32, E29
+M8. "Amigo Browser" (Software) — options: E32, E37, E36, E29
+M9. "Liebao Browser" (Software) — options: E40, E36, E31, E29
+M10. "360Chrome Browser" (Software) — options: E27, E42, E7, E23
+M11. "Sputnik Browser" (Software) — options: E41, E36, E32, E29
+M12. "QIP Surf Browser" (Software) — options: E28, E20, E32, E29
+M13. "Thunderbird" (Software) — options: E44, E45, E46, E47
+M14. "Foxmail" (Software) — options: E49, E44, E50, E51
+M15. "OpenVPN" (Software) — options: E20, E51, E6, E54
+M16. "SmartFTP" (Software) — options: E56, E57, E46, E58
+M17. "FTPGetter" (Software) — options: E46, E61, E56, E55
+M18. "YARA" (Software) — options: E61, E65, E41, E5
+M19. "pfSense" (Software) — options: E44, E13, E52, E16
+M20. "Remote Utilities - Host" (Software) — options: E69, E18, E58, E70
+M21. "rutserv.exe" (Software) — options: E16, E12, E73, E11
+M22. "Petya" (Software) — options: E66, E53, E74, E52
+M23. "Microsoft Windows" (Software) — options: E75, E48, E76, E77
+M24. "Office 2010" (Software) — options: E81, E79, E82, E83
+M25. "Windows Server 2008" (Software) — options: E82, E80, E75, E76
+M26. "PGMB New Order 18-2077.xlsx" (Software) — options: E82, E34, E87, E30
+M27. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software) — options: E87, E88, E89, E90
+M28. "stage2.ps1" (Software) — options: E59, E95, E13, E10
+M29. "SPECTR" (Software) — options: E58, E2, E28, E98
+M30. "Browser.dll" (Software) — options: E99, E29, E45, E100
+M31. "USB.dll" (Software) — options: E99, E34, E16, E100
+M32. "MCMDiction.exe" (Software) — options: E19, E11, E104, E17
+M33. "Microsoft Office Services and Web Apps" (Software) — options: E47, E79, E82, E106
+M34. ".NET Framework" (Software) — options: E16, E61, E5, E65
+M35. "Win32k" (Software) — options: E75, E6, E76, E5
+M36. "CVE-2018-0854" (Software) — options: E109, E94, E110, E111
+M37. "CVE-2018-8127" (Software) — options: E116, E110, E94, E117
+M38. "CVE-2018-8136" (Software) — options: E118, E117, E112, E109
+M39. "CVE-2018-8897" (Software) — options: E115, E94, E117, E120
+M40. "CCleaner.rar" (Software) — options: E121, E11, E10, E12
+
+=== RESPONSE (9.9s, in 3653 / out 1157 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"a Metasploit payload and post-exploitation tool"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"an executable file"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"an executable file"},{"m":"M4","id":"NEW","p":"E52","r":"p","g":"a .NET assembly registration command-line tool"},{"m":"M5","id":"NEW","p":null,"r":null,"g":"a web browser developed by Mozilla"},{"m":"M6","id":"NEW","p":"E27","r":"n","g":"a privacy-focused Chromium-based web browser"},{"m":"M7","id":"NEW","p":"E27","r":"n","g":"a Chromium-based web browser"},{"m":"M8","id":"NEW","p":"E27","r":"n","g":"a Chromium-based web browser developed by Mail.Ru"},{"m":"M9","id":"NEW","p":"E27","r":"n","g":"a dual-engine web browser developed by Cheetah Mobile"},{"m":"M10","id":"NEW","p":"E27","r":"n","g":"a web browser developed by Qihoo 360"},{"m":"M11","id":"NEW","p":"E27","r":"n","g":"a Russian web browser developed by Rostelecom"},{"m":"M12","id":"NEW","p":"E27","r":"n","g":"a web browser developed for the QIP project"},{"m":"M13","id":"NEW","p":null,"r":null,"g":"an open-source email client developed by Mozilla"},{"m":"M14","id":"NEW","p":null,"r":null,"g":"an email client software developed by Tencent"},{"m":"M15","id":"NEW","p":null,"r":null,"g":"an open-source virtual private network application"},{"m":"M16","id":"NEW","p":null,"r":null,"g":"a file transfer client for Windows"},{"m":"M17","id":"NEW","p":null,"r":null,"g":"an automated FTP and SFTP client"},{"m":"M18","id":"NEW","p":null,"r":null,"g":"a tool used to identify and classify malware samples"},{"m":"M19","id":"NEW","p":null,"r":null,"g":"an open-source firewall and routing software distribution"},{"m":"M20","id":"NEW","p":"E69","r":"p","g":"the host module component of Remote Utilities software"},{"m":"M21","id":"NEW","p":"E69","r":"p","g":"the host executable process for Remote Utilities"},{"m":"M22","id":"NEW","p":null,"r":null,"g":"a family of encrypting ransomware"},{"m":"M23","id":"NEW","p":null,"r":null,"g":"a family of operating systems developed by Microsoft"},{"m":"M24","id":"NEW","p":"E79","r":"v","g":"an office productivity suite release by Microsoft"},{"m":"M25","id":"NEW","p":"E86","r":"v","g":"a server operating system released by Microsoft"},{"m":"M26","id":"NEW","p":null,"r":null,"g":"a malicious Excel spreadsheet document"},{"m":"M27","id":"NEW","p":null,"r":null,"g":"a malicious Excel spreadsheet document lure"},{"m":"M28","id":"NEW","p":null,"r":null,"g":"a PowerShell script file"},{"m":"M29","id":"NEW","p":null,"r":null,"g":"a modular malware platform"},{"m":"M30","id":"NEW","p":null,"r":null,"g":"a dynamic link library file"},{"m":"M31","id":"NEW","p":null,"r":null,"g":"a dynamic link library file"},{"m":"M32","id":"NEW","p":null,"r":null,"g":"an executable file"},{"m":"M33","id":"NEW","p":"E79","r":"p","g":"web-enabled components and online services for Microsoft Office"},{"m":"M34","id":"NEW","p":null,"r":null,"g":"a managed software development framework by Microsoft"},{"m":"M35","id":"NEW","p":"E86","r":"p","g":"a core Windows kernel-mode driver subsystem"},{"m":"M36","id":"NEW","p":"E48","r":"p","g":"a Microsoft Word memory corruption vulnerability"},{"m":"M37","id":"NEW","p":"E79","r":"p","g":"a Microsoft Office remote code execution vulnerability"},{"m":"M38","id":"NEW","p":"E79","r":"p","g":"a Microsoft Office memory corruption vulnerability"},{"m":"M39","id":"NEW","p":"E86","r":"p","g":"a Windows kernel privilege escalation vulnerability"},{"m":"M40","id":"NEW","p":null,"r":null,"g":"a RAR archive containing CCleaner application files"}]}

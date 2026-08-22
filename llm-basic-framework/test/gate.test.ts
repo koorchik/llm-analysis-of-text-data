@@ -1,4 +1,4 @@
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { identityAnalyzer } from '../src/Normalization/analyzers/identity';
 import { StringSimilarityGenerator } from '../src/Normalization/candidates/StringSimilarityGenerator';
 import { maxLevDice } from '../src/Normalization/metrics/stringMetrics';
@@ -11,7 +11,7 @@ import path from 'path';
  * **The behaviour-preservation gate (plan verification item 4).**
  *
  * `StringSimilarityGenerator(identity, max-lev-dice)` must reproduce the pre-M4
- * `EntityRegistry.candidates()` output **exactly** on all 3,392 frozen pairs — similarity floats
+ * `ConceptRegistry.candidates()` output **exactly** on all 3,392 frozen pairs — similarity floats
  * included — against the fixture and golden lists captured in M2.5, before M3 changed the registry
  * format and before `candidates()` was removed.
  *
@@ -43,7 +43,7 @@ test(
       results: GoldenRow[];
     };
 
-    const registry = new EntityRegistry({ filePath: FIXTURE });
+    const registry = new ConceptRegistry({ filePath: FIXTURE });
     await registry.load();
     assert.equal(registry.loadedFromV1, true, 'the gate must score against the v1 reference');
 
@@ -98,7 +98,7 @@ test(
   'GATE: every candidate channel is labelled, so E4 can score recall per channel',
   { skip: !available },
   async () => {
-    const registry = new EntityRegistry({ filePath: FIXTURE });
+    const registry = new ConceptRegistry({ filePath: FIXTURE });
     await registry.load();
     const generator = new StringSimilarityGenerator();
     await generator.prepare(registry.snapshot());

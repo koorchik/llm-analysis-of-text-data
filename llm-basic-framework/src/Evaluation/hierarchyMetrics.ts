@@ -1,3 +1,4 @@
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { normalizeSurface } from './partition';
 
 /**
@@ -72,11 +73,16 @@ export interface HierarchyMetrics {
 }
 
 /**
- * The registry writes the SKEIN v2 vocabulary, gold was annotated in the ontology vocabulary. They
- * name the same two relations: a referent preserved and described less precisely (`coarsens-to` /
- * `isa`), and a distinct part or member of its whole (`part-of`).
+ * The registry writes the ISO 25964 broader-term typology, gold was annotated in the ontology
+ * vocabulary. `broaderGeneric` (is-a) and `broaderInstantial` (a named instance/version — a
+ * refinement of is-a) both fold onto gold's `isa`; `broaderPartitive` is gold's `part-of`.
+ * Legacy keys (`coarsens-to` from ladder-era registries) are kept so old baselines re-score in the
+ * same table. Keys are lowercase — `foldKind` lower-cases before lookup.
  */
 const KIND_ALIASES: Record<string, string> = {
+  broadergeneric: 'isa',
+  broaderinstantial: 'isa',
+  broaderpartitive: 'part-of',
   'coarsens-to': 'isa',
   isa: 'isa',
   'part-of': 'part-of',
@@ -216,28 +222,39 @@ export function hierarchyMetrics(params: {
   };
 }
 
-/** Pull the run's canonicals and granularity edges out of a v3 registry file. */
-export function readRegistryHierarchy(registry: {
-  categories?: Record<string, Record<string, { aliases?: Array<{ surface: string } | string> }>>;
-  granularityEdges?: Record<string, Array<{ from: string; to: string; kind: string }>>;
-}): {
+/**
+ * Pull the run's canonicals and broader edges out of a registry file (any version, v1–v6),
+ * routed through `ConceptRegistry.parse` — the single shape normalizer, so the legacy-kind folding
+ * is never duplicated here. The scoring kind is the edge's ISO 25964 `type`, folded onto the gold
+ * vocabulary by {@link KIND_ALIASES}; untyped edges score as `untyped` and never agree with gold.
+ */
+export function readRegistryHierarchy(registry: unknown): {
   canonicals: Array<{ category: string; canonical: string; surfaces: string[] }>;
   edges: HierarchyEdge[];
 } {
+  const { conceptSchemes, broaderEdges } = ConceptRegistry.parse(registry);
+
   const canonicals: Array<{ category: string; canonical: string; surfaces: string[] }> = [];
-  for (const [category, records] of Object.entries(registry.categories ?? {})) {
+  for (const [category, records] of Object.entries(conceptSchemes)) {
     for (const [canonical, record] of Object.entries(records ?? {})) {
-      const surfaces = (record?.aliases ?? [])
-        .map((alias) => (typeof alias === 'string' ? alias : alias?.surface))
-        .filter((surface): surface is string => Boolean(surface));
-      canonicals.push({ category, canonical, surfaces });
+      canonicals.push({
+        category,
+        canonical,
+        surfaces: record.labels.map((label) => label.surface),
+      });
     }
   }
 
   const edges: HierarchyEdge[] = [];
-  for (const [category, list] of Object.entries(registry.granularityEdges ?? {})) {
+  for (const [category, list] of Object.entries(broaderEdges)) {
     for (const edge of list ?? []) {
-      if (edge?.from && edge?.to) edges.push({ category, from: edge.from, to: edge.to, kind: edge.kind });
+      if (!edge?.narrower || !edge?.broader) continue;
+      edges.push({
+        category,
+        from: edge.narrower,
+        to: edge.broader,
+        kind: edge.type ?? 'untyped',
+      });
     }
   }
   return { canonicals, edges };

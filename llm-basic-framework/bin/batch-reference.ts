@@ -22,7 +22,7 @@
  */
 import { RegistryConsolidator } from '../src/Consolidator/RegistryConsolidator';
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { CostMeter } from '../src/Experiment/CostMeter';
 import { stripRunDate } from '../src/Experiment/runDirName';
 import { LlmClient } from '../src/LlmClient/LlmClient';
@@ -71,7 +71,7 @@ async function main() {
   const llmClient = new LlmClient({ backend: createLlmBackend({ provider, model }), costMeter });
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(runDir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(runDir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(runDir, 'registry.json') });
   // Same file the run already wrote under DECISIONS_LOG=1 — this pass appends its docId -1 ops to
   // it rather than starting a new log, which is what lets the viewer read it as one more chapter.
   const decisionLog = new DecisionLog({
@@ -84,7 +84,7 @@ async function main() {
     artifactsDir: path.join(runDir, 'artifacts'),
     llmClient,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
   });
 

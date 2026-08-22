@@ -1,0 +1,100 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: S1. "ду конкретної організації.</p><p>Прикладами актуальних тем, що варті розгляду, можуть бути такі (але не виключно):</p><ul><li>Використання механізмів SRP / AppLocker для зменшення вірогідності первинного ураження</li><li>Особливості проведення комп’ютерно-технічних досліджень (форензики) ЕОМ за фактом компрометаці" S2. "i><li>Кіберрозвідка – інструменти та методи</li><li>Аналіз журналів веб-серверу з метою пошуку бекдорів (веб-шелів)</li><li>Створення та використання Yara-правил на прикладі пошуку ознак ураження ЕОМ шкідливими програмами</li><li>Застосування MISP для синхронізації ACL засобів захисту Mikrotik/pfSense</li><li>Вирішення питання багатофакторної автентифікації для VPN-підключень на основні програмного забезпечення з відкритим вихідним кодом</li><li>Мо" S3. "ованого доступу</li><li>Сегментація мережі, фільтрація інформаційних потоків, матриця доступу</li><li>Практичні приклади налаштування та використання SIEM для хантингу кіберзагроз</li><li>Побудова механізму моніторингу роботи мережі та інформаційних систем</li><li>Конфігурація широковживаних програмно-а"
+Entities:
+E1. MS Office [aka Microsoft Office]
+E2. SmartFTP
+E3. .NET Framework
+E4. MS Excel
+E5. VBScript
+E6. 360Chrome Browser
+E7. MS PowerPoint
+E8. WS_FTP
+E9. 7Star Browser
+E10. MS Word [aka Microsoft Word]
+E11. ConfuserEx
+E12. Smokeloader
+E13. Microsoft Office Services and Web Apps
+E14. jDownloader
+E15. Internet Explorer
+E16. FTPGetter
+E17. CentBrowser
+E18. Uran Browser
+E19. QuasarRAT
+E20. Yandex Browser
+E21. ChakraCore
+E22. Opera Browser
+E23. Paltalk
+E24. Opera Mail
+E25. UkrScanner.rar
+E26. Sputnik Browser
+E27. MISP
+E28. Microsoft Edge
+E29. Misha
+E30. Microsoft Outlook
+E31. Microsoft Windows
+E32. powershell.exe [aka PowerShell (powershell.exe), PowerShell]
+E33. rfusclient.exe
+E34. spi.exe
+E35. wscript.exe
+E36. AppLocker
+E37. YARA
+E38. Mikrotik
+E39. pfSense
+E40. SIEM
+E41. SRP
+Mentions:
+M1. "SRP" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "AppLocker" (Software) — options: E11, E12, E13, E14 — ctx: S1
+M3. "YARA" (Software) — options: E1, E19, E20, E4 — ctx: S2
+M4. "Mikrotik" (Software) — options: E1, E26, E4, E10 — ctx: S2
+M5. "pfSense" (Software) — options: E1, E32, E3, E4 — ctx: S2
+M6. "SIEM" (Software) — options: E1, E34, E3, E4 — ctx: S3
+
+=== RESPONSE (5.8s, in 1945 / out 175 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":"E31","r":"p","g":"mechanism used to reduce probability of initial compromise"},{"m":"M2","id":"NEW","p":"E31","r":"p","g":"mechanism used to reduce probability of initial compromise"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"rules used to search for indicators of malware compromise"},{"m":"M4","id":"NEW","p":null,"r":null,"g":"security protection tool with access control lists"},{"m":"M5","id":"NEW","p":null,"r":null,"g":"security protection tool with access control lists"},{"m":"M6","id":"NEW","p":null,"r":null,"g":"system configured and used for cyber threat hunting"}]}

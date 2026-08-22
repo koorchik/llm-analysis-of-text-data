@@ -1,5 +1,5 @@
 import type { EmbeddingsClient } from '../EmbeddingsClient/EmbeddingsClient';
-import type { CanonicalRecord, EntityRegistry, EntityRef } from '../EntityRegistry/EntityRegistry';
+import type { Concept, ConceptRegistry, ConceptRef } from '../ConceptRegistry/ConceptRegistry';
 import { cosineNormalized, l2Normalize, meanPool } from '../utils/vectorUtils';
 
 interface Params {
@@ -43,7 +43,7 @@ interface Entry {
  * implementation choice flagged per design R6, not the only reachable one: an alternative would
  * weight the canonical's own name+gloss vector separately from the alias-surface vectors (e.g. a
  * fixed blend ratio) instead of pooling all surfaces uniformly. Uniform pooling was picked because
- * `CanonicalRecord.aliases` already stores the canonical as its own first alias (`EntityRegistry
+ * `Concept.labels` already stores the canonical as its own first alias (`ConceptRegistry
  * .mint`), so "alias-surface vectors" and "the name+gloss vector" are already the same set in
  * practice — a separate weighted term would double-count the canonical's own surface for no signal.
  *
@@ -88,7 +88,7 @@ interface Entry {
  * **Leave-one-out mechanics.** Each entry keeps its component vectors, not only the pooled
  * `centroid`: `nameGlossVector` (the canonical's own name+gloss text, embedded and kept
  * unconditionally) plus `vectors` (every unique surface text -> vector, which — since
- * `CanonicalRecord.aliases` always lists the canonical as its own first alias — includes a second,
+ * `Concept.labels` always lists the canonical as its own first alias — includes a second,
  * separately-keyed copy of the canonical's own text). `aliasCoherence(ref, alias)` embeds `alias`,
  * then pools `nameGlossVector` with every entry of `vectors` **except** the one whose text matches
  * the probed alias's own embed text, and compares the probe against that pool's centroid. If the
@@ -114,8 +114,8 @@ export class GlossIndex {
    * no-op call — nothing minted, linked, merged, split or renamed since the last `sync()` — embeds
    * nothing.
    */
-  async sync(registry: EntityRegistry): Promise<void> {
-    const liveCategories = new Set(registry.categories());
+  async sync(registry: ConceptRegistry): Promise<void> {
+    const liveCategories = new Set(registry.conceptSchemes());
     for (const category of this.#index.keys()) {
       if (!liveCategories.has(category)) this.#index.delete(category);
     }
@@ -128,8 +128,8 @@ export class GlossIndex {
       texts: string[];
     }> = [];
 
-    for (const category of registry.categories()) {
-      const records = registry.records(category);
+    for (const category of registry.conceptSchemes()) {
+      const records = registry.concepts(category);
       const liveCanonicals = new Set(Object.keys(records));
 
       const bucket = this.#index.get(category);
@@ -140,7 +140,7 @@ export class GlossIndex {
       }
 
       for (const [canonical, record] of Object.entries(records)) {
-        const gloss = record.gloss ?? null;
+        const gloss = record.definition ?? null;
         const signature = this.#signatureFor(canonical, record);
         if (bucket?.get(canonical)?.signature === signature) continue; // unchanged since last sync
 
@@ -168,10 +168,10 @@ export class GlossIndex {
   }
 
   /** ALL categories, self excluded — cross-category by design (repair suspects are not category-scoped). */
-  async nearest(ref: EntityRef, k: number): Promise<Array<{ ref: EntityRef; sim: number }>> {
+  async nearest(ref: ConceptRef, k: number): Promise<Array<{ ref: ConceptRef; sim: number }>> {
     const target = this.#entry(ref);
 
-    const scored: Array<{ ref: EntityRef; sim: number }> = [];
+    const scored: Array<{ ref: ConceptRef; sim: number }> = [];
     for (const [category, bucket] of this.#index) {
       for (const [canonical, entry] of bucket) {
         if (category === ref.category && canonical === ref.canonical) continue;
@@ -191,7 +191,7 @@ export class GlossIndex {
    * depends on whether `sync()` already folded this exact alias in — see the class comment's
    * "leave-one-out mechanics" paragraph for why that independence matters.
    */
-  async aliasCoherence(ref: EntityRef, alias: string): Promise<number> {
+  async aliasCoherence(ref: ConceptRef, alias: string): Promise<number> {
     const target = this.#entry(ref);
     const text = this.#textFor(alias, target.gloss);
     const probe = l2Normalize(await this.#client.embed(text, { operator: 'gloss-index' }));
@@ -205,7 +205,7 @@ export class GlossIndex {
     return cosineNormalized(probe, leaveOneOutCentroid);
   }
 
-  #entry(ref: EntityRef): Entry {
+  #entry(ref: ConceptRef): Entry {
     const entry = this.#index.get(ref.category)?.get(ref.canonical);
     if (!entry) {
       throw new Error(
@@ -217,19 +217,21 @@ export class GlossIndex {
   }
 
   /** `[canonical, ...aliasSurfaces]`, de-duplicated, each rendered through the shared name+gloss format. */
-  #surfaceTexts(canonical: string, record: CanonicalRecord, gloss: string | null): string[] {
-    const surfaces = new Set([canonical, ...record.aliases.map((alias) => alias.surface)]);
+  #surfaceTexts(canonical: string, record: Concept, gloss: string | null): string[] {
+    const surfaces = new Set([canonical, ...record.labels.map((label) => label.surface)]);
     return [...new Set([...surfaces].map((surface) => this.#textFor(surface, gloss)))];
   }
 
   /**
    * Content fingerprint for staleness detection — gloss plus the sorted deduplicated surface set, so
    * an alias-order shuffle with no actual content change (never observed today, but not ruled out by
-   * `CanonicalRecord`'s shape either) can never look like a spurious re-embed.
+   * `Concept`'s shape either) can never look like a spurious re-embed.
    */
-  #signatureFor(canonical: string, record: CanonicalRecord): string {
-    const surfaces = [...new Set([canonical, ...record.aliases.map((alias) => alias.surface)])].sort();
-    return JSON.stringify({ gloss: record.gloss ?? null, surfaces });
+  #signatureFor(canonical: string, record: Concept): string {
+    const surfaces = [...new Set([canonical, ...record.labels.map((label) => label.surface)])].sort();
+    // The `gloss` JSON key is frozen in step with SuspectGenerator.signature's persisted dialect,
+    // so the two "did the evidence change" fingerprints never look deceptively different.
+    return JSON.stringify({ gloss: record.definition ?? null, surfaces });
   }
 
   /** Byte-identical to `EmbeddingGenerator#textFor`'s `name+gloss` branch — see the class comment. */

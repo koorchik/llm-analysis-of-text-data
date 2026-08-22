@@ -51,7 +51,7 @@ function snapshotOf(entries: Record<string, string[][]>, glosses: Record<string,
     built[category] = groups.map((surfaces) => ({
       canonical: surfaces[0],
       surfaces,
-      gloss: glosses[surfaces[0]] ?? null,
+      definition: glosses[surfaces[0]] ?? null,
     }));
   }
   return {
@@ -176,7 +176,7 @@ test('a mint after prepare() is retrievable — the stale-index failure the port
   const backend = new StubEncoder();
   const generator = new EmbeddingGenerator({ embeddingsClient: clientFor(backend) });
 
-  const live: Record<string, SnapshotEntry[]> = { C: [{ canonical: 'APT28', surfaces: ['APT28'], gloss: null }] };
+  const live: Record<string, SnapshotEntry[]> = { C: [{ canonical: 'APT28', surfaces: ['APT28'], definition: null }] };
   await generator.prepare({
     categories: () => Object.keys(live),
     size: (category) => (live[category] ?? []).length,
@@ -184,7 +184,7 @@ test('a mint after prepare() is retrievable — the stale-index failure the port
   });
   await generator.candidates(query({ mention: 'APT28', minSim: 0 }));
 
-  live.C.push({ canonical: 'Sandworm', surfaces: ['Sandworm'], gloss: null });
+  live.C.push({ canonical: 'Sandworm', surfaces: ['Sandworm'], definition: null });
   generator.onRegistryChange({ type: 'mint', category: 'C', canonical: 'Sandworm' });
 
   const found = await generator.candidates(query({ mention: 'Sandworm', minSim: 0.9 }));

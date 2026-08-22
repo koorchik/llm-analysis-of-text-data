@@ -19,6 +19,8 @@
     "embed-bench": "node bin/embed-bench.js",
     "blocker-bench": "ts-node bin/blocker-bench.ts",
     "fold": "ts-node bin/fold-registry.ts",
+    "export-skos": "ts-node bin/export-skos.ts",
+    "order-ari": "ts-node bin/order-ari.ts",
     "regen-view": "ts-node bin/regen-view.ts"
   },
   "author": "",

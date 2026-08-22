@@ -1,0 +1,194 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "registry review at 114 canonicals"
+Entities:
+E1. shellcode.x86.bin
+E2. FTPGetter
+E3. pfSense
+E4. Kometa Browser
+E5. Internet Explorer
+E6. WinSCP
+E7. 7Star Browser
+E8. shellcode.x64.bin
+E9. Elements Browser
+E10. powershell.exe [aka PowerShell]
+E11. stage1.ps1
+E12. stage2.ps1
+E13. MISP
+E14. 360Chrome Browser
+E15. FileZilla
+E16. SRP [aka Software Restriction Policies (SRP)]
+E17. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E18. Електронний запит.exe
+E19. PGMB New Order 18-2077.xlsx
+E20. Cobalt Strike Beacon
+E21. Office 2007 [aka Microsoft Office 2007]
+E22. z.ps1
+E23. Windows Server 2012
+E24. SmartFTP
+E25. Paltalk
+E26. Trillian
+E27. SIEM
+E28. AgentTesla [aka Agent Tesla]
+E29. rfusclient.exe
+E30. Browser.dll
+E31. loader.exe
+E32. Files.dll
+E33. USB.dll
+E34. installer.exe
+E35. Screen.dll
+E36. IDCLIPNET_x86.dll
+E37. Social.dll
+E38. Opera Browser
+E39. ConfuserEx
+E40. Google Chrome
+E41. FIRMACHAGENT
+E42. MS Office [aka Microsoft Office]
+E43. Foxmail
+E44. Chromium Browser
+E45. Sputnik Browser
+E46. Amigo Browser
+E47. Brave Browser
+E48. Chedot Browser
+E49. Citrio Browser
+E50. Vivaldi Browser
+E51. Iridium Browser
+E52. Torch Browser
+E53. CocCoc Browser
+E54. Orbitum Browser
+E55. Uran Browser
+E56. Liebao Browser
+E57. Coowon Browser
+E58. Yandex Browser
+E59. CentBrowser
+E60. IceDragon
+E61. Mozilla Firefox
+E62. Meterpreter
+E63. AppLocker
+E64. Microsoft Outlook
+E65. Pocomail
+E66. Claws Mail
+E67. Opera Mail
+E68. Postbox Credential
+E69. FTP Commander
+E70. killself.bat
+E71. WS_FTP
+E72. SmartAssembly
+E73. SPECTR
+E74. jDownloader
+E75. Petya
+E76. Remote Utilities [aka RemoteUtilities]
+E77. Misha
+E78. Mikrotik
+E79. Microsoft Windows
+E80. Microsoft Word
+E81. rutserv.exe
+E82. RemcosRAT [aka Remcos]
+E83. host_news_mod_mod.msi
+E84. Remote Utilities - Host
+E85. scandoc.exe
+E86. Comodo Dragon Browser
+E87. MCMDiction.exe
+E88. Windows Vista
+E89. Windows 7
+E90. Windows Server 2008
+E91. Office 2013 [aka Microsoft Office 2013]
+E92. Office 2016 [aka Microsoft Office 2016]
+E93. CVE-2017-0199
+E94. Office 2010 [aka Microsoft Office 2010]
+E95. chrome_updater.dll
+E96. b.exe
+E97. RegAsm.exe
+E98. major.exe
+E99. Thunderbird
+E100. vaultcli.dll
+E101. baseupd.exe
+Mentions:
+M1. "Meterpreter" (Software) — options: E1, E2, E3, E4
+M2. "z.ps1" (Software) — options: E10, E11, E12, E13
+M3. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software) — options: E17, E18, E19, E14
+M4. "SmartAssembly" (Software) — options: E24, E3, E25, E14
+M5. "vaultcli.dll" (Software) — options: E29, E30, E31, E32
+M6. "Mozilla Firefox" (Software) — options: E38, E39, E15, E40
+M7. "Yandex Browser" (Software) — options: E45, E46, E47, E14
+M8. "Epic Privacy Browser" (Software) — options: E47, E49, E50, E14
+M9. "Torch Browser" (Software) — options: E45, E53, E47, E14
+M10. "Amigo Browser" (Software) — options: E47, E48, E49, E14
+M11. "Liebao Browser" (Software) — options: E57, E49, E46, E14
+M12. "Citrio Browser" (Software) — options: E51, E56, E46, E14
+M13. "Chedot Browser" (Software) — options: E44, E59, E14, E45
+M14. "Comodo Dragon Browser" (Software) — options: E4, E57, E60, E14
+M15. "QIP Surf Browser" (Software) — options: E45, E38, E47, E14
+M16. "Internet Explorer" (Software) — options: E61, E62, E51, E34
+M17. "Postbox Credential" (Software) — options: E65, E35, E43, E37
+M18. "Pocomail" (Software) — options: E43, E66, E67, E68
+M19. "FileZilla" (Software) — options: E61, E32, E3, E43
+M20. "SmartFTP" (Software) — options: E71, E72, E69, E16
+M21. "FTPGetter" (Software) — options: E69, E62, E71, E73
+M22. "SRP" (Software) — options: E13, E24, E14, E3
+M23. "MISP" (Software) — options: E16, E77, E27, E6
+M24. "SIEM" (Software) — options: E3, E73, E14, E62
+M25. "Remote Utilities - Host" (Software) — options: E76, E81, E16, E82
+M26. "host_news_mod_mod.msi" (Software) — options: E13, E84, E85, E86
+M27. "killself.bat" (Software) — options: E62, E15, E26, E6
+M28. "Misha" (Software) — options: E13, E78, E25, E82
+M29. "Microsoft Windows" (Software) — options: E88, E80, E89, E64
+M30. "Office 2010" (Software) — options: E91, E42, E21, E92
+M31. "Windows Vista" (Software) — options: E89, E79, E64, E5
+M32. "CVE-2017-11882" (Software) — options: E93, E77, E19, E94
+M33. "Microsoft Equation Editor" (Software) — options: E64, E79, E5, E80
+M34. "baseupd.exe" (Software) — options: E96, E87, E29, E97
+M35. "stage1.ps1" (Software) — options: E12, E22, E10, E34
+M36. "shellcode.x64.bin" (Software) — options: E1, E62, E70, E10
+M37. "IDCLIPNET_x86.dll" (Software) — options: E100, E30, E1, E31
+M38. "Files.dll" (Software) — options: E100, E15, E30, E29
+M39. "USB.dll" (Software) — options: E100, E30, E29, E32
+M40. "MCMDiction.exe" (Software) — options: E96, E97, E85, E16
+
+=== RESPONSE (7.9s, in 3302 / out 1076 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"g":"Metasploit payload and post-exploitation tool"},{"m":"M2","id":"NEW","p":null,"r":null,"g":"PowerShell script file"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"malicious Windows shortcut file"},{"m":"M4","id":"NEW","p":null,"r":null,"g":".NET obfuscator and protection tool"},{"m":"M5","id":"NEW","p":null,"r":null,"g":"Windows Vault client library"},{"m":"M6","id":"NEW","p":null,"r":null,"g":"web browser developed by Mozilla"},{"m":"M7","id":"NEW","p":null,"r":null,"g":"web browser developed by Yandex"},{"m":"M8","id":"NEW","p":null,"r":null,"g":"privacy-focused web browser"},{"m":"M9","id":"NEW","p":null,"r":null,"g":"Chromium-based web browser"},{"m":"M10","id":"NEW","p":null,"r":null,"g":"web browser developed by Mail.Ru"},{"m":"M11","id":"NEW","p":null,"r":null,"g":"dual-core web browser by Cheetah Mobile"},{"m":"M12","id":"NEW","p":null,"r":null,"g":"Chromium-based web browser"},{"m":"M13","id":"NEW","p":null,"r":null,"g":"Chromium-based web browser"},{"m":"M14","id":"NEW","p":null,"r":null,"g":"Chromium-based web browser by Comodo"},{"m":"M15","id":"NEW","p":null,"r":null,"g":"web browser based on Chromium"},{"m":"M16","id":"NEW","p":null,"r":null,"g":"web browser by Microsoft"},{"m":"M17","id":"NEW","p":null,"r":null,"g":"Postbox email credential storage module"},{"m":"M18","id":"NEW","p":null,"r":null,"g":"email client software"},{"m":"M19","id":"NEW","p":null,"r":null,"g":"FTP client application"},{"m":"M20","id":"NEW","p":null,"r":null,"g":"FTP client application"},{"m":"M21","id":"NEW","p":null,"r":null,"g":"FTP client and automation utility"},{"m":"M22","id":"NEW","p":null,"r":null,"g":"Windows Software Restriction Policies security feature"},{"m":"M23","id":"NEW","p":null,"r":null,"g":"open source threat intelligence sharing platform"},{"m":"M24","id":"NEW","p":null,"r":null,"g":"security information and event management system"},{"m":"M25","id":"NEW","p":"E76","r":"p","g":"remote administration host module"},{"m":"M26","id":"NEW","p":"E84","r":"n","g":"MSI installer package for Remote Utilities Host"},{"m":"M27","id":"NEW","p":null,"r":null,"g":"batch script for self-deletion"},{"m":"M28","id":"NEW","p":"E75","r":"n","g":"ransomware payload bundled with Petya"},{"m":"M29","id":"NEW","p":null,"r":null,"g":"operating system family by Microsoft"},{"m":"M30","id":"NEW","p":"E42","r":"v","g":"2010 release of Microsoft Office suite"},{"m":"M31","id":"NEW","p":"E79","r":"v","g":"major release of Microsoft Windows OS"},{"m":"M32","id":"NEW","p":null,"r":null,"g":"remote code execution vulnerability in Microsoft Office"},{"m":"M33","id":"NEW","p":"E42","r":"p","g":"formula editing component of Microsoft Office"},{"m":"M34","id":"NEW","p":null,"r":null,"g":"executable update payload"},{"m":"M35","id":"NEW","p":null,"r":null,"g":"first-stage PowerShell script"},{"m":"M36","id":"NEW","p":null,"r":null,"g":"64-bit shellcode binary"},{"m":"M37","id":"NEW","p":null,"r":null,"g":"32-bit dynamic link library"},{"m":"M38","id":"NEW","p":null,"r":null,"g":"file management dynamic link library plugin"},{"m":"M39","id":"NEW","p":null,"r":null,"g":"USB dynamic link library plugin"},{"m":"M40","id":"E87","p":null,"r":null,"g":null}]}

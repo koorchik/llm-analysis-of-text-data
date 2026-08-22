@@ -1,7 +1,7 @@
 import type { Decision, DecisionRequest, DecisionStrategy } from '../types';
 
 interface Params {
-  /** Case-insensitive by default, matching what `EntityRegistry.resolve()` treats as identical. */
+  /** Case-insensitive by default, matching what `ConceptRegistry.resolve()` treats as identical. */
   caseSensitive?: boolean;
 }
 

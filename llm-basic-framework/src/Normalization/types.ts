@@ -50,12 +50,13 @@ export interface SimilarityMetric {
 export interface SnapshotEntry {
   canonical: string;
   /**
-   * Every surface this canonical can be matched on: the canonical itself followed by its alias
+   * Every surface this canonical can be matched on: the canonical itself followed by its label
    * surfaces, in registry order. The canonical usually appears twice, because `mint` stores it in
-   * its own alias list — harmless, since scoring takes a max.
+   * its own label list — harmless, since scoring takes a max.
    */
   surfaces: string[];
-  gloss?: string | null;
+  /** skos:definition — the one-line description written at mint time. */
+  definition?: string | null;
   categoryCounts?: Record<string, number>;
 }
 
@@ -98,12 +99,6 @@ export interface Candidate {
   sim: number;
   /** The canonical's surfaces, as shown to the judge. */
   surfaces: string[];
-  /**
-   * The candidate's current ladder rung, when the category has an active ladder. Carried so a
-   * graph-building strategy can tell "same level" from "one level up" — the distinction between a
-   * link and a granularity edge. Absent for ladder-free arms and for generators that do not set it.
-   */
-  rung?: string;
   /**
    * Which generator surfaced it. Carried into the decision log so E4 can score candidate recall
    * per channel rather than only in aggregate.
@@ -164,6 +159,12 @@ export interface DecisionRequest {
   docTitle?: string;
   docSnippet?: string;
   /**
+   * Which evidence window(s) of `docSnippet` cover this mention (per-mention snippet mode):
+   * `docSnippet` then holds numbered windows ("S1. …") and this names the ones containing the
+   * mention (e.g. "S2"), so the ballot can bind evidence to mentions without re-printing text.
+   */
+  contextRef?: string;
+  /**
    * Entities this document already knows about, offered as possible **parents**: every candidate
    * surfaced for any mention in the batch, plus the other mentions being decided alongside it.
    *
@@ -173,13 +174,7 @@ export interface DecisionRequest {
    * (`rfusclient.exe` → `Remote Utilities`, `MS Excel` → `MS Office`) — they are not near in name or
    * in embedding space, they are simply discussed in the same report.
    */
-  pool?: Array<{ canonical: string; surfaces: string[]; rung?: string }>;
-  /**
-   * The category's active granularity ladder, already rendered for a prompt. Supplied so a strategy
-   * can place a mention on the ladder without reaching into `SchemaRegistry` itself — the port stays
-   * a port. Undefined when the category has no ladder yet.
-   */
-  ladder?: string;
+  pool?: Array<{ canonical: string; surfaces: string[] }>;
 }
 
 export type DecisionKind = 'link' | 'mint' | 'defer';
@@ -207,32 +202,29 @@ export interface Decision {
   /** Short, loggable reason — appears in the decision log, so keep it stable across runs. */
   reason: string;
   /**
-   * The graph half of a verdict, filled only by strategies that model granularity. All three are
-   * optional so the flat-identity strategies stay unchanged, and all three are **proposals**: the
-   * caller validates `parentCandidate` against the list it actually showed and derives the edge kind
-   * from the parent's rung, exactly as it does for the built-in judge. A strategy cannot mint an
-   * edge the ladder does not support.
+   * The graph half of a verdict, filled only by strategies that model hierarchy. All optional so
+   * the flat-identity strategies stay unchanged, and all **proposals**: the caller validates
+   * `parentCandidate` against the list it actually showed before storing anything.
    */
   gloss?: string | null;
   parentCandidate?: string | null;
-  mentionRung?: string | null;
   /**
-   * The relation the strategy read between mention and parent, in ladder-free words: the same thing
-   * with a version/edition/platform qualifier removed (`version-of`), the same referent stated less
-   * precisely for some other reason (`narrower-of`), or a distinct component of it (`part-of`).
+   * The ISO 25964 typing the strategy read between mention and `parentCandidate`:
+   * `broaderInstantial` (BTI — a version/edition/platform qualifier removed, `Office 2010` under
+   * `Office`), `broaderGeneric` (BTG — is-a, stated less precisely for any other reason), or
+   * `broaderPartitive` (BTP — a distinct component of a whole).
    *
-   * `version-of` is a refinement of `narrower-of`, not a rival: both store `coarsens-to`, so nothing
-   * downstream changes meaning. It is recorded separately because it is the one relation an analysis
-   * usually wants to contract on its own — "products without version names" folds `Office 2010` into
-   * `Office` and `Photoshop 7` into `Photoshop` while leaving `MS Word` under `MS Office` alone —
-   * and that operation is identical across vendors regardless of how deep either chain runs.
-   *
-   * The ladder stays authoritative when it has an opinion — the caller derives the edge kind from
-   * the parent's rung first and only falls back to this. Without the fallback a category whose
-   * ladder has not been discovered yet drops **every** edge its judge proposes, which is exactly
-   * what the first `listwise-graph` run did: correct parents, zero edges recorded.
+   * All three store one skos:broader edge; the typing rides in the edge's `type` field.
+   * `broaderInstantial` is recorded separately because it is the one relation an analysis usually
+   * wants to contract on its own — "products without version names" folds `Office 2010` into
+   * `Office` while leaving `MS Word` under `MS Office` alone.
    */
-  relation?: 'version-of' | 'narrower-of' | 'part-of' | null;
+  broaderType?: 'broaderGeneric' | 'broaderPartitive' | 'broaderInstantial' | null;
+  /**
+   * True when the strategy read the mention as the BROADER side of the relation (`r: "b"` on the
+   * SKOS ballot): the stored edge runs `parentCandidate` → mention, endpoints swapped by the caller.
+   */
+  mentionIsBroader?: boolean;
 }
 
 /**

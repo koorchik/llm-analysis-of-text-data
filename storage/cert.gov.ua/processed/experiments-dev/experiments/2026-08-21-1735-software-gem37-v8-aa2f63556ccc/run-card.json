@@ -3,7 +3,7 @@
   "runId": "software-gem37-v8-aa2f63556ccc",
   "condition": "software-gem37-v8",
   "createdAt": "2026-08-21T14:35:03.846Z",
-  "updatedAt": "2026-08-21T14:35:06.086Z",
+  "updatedAt": "2026-08-21T14:40:43.009Z",
   "config": {
     "condition": "software-gem37-v8",
     "orchestration": "incremental",
@@ -166,7 +166,50 @@
     "runId": "software-gem37-v8-aa2f63556ccc"
   },
   "resumeEvents": [],
-  "cost": null,
-  "embeddingCache": null,
-  "completedAt": null
+  "cost": {
+    "runId": "software-gem37-v8-aa2f63556ccc",
+    "totals": {
+      "calls": 46,
+      "inputTokens": 70679,
+      "outputTokens": 21176,
+      "costUsd": 0,
+      "unpricedCalls": 36,
+      "wallClockMs": 335836
+    },
+    "byOperator": {
+      "listwise-graph": {
+        "calls": 24,
+        "inputTokens": 52262,
+        "outputTokens": 8635,
+        "costUsd": 0,
+        "unpricedCalls": 24,
+        "wallClockMs": 159110
+      },
+      "ladder": {
+        "calls": 12,
+        "inputTokens": 17721,
+        "outputTokens": 12541,
+        "costUsd": 0,
+        "unpricedCalls": 12,
+        "wallClockMs": 175049
+      },
+      "embed-index": {
+        "calls": 10,
+        "inputTokens": 696,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "unpricedCalls": 0,
+        "wallClockMs": 1677
+      }
+    },
+    "unpricedModels": [
+      "gemini/gemini-3.7-flash"
+    ]
+  },
+  "embeddingCache": {
+    "hits": 2580,
+    "misses": 49,
+    "entries": 3563
+  },
+  "completedAt": "2026-08-21T14:40:43.009Z"
 }

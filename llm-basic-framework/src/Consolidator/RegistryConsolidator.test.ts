@@ -1,6 +1,6 @@
 import { RegistryConsolidator } from './RegistryConsolidator';
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import assert from 'node:assert/strict';
@@ -48,9 +48,9 @@ const EMPTY_REVIEW = JSON.stringify({ merges: [], edges: [], renames: [], splits
 async function setup(replies: string[]) {
   const dir = await scratchDir();
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
+  await conceptRegistry.load();
 
   const llm = cannedLlm(replies);
   const decisionLog = new DecisionLog({ filePath: path.join(dir, 'decisions.jsonl'), enabled: true });
@@ -58,10 +58,10 @@ async function setup(replies: string[]) {
     artifactsDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
   });
-  return { dir, consolidator, schemaRegistry, entityRegistry, llm };
+  return { dir, consolidator, schemaRegistry, conceptRegistry, llm };
 }
 
 async function readLog(dir: string) {
@@ -76,27 +76,27 @@ test('review verdicts apply: merge, granularity edge, rename — each with conso
     renames: [{ old: 'Sandworm', new: 'APT44' }],
     splits: [],
   });
-  const { dir, consolidator, entityRegistry } = await setup([review, EMPTY_REVIEW]);
+  const { dir, consolidator, conceptRegistry } = await setup([review, EMPTY_REVIEW]);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.mint('HackerGroup', 'Sandworm Team', { doc: 2, date: '01.01.2024' });
-  entityRegistry.mint('HackerGroup', 'UAC-0002', { doc: 3, date: '01.01.2024' });
-  entityRegistry.mint('HackerGroup', 'APT44', { doc: 4, date: '01.01.2024' });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.mint('HackerGroup', 'Sandworm Team', { doc: 2, date: '01.01.2024' });
+  conceptRegistry.mint('HackerGroup', 'UAC-0002', { doc: 3, date: '01.01.2024' });
+  conceptRegistry.mint('HackerGroup', 'APT44', { doc: 4, date: '01.01.2024' });
+  await conceptRegistry.save();
 
   await consolidator.run();
 
-  assert.equal(entityRegistry.resolve('HackerGroup', 'Sandworm Team'), 'Sandworm', 'merged');
-  const edges = entityRegistry.granularityEdges('HackerGroup');
+  assert.equal(conceptRegistry.resolve('HackerGroup', 'Sandworm Team'), 'Sandworm', 'merged');
+  const edges = conceptRegistry.broaderEdges('HackerGroup');
   assert.equal(edges.length, 1);
-  assert.equal(edges[0].kind, 'part-of');
+  assert.equal(edges[0].type, 'broaderPartitive', 'the review reply\'s legacy kind maps onto the ISO 25964 typing');
   assert.equal(edges[0].decision, 'consolidator');
-  const renames = entityRegistry.renameEdges('HackerGroup');
+  const renames = conceptRegistry.renameEdges('HackerGroup');
   assert.equal(renames.length, 1);
   assert.equal(renames[0].to, 'APT44');
 
   const ops = (await readLog(dir)).map((event) => event.op);
-  for (const op of ['merge-canonical', 'granularity-edge', 'rename-edge']) {
+  for (const op of ['merge-canonical', 'broader-edge', 'rename-edge']) {
     assert.ok(ops.includes(op), `${op} logged`);
   }
 });
@@ -108,14 +108,14 @@ test('split detaches aliases and the matchedVia re-stamp moves exactly their men
     renames: [],
     splits: [{ canonical: 'Sandworm', detach: ['Voodoo Bear'] }],
   });
-  const { dir, consolidator, entityRegistry, schemaRegistry } = await setup([review, EMPTY_REVIEW]);
+  const { dir, consolidator, conceptRegistry, schemaRegistry } = await setup([review, EMPTY_REVIEW]);
 
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 1 });
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 2 });
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.link('HackerGroup', 'Sandworm', 'Voodoo Bear', { docId: 2 });
   // A second, similar canonical so the pairwise scan makes the category suspicious at all.
-  entityRegistry.mint('HackerGroup', 'Sandworms', { doc: 3, date: '01.01.2024' });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworms', { doc: 3, date: '01.01.2024' });
+  await conceptRegistry.save();
   await schemaRegistry.save();
 
   // Two mentions of the same canonical, matched via different aliases: only the detached one moves.
@@ -141,7 +141,7 @@ test('split detaches aliases and the matchedVia re-stamp moves exactly their men
   await consolidator.run();
 
   assert.equal(
-    entityRegistry.resolve('HackerGroup', 'Voodoo Bear'),
+    conceptRegistry.resolve('HackerGroup', 'Voodoo Bear'),
     'Voodoo Bear',
     'detached alias became its own canonical'
   );
@@ -151,23 +151,23 @@ test('split detaches aliases and the matchedVia re-stamp moves exactly their men
 });
 
 test('deferred pairs reach the review even when similarity would not flag them, then clear', async () => {
-  const { consolidator, entityRegistry, llm } = await setup([EMPTY_REVIEW]);
+  const { consolidator, conceptRegistry, llm } = await setup([EMPTY_REVIEW]);
 
-  entityRegistry.mint('HackerGroup', 'UAC-0002', { doc: 1, date: '01.01.2024' });
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 2, date: '01.01.2024' });
-  entityRegistry.pushDeferred({
+  conceptRegistry.mint('HackerGroup', 'UAC-0002', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 2, date: '01.01.2024' });
+  conceptRegistry.pushDeferred({
     category: 'HackerGroup',
     mention: 'UAC-0002',
     mintedAs: 'UAC-0002',
     candidates: ['Sandworm'],
     docId: 3,
   });
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   await consolidator.run();
 
   assert.ok(llm.calls() >= 1, 'the dissimilar deferred pair still triggered a review call');
-  assert.equal(entityRegistry.deferred().length, 0, 'reviewed defers are consumed');
+  assert.equal(conceptRegistry.deferred().length, 0, 'reviewed defers are consumed');
 });
 
 test('cross-category sweep merges a shared-surface duplicate and records the category correction', async () => {
@@ -178,16 +178,16 @@ test('cross-category sweep merges a shared-surface duplicate and records the cat
     splits: [],
   });
   // Call order: no per-category suspects (single dissimilar entries) → cross-category call first.
-  const { dir, consolidator, entityRegistry } = await setup([crossReview, EMPTY_REVIEW]);
+  const { dir, consolidator, conceptRegistry } = await setup([crossReview, EMPTY_REVIEW]);
 
-  entityRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
-  entityRegistry.mint('Organization', 'Sandworm', { doc: 2, date: '01.01.2024' });
-  await entityRegistry.save();
+  conceptRegistry.mint('HackerGroup', 'Sandworm', { doc: 1, date: '01.01.2024' });
+  conceptRegistry.mint('Organization', 'Sandworm', { doc: 2, date: '01.01.2024' });
+  await conceptRegistry.save();
 
   await consolidator.run();
 
-  assert.equal(entityRegistry.records('Organization').Sandworm, undefined, 'moved out');
-  assert.ok(entityRegistry.records('HackerGroup').Sandworm, 'kept under the corrected category');
+  assert.equal(conceptRegistry.concepts('Organization').Sandworm, undefined, 'moved out');
+  assert.ok(conceptRegistry.concepts('HackerGroup').Sandworm, 'kept under the corrected category');
   const corrections = (await readLog(dir)).filter((event) => event.op === 'category-correction');
   assert.equal(corrections.length, 1);
   assert.equal(corrections[0].from.category, 'Organization');

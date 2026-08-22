@@ -1,6 +1,6 @@
 import { DecisionLog } from '../src/DecisionLog/DecisionLog';
 import type { EmbeddingsClient } from '../src/EmbeddingsClient/EmbeddingsClient';
-import { EntityRegistry } from '../src/EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../src/ConceptRegistry/ConceptRegistry';
 import { GlossIndex } from '../src/Repair/GlossIndex';
 import type { LlmClient } from '../src/LlmClient/LlmClient';
 import { SchemaRegistry } from '../src/SchemaRegistry/SchemaRegistry';
@@ -33,7 +33,7 @@ import { before, describe, it } from 'node:test';
  * last one: the duplicate `Voodoo Bear` lives for ZERO subsequent documents, so there is no fifth
  * document in this test and there must not be one.
  *
- * **What is real here**: `SchemaRegistry`, `EntityRegistry`, `StreamingNormalizer` (phase 1),
+ * **What is real here**: `SchemaRegistry`, `ConceptRegistry`, `StreamingNormalizer` (phase 1),
  * `StreamingRepairer` (phase 2) with its real `SuspectGenerator` and a real `GlossIndex`, and a real
  * `StringSimilarityGenerator` blocker — the same instance shared between normalizer and repairer with
  * `onRegistryChange` forwarded, exactly as `bin/app.ts#createProcessors` wires it. Only the two
@@ -338,7 +338,7 @@ async function scratchDir(): Promise<string> {
 
 interface Walkthrough {
   dir: string;
-  entityRegistry: EntityRegistry;
+  conceptRegistry: ConceptRegistry;
   repairer: StreamingRepairer;
   llm: ReturnType<typeof scriptedLlm>;
   decisions: Array<Record<string, unknown>>;
@@ -353,9 +353,9 @@ async function runWalkthrough(): Promise<Walkthrough> {
   }
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
+  await conceptRegistry.load();
 
   // Stands in for the extractor's cold-start proposal admission (d1: "all 5 proposals admitted
   // without a judge call") — the normalizer resolves categories, it never reads `schemaProposals`.
@@ -383,7 +383,7 @@ async function runWalkthrough(): Promise<Walkthrough> {
     );
   }
   await schemaRegistry.save();
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   const llm = scriptedLlm(SCRIPT);
   const decisionLog = new DecisionLog({ filePath: path.join(dir, 'decisions.jsonl'), enabled: true });
@@ -398,7 +398,7 @@ async function runWalkthrough(): Promise<Walkthrough> {
     artifactsDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
     glossIndex,
     blocker,
@@ -420,7 +420,7 @@ async function runWalkthrough(): Promise<Walkthrough> {
     outputDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
     candidateGenerator: blocker,
     // The walkthrough judges candidates the default 0.5 floor would never retrieve — "UAC-0002 …
@@ -434,7 +434,7 @@ async function runWalkthrough(): Promise<Walkthrough> {
   const hackerGroupsAfter: string[][] = [];
   for (const file of Object.keys(EXTRACTIONS)) {
     await normalizer.processFile(file);
-    hackerGroupsAfter.push(Object.keys(entityRegistry.records('HackerGroup')));
+    hackerGroupsAfter.push(Object.keys(conceptRegistry.concepts('HackerGroup')));
   }
 
   const raw = await fs.readFile(path.join(dir, 'decisions.jsonl'), 'utf8');
@@ -444,7 +444,7 @@ async function runWalkthrough(): Promise<Walkthrough> {
     .filter(Boolean)
     .map((line) => JSON.parse(line) as Record<string, unknown>);
 
-  return { dir, entityRegistry, repairer, llm, decisions, hackerGroupsAfter };
+  return { dir, conceptRegistry, repairer, llm, decisions, hackerGroupsAfter };
 }
 
 // --- assertions ----------------------------------------------------------------------------------
@@ -461,7 +461,7 @@ describe('SKEIN walkthrough micro-corpus d1–d4 (StreamingNormalizer + Streamin
   });
 
   it('d2: "Sandworm group" and "UAC-0002" link onto Sandworm instead of duplicating it', () => {
-    const aliases = world.entityRegistry.aliasSurfaces('HackerGroup', 'Sandworm');
+    const aliases = world.conceptRegistry.labelSurfaces('HackerGroup', 'Sandworm');
     assert.ok(aliases.includes('Sandworm group'), `aliases: ${aliases.join(', ')}`);
     assert.ok(aliases.includes('UAC-0002'), `aliases: ${aliases.join(', ')}`);
 
@@ -474,14 +474,14 @@ describe('SKEIN walkthrough micro-corpus d1–d4 (StreamingNormalizer + Streamin
       'both actor mentions decided at d2, not merged later'
     );
     // "SCADA systems" is minted with no call: its category is empty, so there are no candidates.
-    assert.equal(world.entityRegistry.resolve('IndustrialSystem', 'SCADA systems'), 'SCADA systems');
+    assert.equal(world.conceptRegistry.resolve('IndustrialSystem', 'SCADA systems'), 'SCADA systems');
   });
 
   it('d3: APT28 is minted as its own record and is never merged away (the don\'t-merge case)', () => {
     assert.deepEqual(world.hackerGroupsAfter[2].sort(), ['APT28', 'Sandworm']);
-    assert.equal(world.entityRegistry.resolve('HackerGroup', 'APT28'), 'APT28');
+    assert.equal(world.conceptRegistry.resolve('HackerGroup', 'APT28'), 'APT28');
     // Still standing after d4's repair pass ran across all category registries.
-    assert.equal(world.entityRegistry.records('HackerGroup')['APT28'] !== undefined, true);
+    assert.equal(world.conceptRegistry.concepts('HackerGroup')['APT28'] !== undefined, true);
     assert.deepEqual(
       world.decisions.filter((event) => event.op === 'repair-merge' && event.from === 'APT28'),
       [],
@@ -489,7 +489,7 @@ describe('SKEIN walkthrough micro-corpus d1–d4 (StreamingNormalizer + Streamin
     );
     // "the same regional energy company" refers back — a link, not a second organization.
     assert.equal(
-      world.entityRegistry.resolve('Organization', 'regional energy company'),
+      world.conceptRegistry.resolve('Organization', 'regional energy company'),
       'oblast energy operator'
     );
   });
@@ -523,15 +523,15 @@ describe('SKEIN walkthrough micro-corpus d1–d4 (StreamingNormalizer + Streamin
 
   it('d4: the registry keeps no Voodoo Bear record, only the alias on Sandworm', () => {
     assert.equal(
-      world.entityRegistry.records('HackerGroup')['Voodoo Bear'],
+      world.conceptRegistry.concepts('HackerGroup')['Voodoo Bear'],
       undefined,
       'record absorbed'
     );
     assert.ok(
-      world.entityRegistry.aliasSurfaces('HackerGroup', 'Sandworm').includes('Voodoo Bear'),
+      world.conceptRegistry.labelSurfaces('HackerGroup', 'Sandworm').includes('Voodoo Bear'),
       'the alias survives the record'
     );
-    assert.equal(world.entityRegistry.resolve('HackerGroup', 'Voodoo Bear'), 'Sandworm');
+    assert.equal(world.conceptRegistry.resolve('HackerGroup', 'Voodoo Bear'), 'Sandworm');
   });
 
   it('d4: artifacts/4.json is deterministically re-stamped onto Sandworm', async () => {
@@ -574,7 +574,7 @@ describe('SKEIN walkthrough micro-corpus d1–d4 (StreamingNormalizer + Streamin
   });
 
   it('leaves the repair boundary debt-free: nothing spilled, repairedThrough === 4', () => {
-    const state = world.entityRegistry.repairState();
+    const state = world.conceptRegistry.repairState();
     assert.deepEqual(state.spillover, [], 'no suspect was carried past its own document');
     assert.equal(state.repairedThrough, 4);
   });

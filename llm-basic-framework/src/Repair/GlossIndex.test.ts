@@ -4,7 +4,7 @@ import {
   type EmbeddingsResponse,
 } from '../EmbeddingsClient/EmbeddingsBackendBase';
 import { EmbeddingsClient } from '../EmbeddingsClient/EmbeddingsClient';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import { GlossIndex } from './GlossIndex';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -55,7 +55,7 @@ async function tmpPath(): Promise<string> {
   return path.join(dir, 'registry.json');
 }
 
-/** A loaded registry seeded via mint/link, matching `EntityRegistry.test.ts`'s `seeded()` pattern. */
+/** A loaded registry seeded via mint/link, matching `ConceptRegistry.test.ts`'s `seeded()` pattern. */
 async function seeded(
   entries: Array<{
     category: string;
@@ -64,15 +64,15 @@ async function seeded(
     gloss?: string | null;
     doc?: number;
   }>
-): Promise<EntityRegistry> {
-  const registry = new EntityRegistry({ filePath: await tmpPath() });
+): Promise<ConceptRegistry> {
+  const registry = new ConceptRegistry({ filePath: await tmpPath() });
   await registry.load();
   for (const entry of entries) {
     registry.mint(
       entry.category,
       entry.canonical,
       { doc: entry.doc ?? 1, date: '01.01.2020' },
-      { gloss: entry.gloss ?? null }
+      { definition: entry.gloss ?? null }
     );
     for (const alias of entry.aliases ?? []) {
       registry.link(entry.category, entry.canonical, alias, { docId: entry.doc ?? 1 });
@@ -134,11 +134,11 @@ test('sync() refreshes a SURVIVING canonical\'s centroid after a merge — the f
   const beforeMerge = await index.aliasCoherence({ category: 'HackerGroup', canonical: 'Alpha' }, 'Probe');
 
   // `canonicalPolicy` defaults to 'first-seen', so Alpha (doc 1) survives over Beta (doc 2); Beta's
-  // own name becomes an alias of Alpha (EntityRegistry.applyMerges folds `source.aliases` in).
+  // own name becomes an alias of Alpha (ConceptRegistry.applyMerges folds `source.aliases` in).
   const summary = registry.applyMerges('HackerGroup', [{ from: 'Beta', into: 'Alpha' }]);
   assert.deepEqual(summary.survivors, ['Alpha'], 'sanity: first-seen policy keeps Alpha as the survivor');
   assert.deepEqual(
-    [...registry.aliasSurfaces('HackerGroup', 'Alpha')].sort(),
+    [...registry.labelSurfaces('HackerGroup', 'Alpha')].sort(),
     ['Alpha', 'Beta'],
     'sanity: Beta is now an alias of the survivor'
   );
@@ -163,10 +163,10 @@ test('sync() picks up a gloss backfilled onto a survivor by applyMerges, not the
   ]);
   await index.sync(registry);
 
-  // EntityRegistry.applyMerges: `if (!target.gloss && source.gloss) target.gloss = source.gloss`.
+  // ConceptRegistry.applyMerges: `if (!target.gloss && source.gloss) target.definition = source.gloss`.
   registry.applyMerges('HackerGroup', [{ from: 'Beta', into: 'Alpha' }]);
   assert.equal(
-    registry.records('HackerGroup').Alpha.gloss,
+    registry.concepts('HackerGroup').Alpha.definition,
     'a distinct threat actor',
     "sanity: the merge backfilled Beta's gloss onto Alpha"
   );

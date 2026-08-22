@@ -1,0 +1,104 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to — any of `E1…En`, not only that mention's options, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line. Every fact true of the mention stays true of the listed entity, only vaguer.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+Ask it of every new entity, not only the obvious ones. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when unsure — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## 3. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context is usable only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order:
+{"v":[{"m":"M1","id":"E3","p":null,"r":null,"g":null},{"m":"M2","id":"NEW","p":"E1","r":"v","g":"a 2010 release of the suite"}]}
+
+--- text ---
+Source: "Масштабна фішингова атака на державні установи України 19.01.2021" — evidence: S1. "апит.rar», в якому знаходиться запаролений архів «Електронний запит.rar» та текстовий файл з паролем до нього «2021». Запаролений архів містить файл «Електронний запит.exe», який є трояном для віддаленого доступу (RAT).</p><p>Мал.5 «Електронний запит.ехе»</p><p>В свою чергу «Електронний запит.ехе» містить в собі файли «installer.exe» та «host_news_mod_mod.msi». Файл «installer.exe» є старою версією легального програмного забезпечення для віддаленого доступу Remote Utilities (https://www.remoteutilities.com/&nbsp;або https://rmansys.ru/)&nbsp;(Мал.6, Мал.7, Мал.8, Мал.9).</p><p>Мал.6 «installer.exe»</p><p></p><p>Мал.7 «in" S2. "ддаленого доступу. Одразу після ініціалізації виконуються команди, що видаляють індикатори компрометації з робочих директорій ШПЗ за допомогою файлу «killself.bat» (Мал.10).&nbsp;</p><p>Мал. 10 Видалення файлів</p><p>Під час ініціалізації ШПЗ відбувається реплікація його складових до директорії %TEMP%\7ZipSfx.0" S3. "ється інсталяція програмного забезпечення RMS, встановлюється його клієнт-серверна частина та починається запуск.&nbsp;</p><p>'C:\Program Files (x86)\Remote Utilities - Host\rutserv.exe' /silentinstall</p><p>'C:\Program Files (x86)\Remote Utilities - Host\rutserv.exe' /firewall</p><p>'C:\Program Files (x86)\Remote Utilities - Host\rutserv.exe' /start</p><p>C:\Program Files (x86)\Remote Utilities - Host\rutserv.exe</p><p>C:\Program Files (x86)\Remote Utilities - Host\rfusclient.exe</p><p>'C:\Program Files (x86)\Remote Utilities - Host\rfusclient.exe' /tra"
+Entities:
+E1. FTPGetter
+E2. Microsoft Equation Editor
+E3. RegAsm.exe
+E4. FTP Commander
+E5. Smokeloader
+E6. Windows Host Compute Service Shim
+E7. SmartFTP
+E8. Chedot Browser
+E9. Microsoft Office Services and Web Apps
+E10. WinSCP
+E11. Adobe Flash Player
+E12. Postbox Credential
+E13. Agent Tesla
+E14. ckZ89.ExE
+E15. spi.exe
+E16. До оплати рах.ф. 74 - 2018р.js
+E17. cmd.exe
+E18. Рахунки и новые списки.lzh
+E19. major.exe
+E20. powershell.exe
+E21. Рахунки за выполненные работы от 11.12.2018.js
+E22. До оплати від 11.12.18.lzh
+E23. Misha
+E24. Internet Explorer
+E25. Google Chrome
+E26. Comodo Dragon Browser
+E27. MS Word [aka Microsoft Word]
+E28. WS_FTP
+E29. Windows Server 2012
+E30. Liebao Browser
+E31. FileZilla
+E32. Double Kill
+E33. Trillian
+E34. QIP Surf Browser
+E35. Mozilla Firefox
+E36. Remote Utilities - Host
+E37. Електронний запит.exe
+E38. installer.exe
+E39. host_news_mod_mod.msi
+E40. rutserv.exe
+E41. rfusclient.exe
+E42. killself.bat
+E43. Remote Utilities
+Mentions:
+M1. "Remote Utilities" (Software) — options: E1, E2, E3, E4, E5, E6, E7, E8, E9, E10 — ctx: S1
+M2. "Remote Utilities - Host" (Software) — options: E1, E6, E4, E9, E3, E10, E11, E12, E7, E13 — ctx: S3
+M3. "Електронний запит.exe" (Software) — options: E14, E3, E15, E16, E17, E18, E19, E20, E21, E22 — ctx: S1
+M4. "installer.exe" (Software) — options: E14, E3, E19, E15, E17, E20, E13, E23, E24, E10 — ctx: S1
+M5. "host_news_mod_mod.msi" (Software) — options: E19, E6, E14, E25, E26, E15, E27, E28, E23, E12 — ctx: S1
+M6. "rutserv.exe" (Software) — options: E15, E3, E17, E14, E20, E19, E6, E13, E24, E29 — ctx: S3
+M7. "rfusclient.exe" (Software) — options: E15, E3, E17, E14, E6, E19, E20, E13, E1, E30 — ctx: S3
+M8. "killself.bat" (Software) — options: E14, E31, E32, E23, E20, E33, E17, E5, E34, E35 — ctx: S2
+
+=== RESPONSE (11.5s, in 2521 / out 220 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","p":"E36","r":"b","g":"remote access software"},{"m":"M2","id":"NEW","p":"E43","r":"p","g":"host component of Remote Utilities software"},{"m":"M3","id":"NEW","p":null,"r":null,"g":"remote access trojan executable"},{"m":"M4","id":"NEW","p":"E37","r":"p","g":"executable contained within malicious executable"},{"m":"M5","id":"NEW","p":"E37","r":"p","g":"MSI file contained within malicious executable"},{"m":"M6","id":"NEW","p":"E36","r":"p","g":"executable component of Remote Utilities Host"},{"m":"M7","id":"NEW","p":"E36","r":"p","g":"executable component of Remote Utilities Host"},{"m":"M8","id":"NEW","p":null,"r":null,"g":"batch file used to delete compromise indicators"}]}

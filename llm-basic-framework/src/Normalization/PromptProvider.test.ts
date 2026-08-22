@@ -113,7 +113,7 @@ describe('PromptProvider', () => {
   });
 
   it('entity-matching prompts are domain-neutral and reject contextual roles as identity', () => {
-    for (const id of ['ladder', 'link-judge', 'listwise-select', 'listwise-select-compact-v1', 'listwise-select-complete-v2', 'listwise-select-balanced-v3', 'comem-select']) {
+    for (const id of ['listwise-skos-v1', 'link-judge', 'listwise-select', 'listwise-select-compact-v1', 'listwise-select-complete-v2', 'listwise-select-balanced-v3', 'comem-select']) {
       const prompt = prompts.get(id);
       assert.doesNotMatch(prompt.template, /cyber|CERT-UA|phishing|attacker|targeting/i, id);
       assert.match(prompt.template, /role/i, `${id} must explicitly reject role as identity evidence`);

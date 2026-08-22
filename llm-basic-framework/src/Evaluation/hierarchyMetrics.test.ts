@@ -94,15 +94,44 @@ test('reachable recall only counts gold edges whose endpoints exist in the run',
   assert.equal(metrics.recallReachable, 1);
 });
 
-test('readRegistryHierarchy reads canonicals and edges out of a v3 registry', () => {
+test('readRegistryHierarchy reads canonicals and edges out of a v3 registry, lifted to v6 vocabulary', () => {
   const { canonicals: read, edges } = readRegistryHierarchy({
-    categories: { Software: { 'MS Office': { aliases: [{ surface: 'MS Office' }, { surface: 'Microsoft Office' }] } } },
-    granularityEdges: { Software: [{ from: 'Office 2010', to: 'MS Office', kind: 'coarsens-to' }] },
+    version: 3,
+    canonicalPolicy: 'first-seen',
+    categories: { Software: { 'MS Office': { aliases: [{ surface: 'MS Office' }, { surface: 'Microsoft Office' }], firstSeen: { doc: 1, date: '' } } } },
+    granularityEdges: { Software: [{ from: 'Office 2010', to: 'MS Office', kind: 'coarsens-to', docId: 1, decision: 'judge' }] },
+    renameEdges: {},
+    deferQueue: [],
   });
   assert.deepEqual(read, [
     { category: 'Software', canonical: 'MS Office', surfaces: ['MS Office', 'Microsoft Office'] },
   ]);
   assert.deepEqual(edges, [
-    { category: 'Software', from: 'Office 2010', to: 'MS Office', kind: 'coarsens-to' },
+    // Legacy `coarsens-to` carried no finer reading, so it lifts onto an UNTYPED skos:broader.
+    { category: 'Software', from: 'Office 2010', to: 'MS Office', kind: 'untyped' },
+  ]);
+});
+
+test('readRegistryHierarchy scores v6 typed edges through the ISO 25964 vocabulary', () => {
+  const { edges } = readRegistryHierarchy({
+    version: 6,
+    canonicalPolicy: 'first-seen',
+    conceptSchemes: {
+      Software: {
+        'MS Office': { labels: [{ surface: 'MS Office', docId: 1, decision: 'mint' }], firstSeen: { doc: 1, date: '' } },
+        'Office 2010': { labels: [{ surface: 'Office 2010', docId: 1, decision: 'mint' }], firstSeen: { doc: 1, date: '' } },
+      },
+    },
+    broaderEdges: {
+      Software: [
+        { narrower: 'Office 2010', broader: 'MS Office', type: 'broaderInstantial', docId: 1, decision: 'judge' },
+      ],
+    },
+    renameEdges: {},
+    deferQueue: [],
+    repair: { adjudicated: [], spillover: [], repairedThrough: -1 },
+  });
+  assert.deepEqual(edges, [
+    { category: 'Software', from: 'Office 2010', to: 'MS Office', kind: 'broaderInstantial' },
   ]);
 });

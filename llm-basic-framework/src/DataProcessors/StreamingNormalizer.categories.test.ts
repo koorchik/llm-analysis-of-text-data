@@ -1,5 +1,5 @@
 import { DecisionLog } from '../DecisionLog/DecisionLog';
-import { EntityRegistry } from '../EntityRegistry/EntityRegistry';
+import { ConceptRegistry } from '../ConceptRegistry/ConceptRegistry';
 import type { LlmClient } from '../LlmClient/LlmClient';
 import { SchemaRegistry } from '../SchemaRegistry/SchemaRegistry';
 import { StreamingNormalizer } from './StreamingNormalizer';
@@ -64,13 +64,13 @@ async function setup(tag: string, categories?: string[]) {
   );
 
   const schemaRegistry = new SchemaRegistry({ filePath: path.join(dir, 'schema.json') });
-  const entityRegistry = new EntityRegistry({ filePath: path.join(dir, 'registry.json') });
+  const conceptRegistry = new ConceptRegistry({ filePath: path.join(dir, 'registry.json') });
   await schemaRegistry.load();
-  await entityRegistry.load();
+  await conceptRegistry.load();
   schemaRegistry.admitCategory({ name: 'Software', definition: '', doc: 0 });
   schemaRegistry.admitCategory({ name: 'HackerGroup', definition: '', doc: 0 });
   await schemaRegistry.save();
-  await entityRegistry.save();
+  await conceptRegistry.save();
 
   const llm = cannedLlm();
   const decisionLog = new DecisionLog({ filePath: path.join(dir, 'decisions.jsonl'), enabled: true });
@@ -79,28 +79,28 @@ async function setup(tag: string, categories?: string[]) {
     outputDir: path.join(dir, 'artifacts'),
     llmClient: llm.client,
     schemaRegistry,
-    entityRegistry,
+    conceptRegistry,
     decisionLog,
     ...(categories ? { categories } : {}),
   });
-  return { dir, normalizer, llm, entityRegistry };
+  return { dir, normalizer, llm, conceptRegistry };
 }
 
 describe('StreamingNormalizer CATEGORIES filter', () => {
   it('keeps only listed categories in registry and artifact, drops half-filtered relations', async () => {
-    const { dir, normalizer, entityRegistry } = await setup('filter', ['Software']);
+    const { dir, normalizer, conceptRegistry } = await setup('filter', ['Software']);
     await normalizer.processFile('1.json');
 
-    // NOTE: EntityRegistry#snapshot() does not expose a `categories` map — `categories` is a
+    // NOTE: ConceptRegistry#snapshot() does not expose a `categories` map — `categories` is a
     // `() => string[]` accessor and per-category counts come from `size(category)`. Adapted per
     // the brief's fallback: assert through `resolve()` directly, which is null/undefined for a
     // category+name pair the registry never minted.
-    const snapshot = entityRegistry.snapshot();
+    const snapshot = conceptRegistry.snapshot();
     assert.ok(snapshot.categories().includes('Software'), 'Software entities minted');
     assert.equal(snapshot.size('Software'), 2, 'both Software mentions minted');
     assert.ok(!snapshot.categories().includes('HackerGroup'), 'HackerGroup never entered the registry');
     assert.equal(
-      entityRegistry.resolve('HackerGroup', 'UAC-0006'),
+      conceptRegistry.resolve('HackerGroup', 'UAC-0006'),
       undefined,
       'HackerGroup mention never resolves'
     );
@@ -117,13 +117,13 @@ describe('StreamingNormalizer CATEGORIES filter', () => {
   });
 
   it('is a no-op when categories is omitted', async () => {
-    const { dir, normalizer, entityRegistry } = await setup('noop');
+    const { dir, normalizer, conceptRegistry } = await setup('noop');
     await normalizer.processFile('1.json');
 
-    const snapshot = entityRegistry.snapshot();
+    const snapshot = conceptRegistry.snapshot();
     assert.ok(snapshot.categories().includes('HackerGroup'), 'HackerGroup minted as before');
     assert.equal(
-      entityRegistry.resolve('HackerGroup', 'UAC-0006'),
+      conceptRegistry.resolve('HackerGroup', 'UAC-0006'),
       'UAC-0006',
       'HackerGroup mention resolves as before'
     );
