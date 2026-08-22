@@ -862,6 +862,10 @@ export function normalizeLadderProposal(data: RawData): LadderProposal | undefin
       }
     }
   }
+  // Same LIVR gap as `placements` above, same consequence: a model that derives a perfectly good
+  // ladder and simply omits the optional `rejected` array had the whole run thrown out with
+  // `{ rejected: 'FORMAT_ERROR' }`, silently narrowing a 3-member ensemble to 2.
+  if (data.rejected === undefined || data.rejected === null) data.rejected = [];
   if (Array.isArray(data.rejected)) {
     for (const rejection of data.rejected) {
       if (rejection && typeof rejection === 'object' && typeof rejection.gate === 'number') {

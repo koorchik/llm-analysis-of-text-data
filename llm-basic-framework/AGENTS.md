@@ -21,6 +21,21 @@ It also hosts the experiment harness for a research paper comparing entity-norma
 - `docs/normalization-experiments-refactor.md` — the migration plan and milestone status.
 - `docs/statistical-protocol.md` — the pre-registered analysis. Read §5 before emitting a `defer`.
 
+**Session start — where the work currently stands.** Read `docs/ENTITY-GRAPH-2026-08-20.md` FIRST:
+the §14 "Update, 2026-08-22" paragraph (the recommended configuration — the "v8 package":
+`listwise-graph-compact-v8` + `ladder-placed-v2` + `LADDER_MAX_EXAMPLES=50` + the automatic catch-up
+pass), then §15a (the package replicated on both `gemma4:12b-64k` and `gemini-3.7-flash`: identity
+1.000 held, reachable edge recall +50% relative on both) and §15b (two harness bugs that silently
+degraded local arms — never remove the undici dispatcher in `LlmClientBackendOllama`). Open threads
+as of 2026-08-22, roughly in value order: (1) kind agreement regression `.750 → .500` — catch-up
+edges mislabel `part-of` vs `narrower-of` without document context; (2) full-corpus 204-doc run is
+the honest gate for every reportable number; (3) the catch-up-without-placements ablation
+(v7 + old ladder + catch-up) was never run and would isolate the one change that carries the gain;
+(4) 4 of 52 ladder placements fail to resolve (`Microsoft Windows` lands g0 beside `MS Office` g1);
+(5) edge-recall variance on Gemini needs replicates (.545/.545/.364 spread). The all-category arm
+runner is `run-allcat.sh` in the session scratchpad — /tmp is wiped on reboot; recreate it per its
+own header comment and rebuild subsets from `gold/subsets/*.txt`.
+
 Two things that are load-bearing and easy to break: `test/gate.test.ts` (byte-identity against a
 golden fixture — a failure means a measured difference downstream would be the refactor, not the
 experiment), and `prompts/` (prompt text is an experimental variable, hashed into every `runId`, so
@@ -39,7 +54,7 @@ npm start
 # 3. Data analysis and visualization
 
 # Tests: node:test via ts-node, no build step
-npm test        # 872 tests, ~15s — includes the behaviour gate (test/gate.test.ts)
+npm test        # ~950 tests, ~15s — includes the behaviour gate (test/gate.test.ts)
 ```
 
 ### Typecheck
@@ -130,12 +145,12 @@ a registry whose repair pass never ran). The old deferred, manually-triggered
 
 The fast loop for "does this change help category X?" — minutes, not an hour, and no cloud spend.
 Every number it produces is **non-reportable** (dev split × single category × subset corpus); it
-exists to rank iterations. Full reference: `docs/RUNNING-EXPERIMENTS.md` §3b; measured results and
-the current best-known knobs per category: `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-19.md` (judge
-`gemma4:12b-16k` + `LISTWISE_PROMPT_ID=listwise-select-nameform-v6` +
-`CANDIDATE_GENERATOR=union-rr`), with the earlier configuration study in
-`docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-18.md` and the blocker-fusion measurement in
-`docs/BLOCKER-FUSION-2026-08-20.md`.
+exists to rank iterations. Full reference: `docs/RUNNING-EXPERIMENTS.md` §3b. Current best-known
+knobs are the v8 package in `docs/ENTITY-GRAPH-2026-08-20.md` (§14 update: judge `gemma4:12b-64k` +
+`DECISION_STRATEGY=listwise-graph` + `LISTWISE_PROMPT_ID=listwise-graph-compact-v8` +
+`LADDER_PROMPT_ID=ladder-placed-v2` + `CANDIDATE_GENERATOR=union-rr`); the flat-partition era it
+superseded is `docs/LOCAL-MATCHING-EXPERIMENTS-2026-08-19.md` / `-18.md`, and the blocker-fusion
+measurement is `docs/BLOCKER-FUSION-2026-08-20.md`.
 
 Three ingredients make it fast: `CATEGORIES` drops every other category's mentions at plan-build
 time, a committed doc subset (`gold/subsets/*.txt`) shrinks the corpus, and pre-seeded frozen

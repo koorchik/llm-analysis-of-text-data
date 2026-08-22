@@ -409,6 +409,20 @@ decisions rather than only in the metric:
 (Software, Country, all-categories — all within the variance band), and is the leanest variant that
 carries every rule with demonstrated value and no clause that has been shown to help.
 
+**Update, 2026-08-22 — the recommendation advances to the v8 package.** Three changes landed after
+the paragraph above was written and have now been measured on *both* judges (§15a):
+`listwise-graph-compact-v8` (v7 plus the `version-of` relation tag — §13 made per-pair, so
+`fold --contract version-of` rolls `Office 2010` and `Photoshop 7` up in one operation regardless of
+chain depth), `ladder-placed-v2` (the
+discovery call places the samples it already read), and the **catch-up pass** (when a category's
+ladder lands or changes version, one linking call reviews a stride-sample of that category's existing
+canonicals). The package holds identity at 1.000 on both judges and lifts reachable edge recall
++50% relative (local .348 → .522, Gemini .417 → .583). Two warnings from the ablations: placements
+*without* catch-up cost identity (1.000 → 0.750 on Gemini) — the two ship together or not at all —
+and kind agreement drops (.750 → .500–.571), which is the open regression. Env deltas on top of the
+block below: `LISTWISE_PROMPT_ID=listwise-graph-compact-v8 LADDER_PROMPT_ID=ladder-placed-v2
+LADDER_MAX_EXAMPLES=50`.
+
 ### The recommended configuration
 
 ```bash
@@ -475,6 +489,61 @@ counts above are the comparable figure until a price is added.
 ceiling identity on a different model family without modification, which is evidence that its rules
 describe the task rather than the judge.
 
+## 15a. The v8 package, replicated on both judges (2026-08-22)
+
+All-categories slice, identical frozen extractions, `--hierarchy-all-splits`; the ablation rows are
+Gemini-only (each cell is a single run — variance bands from §14 apply):
+
+| all-categories arm | judge | identity | edges | edge P | R_reach | kind |
+|---|---|---:|---:|---:|---:|---:|
+| v7 + ladder v1 (§14 recommendation) | local | 1.000 | 17 | .471 | .348 | .750 |
+| v7 + ladder v1 | gemini-3.7-flash | 1.000 | 24 | .417 | .417 | .700 |
+| + `ladder-placed-v2`, 8×50 (ablation) | gemini-3.7-flash | **0.750** | 19 | .526 | .417 | .700 |
+| + catch-up pass | gemini-3.7-flash | 1.000 | 30 | .500 | **.625** | .533 |
+| **+ `compact-v8` (full package)** | gemini-3.7-flash | 1.000 | 28 | .500 | .583 | .571 |
+| **full package** | **local `gemma4:12b-64k`** | **1.000** | 30 | .400 | **.522** | .500 |
+
+What replicates across judges, and what doesn't:
+
+- **The catch-up gain transfers.** Reachable recall +50% relative on both judges (local .348 → .522,
+  Gemini .417 → .583–.625), by the same mechanism: the pass added 32 Software + 6 Domain edges on the
+  local judge against 39 + 7 on Gemini, and **zero merges on either** — with identity already at
+  ceiling the linking half of the pass finds no duplicates, so its value today is entirely edges.
+- **Identity survives the package on both judges** (1.000, NIL F1 0.914 — unchanged from the flat
+  reference). The ablation row shows this is not free: placements alone cost Gemini a merge
+  (0.750), and catch-up is what repairs it.
+- **Kind agreement falls on both** (.750 → .500 local, .571 Gemini). Catch-up edges arrive without
+  the document context the per-doc judge has, and mislabel `part-of` vs `narrower-of` more often.
+  This is the open regression the recall was bought with.
+- The local judge pays ~8.5× the tokens (1.14M vs 134k, §7's hidden reasoning) and ~37× the
+  wall-clock (12,096 s vs 324 s) for edge quality a step below the cloud judge — the local track's
+  value remains the corpus-cannot-leave-the-machine constraint, unchanged from §15.
+
+The local run also folds to the target the graph exists for (§8): `--contract version-of` rolls
+`Microsoft Office 2016/2013/2010/2007 → MS Office`, `Windows 7/Vista → Microsoft Windows`, and
+`shellcode.x86/x64 → Cobalt Strike Beacon` while leaving components (`MS Word`, `cmd.exe`) alone.
+
+## 15b. Two harness bugs the local replication flushed out
+
+Neither is a modelling change; both silently degraded local arms and are invisible in every metric
+table — exactly the `22f01d7` class ("dropped calls, not worse judgement").
+
+- **The HTTP layer capped every local call at 300 s.** ollama-js leaves `fetch` on undici's
+  defaults, and undici aborts after 300 s waiting for response headers; a non-streaming `/api/chat`
+  sends no headers until generation completes, so that default was a hard per-call ceiling. The v8
+  package pushed 64k-judge calls right up against it (typical 160–260 s), and when one crossed it,
+  `StreamingNormalizer` caught the error and **minted every mention in the document** — the arm kept
+  running and simply scored worse. `LlmClientBackendOllama` now supplies its own undici dispatcher
+  (30 min, `OLLAMA_TIMEOUT_MS` to override). The replicated run is the direct evidence: **6 calls
+  exceeded 300 s and completed** (max 782 s — a ladder member that spent 64k output tokens on hidden
+  reasoning), two of them judge calls, one of those on the *first document* of the run. The §15a
+  local row does not exist without this fix.
+- **An omitted optional `rejected` array sank valid ladder proposals.** LIVR's `default` does not
+  fire ahead of `listOfObjects` for an absent field, so a model that derived a correct ladder but
+  skipped the optional `rejected` list failed validation with `FORMAT_ERROR` — silently narrowing a
+  3-member ensemble to 2 (the same gap already fixed for `placements`; local models omit empty
+  optional fields routinely). Normalized to `[]` before validation, with tests pinning both fields.
+
 ## 16. Threats to validity
 
 - **Slice size.** 22/14/11-document subsets with 22-24 reachable gold edges. One edge moves recall by
@@ -488,6 +557,10 @@ describe the task rather than the judge.
 - **Model coverage.** The optimization ran entirely on `gemma4:12b-64k`; §15 adds a `gemini-3.7-flash`
   cross-check at single samples per cell (replicates in progress). The identifier-rule replication
   (n=10) is local-only.
+- **Inference-engine version.** The §15a local row ran on ollama 0.32.15; every earlier local arm ran
+  on the previous daemon. Model digests are identical and per-call timings match (160–260 s typical),
+  but the daemon is not recorded in the run card, so a subtle generation difference between engine
+  versions cannot be excluded when comparing local rows across that boundary.
 
 ## Reproduction
 

@@ -4,9 +4,44 @@ import {
   type LlmResponse,
   type LlmSamplingSupport,
 } from './LlmClientBackendBase';
-import { Ollama } from 'ollama';
+import { Ollama, type Fetch } from 'ollama';
+import { Agent, fetch as undiciFetch } from 'undici';
 
 const DEFAULT_NUM_CTX = 32768;
+
+/**
+ * How long a single local call may take before the HTTP layer gives up.
+ *
+ * ollama-js leaves `fetch` on undici's defaults, and undici times out after **300 s waiting for
+ * response headers**. A non-streaming `/api/chat` sends no headers until generation finishes, so
+ * that default is a hard per-call ceiling — and a 64k local judge sits uncomfortably close to it:
+ * measured on `gemma4:12b-64k`, ordinary calls run 145-230 s and one landed at exactly 300.7 s,
+ * which undici killed. The failure is silent in the worst way: `StreamingNormalizer` catches it and
+ * mints every mention in the document, so the arm keeps running and simply scores worse, looking
+ * like bad judgement rather than a dropped call (the trap recorded in commit 22f01d7).
+ *
+ * 30 minutes is far above any observed call and still bounded, so a genuinely hung server fails
+ * rather than blocking the run forever.
+ */
+const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000;
+
+export function ollamaTimeoutMs(): number {
+  const override = Number(process.env.OLLAMA_TIMEOUT_MS);
+  return Number.isFinite(override) && override > 0 ? override : DEFAULT_TIMEOUT_MS;
+}
+
+/**
+ * `fetch` for ollama-js with that ceiling raised. Node does not expose a configurable dispatcher for
+ * its built-in `fetch`, and `setGlobalDispatcher` from the standalone `undici` package does NOT
+ * reach it (separate module instances) — so the request has to go through undici's own `fetch` with
+ * an explicit dispatcher. Passing only `fetch` to `Ollama` leaves host resolution untouched
+ * (`config?.host ?? defaultHost`), so this changes transport timeouts and nothing else.
+ */
+export function createOllamaFetch(timeoutMs = ollamaTimeoutMs()): Fetch {
+  const agent = new Agent({ headersTimeout: timeoutMs, bodyTimeout: timeoutMs });
+  return ((input: string | URL | Request, init?: RequestInit) =>
+    undiciFetch(input as never, { ...(init ?? {}), dispatcher: agent } as never)) as unknown as Fetch;
+}
 
 /**
  * The context window a local model tag advertises, e.g. `gemma4:e2b-8k` → 8192.
@@ -62,6 +97,7 @@ export class LlmClientBackendOllama implements LlmBackendBase {
     this.#numCtx = args.numCtx ?? numCtxFromModelTag(args.model) ?? DEFAULT_NUM_CTX;
     this.#think = args.think;
 
+    const fetch = createOllamaFetch();
     this.ollama =
       args.apiKey && args.model.match(/gpt-oss/)
         ? new Ollama({
@@ -69,8 +105,9 @@ export class LlmClientBackendOllama implements LlmBackendBase {
             headers: {
               Authorization: `Bearer ${args.apiKey}`,
             },
+            fetch,
           })
-        : new Ollama();
+        : new Ollama({ fetch });
   }
 
   async send(
