@@ -352,14 +352,19 @@ export class ListwiseGraphDecision implements DecisionStrategy {
     const byMention = new Map<string, CompactVerdict>();
     raw.forEach((verdict, position) => {
       if (!verdict || typeof verdict !== 'object') return;
-      // `m` is the mention's number; fall back to position so a model that drops the key still lines
-      // up, which a positional array cannot do once one entry is missing.
-      const key = typeof verdict.m === 'string' ? verdict.m.trim().toUpperCase() : `M${position + 1}`;
-      byMention.set(key, verdict);
+      const mStr = typeof verdict.m === 'string' ? verdict.m.trim().toUpperCase() : '';
+      if (/^M\d+$/.test(mStr)) {
+        byMention.set(mStr, verdict);
+      } else {
+        if (mStr) byMention.set(mStr, verdict);
+        byMention.set(`M${position + 1}`, verdict);
+      }
     });
 
     askable.forEach(({ request, index }, position) => {
-      const verdict = byMention.get(`M${position + 1}`);
+      const verdict =
+        byMention.get(`M${position + 1}`) ??
+        byMention.get(request.mention.trim().toUpperCase());
       if (!verdict) {
         decisions[index] = mintOf('no usable verdict returned');
         return;
