@@ -99,7 +99,9 @@ export class LlmClientBackendOllama implements LlmBackendBase {
 
     const fetch = createOllamaFetch();
     this.ollama =
-      args.apiKey && args.model.match(/gpt-oss/)
+      // OLLAMA_CLOUD=1 routes ANY model to ollama.com when an API key is present (the hosted
+      // catalog decides what actually exists there — gemma4:31b is, gemma4:12b is not).
+      args.apiKey && (args.model.match(/gpt-oss/) || process.env.OLLAMA_CLOUD === '1')
         ? new Ollama({
             host: 'https://ollama.com',
             headers: {
@@ -117,9 +119,10 @@ export class LlmClientBackendOllama implements LlmBackendBase {
   ): Promise<LlmResponse> {
     const started = Date.now();
 
+    const think = options.think ?? this.#think;
     const response = await this.ollama.chat({
       model: this.model,
-      ...(this.#think === undefined ? {} : { think: this.#think }),
+      ...(think === undefined ? {} : { think }),
       options: {
         num_ctx: this.#numCtx,
         ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),

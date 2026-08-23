@@ -20,6 +20,11 @@ interface Params {
    * precision, so the union adds recall without meaningful precision cost. Default 1 (off).
    */
   samples?: number;
+  /** Per-strategy decoding overrides (v8 hybrid: review pass runs think:false + temperature 0 —
+   *  deterministic and measured best there — while the identity pass keeps the model defaults,
+   *  where hidden reasoning is load-bearing for written-form linking). */
+  think?: boolean;
+  temperature?: number;
 }
 
 interface Choice {
@@ -80,6 +85,8 @@ export class ListwiseGraphDecision implements DecisionStrategy {
   #promptId: string;
   #compact: boolean;
   #samples: number;
+  #think?: boolean;
+  #temperature?: number;
 
   constructor(params: Params) {
     this.#llmClient = params.llmClient;
@@ -88,6 +95,8 @@ export class ListwiseGraphDecision implements DecisionStrategy {
     this.#k = params.k ?? 4;
     this.#promptId = params.promptId ?? 'listwise-graph-v2';
     this.#samples = Math.max(1, params.samples ?? 1);
+    this.#think = params.think;
+    this.#temperature = params.temperature;
     // The SKOS ballot speaks the compact dialect (E-numbered entities, {"v":[...]}) by design;
     // the identity-only pass-1 prompts (listwise-id-*) render the same ballot and answer in JSONL.
     this.#compact =
@@ -103,6 +112,8 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       dialect: this.#compact ? 'compact' : 'verbose',
       promptSha256: this.#prompts.get(this.#promptId).sha256,
       samples: this.#samples,
+      ...(this.#think !== undefined ? { think: this.#think } : {}),
+      ...(this.#temperature !== undefined ? { temperature: this.#temperature } : {}),
     };
   }
 
@@ -212,6 +223,8 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       response = await this.#llmClient.send(this.#prompts.render(this.#promptId), text, {
         operator: 'listwise-graph',
         docId: first.docId,
+        ...(this.#think !== undefined ? { think: this.#think } : {}),
+        ...(this.#temperature !== undefined ? { temperature: this.#temperature } : {}),
       });
 
       // JSONL dialect (listwise-id-*): one verdict object per line, no wrapping array — a

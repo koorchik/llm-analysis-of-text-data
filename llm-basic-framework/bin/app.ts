@@ -262,6 +262,12 @@ async function main() {
       reaskSplit: CONFIG.reaskSplit,
       reaskNow: CONFIG.reaskNow,
       decouple: CONFIG.decouple,
+      // Decoding knobs, runId-folded since 2026-08-23 (they change behaviour and previously did
+      // not rotate the id): judge temperature and ollama hidden-reasoning switch.
+      temperature: CONFIG.temperature ?? null,
+      ollamaThink: process.env.OLLAMA_THINK ?? null,
+      reviewThink: process.env.REVIEW_THINK ?? null,
+      reviewTemperature: process.env.REVIEW_TEMPERATURE ?? null,
       reviewPromptId: CONFIG.decouple ? CONFIG.reviewPromptId : null,
       docSiblingK: CONFIG.docSiblingK,
       docSiblingMode: CONFIG.docSiblingMode,
@@ -677,6 +683,14 @@ function createProcessors(
             promptId: CONFIG.reviewPromptId,
             k: CONFIG.listwiseK,
             samples: CONFIG.judgeSamples,
+            // v8 hybrid decoding for the review pass (REVIEW_THINK=false REVIEW_TEMPERATURE=0
+            // measured deterministic-and-best on gemma; unset inherits the model defaults).
+            ...(process.env.REVIEW_THINK === undefined
+              ? {}
+              : { think: process.env.REVIEW_THINK !== 'false' && process.env.REVIEW_THINK !== '0' }),
+            ...(process.env.REVIEW_TEMPERATURE === undefined
+              ? {}
+              : { temperature: Number(process.env.REVIEW_TEMPERATURE) }),
           }),
         }
       : {}),

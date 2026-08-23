@@ -1,0 +1,91 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: ""Повістка до суду": чергова цільова атака UAC-0050 з використанням RemcosRAT (CERT-UA#8150)" — evidence: S1. "У разі активації код макросу за допомогою оглядача файлів (explorer.exe) з використанням протоколу SMB здійснить завантаження на ЕОМ та запуск файлу "scandoc.exe". В свою чергу зазначений виконуваний файл є обфускованою за допомогою SmartAssembly .NET-програмою, призначенням якої є дешифрування та запуск програми для віддаленого управління RemcosRAT (ідентифікатор ліцензції: A254379BF33E9109EA234A12DD74E7AB).&nbsp;</p><p>CERT-UA заздалегідь розкрито зловмисний задум та вжито невідкладних заходів"
+Entities:
+E1. Remcos
+E2. RemoteUtilities
+E3. Misha
+E4. HarvesterX
+E5. Meterpreter
+E6. Remote Utilities
+E7. AgentTesla
+E8. Remote Utilities - Host
+E9. ConfuserEx
+E10. Elements Browser
+E11. wscript.exe
+E12. cmd.exe
+E13. scan.exe (CredoMap_v2)
+E14. MCMDiction.exe
+E15. baseupd.exe
+E16. loader.exe
+E17. UkrScanner.exe (SFX)
+E18. PowerShell (powershell.exe)
+E19. major.exe
+E20. b.exe
+E21. SmartFTP
+E22. Smokeloader
+E23. ChakraCore
+E24. Paltalk
+E25. .NET Framework
+E26. Microsoft Edge
+E27. mshta.exe
+E28. 360Chrome Browser
+E29. scandoc.exe
+E30. SmartAssembly
+E31. RemcosRAT
+Mentions:
+M1. "RemcosRAT" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "scandoc.exe" (Software) — options: E11, E12, E13, E14 — ctx: S1
+M3. "SmartAssembly" (Software) — options: E4, E21, E7, E22 — ctx: S1
+
+=== ERROR ===
+fetch failed
+TypeError: fetch failed
+    at Object.processResponse (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/lib/web/fetch/index.js:271:16)
+    at /home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/lib/web/fetch/index.js:1119:19
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/index.js:159:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async post (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/ollama/dist/browser.cjs:135:20)
+    at async Ollama.processStreamableRequest (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/ollama/dist/browser.cjs:281:22)
+    at async LlmClientBackendOllama.send (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendOllama.ts:121:22)
+    at async LlmClient.send (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:61:24)
+    at async ListwiseGraphDecision.#decideOnce (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Normalization/decision/ListwiseGraphDecision.ts:223:18)
+    at async ListwiseGraphDecision.decide (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Normalization/decision/ListwiseGraphDecision.ts:129:22)
+    at async StreamingNormalizer.#strategyJudge (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:894:19)
+    at async StreamingNormalizer.processFile (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:495:15)

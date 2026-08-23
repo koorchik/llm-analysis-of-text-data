@@ -124,6 +124,20 @@ plain-v7 tails are harmless nulls — and only cat runs exhibited escaped-quote 
 usable, if ever, only behind 2-of-N voting. (b) Schema-constrained decoding: >40 min/call through
 the thinking model — disqualified on latency. (c) Prompt wording — immune, as above.
 
+### 6b. Per-pass decoding (the "hybrid") — promising probe, unresolved corpus run
+
+Probe-level, the review pass is strictly better WITHOUT thinking at T=0: 27/28 family parents,
+byte-identical across draws, ~22 s vs ~200 s (the T=0 pathology lives in the thinking channel;
+remove the channel and greedy is stable). Corpus-wide, thinking OFF everywhere collapses identity
+(pairwise 1.000 → .571) — deliberation is load-bearing for written-form linking. The per-pass
+hybrid (thinking pass 1, no-thinking T=0 pass 2; plumbed as per-strategy decoding overrides
+REVIEW_THINK / REVIEW_TEMPERATURE) should combine both, but its first validation arm failed
+identity on the hard-merge stratum with a confounder present (an ollama server reconfiguration
+restart mid-run) and one clean replication pending. STATUS: the RECOMMENDED local configuration
+remains v8 + thinking + JUDGE_SAMPLES=2 (.677, identity 1.000); per-pass decoding is recorded as
+the next optimization candidate, not a validated result. The asymmetry finding itself (thinking
+helps name-form recognition, hurts relation assertion) stands on the probe + all-nothink data.
+
 ## 7. Transport: JSONL for big ballots
 
 **Issue.** On 74-row ballots the small judge intermittently truncates or malforms the single

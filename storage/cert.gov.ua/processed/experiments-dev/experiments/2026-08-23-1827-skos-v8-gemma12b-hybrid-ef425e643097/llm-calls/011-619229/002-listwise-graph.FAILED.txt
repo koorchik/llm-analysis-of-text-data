@@ -1,0 +1,237 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- sampling ---
+{"temperature":0,"think":false}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 128 canonicals"
+Entities:
+E1. PGMB New Order 18-2077.xlsx
+E2. До оплати рах.ф. 74 - 2018р.js
+E3. Електронний запит.exe
+E4. MS Excel
+E5. Рахунки за выполненные работы от 11.12.2018.js
+E6. Comodo Dragon Browser
+E7. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E8. До оплати від 11.12.18.lzh
+E9. Microsoft Equation Editor
+E10. powershell.exe
+E11. spi.exe
+E12. b.exe
+E13. RegAsm.exe
+E14. .NET Framework
+E15. rutserv.exe
+E16. cmd.exe
+E17. ckZ89.ExE
+E18. loader.exe
+E19. Internet Explorer
+E20. TRYxaEbX.ps1
+E21. Microsoft Exchange Server
+E22. TRYxaEbX_2.ps1
+E23. Microsoft Edge
+E24. Thunderbird
+E25. Trillian
+E26. ChakraCore
+E27. TRYxaEbX
+E28. z.ps1
+E29. UkrScanner.exe (SFX)
+E30. shellcode.x64 (Cobalt Strike Beacon)
+E31. Cobalt Strike Beacon
+E32. Remote Utilities - Host
+E33. write.exe
+E34. scan.exe (CredoMap_v2)
+E35. Becky!
+E36. killself.bat
+E37. shellcode.x86 (Cobalt Strike Beacon)
+E38. Chedot Browser
+E39. Microsoft Office Services and Web Apps
+E40. CocCoc Browser [aka Coowon Browser]
+E41. Adobe Flash Player
+E42. Petya
+E43. installer.exe
+E44. MS PowerPoint
+E45. major.exe
+E46. rfusclient.exe
+E47. MISP
+E48. Win32k
+E49. Windows 7
+E50. Microsoft Windows
+E51. Misha
+E52. MS Word [aka Microsoft Word]
+E53. MS Office [aka Microsoft Office]
+E54. Windows Vista
+E55. Microsoft Outlook
+E56. Windows Server 2008
+E57. Windows Server 2012
+E58. Smokeloader
+E59. jDownloader
+E60. Meterpreter
+E61. IceDragon
+E62. 360Chrome Browser
+E63. WinSCP
+E64. Windows Host Compute Service Shim
+E65. Microsoft Office 2010 [aka Office 2010]
+E66. Microsoft Office 2013 [aka Office 2013]
+E67. Microsoft Office 2016 [aka Office 2016]
+E68. Microsoft Office 2007 [aka Office 2007]
+E69. SQLite.Interop.dll
+E70. 7Star Browser
+E71. vaultcli.dll
+E72. CentBrowser
+E73. Citrio Browser
+E74. Liebao Browser
+E75. FTP Commander
+E76. SmartFTP
+E77. FTPGetter
+E78. VBScript
+E79. host_news_mod_mod.msi
+E80. Kometa Browser
+E81. Elements Browser
+E82. Double Kill
+E83. Paltalk
+E84. FileZilla
+E85. Mozilla Firefox
+E86. Uran Browser
+E87. Orbitum Browser
+E88. Google Chrome
+E89. Foxmail
+E90. Opera Mail
+E91. Pocomail
+E92. Claws Mail
+E93. CredoMap_v2
+E94. Chromium Browser
+E95. Agent Tesla
+E96. WS_FTP
+E97. Yandex Browser
+E98. Brave Browser
+E99. Opera Browser
+E100. Iridium Browser
+E101. ChromePlus Browser
+E102. Amigo Browser
+E103. Epic Privacy Browser
+E104. UkrScanner.rar
+Mentions:
+M1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software) — options: E1, E2, E3, E4
+M2. "write.exe" (Software) — options: E10, E11, E12, E13
+M3. "TRYxaEbX" (Software) — options: E19, E20, E21, E22
+M4. "TRYxaEbX.ps1" (Software) — options: E27, E22, E28, E19
+M5. "TRYxaEbX_2.ps1" (Software) — options: E20, E27, E28, E19
+M6. "shellcode.x86 (Cobalt Strike Beacon)" (Software) — options: E30, E31, E11, E32
+M7. "shellcode.x64 (Cobalt Strike Beacon)" (Software) — options: E37, E31, E10, E32
+M8. "Cobalt Strike Beacon" (Software) — options: E37, E30, E26, E39
+M9. "Електронний запит.exe" (Software) — options: E19, E13, E12, E18
+M10. "powershell.exe" (Software) — options: E28, E13, E44, E16
+M11. "spi.exe" (Software) — options: E16, E12, E13, E14
+M12. "b.exe" (Software) — options: E14, E16, E11, E13
+M13. "rfusclient.exe" (Software) — options: E15, E13, E12, E14
+M14. "installer.exe" (Software) — options: E18, E13, E14, E45
+M15. "rutserv.exe" (Software) — options: E21, E18, E12, E13
+M16. "cmd.exe" (Software) — options: E10, E12, E13, E14
+M17. "WinSCP" (Software) — options: E19, E47, E48, E23
+M18. "Microsoft Windows" (Software) — options: E23, E52, E49, E53
+M19. "loader.exe" (Software) — options: E58, E45, E59, E13
+M20. ".NET Framework" (Software) — options: E23, E60, E19, E26
+M21. "Win32k" (Software) — options: E23, E19, E63, E14
+M22. "major.exe" (Software) — options: E19, E18, E13, E23
+M23. "Windows Vista" (Software) — options: E23, E49, E50, E19
+M24. "MS Office" (Software) — options: E4, E65, E52, E44
+M25. "Windows 7" (Software) — options: E23, E54, E50, E19
+M26. "Internet Explorer" (Software) — options: E23, E60, E69, E21
+M27. "Microsoft Edge" (Software) — options: E19, E52, E21, E55
+M28. "Microsoft Exchange Server" (Software) — options: E23, E56, E19, E9
+M29. "SQLite.Interop.dll" (Software) — options: E14, E71, E19, E72
+M30. "WS_FTP" (Software) — options: E21, E75, E76, E19
+M31. "Meterpreter" (Software) — options: E11, E77, E19, E80
+M32. "Windows Server 2008" (Software) — options: E21, E57, E68, E54
+M33. "vaultcli.dll" (Software) — options: E14, E69, E82, E46
+M34. "Trillian" (Software) — options: E19, E85, E86, E23
+M35. "Thunderbird" (Software) — options: E19, E69, E75, E23
+M36. "Mozilla Firefox" (Software) — options: E23, E82, E84, E19
+M37. "ckZ89.ExE" (Software) — options: E21, E16, E12, E13
+M38. "Petya" (Software) — options: E23, E35, E14, E19
+M39. "Paltalk" (Software) — options: E23, E71, E43, E19
+M40. "Foxmail" (Software) — options: E21, E91, E23, E92
+M41. "z.ps1" (Software) — options: E19, E20, E23, E22
+M42. "Misha" (Software) — options: E23, E47, E53, E63
+M43. "IceDragon" (Software) — options: E19, E26, E6, E23
+M44. "ChakraCore" (Software) — options: E23, E61, E19, E14
+M45. "Remote Utilities" (Software) — options: E19, E32, E15, E9
+M46. "FileZilla" (Software) — options: E41, E82, E85, E19
+M47. "MISP" (Software) — options: E4, E51, E53, E63
+M48. "FTP Commander" (Software) — options: E19, E96, E77, E16
+M49. "Opera Browser" (Software) — options: E19, E80, E90, E23
+M50. "Orbitum Browser" (Software) — options: E99, E100, E94, E40
+M51. "Google Chrome" (Software) — options: E23, E40, E62, E19
+M52. "Agent Tesla" (Software) — options: E19, E81, E84, E23
+M53. "Adobe Flash Player" (Software) — options: E19, E58, E72, E23
+M54. "Torch Browser" (Software) — options: E19, E40, E98, E23
+M55. "Iridium Browser" (Software) — options: E19, E94, E40, E61
+M56. "SmartFTP" (Software) — options: E19, E96, E41, E47
+M57. "Chromium Browser" (Software) — options: E88, E101, E100, E40
+M58. "Brave Browser" (Software) — options: E19, E86, E62, E40
+M59. "scan.exe (CredoMap_v2)" (Software) — options: E93, E29, E13, E11
+M60. "UkrScanner.rar" (Software) — options: E29, E19, E86, E34
+M61. "UkrScanner.exe (SFX)" (Software) — options: E104, E34, E13, E18
+
+=== ERROR ===
+fetch failed
+TypeError: fetch failed
+    at Object.processResponse (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/lib/web/fetch/index.js:271:16)
+    at /home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/lib/web/fetch/index.js:1119:19
+    at /home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/undici/index.js:159:7
+    at async post (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/ollama/dist/browser.cjs:135:20)
+    at async Ollama.processStreamableRequest (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/node_modules/ollama/dist/browser.cjs:281:22)
+    at async LlmClientBackendOllama.send (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClientBackendOllama.ts:121:22)
+    at async LlmClient.send (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/LlmClient/LlmClient.ts:61:24)
+    at async ListwiseGraphDecision.#decideOnce (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Normalization/decision/ListwiseGraphDecision.ts:223:18)
+    at async ListwiseGraphDecision.decide (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/Normalization/decision/ListwiseGraphDecision.ts:129:22)
+    at async StreamingNormalizer.#reviewConcepts (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:1328:19)
+    at async StreamingNormalizer.processFile (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:730:9)
+    at async StreamingNormalizer.run (/home/koorchik/work/kpi/llm-analysis-of-text-data/llm-basic-framework/src/DataProcessors/StreamingNormalizer.ts:303:7)

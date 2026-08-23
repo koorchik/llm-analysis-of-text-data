@@ -1,0 +1,133 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератака UAC-0020 (Vermin) з використанням тематики військовополонених на Курському напрямку; новий інструмент FIRMACHAGENT (CERT-UA#10742)" — evidence: S1. "ip".</p><p>Згаданий архів містить CHM-файл "список вп, що вибувають. курск.chm", в якому, серед іншого, знаходиться HTML-файл "part.html", що містить JavaScript-код, який, у свою чергу, забезпечує запуск обфускованого PowerShell-сценарію.</p><p>PowerShell-код призначений для завантаження на ЕОМ компонентів шкідливої програми SPECTR (здійснює викрадення документів, знімків екрану, даних Інтернет-браузерів та ін.) та нової програми FIRMACHAGENT ("chrome_updater.dll"; основним завданням якої є вивантаження викрадених даних на сервер управління), а також створення запланованих задач для запуску оркестратору "IDCLIPNET_x86.dll" (управляє плагінами SPECTR) та FIRMACHAGENT.</p><p>Зменшення вірогідності реалізації кіберзагрози досягається шляхом скорочення поверхні атаки за ра" S2. "&nbsp; chrome_updater.txt f8efa529dff81b0e02a786fc766ffca3&nbsp; &nbsp; 21c33c8365218b7fb1bbb0d45af77926877fb33384ef58fbbb6db04b9df55eb6&nbsp; &nbsp; Browser.dll ef123bc71a5f0e323b6a5c809d17d048&nbsp; &nbsp; 087158ad28080ef438047b88896dfa1962d1cd6fed8fce06e35c25f91ad5f1ff&nbsp; &nbsp; Files.dll 2972616c870bffdb1978b487df290dfe&nbsp; &nbsp; b95ef984bfb22c55881931b134deaf1b848fbfda4180fc393b9f532f51089cbb&nbsp; &nbsp; Screen.dll 7dc1016e78f8c243b3b0fa59eb648567&nbsp; &nbsp; f00c85d9db7a2a2bf248771b8d81d978fa6d2153e6a3095d9c5896b604e9d00d&nbsp; &nbsp; Social.dll a973224da0ebfca023ab3e55913447a9&nbsp; &nbsp; 6a18392e3e062ce0fcd4688c0b09e482855cf709eb178437d8fe2cdc9cfdf51f&nbsp; &nbsp; USB.dll a9261e37a5a2fadbf58c71f"
+Entities:
+E1. ChakraCore
+E2. FTPGetter
+E3. spi.exe
+E4. ConfuserEx
+E5. MS Excel
+E6. Sputnik Browser
+E7. Internet Explorer
+E8. AppLocker
+E9. .NET Framework
+E10. HarvesterX
+E11. AgentTesla
+E12. IceDragon
+E13. Agent Tesla
+E14. GammaSteel.NET
+E15. Microsoft Exchange Server
+E16. Mozilla Firefox
+E17. Foxmail
+E18. vaultcli.dll
+E19. wscript.exe
+E20. SQLite.Interop.dll
+E21. shellcode.x86.bin
+E22. CCleaner.exe
+E23. rfusclient.exe
+E24. shellcode.x86 (Cobalt Strike Beacon)
+E25. CCleaner.rar
+E26. Google Chrome
+E27. ChromePlus Browser
+E28. Chromium Browser
+E29. baseupd.exe
+E30. 360Chrome Browser
+E31. Brave Browser
+E32. 7Star Browser
+E33. Amigo Browser
+E34. Uran Browser
+E35. FileZilla
+E36. scandoc.exe
+E37. install.msi
+E38. PowerShell
+E39. rundll32.exe
+E40. Double Kill
+E41. Postbox Credential
+E42. scan.exe (CredoMap_v2)
+E43. MCMDiction.exe
+E44. MS Office [aka Microsoft Office]
+E45. Paltalk
+E46. wsuscr.exe
+E47. b.exe
+E48. VBScript
+E49. QuasarRAT
+E50. AutoIt
+E51. SRP
+E52. pfSense
+E53. Remote Utilities
+E54. Microsoft Equation Editor
+E55. YARA
+E56. Remote Utilities - Host
+E57. RemoteUtilities
+E58. rutserv.exe
+E59. FIRMACHAGENT
+E60. IDCLIPNET_x86.dll
+E61. chrome_updater.dll
+E62. Browser.dll
+E63. Files.dll
+E64. Screen.dll
+E65. Social.dll
+E66. USB.dll
+E67. JavaScript
+E68. Software Restriction Policies (SRP)
+E69. SPECTR
+Mentions:
+M1. "SPECTR" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "FIRMACHAGENT" (Software) — options: E11, E12, E13, E10 — ctx: S1
+M3. "IDCLIPNET_x86.dll" (Software) — options: E9, E18, E19, E20 — ctx: S1
+M4. "chrome_updater.dll" (Software) — options: E19, E26, E27, E9 — ctx: S1
+M5. "Browser.dll" (Software) — options: E19, E30, E31, E18 — ctx: S2
+M6. "Files.dll" (Software) — options: E19, E35, E18, E36 — ctx: S2
+M7. "Screen.dll" (Software) — options: E19, E18, E36, E20 — ctx: S2
+M8. "Social.dll" (Software) — options: E9, E18, E19, E20 — ctx: S2
+M9. "USB.dll" (Software) — options: E19, E18, E9, E20 — ctx: S2
+M10. "JavaScript" (Software) — options: E7, E48, E19, E49 — ctx: S1
+M11. "Software Restriction Policies (SRP)" (Software) — options: E51, E43, E52, E53
+
+=== RESPONSE (220.2s, in 2513 / out 17747 tok, stop) ===
+{"m":"SPECTR","id":"NEW","g":"malware that steals documents, screenshots, and browser data"}
+{"m":"FIRMACHAGENT","id":"NEW","g":"tool for exfiltrating stolen data to a command server"}
+{"m":"IDCLIPNET_x86.dll","id":"NEW","g":"orchestrator that manages plugins for the SPECTR program"}
+{"m":"chrome_updater.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"Browser.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"Files.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"Screen.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"Social.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"USB.dll","id":"NEW","g":"component of the FIRMACHAGENT program"}
+{"m":"JavaScript","id":"NEW","g":"scripting language used to launch a PowerShell script"}
+{"m":"Software Restriction Policies (SRP)","id":"E51","g":null}

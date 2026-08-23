@@ -22,6 +22,8 @@ export interface LlmCallOptions {
   seed?: number;
   maxTokens?: number;
   topP?: number;
+  /** Per-call hidden-reasoning switch (ollama thinking models); overrides the backend default. */
+  think?: boolean;
 }
 
 /** Why the provider stopped. Not normalised across providers — recorded verbatim. */

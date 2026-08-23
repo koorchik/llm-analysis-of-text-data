@@ -117,6 +117,8 @@ export class LlmClient {
     if (merged.temperature !== undefined && support.temperature) out.temperature = merged.temperature;
     if (merged.topP !== undefined && support.topP) out.topP = merged.topP;
     if (merged.seed !== undefined && support.seed) out.seed = merged.seed;
+    // Passed through untouched: only the ollama backend reads it, others ignore unknown options.
+    if (merged.think !== undefined) out.think = merged.think;
 
     return out;
   }

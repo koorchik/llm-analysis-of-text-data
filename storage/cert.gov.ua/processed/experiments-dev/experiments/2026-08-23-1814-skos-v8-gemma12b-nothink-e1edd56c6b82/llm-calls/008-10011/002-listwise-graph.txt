@@ -1,0 +1,208 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 112 canonicals"
+Entities:
+E1. Thunderbird
+E2. Remote Utilities - Host
+E3. Microsoft Equation Editor
+E4. RegAsm.exe
+E5. Internet Explorer
+E6. Smokeloader
+E7. Windows Host Compute Service Shim
+E8. WinSCP
+E9. Chedot Browser
+E10. rutserv.exe
+E11. Remote Utilities
+E12. rfusclient.exe
+E13. host_news_mod_mod.msi
+E14. Microsoft Office Services and Web Apps
+E15. installer.exe
+E16. Adobe Flash Player
+E17. spi.exe
+E18. powershell.exe
+E19. ckZ89.ExE
+E20. cmd.exe
+E21. major.exe
+E22. .NET Framework
+E23. Microsoft Windows
+E24. Microsoft Edge
+E25. Mozilla Firefox
+E26. Comodo Dragon Browser
+E27. MS Office [aka Microsoft Office]
+E28. Google Chrome
+E29. MS Word
+E30. WS_FTP
+E31. Microsoft Exchange Server
+E32. Double Kill
+E33. FileZilla
+E34. VBScript
+E35. Trillian
+E36. Misha
+E37. QIP Surf Browser
+E38. FTP Commander
+E39. Microsoft Outlook
+E40. MS PowerPoint
+E41. Orbitum Browser
+E42. Torch Browser
+E43. Iridium Browser
+E44. 7Star Browser
+E45. FTPGetter
+E46. Win32k
+E47. Windows 7
+E48. Windows Vista
+E49. SmartFTP
+E50. Windows Server 2012
+E51. Elements Browser
+E52. CentBrowser
+E53. Uran Browser
+E54. Citrio Browser
+E55. Petya
+E56. jDownloader
+E57. Agent Tesla
+E58. Microsoft Word
+E59. Microsoft Office 2007
+E60. Opera Browser
+E61. Opera Mail
+E62. 360Chrome Browser
+E63. ChakraCore
+E64. IceDragon
+E65. MS Excel
+E66. Microsoft Office 2010 [aka Office 2010]
+E67. Pocomail
+E68. Yandex Browser
+E69. Foxmail
+E70. Windows Server 2008
+E71. Paltalk
+E72. Sputnik Browser
+E73. CocCoc Browser
+E74. Brave Browser
+E75. Chromium Browser
+E76. Amigo Browser
+E77. vaultcli.dll
+E78. Coowon Browser
+E79. ChromePlus Browser
+E80. Office 2007
+E81. Microsoft Office 2013 [aka Office 2013]
+E82. Microsoft Office 2016 [aka Office 2016]
+E83. killself.bat
+E84. Becky!
+E85. Kometa Browser
+E86. Vivaldi Browser
+E87. Liebao Browser
+E88. Epic Privacy Browser
+E89. Claws Mail
+E90. Postbox Credential
+Mentions:
+M1. "Remote Utilities" (Software) — options: E1, E2, E3, E4
+M2. "Remote Utilities - Host" (Software) — options: E10, E11, E12, E13
+M3. "Електронний запит.exe" (Software) — options: E17, E4, E18, E19
+M4. "installer.exe" (Software) — options: E18, E17, E4, E21
+M5. "host_news_mod_mod.msi" (Software) — options: E24, E2, E25, E7
+M6. "rutserv.exe" (Software) — options: E18, E4, E17, E19
+M7. "rfusclient.exe" (Software) — options: E18, E4, E17, E19
+M8. "killself.bat" (Software) — options: E32, E33, E34, E18
+M9. "Thunderbird" (Software) — options: E25, E32, E38, E39
+M10. "Internet Explorer" (Software) — options: E24, E15, E22, E25
+M11. "WinSCP" (Software) — options: E30, E46, E23, E47
+M12. "Agent Tesla" (Software) — options: E1, E51, E33, E35
+M13. "Trillian" (Software) — options: E1, E25, E53, E36
+M14. "FTPGetter" (Software) — options: E38, E30, E55, E49
+M15. "Microsoft Edge" (Software) — options: E39, E58, E5, E27
+M16. "OpenVPN" (Software) — options: E60, E61, E8, E55
+M17. ".NET Framework" (Software) — options: E24, E63, E5, E64
+M18. "Microsoft Outlook" (Software) — options: E27, E58, E24, E23
+M19. "FTP Commander" (Software) — options: E30, E45, E49, E67
+M20. "Mozilla Firefox" (Software) — options: E60, E32, E33, E28
+M21. "Windows Vista" (Software) — options: E23, E47, E24, E70
+M22. "SmartFTP" (Software) — options: E30, E38, E71, E8
+M23. "Torch Browser" (Software) — options: E72, E73, E74, E62
+M24. "Iridium Browser" (Software) — options: E72, E75, E62, E41
+M25. "Paltalk" (Software) — options: E39, E77, E15, E36
+M26. "Google Chrome" (Software) — options: E75, E78, E62, E25
+M27. "Win32k" (Software) — options: E23, E8, E48, E47
+M28. "jDownloader" (Software) — options: E45, E6, E5, E78
+M29. "Microsoft Windows" (Software) — options: E48, E58, E47, E24
+M30. "MS Office" (Software) — options: E39, E65, E80, E40
+M31. "FileZilla" (Software) — options: E25, E32, E49, E69
+M32. "VBScript" (Software) — options: E8, E12, E22, E18
+M33. "WS_FTP" (Software) — options: E49, E38, E8, E45
+M34. "cmd.exe" (Software) — options: E18, E17, E4, E19
+M35. "Windows Host Compute Service Shim" (Software) — options: E23, E70, E47, E2
+M36. "spi.exe" (Software) — options: E20, E4, E18, E21
+M37. "powershell.exe" (Software) — options: E20, E4, E40, E17
+M38. "major.exe" (Software) — options: E17, E4, E15, E5
+M39. "RegAsm.exe" (Software) — options: E17, E19, E18, E20
+M40. "Microsoft Equation Editor" (Software) — options: E24, E39, E65, E31
+M41. "Windows 7" (Software) — options: E23, E48, E80, E8
+M42. "vaultcli.dll" (Software) — options: E17, E32, E22, E71
+M43. "Microsoft Exchange Server" (Software) — options: E24, E70, E39, E3
+M44. "Adobe Flash Player" (Software) — options: E25, E6, E52, E5
+M45. "Opera Browser" (Software) — options: E41, E85, E61, E86
+M46. "Windows Server 2008" (Software) — options: E80, E50, E48, E47
+M47. "Orbitum Browser" (Software) — options: E60, E43, E75, E62
+M48. "Chromium Browser" (Software) — options: E28, E79, E43, E62
+M49. "Vivaldi Browser" (Software) — options: E75, E44, E74, E62
+M50. "Foxmail" (Software) — options: E67, E25, E89, E61
+M51. "Windows Server 2012" (Software) — options: E47, E70, E48, E31
+M52. "CentBrowser" (Software) — options: E75, E9, E51, E54
+M53. "Yandex Browser" (Software) — options: E72, E76, E74, E62
+M54. "ckZ89.ExE" (Software) — options: E33, E20, E17, E4
+M55. "Coowon Browser" (Software) — options: E73, E26, E62, E9
+M56. "Brave Browser" (Software) — options: E75, E53, E62, E86
+M57. "Chedot Browser" (Software) — options: E75, E52, E62, E72
+M58. "Microsoft Office Services and Web Apps" (Software) — options: E27, E59, E39, E66
+M59. "Double Kill" (Software) — options: E1, E33, E83, E35
+
+=== RESPONSE (35.8s, in 4005 / out 2783 tok, stop) ===
+{"v":[{"m":"Remote Utilities","id":"E11","g":null,"p":null,"r":null},{"m":"Remote Utilities - Host","id":"E2","g":null,"p":"E11","r":"n"},{"m":"Електронний запит.exe","id":"NEW","g":"a file named electronic request","p":null,"r":null},{"m":"installer.exe","id":"NEW","g":"a generic installer executable","p":null,"r":null},{"m":"host_news_mod_mod.msi","id":"NEW","g":"a windows installer package","p":null,"r":null},{"m":"rutserv.exe","id":"E10","g":null,"p":"E11","r":"n"},{"m":"rfusclient.exe","id":"E12","g":null,"p":"E11","r":"n"},{"m":"killself.bat","id":"E83","g":null,"p":null,"r":null},{"m":"Thunderbird","id":"E1","g":null,"p":null,"r":null},{"m":"Internet Explorer","id":"E5","g":null,"p":null,"r":null},{"m":"WinSCP","id":"E8","g":null,"p":null,"r":null},{"m":"Agent Tesla","id":"E57","g":null,"p":null,"r":null},{"m":"Trillian","id":"E35","g":null,"p":null,"r":null},{"m":"FTPGetter","id":"E45","g":null,"p":null,"r":null},{"m":"Microsoft Edge","id":"E24","g":null,"p":null,"r":null},{"m":".NET Framework","id":"E22","g":null,"p":null,"r":null},{"m":"Microsoft Outlook","id":"E39","g":null,"p":null,"r":null},{"m":"FTP Commander","id":"E38","g":null,"p":null,"r":null},{"m":"Mozilla Firefox","id":"E25","g":null,"p":null,"r":null},{"m":"Windows Vista","id":"E48","g":null,"p":null,"r":null},{"m":"SmartFTP","id":"E49","g":null,"p":null,"r":null},{"m":"Torch Browser","id":"E42","g":null,"p":null,"r":null},{"m":"Iridium Browser","id":"E43","g":null,"p":null,"r":null},{"m":"Paltalk","id":"E71","g":null,"p":null,"r":null},{"m":"Google Chrome","id":"E28","g":null,"p":null,"r":null},{"m":"Win32k","id":"E46","g":null,"p":null,"r":null},{"m":"jDownloader","id":"E56","g":null,"p":null,"r":null},{"m":"Microsoft Windows","id":"E23","g":null,"p":null,"r":null},{"m":"MS Office","id":"E27","g":null,"p":null,"r":null},{"m":"FileZilla","id":"E33","g":null,"p":null,"r":null},{"m":"VBScript","id":"E34","g":null,"p":null,"r":null},{"m":"cmd.exe","id":"E20","g":null,"p":null,"r":null},{"m":"Windows Host Compute Service Shim","id":"E7","g":null,"p":null,"r":null},{"m":"spi.exe","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"powershell.exe","id":"E18","g":null,"p":null,"r":null},{"m":"major.exe","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"RegAsm.exe","id":"E4","g":null,"p":null,"r":null},{"m":"Microsoft Equation Editor","id":"E3","g":null,"p":null,"r":null},{"m":"Windows 7","id":"E47","g":null,"p":null,"r":null},{"m":"vaultcli.dll","id":"E77","g":null,"p":null,"r":null},{"m":"Microsoft Exchange Server","id":"E31","g":null,"p":null,"r":null},{"m":"Adobe Flash Player","id":"E16","g":null,"p":null,"r":null},{"m":"Windows Server 2008","id":"E70","g":null,"p":null,"r":null},{"m":"Orbitum Browser","id":"E41","g":null,"p":null,"r":null},{"m":"Chromium Browser","id":"E75","g":null,"p":null,"r":null},{"m":"Vivaldi Browser","id":"E86","g":null,"p":null,"r":null},{"m":"Foxmail","id":"E69","g":null,"p":null,"r":null},{"m":"Windows Server 2012","id":"E50","g":null,"p":null,"r":null},{"m":"CentBrowser","id":"E52","g":null,"p":null,"r":null},{"m":"Yandex Browser","id":"E68","g":null,"p":null,"r":null},{"m":"ckZ89.ExE","id":"E19","g":null,"p":null,"r":null},{"m":"Coowon Browser","id":"E78","g":null,"p":null,"r":null},{"m":"Brave Browser","id":"E74","g":null,"p":null,"r":null},{"m":"Chedot Browser","id":"E10","g":null,"p":null,"r":null},{"m":"Microsoft Office Services and Web Apps","id":"E14","g":null,"p":null,"r":null},{"m":"Double Kill","id":"E32","g":null,"p":null,"r":null}],"m":"M1","id":"E11","g":null,"p":null,"r":null},{"m":"M2","id":"E2","g":null,"p":"E11","r":"n"},{"m":"M3","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"M4","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"M5","id":"NEW","g":"a windows installer package","p":null,"r":null},{"m":"M6","id":"E10","g":null,"p":"E11","r":"n"},{"m":"M7","id":"E12","g":null,"p":"E11","r":"n"},{"m":"M8","id":"E83","g":null,"p":null,"r":null},{"m":"M9","id":"E1","g":null,"p":null,"r":null},{"m":"M10","id":"E5","g":null,"p":null,"r":null},{"m":"M11","id":"E8","g":null,"p":null,"r":null},{"m":"M12","id":"E57","g":null,"p":null,"r":null},{"m":"M13","id":"E35","g":null,"p":null,"r":null},{"m":"M14","id":"E45","g":null,"p":null,"r":null},{"m":"M15","id":"E24","g":null,"p":null,"r":null},{"m":"M16","id":"NEW","g":"a virtual private network client","p":null,"r":null},{"m":"M17","id":"E22","g":null,"p":null,"r":null},{"m":"M18","id":"E39","g":null,"p":null,"r":null},{"m":"M19","id":"E38","g":null,"p":null,"r":null},{"m":"M20","id":"E25","g":null,"p":null,"r":null},{"m":"M21","id":"E48","g":null,"p":null,"r":null},{"m":"M22","id":"E49","g":null,"p":null,"r":null},{"m":"M23","id":"E42","g":null,"p":null,"r":null},{"m":"M24","id":"E43","g":null,"p":null,"r":null},{"m":"M25","id":"E71","g":null,"p":null,"r":null},{"m":"M26","id":"E28","g":null,"p":null,"r":null},{"m":"M27","id":"E46","g":null,"p":null,"r":null},{"m":"M28","id":"E56","g":null,"p":null,"r":null},{"m":"M29","id":"E23","g":null,"p":null,"r":null},{"m":"M30","id":"E27","g":null,"p":null,"r":null},{"m":"M31","id":"E33","g":null,"p":null,"r":null},{"m":"M32","id":"E34","g":null,"p":null,"r":null},{"m":"M33","id":"E30","g":null,"p":null,"r":null},{"m":"M34","id":"E20","g":null,"p":null,"r":null},{"m":"M35","id":"E7","g":null,"p":null,"r":null},{"m":"M36","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"M37","id":"E18","g":null,"p":null,"r":null},{"m":"M38","id":"NEW","g":"an executable file","p":null,"r":null},{"m":"M39","id":"E4","g":null,"p":null,"r":null},{"m":"M40","id":"E3","g":null,"p":null,"r":null},{"m":"M41","id":"E47","g":null,"p":null,"r":null},{"m":"M42","id":"E77","g":null,"p":null,"r":null},{"m":"M43","id":"E31","g":null,"p":null,"r":null},{"m":"M44","id":"E16","g":null,"p":null,"r":null},{"m":"M45","id":"E41","g":null,"p":null,"r":null},{"m":"M46","id":"E70","g":null,"p":null,"r":null},{"m":"M47","id":"E41","g":null,"p":null,"r":null},{"m":"M48","id":"E75","g":null,"p":null,"r":null},{"m":"M49","id":"E86","g":null,"p":null,"r":null},{"m":"M50","id":"E69","g":null,"p":null,"r":null},{"m":"M51","id":"E50","g":null,"p":null,"r":null},{"m":"M52","id":"E52","g":null,"p":null,"r":null},{"m":"M53","id":"E68","g":null,"p":null,"r":null},{"m":"M54","id":"E19","g":null,"p":null,"r":null},{"m":"M55","id":"E78","g":null,"p":null,"r":null},{"m":"M56","id":"E74","g":null,"p":null,"r":null},{"m":"M57","id":"E10","g":null,"p":null,"r":null},{"m":"M58","id":"E14","g":null,"p":null,"r":null},{"m":"M59","id":"E32","g":null,"p":null,"r":null}]"
