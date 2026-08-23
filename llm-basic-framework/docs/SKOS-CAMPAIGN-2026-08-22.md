@@ -181,8 +181,13 @@ REASK_PARENTLESS=1 REASK_CARRY=1 LISTWISE_PROMPT_ID=listwise-skos-v7`):
 | gemini-3.7-flash | `TEMPERATURE=0`, split OFF | .855 / .855 / .797 (num/rep/rev) | .87–.93 | 1.000 all | .551 → +.30; split variant equal but 2× calls |
 | gemma4:12b-64k | default temp (T=0 loops thinking to 64k cap!), `REASK_SPLIT=1` | **.623** | **.694** | 1.000 | **.304 → 2×**, P .553→.694, kind .857→.907 |
 
-gemma-split found 25 Chromium-family edges — the knowledge WAS in the 12b model; every
-document-framed config (including the with-catch-up baseline: 0 family edges) suppressed it.
+Attribution audit of gemma-split's .623 (per-call): review calls contributed ~8 edges directly
+(18 fired / 8 answered / 1 looped to length cap); the 25 Chromium-family edges landed in doc
+3028's own DOC-framed call via v7's gloss-before-parent ordering (gloss "a Chromium-based web
+browser" → p:E47, 25 rows; v1-era glosses on the same ballot said "web browser", p:null). At
+gemma's default temperature that first shot is a sampling event (a prior v7 run nulled the same
+ballot) — REPLICATES REQUIRED before quoting .623. The knowledge was in the 12b model; the
+document frame plus pre-v7 prompts suppressed it (with-catch-up baseline: 0 family edges).
 Retired: DOC_SIBLINGS options injection (broke gemma identity to .500 — written-form links lost),
 kin annotations (information without row membership does not move the judge), SKOS_CONSOLIDATE=end
 (anchor only — rejected for never-ending streams; its .77–.78 band confirmed the re-ask

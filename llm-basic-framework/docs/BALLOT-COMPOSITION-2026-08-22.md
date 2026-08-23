@@ -98,17 +98,25 @@ sufficient mechanism, which the two streaming-native devices deliver incremental
 
 ## 4b. Second finding: the FRAME gates knowledge on a small judge (gemma4:12b, 2026-08-23)
 
-The composition finding has a frame-level twin, isolated on the local 12b judge. Identical
-catch-up-shaped rows (self-excluded options, dense candidates) produce opposite behavior
-depending on the *surrounding call*: inside a document ballot (source title + evidence text)
-gemma answers `p:null` and echoes names; inside a source-free "registry review" call it asserts
-the same relations — including **25 Chromium-family edges that no document-framed configuration
-ever produced, with or without catch-up** (its glosses in doc frame said "web browser"; the
-knowledge was present but suppressed, not absent). Splitting reask rows into their own
-review-framed call (`REASK_SPLIT=1`, +1 call per carrying document) doubled gemma's reachable
-recall over its with-catch-up baseline (.304 → .623) at higher precision (.553 → .694) with
-identity intact. The frontier judge (flash) does not need the split (equal scores, 2× calls):
-frame sensitivity, like row-composition sensitivity, scales inversely with judge capability.
+The composition finding has a frame-level twin, isolated on the local 12b judge, with an honest
+attribution audit. The frame evidence proper: gemma asserted MS Word→MS Office (and its class)
+on every catch-up-framed registry-review row and on none of the same rows inside a document
+ballot — the with-catch-up baseline owes its knowledge edges to the review frame. On that basis
+reask/carried rows were split into their own source-free review call (`REASK_SPLIT=1`, +1 call
+per carrying document). In the winning run (.623 reachable recall vs the .304 with-catch-up
+baseline, precision .553→.694, identity intact) the per-call audit attributes the gain as
+follows: the review calls directly contributed ~8 edges (18 fired, 8 answered, 1 looped to the
+length cap — mostly reversed placements such as Windows 7→Microsoft Windows,
+shellcode.x86→Cobalt Strike Beacon), while the **25 Chromium-family edges landed in doc 3028's
+own document-framed call**, where the v7 gloss-before-parent ordering is visibly operative: the
+model writes "a Chromium-based web browser" as the gloss and then copies the answer into
+`p:E47`, twenty-five rows in a row — its glosses in the same ballot under v1-era prompts said
+just "web browser" with null parents. At gemma's mandatory default temperature this first-shot
+win is a sampling event (an earlier v7 run nulled the same ballot), so the local headline number
+requires replicates before it is quotable; the frame effect and the gloss-first mechanism are
+the reproducible findings. The frontier judge (flash) needs neither the split (equal scores, 2×
+calls) nor the luck (T=0 + carry replicates at .855/.855): frame sensitivity, like
+row-composition sensitivity, scales inversely with judge capability.
 
 Two auxiliary small-judge results worth a footnote: greedy decoding (T=0) loops gemma's hidden
 thinking to the 64k context cap with an empty answer (finish=length) — default temperature is
