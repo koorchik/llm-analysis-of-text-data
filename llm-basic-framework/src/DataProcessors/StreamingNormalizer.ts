@@ -120,6 +120,25 @@ interface Params {
    */
   reaskSplit?: boolean;
   /**
+   * Same-document re-ask: after this document's mints land, its parentless mints immediately get
+   * one review-shaped call (self-excluded rows, dense retrieval, no source) — by then the
+   * co-minted family IS registry material, so retrieval can finally build the row the first-shot
+   * ballot could not have (the parent existed only as a sibling mention then). Needs no next
+   * document, so it covers single-occurrence families in any arrival order. Runs before the
+   * one-carry recording: the carry keeps only what this pass could not place.
+   */
+  reaskNow?: boolean;
+  /**
+   * v8 decoupled pipeline: pass 1 (the document ballot, `decisionStrategy`, listwise-id-* prompt)
+   * decides identity + gloss ONLY; every hierarchy question — this document's new mints, its
+   * re-mentioned orphans, and the gap-swept parentless neighbours of the new mints — moves to one
+   * optional source-free pass-2 review call (`reviewStrategy`). After pass 2 the registry is
+   * final for the stream prefix: no cross-document debt of any kind.
+   */
+  decouple?: boolean;
+  /** Pass-2 judge (review frame). Defaults to `decisionStrategy` when absent. */
+  reviewStrategy?: DecisionStrategy;
+  /**
    * Phase 2 of the synchronous per-document pipeline (T9's StreamingRepairer). Optional so
    * repairer-free arms and existing tests remain runnable; when present, `processFile` calls it
    * once this document's registry writes have landed — the repair pass sees a state it can trust.
@@ -226,6 +245,9 @@ export class StreamingNormalizer {
   #reaskParentless: boolean;
   #reaskCarryOrphans: boolean;
   #reaskSplit: boolean;
+  #reaskNow: boolean;
+  #decouple: boolean;
+  #reviewStrategy?: DecisionStrategy;
   /** Parentless mints of the previous document, awaiting their single carried retry. */
   #carryOrphans: Array<{ category: string; canonical: string }> = [];
   /** Highest docId processed, so end-of-stream journal events carry a meaningful doc — max, not
@@ -250,9 +272,12 @@ export class StreamingNormalizer {
     this.#reaskParentless = params.reaskParentless ?? false;
     this.#reaskCarryOrphans = params.reaskCarryOrphans ?? false;
     this.#reaskSplit = params.reaskSplit ?? false;
+    this.#reaskNow = params.reaskNow ?? false;
+    this.#decouple = params.decouple ?? false;
+    this.#reviewStrategy = params.reviewStrategy;
     this.#repairer = params.repairer;
     this.#fileOrder = params.fileOrder ?? sortByNumericId;
-    this.#snippetMode = params.snippetMode ?? 'head';
+    this.#snippetMode = params.snippetMode ?? 'per-mention';
     this.#judgeUnresolved = params.judgeUnresolved ?? false;
     this.inputDir = params.inputDir;
     this.outputDir = params.outputDir;
@@ -443,6 +468,9 @@ export class StreamingNormalizer {
     // Link-judge: ONE batched call for all unresolved mentions with candidates.
     // Dedupe by (category, lowercased name) — the same mention may appear with several roles.
     const judgeBatch = new Map<string, MentionPlan>();
+    // Decoupled pipeline: reask rows never ride any pass-1 call — their question IS the pass-2
+    // review question, so they join the pass-2 concept list directly (below) with zero pass-1
+    // cost.
     // Reask rows in their own source-free call (`reaskSplit`): a carried/re-asked concept's
     // question is answered from knowledge, and the document frame measurably suppresses exactly
     // those answers (gemma asserted MS Word→MS Office on every catch-up row and on none of the
@@ -451,6 +479,7 @@ export class StreamingNormalizer {
     const reaskBatch = new Map<string, MentionPlan>();
     for (const plan of plans) {
       if (plan.action !== 'judge' && plan.action !== 'reask') continue;
+      if (this.#decouple && plan.action === 'reask') continue;
       const target = this.#reaskSplit && plan.action === 'reask' ? reaskBatch : judgeBatch;
       const key = mentionKey(plan.category, plan.entity.name);
       if (!target.has(key)) target.set(key, plan);
@@ -663,6 +692,42 @@ export class StreamingNormalizer {
           similarityScore,
           evidence: edge.evidence,
         });
+      }
+    }
+
+    // Pass 2 / same-document re-ask: review-shaped rows against the registry as it stands AFTER
+    // the mints — the restructure that makes the first document look like its own re-ask. The
+    // concept list is (a) this document's parentless mints, (b) in decoupled mode its re-mentioned
+    // orphans (their pass-1 rows were skipped), and (c) the gap-swept parentless neighbours of the
+    // new mints — the late-parent healing sweep. After this call the registry is final for the
+    // stream prefix.
+    if ((this.#reaskNow || this.#decouple) && (this.#reviewStrategy ?? this.#decisionStrategy)) {
+      const byCategory = new Map<string, Set<string>>();
+      const put = (category: string, canonical: string) => {
+        if (this.#conceptRegistry.resolve(category, canonical) !== canonical) return;
+        if (this.#conceptRegistry.broaderOf(category, canonical).length > 0) return;
+        const set = byCategory.get(category) ?? new Set<string>();
+        set.add(canonical);
+        byCategory.set(category, set);
+      };
+      const mintsByCategory = new Map<string, string[]>();
+      for (const plan of plans) {
+        if (!plan.canonical) continue;
+        if (mintedNow.has(mentionKey(plan.category, plan.canonical))) {
+          put(plan.category, plan.canonical);
+          const mints = mintsByCategory.get(plan.category) ?? [];
+          if (!mints.includes(plan.canonical)) mints.push(plan.canonical);
+          mintsByCategory.set(plan.category, mints);
+        }
+        if (this.#decouple && plan.action === 'reask') put(plan.category, plan.canonical);
+      }
+      if (this.#decouple) {
+        for (const [category, mints] of mintsByCategory) {
+          for (const child of await this.#sweepChildren(category, mints)) put(category, child);
+        }
+      }
+      for (const [category, concepts] of byCategory) {
+        await this.#reviewConcepts(category, [...concepts], docId, 'skos-reask-now');
       }
     }
 
@@ -1177,6 +1242,44 @@ export class StreamingNormalizer {
     await this.#conceptRegistry.save();
   }
 
+  /**
+   * The late-parent healing sweep (v8): parentless registry concepts embedding-near this
+   * document's new mints, selected by gap detection rather than a fixed top-K — walk the
+   * similarity ranking (name embeddings, cached) and stop at the first gap wider than GAP or
+   * below FLOOR, hard cap CAP, no minimum. Families cluster densely, so a real hub pulls its
+   * whole waiting family into pass-2 rows (each child needs only one option slot — the
+   * recognition shape) and a non-hub mint pulls nobody.
+   */
+  async #sweepChildren(category: string, mints: string[]): Promise<string[]> {
+    if (!this.#embeddingsClient || mints.length === 0) return [];
+    const FLOOR = 0.5;
+    const GAP = 0.08;
+    const CAP = 50;
+    const mintSet = new Set(mints);
+    const parentless = Object.keys(this.#conceptRegistry.concepts(category)).filter(
+      (name) =>
+        !mintSet.has(name) && this.#conceptRegistry.broaderOf(category, name).length === 0
+    );
+    if (parentless.length === 0) return [];
+
+    const out = new Set<string>();
+    for (const mint of mints) {
+      const ranked: Array<{ name: string; sim: number }> = [];
+      for (const orphan of parentless) {
+        const sim = await this.#similarity(mint, orphan);
+        if (sim != null && sim >= FLOOR) ranked.push({ name: orphan, sim });
+      }
+      ranked.sort((a, b) => b.sim - a.sim);
+      let previous: number | null = null;
+      for (const { name, sim } of ranked.slice(0, CAP)) {
+        if (previous != null && previous - sim > GAP) break;
+        out.add(name);
+        previous = sim;
+      }
+    }
+    return [...out];
+  }
+
   /** The shared review body behind `#skosCatchUp` and `#consolidateAtEnd` — see `#skosCatchUp`'s
    *  doc comment for the three deliberate differences from a document pass. `by` labels the
    *  journal events and doubles as the summary op. */
@@ -1184,9 +1287,10 @@ export class StreamingNormalizer {
     category: string,
     sample: string[],
     docId: number,
-    by: 'skos-catch-up' | 'skos-consolidate'
+    by: 'skos-catch-up' | 'skos-consolidate' | 'skos-reask-now'
   ): Promise<void> {
-    if (!this.#decisionStrategy) return;
+    const strategy = this.#reviewStrategy ?? this.#decisionStrategy;
+    if (!strategy) return;
     const total = Object.keys(this.#conceptRegistry.concepts(category)).length;
 
     const requests: DecisionRequest[] = [];
@@ -1221,7 +1325,7 @@ export class StreamingNormalizer {
 
     let decisions: Decision[];
     try {
-      decisions = await this.#decisionStrategy.decide(requests);
+      decisions = await strategy.decide(requests);
     } catch (error) {
       console.error(`SKOS REVIEW (${by}) failed for ${category}:`, error);
       return;

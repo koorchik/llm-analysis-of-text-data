@@ -1,0 +1,88 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератаки групи UAC-0010 (Armageddon): шкідливі програми GammaLoad, GammaSteel (CERT-UA#5134)" — evidence: S1. "ої пошти (зі скомпрометованих акаунтів і на приватні електронні адреси) HTM-дроперів (в тому числі, в UTF-16 кодуванні), що ініціюють ланцюг доставки GammaLoad.PS1 на комп'ютер жертви.</p><p>Метою зловмисників, серед іншого, є викрадення файлів за визначеним переліком розширень, а також автентифікаційних даних Інтернет-браузерів, для чого застосовується GammaSteel.PS1 та GammaSteel.NET, відповідно. Вірогідно, GammaSteel.PS1 є PowerShell-реалізацією раніше використовуваного HarvesterX.</p><p>Крім того, однією з тактик зловмисників є ураження файлу шаблону C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Templates\Normal.dotm за допомо" S2. "ня персистентності та запуску пейлоадів використовуються заплановані завдання, гілка реєстру Run, а також змінні середовища. Активно використовується PowerShell (powershell.exe), а також wscript.exe, mshta.exe.</p><p><br></p><p><strong>Індикатори компрометації</strong></p><p><em>Файли:</em></p><pre class="ql-syntax" spellcheck="false">136bd98383e5b3e06b63f2"
+Entities:
+E1. USB.dll
+E2. install.msi
+E3. AgentTesla
+E4. Screen.dll
+E5. AppLocker
+E6. Social.dll
+E7. FIRMACHAGENT
+E8. AutoIt
+E9. Software Restriction Policies (SRP) [aka SRP]
+E10. JavaScript
+E11. SmartAssembly .NET [aka SmartAssembly]
+E12. IDCLIPNET_x86.dll
+E13. chrome_updater.dll
+E14. SPECTR
+E15. CCleaner.exe
+E16. PowerShell
+E17. rutserv.exe
+E18. wsuscr.exe
+E19. QuasarRAT
+E20. scandoc.exe
+E21. Електронний план евакуації.exe
+E22. MISP
+E23. GammaSteel.PS1
+E24. GammaSteel.NET
+E25. HarvesterX
+E26. PowerShell (powershell.exe)
+E27. wscript.exe
+E28. mshta.exe
+E29. GammaLoad.PS1
+Mentions:
+M1. "GammaLoad.PS1" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "GammaSteel.PS1" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M3. "GammaSteel.NET" (Software) — options: E11, E6, E3, E12 — ctx: S1
+M4. "HarvesterX" (Software) — options: E9, E11, E13, E1 — ctx: S1
+M5. "PowerShell (powershell.exe)" (Software) — options: E16, E10, E15, E3 — ctx: S2
+M6. "wscript.exe" (Software) — options: E1, E18, E10, E15 — ctx: S2
+M7. "mshta.exe" (Software) — options: E1, E15, E6, E17 — ctx: S2
+
+=== RESPONSE (6.3s, in 1586 / out 145 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"PowerShell payload delivered by HTM droppers"}
+{"m":"M2","id":"NEW","g":"PowerShell malware used to steal files"}
+{"m":"M3","id":"NEW","g":".NET malware used to steal browser credentials"}
+{"m":"M4","id":"NEW","g":"previously used malware tool"}
+{"m":"M5","id":"E16","g":null}
+{"m":"M6","id":"NEW","g":"Windows script host executable used for payload execution"}
+{"m":"M7","id":"NEW","g":"Microsoft HTML Application host used for payload execution"}
+

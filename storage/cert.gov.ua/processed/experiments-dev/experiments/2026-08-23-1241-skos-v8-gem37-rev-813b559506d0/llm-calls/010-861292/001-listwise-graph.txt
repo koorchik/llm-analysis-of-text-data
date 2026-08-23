@@ -1,0 +1,72 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератака на державні організації України з використанням теми ОК "Південь" та шкідливої програми AgentTesla (CERT-UA#4987)" — evidence: S1. "ивне командування "Південь".&nbsp;</p><p>У випадку відкриття документу та активації макросу останній забезпечить створення файлів "gksg023ig.lnk" та "sgegkseg23mjl.exe", а також виконання LNK-файлу за допомогою rundll32.exe, що, в свою чергу, призведе до запуску згаданого EXE-файлу.</p><p>Виконуваний файл є .NET-програмою, обфускованою за допомогою ConfuserEx, що здійснює завантаження JPEG-файлу "thumb_d_F3D14F4982A256B5CDAE9BD579429AE7.jpg", пошук відповідного офсету, дешифрування та декомпресію даних і запуск отриманої в результаті .NET-програми MCMDiction.exe (дата компіляції: 2022-07-08).&nbsp;</p><p>Надалі, після ряду перетворень (Gzip, AES, base64, XOR), в тому числі, із застосуваннями стеганографії, на"
+Entities:
+E1. Software Restriction Policies (SRP) [aka SRP]
+E2. CCleaner.exe
+E3. Browser.dll
+E4. USB.dll
+E5. HarvesterX
+E6. rutserv.exe
+E7. Social.dll
+E8. pfSense
+E9. AgentTesla
+E10. install.msi
+E11. Screen.dll
+E12. PowerShell [aka PowerShell (powershell.exe)]
+E13. mshta.exe
+E14. scandoc.exe
+E15. wsuscr.exe
+E16. wscript.exe
+E17. MCMDiction.exe
+E18. sgegkseg23mjl.exe
+E19. rundll32.exe
+E20. ConfuserEx
+Mentions:
+M1. "ConfuserEx" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "MCMDiction.exe" (Software) — options: E4, E2, E1, E11 — ctx: S1
+M3. "sgegkseg23mjl.exe" (Software) — options: E11, E2, E13, E4 — ctx: S1
+M4. "rundll32.exe" (Software) — options: E4, E2, E6, E11 — ctx: S1
+
+=== RESPONSE (4.8s, in 1347 / out 86 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"tool used for obfuscating .NET programs"}
+{"m":"M2","id":"NEW","g":".NET program decrypted and executed from JPEG file"}
+{"m":"M3","id":"NEW","g":"executable file created upon macro activation"}
+{"m":"M4","id":"NEW","g":"Windows utility used to execute LNK file"}

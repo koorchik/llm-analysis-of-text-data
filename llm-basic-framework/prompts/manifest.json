@@ -293,6 +293,15 @@
   "variables": [],
   "bytes": 5896
  },
+ "listwise-id-v1": {
+  "file": "prompts/listwise-id-v1.md",
+  "extractedFrom": null,
+  "authoredFor": "src/Normalization/decision/ListwiseGraphDecision.ts",
+  "note": "2026-08-23: pass-1 prompt of the decoupled v8 architecture — identity + gloss ONLY (v7's identity rules verbatim, hierarchy explicitly out of scope), JSONL output (one object per line; a truncated ballot loses a suffix, not everything). Hierarchy lives in the source-free pass-2 review call. Motivated by the frame finding (small judge refuses knowledge edges in the document frame) and the JSONL transport probes (73/73 rows recovered where nested JSON truncated).",
+  "sha256": "450f4d81ab107acbb3065dc9e6f19926866548f428545a41aa075d38f2eaffe8",
+  "variables": [],
+  "bytes": 2947
+ },
  "normalize-country": {
   "file": "prompts/normalize-country.md",
   "extractedFrom": "src/Normalizer/Normalizer.ts",

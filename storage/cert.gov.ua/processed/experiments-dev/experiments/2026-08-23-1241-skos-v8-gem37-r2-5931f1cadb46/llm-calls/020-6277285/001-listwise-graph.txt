@@ -1,0 +1,107 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)" — evidence: S1. "присвячені "видаленню вірусу" і "евакуації", відовідно.</p><p>У випадку відкриття будь-якого з файлів, в т.ч., завантажених зі згаданого вебсервісу ("Електронний план евакуації.rar", "plan_dsns.gov.ua.rar", "CCleaner.rar"), в кінцевому випадку буде виконано MSI-інсталятор "install.msi", який забезпечить встановлення на ЕОМ жертви програми для віддаленого керування RemoteUtilities (конфігураційний файл програми містить 15 різних ІР-" S2. "yntax" spellcheck="false">96c5a1f7734e12ca8532ae046cd69657&nbsp; &nbsp; 44cb295694f3332b31500c7d8408e6f93bb34a56617ae6850a205ed16c2a42a8&nbsp; &nbsp; CCleaner.zip b223d29a27fc60f4c95645782a8d7699&nbsp; &nbsp; 23eda7958cd22e11d5daa39d5a82e5740512c9435a138214b98d1925520bf8e8&nbsp; &nbsp; CCleaner.exe f54fd78880d87f1021cefcdafb516ff8&nbsp; &nbsp; 06956bb4eee98f34f035af11666459b2f9fc5f7485b2cf16f6afb17bfa15a061&nbsp; &nbsp; install.msi 652c2a693b333" S3. "bsp; plan_dsns.gov.ua.rar 9b40a1519801020305e31e553a3e82ab&nbsp; &nbsp; 5158482849c818c270f302c1dfa06d770ed2b5056cf393d60fd56817636866da&nbsp; &nbsp; Електронний план евакуації.exe f54fd78880d87f1021cefcdafb516ff8&nbsp; &nbsp; 06956bb4eee98f34f035af11666459b2f9fc5f7485b2cf16f6afb17bfa15a061&nbsp; &nbsp; install.msi 652c2a693b333"
+Entities:
+E1. powershell.exe [aka PowerShell (powershell.exe), PowerShell]
+E2. installer.exe
+E3. host_news_mod_mod.msi
+E4. stage1.ps1
+E5. stage2.ps1
+E6. WinSCP
+E7. vaultcli.dll
+E8. GammaSteel.PS1
+E9. Paltalk
+E10. Microsoft Windows
+E11. jDownloader
+E12. loader.exe
+E13. UkrScanner.rar
+E14. FTPGetter
+E15. UkrScanner.exe (SFX)
+E16. ConfuserEx
+E17. Claws Mail
+E18. QIP Surf Browser
+E19. SQLite.Interop.dll
+E20. CentBrowser
+E21. cmd.exe
+E22. MCMDiction.exe
+E23. rfusclient.exe
+E24. RegAsm.exe
+E25. b.exe
+E26. ckZ89.ExE
+E27. CocCoc Browser
+E28. QuasarRAT
+E29. 7Star Browser
+E30. Електронний запит.exe
+E31. До оплати від 11.12.18.lzh
+E32. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E33. Інформація щодо наявності вакансій та їх укомплектування.xls
+E34. Рахунки и новые списки.lzh
+E35. .NET Framework
+E36. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E37. Adobe Flash Player
+E38. rutserv.exe
+E39. spi.exe
+E40. baseupd.exe
+E41. Windows Vista
+E42. Yandex Browser
+E43. CCleaner.zip
+E44. CCleaner.exe
+E45. CCleaner.rar
+E46. Електронний план евакуації.rar
+E47. Електронний план евакуації.exe
+E48. plan_dsns.gov.ua.rar
+E49. install.msi
+Mentions:
+M1. "install.msi" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "CCleaner.zip" (Software) — options: E11, E12, E13, E14 — ctx: S2
+M3. "CCleaner.exe" (Software) — options: E21, E12, E22, E23 — ctx: S2
+M4. "CCleaner.rar" (Software) — options: E13, E27, E12, E15 — ctx: S1
+M5. "Електронний план евакуації.rar" (Software) — options: E30, E13, E31, E32 — ctx: S1
+M6. "Електронний план евакуації.exe" (Software) — options: E30, E21, E22, E25 — ctx: S3
+M7. "plan_dsns.gov.ua.rar" (Software) — options: E32, E13, E36, E28 — ctx: S1
+
+=== RESPONSE (5.4s, in 2295 / out 160 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"MSI installer that establishes RemoteUtilities on victim machine"}
+{"m":"M2","id":"NEW","g":"archive file observed in UAC-0050 attack"}
+{"m":"M3","id":"NEW","g":"executable file observed in UAC-0050 attack"}
+{"m":"M4","id":"NEW","g":"archive file downloaded from web service in attack"}
+{"m":"M5","id":"NEW","g":"archive file downloaded from web service in attack"}
+{"m":"M6","id":"NEW","g":"executable file associated with attack"}
+{"m":"M7","id":"NEW","g":"archive file downloaded from web service in attack"}

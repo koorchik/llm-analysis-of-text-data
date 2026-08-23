@@ -1,0 +1,116 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Нові спроби використання вразливості 2017 року Microsoft Office" — evidence: S1. "<p>Всі памʼятають масові атаки шифрувальників Petya та Misha у 2017 для поширення яких використовувалася вразливість для віддаленого виконання коду, а саме CVE-2017-0199.</p><p>При отриманні листів з посиланнями на ресурс для завантаження Microsoft Word документу або ж просто з прикріпленим документом (наприклад з розширенням .rtf, .docx) потрібно бути особливо пильними, оскільки документ з розширенн" S2. "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2017-0199" rel="noopener noreferrer" target="_blank">microsoft.com</a>)</p><p>(Office 2007 (KB3141529)</p><p>Office 2013 (KB3178710)</p><p>Office 2010 (KB3141538)</p><p>Office 2016 (KB3178703)</p><p>Windows 7 (KB4015549)</p><p>Windows 7 (KB4015546)</p><p>Windows Vista, Windows Server 2008 (KB4014793)</p><p>Windows Server 2012 (KB4015551)</p><p>Windows Server 2012 (KB4015548));</p><p>- при можливості, заблокувати додаткам Microsoft Office доступ до мережі Інтернет;</p><p>-"
+Entities:
+E1. Software Restriction Policies (SRP) [aka SRP]
+E2. Becky!
+E3. .NET Framework
+E4. FTPGetter
+E5. 360Chrome Browser
+E6. USB.dll
+E7. SPECTR
+E8. 7Star Browser
+E9. pfSense
+E10. AgentTesla [aka Agent Tesla]
+E11. MISP
+E12. RemcosRAT [aka Remcos]
+E13. Mikrotik
+E14. Social.dll
+E15. WinSCP
+E16. Microsoft Edge
+E17. mshta.exe
+E18. Microsoft Windows
+E19. CVE-2018-8897
+E20. CVE-2018-8129
+E21. CVE-2018-8124
+E22. CVE-2018-0854
+E23. CVE-2018-8170
+E24. CVE-2018-8120
+E25. CVE-2018-0958
+E26. CVE-2018-8127
+E27. CVE-2018-8174
+E28. Windows 7
+E29. cmd.exe
+E30. Microsoft Office
+E31. Microsoft Outlook
+E32. Screen.dll
+E33. Microsoft Exchange Server
+E34. Microsoft Office Services and Web Apps
+E35. Windows Server 2008
+E36. FileZilla
+E37. Files.dll
+E38. Windows Host Compute Service Shim
+E39. IceDragon
+E40. CVE-2018-8136
+E41. vaultcli.dll
+E42. Browser.dll
+E43. Misha
+E44. CVE-2017-0199
+E45. Microsoft Word
+E46. Office 2007
+E47. Office 2013
+E48. Office 2010
+E49. Office 2016
+E50. Windows Vista
+E51. Windows Server 2012
+E52. Petya
+Mentions:
+M1. "Petya" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "Misha" (Software) — options: E1, E11, E12, E13 — ctx: S1
+M3. "CVE-2017-0199" (Software) — options: E19, E20, E21, E22 — ctx: S1
+M4. "Microsoft Word" (Software) — options: E6, E16, E18, E29 — ctx: S1
+M5. "Office 2007" (Software) — options: E28, E30, E31, E35 — ctx: S2
+M6. "Office 2013" (Software) — options: E30, E34, E36, E14 — ctx: S2
+M7. "Office 2010" (Software) — options: E30, E34, E36, E14 — ctx: S2
+M8. "Office 2016" (Software) — options: E30, E34, E36, E31 — ctx: S2
+M9. "Windows Vista" (Software) — options: E6, E28, E18, E14 — ctx: S2
+M10. "Windows Server 2012" (Software) — options: E35, E41, E28, E33 — ctx: S2
+
+=== RESPONSE (5.8s, in 2015 / out 196 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"ransomware used in mass attacks in 2017"}
+{"m":"M2","id":"NEW","g":"ransomware used in mass attacks in 2017"}
+{"m":"M3","id":"NEW","g":"remote code execution vulnerability"}
+{"m":"M4","id":"NEW","g":"word processing software"}
+{"m":"M5","id":"NEW","g":"office productivity suite edition"}
+{"m":"M6","id":"NEW","g":"office productivity suite edition"}
+{"m":"M7","id":"NEW","g":"office productivity suite edition"}
+{"m":"M8","id":"NEW","g":"office productivity suite edition"}
+{"m":"M9","id":"NEW","g":"operating system by Microsoft"}
+{"m":"M10","id":"NEW","g":"server operating system by Microsoft"}

@@ -1,0 +1,337 @@
+{
+  "version": 6,
+  "canonicalPolicy": "first-seen",
+  "conceptSchemes": {
+    "Software": {
+      "MS Office": {
+        "labels": [
+          {
+            "surface": "MS Office",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS Word": {
+        "labels": [
+          {
+            "surface": "MS Word",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS Excel": {
+        "labels": [
+          {
+            "surface": "MS Excel",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS PowerPoint": {
+        "labels": [
+          {
+            "surface": "MS PowerPoint",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "CVE-2017-11882": {
+        "labels": [
+          {
+            "surface": "CVE-2017-11882",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "remote code execution vulnerability",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "major.exe": {
+        "labels": [
+          {
+            "surface": "major.exe",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "an executable file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "PGMB New Order 18-2077.xlsx": {
+        "labels": [
+          {
+            "surface": "PGMB New Order 18-2077.xlsx",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "an Excel spreadsheet",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Equation Editor": {
+        "labels": [
+          {
+            "surface": "Microsoft Equation Editor",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "software for editing equations",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Office 2016": {
+        "labels": [
+          {
+            "surface": "Microsoft Office 2016",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "2016 version of the MS Office suite",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Office 2013": {
+        "labels": [
+          {
+            "surface": "Microsoft Office 2013",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "2013 version of the MS Office suite",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Office 2010": {
+        "labels": [
+          {
+            "surface": "Microsoft Office 2010",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "2010 version of the MS Office suite",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Office 2007": {
+        "labels": [
+          {
+            "surface": "Microsoft Office 2007",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "2007 version of the MS Office suite",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      }
+    }
+  },
+  "broaderEdges": {
+    "Software": [
+      {
+        "narrower": "MS Excel",
+        "broader": "MS Office",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7709572441980327,
+        "docId": 20,
+        "decision": "judge",
+        "evidence": "judge chose NEW above E1 (broader)",
+        "addedBy": null
+      },
+      {
+        "narrower": "MS Word",
+        "broader": "MS Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7550086900588802,
+        "docId": 20,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E4 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "MS PowerPoint",
+        "broader": "MS Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7244282456249082,
+        "docId": 20,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E4 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "PGMB New Order 18-2077.xlsx",
+        "broader": "MS Excel",
+        "type": "broaderGeneric",
+        "similarityScore": 0.45166883153219733,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E2 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Equation Editor",
+        "broader": "MS Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6361413657562756,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E1 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Office 2016",
+        "broader": "MS Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6519114689046436,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E1 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Office 2013",
+        "broader": "MS Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6804441664469194,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E1 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Office 2010",
+        "broader": "MS Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6641056336385484,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E1 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Office 2007",
+        "broader": "MS Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6840199856567146,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E1 (broaderInstantial)",
+        "addedBy": null
+      }
+    ]
+  },
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [],
+    "spillover": [],
+    "repairedThrough": -1
+  }
+}

@@ -1,0 +1,140 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 150 canonicals"
+Entities:
+E1. Microsoft Outlook
+E2. Internet Explorer
+E3. Microsoft Office
+E4. Microsoft Windows
+E5. Microsoft Exchange Server
+E6. Mozilla Firefox
+E7. Google Chrome
+E8. Opera Browser
+E9. Mikrotik
+E10. WinSCP
+E11. Microsoft Edge
+E12. Windows 7
+E13. Microsoft Office Services and Web Apps
+E14. Trillian
+E15. IceDragon
+E16. FIRMACHAGENT
+E17. Thunderbird
+E18. YARA
+E19. CentBrowser
+E20. .NET Framework
+E21. Chedot Browser
+E22. jDownloader
+E23. plan_dsns.gov.ua.rar
+E24. Comodo Dragon Browser
+E25. Torch Browser
+E26. AgentTesla [aka Agent Tesla]
+E27. Uran Browser
+E28. SQLite.Interop.dll
+E29. GammaSteel.NET
+E30. SmartAssembly .NET [aka SmartAssembly]
+E31. Meterpreter
+E32. ChakraCore
+E33. IDCLIPNET_x86.dll
+E34. Windows Server 2008
+E35. pfSense
+E36. JavaScript
+E37. wscript.exe
+E38. WS_FTP
+E39. Software Restriction Policies (SRP) [aka SRP]
+E40. wsuscr.exe
+E41. QuasarRAT
+E42. Screen.dll
+E43. Double Kill
+E44. CVE-2018-8124
+E45. CVE-2018-8170
+E46. CVE-2018-0854
+E47. CVE-2018-8134
+E48. CVE-2018-0958
+E49. CVE-2018-8120
+E50. CVE-2018-8127
+E51. CVE-2018-8141
+E52. FileZilla
+E53. killself.bat
+E54. Files.dll
+E55. vaultcli.dll
+E56. CVE-2018-8129
+E57. CVE-2018-8132
+E58. CVE-2018-8174
+E59. CVE-2018-8136
+Mentions:
+M1. "Microsoft Edge" (Software) — options: E1, E2, E3, E4
+M2. "Microsoft Windows" (Software) — options: E1, E10, E11, E12
+M3. "Microsoft Office" (Software) — options: E1, E11, E13, E2
+M4. "ChakraCore" (Software) — options: E14, E15, E16, E17
+M5. "Adobe Flash Player" (Software) — options: E6, E22, E23, E2
+M6. ".NET Framework" (Software) — options: E28, E29, E2, E30
+M7. "Microsoft Exchange Server" (Software) — options: E1, E2, E11, E34
+M8. "VBScript" (Software) — options: E10, E36, E37, E38
+M9. "CVE-2018-8174" (Software) — options: E43, E44, E45, E46
+M10. "Double Kill" (Software) — options: E17, E52, E53, E14
+M11. "CVE-2018-8120" (Software) — options: E56, E44, E46, E57
+M12. "CVE-2018-0854" (Software) — options: E48, E45, E44, E49
+M13. "CVE-2018-0958" (Software) — options: E46, E43, E49, E44
+M14. "CVE-2018-8124" (Software) — options: E56, E49, E46, E47
+M15. "CVE-2018-8127" (Software) — options: E56, E49, E44, E46
+M16. "CVE-2018-8129" (Software) — options: E49, E44, E46, E48
+M17. "CVE-2018-8132" (Software) — options: E59, E47, E46, E48
+M18. "CVE-2018-8134" (Software) — options: E57, E44, E46, E59
+M19. "CVE-2018-8136" (Software) — options: E57, E46, E47, E48
+M20. "CVE-2018-8141" (Software) — options: E47, E49, E44, E46
+M21. "CVE-2018-8170" (Software) — options: E58, E49, E46, E44
+M22. "CVE-2018-8897" (Software) — options: E50, E44, E46, E45
+
+=== RESPONSE (10.0s, in 2760 / out 599 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"web browser developed by Microsoft","p":null,"r":null},{"m":"M2","id":"NEW","g":"operating system developed by Microsoft","p":"E12","r":"b"},{"m":"M3","id":"NEW","g":"office productivity software suite","p":"E1","r":"b"},{"m":"M4","id":"NEW","g":"core JavaScript engine of Microsoft Edge","p":"E11","r":"p"},{"m":"M5","id":"NEW","g":"multimedia and software platform","p":null,"r":null},{"m":"M6","id":"NEW","g":"software framework developed by Microsoft","p":null,"r":null},{"m":"M7","id":"NEW","g":"mail server and calendaring server","p":null,"r":null},{"m":"M8","id":"NEW","g":"Active Scripting language developed by Microsoft","p":null,"r":null},{"m":"M9","id":"NEW","g":"Windows VBScript Engine remote code execution vulnerability","p":null,"r":null},{"m":"M10","id":"NEW","g":"exploit for CVE-2018-8174 vulnerability","p":null,"r":null},{"m":"M11","id":"NEW","g":"Win32k elevation of privilege vulnerability","p":null,"r":null},{"m":"M12","id":"NEW","g":"Microsoft Word memory corruption vulnerability","p":null,"r":null},{"m":"M13","id":"NEW","g":"Microsoft Edge memory corruption vulnerability","p":null,"r":null},{"m":"M14","id":"NEW","g":"Windows elevation of privilege vulnerability","p":null,"r":null},{"m":"M15","id":"NEW","g":"Microsoft Edge elevation of privilege vulnerability","p":null,"r":null},{"m":"M16","id":"NEW","g":"Windows elevation of privilege vulnerability","p":null,"r":null},{"m":"M17","id":"NEW","g":"Microsoft Edge remote code execution vulnerability","p":null,"r":null},{"m":"M18","id":"NEW","g":"Microsoft Edge memory corruption vulnerability","p":null,"r":null},{"m":"M19","id":"NEW","g":"ChakraCore memory corruption vulnerability","p":null,"r":null},{"m":"M20","id":"NEW","g":"Windows elevation of privilege vulnerability","p":null,"r":null},{"m":"M21","id":"NEW","g":"Windows image parsing elevation of privilege vulnerability","p":null,"r":null},{"m":"M22","id":"NEW","g":"Windows POP and MOV SS privilege escalation vulnerability","p":null,"r":null}]}

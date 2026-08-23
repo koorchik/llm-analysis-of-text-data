@@ -1,0 +1,275 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 151 canonicals"
+Entities:
+E1. USB.dll
+E2. CCleaner.exe
+E3. SQLite.Interop.dll
+E4. Social.dll
+E5. Meterpreter
+E6. Microsoft Exchange Server
+E7. loader.exe
+E8. installer.exe
+E9. GammaSteel.NET
+E10. Microsoft Office
+E11. Microsoft Windows
+E12. Microsoft Outlook
+E13. Internet Explorer
+E14. Screen.dll
+E15. Software Restriction Policies (SRP) [aka SRP]
+E16. Microsoft Edge
+E17. Windows 7
+E18. VBScript
+E19. Microsoft Office Services and Web Apps
+E20. RemoteUtilities [aka Remote Utilities]
+E21. WS_FTP
+E22. Windows Host Compute Service Shim
+E23. Cobalt Strike Beacon
+E24. IceDragon
+E25. FIRMACHAGENT
+E26. YARA
+E27. CentBrowser
+E28. .NET Framework
+E29. Chedot Browser
+E30. jDownloader
+E31. plan_dsns.gov.ua.rar
+E32. Comodo Dragon Browser
+E33. FTPGetter
+E34. AgentTesla [aka Agent Tesla]
+E35. Uran Browser
+E36. SmartAssembly .NET [aka SmartAssembly]
+E37. ConfuserEx
+E38. ChakraCore
+E39. IDCLIPNET_x86.dll
+E40. Windows Server 2008
+E41. wscript.exe
+E42. Remote Utilities - Host
+E43. rfusclient.exe
+E44. JavaScript
+E45. z.ps1
+E46. wsuscr.exe
+E47. TRYxaEbX.ps1
+E48. QuasarRAT
+E49. WinSCP
+E50. Mikrotik
+E51. shellcode.x86.bin
+E52. rundll32.exe
+E53. 7Star Browser
+E54. vaultcli.dll
+E55. Double Kill
+E56. CVE-2018-8124
+E57. CVE-2018-8170
+E58. CVE-2018-0854
+E59. CVE-2018-8134
+E60. CVE-2018-0958
+E61. CVE-2018-8120
+E62. CVE-2018-8127
+E63. CVE-2018-8141
+E64. CVE-2018-8174
+E65. FileZilla
+E66. killself.bat
+E67. Files.dll
+E68. Google Chrome
+E69. Trillian
+E70. CVE-2018-8129
+E71. CVE-2018-8132
+E72. CVE-2018-8897
+E73. CVE-2018-8136
+E74. Torch Browser
+E75. Amigo Browser
+E76. Foxmail
+E77. 360Chrome Browser
+E78. ChromePlus Browser
+E79. Iridium Browser
+E80. Orbitum Browser
+E81. Brave Browser
+E82. AutoIt
+E83. MISP
+E84. Win32k
+E85. install.msi
+E86. host_news_mod_mod.msi
+E87. stage1.ps1
+E88. stage2.ps1
+E89. write.exe
+E90. MCMDiction.exe
+E91. FTP Commander
+E92. chrome_updater.dll
+E93. PowerShell [aka PowerShell (powershell.exe), powershell.exe]
+E94. SmartFTP
+E95. RegAsm.exe
+E96. b.exe
+E97. Browser.dll
+E98. shellcode.x64.bin
+E99. GammaLoad.PS1
+E100. pfSense
+E101. GammaSteel.PS1
+E102. scan.exe (CredoMap_v2)
+E103. Sputnik Browser
+E104. rutserv.exe
+E105. scandoc.exe
+E106. Paltalk
+E107. UkrScanner.exe (SFX)
+E108. Mozilla Firefox
+E109. Yandex Browser
+E110. Coowon Browser
+E111. TRYxaEbX
+E112. Pocomail
+E113. Claws Mail
+E114. Opera Mail
+E115. SPECTR
+E116. Opera Browser
+E117. Kometa Browser
+E118. HarvesterX
+E119. Elements Browser
+E120. AppLocker
+E121. CCleaner.rar
+E122. CCleaner.zip
+E123. Thunderbird
+E124. SIEM
+E125. TRYxaEbX_2.ps1
+E126. mshta.exe
+E127. UkrScanner.rar
+E128. Електронний план евакуації.exe
+E129. Електронний план евакуації.rar
+E130. RemcosRAT [aka Remcos]
+E131. shellcode.x86 (Cobalt Strike Beacon)
+E132. shellcode.x64 (Cobalt Strike Beacon)
+Mentions:
+M1. "Internet Explorer" (Software) — options: E1, E2, E3, E4
+M2. "Microsoft Edge" (Software) — options: E1, E10, E11, E4
+M3. "Microsoft Windows" (Software) — options: E1, E16, E17, E14
+M4. "Microsoft Office" (Software) — options: E19, E16, E4, E12
+M5. "Microsoft Office Services and Web Apps" (Software) — options: E10, E12, E6, E16
+M6. "ChakraCore" (Software) — options: E15, E24, E25, E1
+M7. "Adobe Flash Player" (Software) — options: E1, E30, E31, E4
+M8. ".NET Framework" (Software) — options: E36, E9, E1, E37
+M9. "Microsoft Exchange Server" (Software) — options: E1, E16, E40, E4
+M10. "Windows Host Compute Service Shim" (Software) — options: E41, E40, E17, E11
+M11. "VBScript" (Software) — options: E1, E44, E41, E45
+M12. "Win32k" (Software) — options: E1, E49, E4, E17
+M13. "Windows 7" (Software) — options: E1, E11, E4, E49
+M14. "Windows Server 2008" (Software) — options: E1, E17, E6, E4
+M15. "CVE-2018-8174" (Software) — options: E55, E56, E57, E58
+M16. "Double Kill" (Software) — options: E64, E65, E66, E15
+M17. "CVE-2018-8120" (Software) — options: E70, E56, E58, E62
+M18. "CVE-2018-0854" (Software) — options: E60, E61, E56, E59
+M19. "CVE-2018-0958" (Software) — options: E58, E61, E56, E64
+M20. "CVE-2018-8124" (Software) — options: E70, E61, E58, E59
+M21. "CVE-2018-8127" (Software) — options: E70, E61, E56, E58
+M22. "CVE-2018-8129" (Software) — options: E61, E56, E58, E60
+M23. "CVE-2018-8132" (Software) — options: E73, E59, E58, E60
+M24. "CVE-2018-8134" (Software) — options: E71, E56, E58, E73
+M25. "CVE-2018-8136" (Software) — options: E71, E58, E59, E60
+M26. "CVE-2018-8141" (Software) — options: E59, E61, E56, E58
+M27. "CVE-2018-8170" (Software) — options: E61, E64, E58, E56
+M28. "CVE-2018-8897" (Software) — options: E62, E56, E58, E57
+M29. "Microsoft Outlook" (Software) — options: E4, E10, E16, E1
+M30. "Mozilla Firefox" (Software) — options: E74, E37, E65, E75
+M31. "Chromium Browser" (Software) — options: E77, E78, E79, E53
+M32. "JavaScript" (Software) — options: E1, E18, E15, E48
+M33. "WinSCP" (Software) — options: E1, E83, E84, E15
+M34. "install.msi" (Software) — options: E1, E8, E86, E4
+M35. "wscript.exe" (Software) — options: E1, E89, E18, E2
+M36. "Thunderbird" (Software) — options: E1, E3, E91, E15
+M37. "pfSense" (Software) — options: E15, E93, E28, E1
+M38. "installer.exe" (Software) — options: E7, E85, E2, E1
+M39. "b.exe" (Software) — options: E7, E2, E1, E90
+M40. "PowerShell" (Software) — options: E45, E44, E97, E51
+M41. "HarvesterX" (Software) — options: E15, E33, E5, E1
+M42. "MCMDiction.exe" (Software) — options: E1, E2, E15, E7
+M43. "Mikrotik" (Software) — options: E85, E10, E103, E15
+M44. "loader.exe" (Software) — options: E1, E2, E30, E4
+M45. "AutoIt" (Software) — options: E1, E54, E28, E15
+M46. "wsuscr.exe" (Software) — options: E1, E104, E41, E2
+M47. "scandoc.exe" (Software) — options: E14, E7, E102, E2
+M48. "mshta.exe" (Software) — options: E7, E89, E96, E2
+M49. "FileZilla" (Software) — options: E1, E67, E108, E45
+M50. "ConfuserEx" (Software) — options: E15, E2, E109, E1
+M51. "Trillian" (Software) — options: E15, E108, E35, E1
+M52. "Foxmail" (Software) — options: E112, E113, E114, E108
+M53. "SIEM" (Software) — options: E83, E115, E28, E15
+M54. "OpenVPN" (Software) — options: E1, E114, E116, E115
+M55. "WS_FTP" (Software) — options: E1, E91, E94, E33
+M56. "Meterpreter" (Software) — options: E99, E33, E34, E117
+M57. "FTP Commander" (Software) — options: E33, E21, E94, E112
+M58. "jDownloader" (Software) — options: E1, E110, E7, E120
+M59. "SmartFTP" (Software) — options: E36, E33, E15, E21
+M60. "SmartAssembly .NET" (Software) — options: E85, E28, E94, E1
+M61. "GammaSteel.NET" (Software) — options: E99, E101, E28, E36
+M62. "AgentTesla" (Software) — options: E15, E33, E25, E1
+M63. "SQLite.Interop.dll" (Software) — options: E1, E97, E4, E67
+M64. "CCleaner.exe" (Software) — options: E121, E122, E7, E90
+M65. "AppLocker" (Software) — options: E30, E19, E33, E13
+M66. "FTPGetter" (Software) — options: E91, E5, E21, E115
+M67. "vaultcli.dll" (Software) — options: E1, E97, E4, E67
+M68. "z.ps1" (Software) — options: E15, E99, E88, E1
+M69. "MISP" (Software) — options: E15, E49, E50, E85
+M70. "TRYxaEbX" (Software) — options: E47, E125, E15, E118
+M71. "RegAsm.exe" (Software) — options: E1, E2, E96, E14
+M72. "Paltalk" (Software) — options: E15, E54, E8, E4
+M73. "SPECTR" (Software) — options: E15, E39, E33, E103
+M74. "baseupd.exe" (Software) — options: E1, E2, E96, E7
+M75. "rundll32.exe" (Software) — options: E7, E2, E104, E1
+M76. "write.exe" (Software) — options: E111, E41, E96, E2
+M77. "YARA" (Software) — options: E15, E48, E109, E1
+M78. "Електронний запит.exe" (Software) — options: E128, E129, E7, E2
+M79. "CCleaner.zip" (Software) — options: E121, E2, E33, E7
+M80. "RemoteUtilities" (Software) — options: E85, E42, E104, E5
+M81. "Cobalt Strike Beacon" (Software) — options: E131, E132, E15, E19
+M82. "CCleaner.rar" (Software) — options: E122, E2, E127, E30
+M83. "UkrScanner.rar" (Software) — options: E107, E121, E1, E2
+M84. "killself.bat" (Software) — options: E1, E65, E55, E37
+
+=== RESPONSE (21.3s, in 5411 / out 2279 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"web browser developed by Microsoft","p":"E11","r":"p"},{"m":"M2","id":"NEW","g":"web browser developed by Microsoft","p":"E11","r":"p"},{"m":"M3","id":"NEW","g":"family of operating systems developed by Microsoft","p":null,"r":null},{"m":"M4","id":"NEW","g":"productivity software suite developed by Microsoft","p":null,"r":null},{"m":"M5","id":"NEW","g":"web-based suite of Microsoft Office applications","p":"E10","r":"p"},{"m":"M6","id":"NEW","g":"open-source core JavaScript engine","p":"E16","r":"p"},{"m":"M7","id":"NEW","g":"multimedia and software platform by Adobe","p":null,"r":null},{"m":"M8","id":"NEW","g":"software development framework for Windows","p":"E11","r":"p"},{"m":"M9","id":"NEW","g":"mail and calendaring server by Microsoft","p":null,"r":null},{"m":"M10","id":"NEW","g":"Windows host compute service shim component","p":"E11","r":"p"},{"m":"M11","id":"NEW","g":"Active Scripting language developed by Microsoft","p":null,"r":null},{"m":"M12","id":"NEW","g":"Windows kernel-mode graphics subsystem driver","p":"E11","r":"p"},{"m":"M13","id":"NEW","g":"major release of Microsoft Windows OS","p":"E11","r":"v"},{"m":"M14","id":"NEW","g":"server operating system produced by Microsoft","p":"E11","r":"v"},{"m":"M15","id":"NEW","g":"VBScript engine remote code execution flaw","p":null,"r":null},{"m":"M16","id":"NEW","g":"exploit targeting CVE-2018-8174 vulnerability","p":null,"r":null},{"m":"M17","id":"NEW","g":"Win32k elevation of privilege vulnerability","p":null,"r":null},{"m":"M18","id":"NEW","g":"Microsoft Word remote code execution vulnerability","p":null,"r":null},{"m":"M19","id":"NEW","g":"Microsoft Edge elevation of privilege vulnerability","p":null,"r":null},{"m":"M20","id":"NEW","g":"Windows elevation of privilege vulnerability","p":null,"r":null},{"m":"M21","id":"NEW","g":"Microsoft Edge remote code execution vulnerability","p":null,"r":null},{"m":"M22","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M23","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M24","id":"NEW","g":"Microsoft Edge remote code execution vulnerability","p":null,"r":null},{"m":"M25","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M26","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M27","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M28","id":"NEW","g":"Windows kernel elevation of privilege vulnerability","p":null,"r":null},{"m":"M29","id":"NEW","g":"email client and personal information manager","p":"E10","r":"p"},{"m":"M30","id":"NEW","g":"open-source web browser by Mozilla","p":null,"r":null},{"m":"M31","id":"NEW","g":"open-source web browser project","p":null,"r":null},{"m":"M32","id":"NEW","g":"high-level programming language","p":null,"r":null},{"m":"M33","id":"NEW","g":"free and open-source SFTP client","p":null,"r":null},{"m":"M34","id":"NEW","g":"Windows installer package file","p":null,"r":null},{"m":"M35","id":"NEW","g":"Windows Script Host executable","p":"E11","r":"p"},{"m":"M36","id":"NEW","g":"free and open-source email client","p":null,"r":null},{"m":"M37","id":"NEW","g":"open-source firewall and router software","p":null,"r":null},{"m":"M38","id":"NEW","g":"generic installer executable","p":null,"r":null},{"m":"M39","id":"NEW","g":"executable payload file","p":null,"r":null},{"m":"M40","id":"NEW","g":"task automation and configuration management framework","p":"E11","r":"p"},{"m":"M41","id":"NEW","g":"credential harvesting utility","p":null,"r":null},{"m":"M42","id":"NEW","g":"executable file used in attack","p":null,"r":null},{"m":"M43","id":"NEW","g":"network hardware and software manufacturer","p":null,"r":null},{"m":"M44","id":"NEW","g":"malware loader executable","p":null,"r":null},{"m":"M45","id":"NEW","g":"freeware automation language for Windows","p":null,"r":null},{"m":"M46","id":"NEW","g":"malicious executable binary","p":null,"r":null},{"m":"M47","id":"NEW","g":"scanner-related document executable","p":null,"r":null},{"m":"M48","id":"NEW","g":"Microsoft HTML Application host utility","p":"E11","r":"p"},{"m":"M49","id":"NEW","g":"free cross-platform FTP client","p":null,"r":null},{"m":"M50","id":"NEW","g":"open-source protector for .NET applications","p":null,"r":null},{"m":"M51","id":"NEW","g":"instant messaging client","p":null,"r":null},{"m":"M52","id":"NEW","g":"email client software","p":null,"r":null},{"m":"M53","id":"NEW","g":"security information and event management","p":null,"r":null},{"m":"M54","id":"NEW","g":"virtual private network system software","p":null,"r":null},{"m":"M55","id":"NEW","g":"secure file transfer client software","p":null,"r":null},{"m":"M56","id":"NEW","g":"advanced dynamically extensible payload","p":null,"r":null},{"m":"M57","id":"NEW","g":"FTP client application","p":null,"r":null},{"m":"M58","id":"NEW","g":"free open-source download management tool","p":null,"r":null},{"m":"M59","id":"NEW","g":"FTP and SFTP client software","p":null,"r":null},{"m":"M60","id":"NEW","g":".NET obfuscator and error reporting tool","p":null,"r":null},{"m":"M61","id":"NEW","g":".NET-based malware variant","p":null,"r":null},{"m":"M62","id":"NEW","g":".NET-based spyware and keylogger","p":null,"r":null},{"m":"M63","id":"NEW","g":"SQLite interop dynamic link library","p":null,"r":null},{"m":"M64","id":"NEW","g":"CCleaner utility executable","p":null,"r":null},{"m":"M65","id":"NEW","g":"Windows application whitelisting feature","p":"E11","r":"p"},{"m":"M66","id":"NEW","g":"automated FTP client software","p":null,"r":null},{"m":"M67","id":"NEW","g":"Windows Vault credentials client DLL","p":"E11","r":"p"},{"m":"M68","id":"NEW","g":"PowerShell script file","p":"E93","r":"n"},{"m":"M69","id":"NEW","g":"open-source threat intelligence platform","p":null,"r":null},{"m":"M70","id":"NEW","g":"threat actor campaign identifier","p":null,"r":null},{"m":"M71","id":"NEW","g":".NET Assembly Registration tool","p":"E28","r":"p"},{"m":"M72","id":"NEW","g":"proprietary video and group chat service","p":null,"r":null},{"m":"M73","id":"NEW","g":"information stealing malware","p":null,"r":null},{"m":"M74","id":"NEW","g":"update executable binary","p":null,"r":null},{"m":"M75","id":"NEW","g":"Windows host process for DLLs","p":"E11","r":"p"},{"m":"M76","id":"NEW","g":"Windows WordPad executable","p":"E11","r":"p"},{"m":"M77","id":"NEW","g":"pattern matching tool for malware analysts","p":null,"r":null},{"m":"M78","id":"NEW","g":"malicious executable disguised as inquiry document","p":null,"r":null},{"m":"M79","id":"NEW","g":"ZIP archive containing CCleaner","p":null,"r":null},{"m":"M80","id":"NEW","g":"remote desktop access software","p":null,"r":null},{"m":"M81","id":"NEW","g":"Cobalt Strike post-exploitation payload agent","p":null,"r":null},{"m":"M82","id":"NEW","g":"RAR archive containing CCleaner","p":null,"r":null},{"m":"M83","id":"NEW","g":"RAR archive containing UkrScanner utility","p":null,"r":null},{"m":"M84","id":"NEW","g":"batch script designed for self-deletion","p":null,"r":null}]}

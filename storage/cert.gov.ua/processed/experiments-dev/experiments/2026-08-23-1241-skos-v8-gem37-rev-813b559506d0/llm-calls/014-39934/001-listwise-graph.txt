@@ -1,0 +1,100 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератака групи UAC-0098 на державні органи України із застосуванням фреймворку Metasploit (CERT-UA#4560)" — evidence: S1. "та України No 151 про безпрецедентні заходи безпеки.iso".&nbsp;</p><p>Встановлено, що згаданий ISO-файл містить документ-приманку "a.docx", LNK-файл "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk", PowerShell-скрипт "z.ps1" та EXE-файл "b.exe". У випадку запуску LNK-файлу, останній виконає PowerShell-скрипт, який, у свою чергу, відкриє DOCX-файл та здійснить виконання файлу "b.exe". В результаті, комп'ютер буде уражено шкідливою програмою Meterpreter.</p><p>Виходячи з результатів дослідження, активність асоційовано з UAC-0098. Крім того, існують підстави вважати, що згадана активність має відношен" S2. "09de95fb5f4c1a9b194b9e1f84973b4266c9a464d196b b.exe 493c8de446f2c442d781cd0fe22ca813 a5f713ca2ba69af2ad2a2631b2369c250c3b359513ec93c26a075bde3f659389 loader.exe </pre><p><br></p><p><em>Мережеві:</em></p><pre class="ql-syntax" spellcheck="false">admin@rs500cosworth.com tcp://195[.]211.99.29:28334 195[.]211.99.29 </pre><p><br></p><p><em>Хостові:</em></p><pre class="ql-syntax" spellcheck="false">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -exec bypass -w h -file z.ps1 </pre><p><br></p><p><strong>Графічні зображення</strong></p><p><strong><span class="ql-cursor"> </span></strong></p>"
+Entities:
+E1. GammaLoad.PS1
+E2. rutserv.exe
+E3. HarvesterX
+E4. AgentTesla
+E5. RemoteUtilities [aka Remote Utilities]
+E6. chrome_updater.dll
+E7. TRYxaEbX.ps1
+E8. SQLite.Interop.dll
+E9. ConfuserEx
+E10. AppLocker
+E11. JavaScript
+E12. PowerShell [aka PowerShell (powershell.exe)]
+E13. CCleaner.exe
+E14. shellcode.x86.bin
+E15. MCMDiction.exe
+E16. shellcode.x64.bin
+E17. QuasarRAT
+E18. baseupd.exe
+E19. sgegkseg23mjl.exe
+E20. Software Restriction Policies (SRP) [aka SRP]
+E21. stage2.ps1
+E22. USB.dll
+E23. GammaSteel.PS1
+E24. stage1.ps1
+E25. Social.dll
+E26. TRYxaEbX_2.ps1
+E27. Screen.dll
+E28. write.exe
+E29. mshta.exe
+E30. scandoc.exe
+E31. wsuscr.exe
+E32. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E33. plan_dsns.gov.ua.rar
+E34. Електронний план евакуації.exe
+E35. scan.exe (CredoMap_v2)
+E36. Інформація щодо наявності вакансій та їх укомплектування.xls
+E37. Електронний план евакуації.rar
+E38. AutoIt
+E39. powershell.exe
+E40. z.ps1
+E41. b.exe
+E42. loader.exe
+E43. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E44. Meterpreter
+Mentions:
+M1. "Meterpreter" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "powershell.exe" (Software) — options: E11, E12, E13, E14 — ctx: S2
+M3. "z.ps1" (Software) — options: E20, E1, E21, E22 — ctx: S1
+M4. "b.exe" (Software) — options: E22, E13, E28, E27 — ctx: S1
+M5. "loader.exe" (Software) — options: E22, E13, E25, E2 — ctx: S2
+M6. "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk" (Software) — options: E32, E33, E34, E35 — ctx: S1
+
+=== RESPONSE (4.7s, in 2026 / out 114 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"malware delivered to compromised systems"}
+{"m":"M2","id":"E12","g":null}
+{"m":"M3","id":"NEW","g":"PowerShell script contained in ISO file"}
+{"m":"M4","id":"NEW","g":"executable file contained in ISO file"}
+{"m":"M5","id":"NEW","g":"executable file"}
+{"m":"M6","id":"NEW","g":"malicious shortcut file executing PowerShell script"}

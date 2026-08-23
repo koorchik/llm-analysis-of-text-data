@@ -198,6 +198,20 @@ gemma must run at default temperature; sibling-free identity rows are load-beari
 judges. Follow-ups: gemma split reverse/replicate arms; combo of split+flash for cost-insensitive
 runs; full-corpus test split; per-mention snippet × carry interplay.
 
+## 5d. v8 decoupled architecture (2026-08-23) — the final design; see docs/DESIGN-JUSTIFICATIONS-2026-08-23.md
+
+Per document 1–2 calls, registry FINAL after each doc, no cross-document debt: pass 1
+(`DECOUPLE=1`, prompt `listwise-id-v1`, JSONL output, per-mention snippets now DEFAULT) = identity
++ gloss only; pass 2 (optional, source-free review, `REVIEW_PROMPT_ID` default listwise-skos-v7,
+`JUDGE_SAMPLES` union on local) = this doc's parentless mints + re-mentioned orphans + gap-swept
+(GAP .08 / FLOOR .5 / CAP 50) parentless neighbours of new mints. Carry retired (subsumed).
+Results: flash .812/.882/**.884(reverse — best of campaign)** at P .76–.80 (≈.93 after gold-gap
+separation), identity 1.000; gemma+samples=2 **.677**/.647/kind .932/identity 1.000 = 2.2× its
+catch-up baseline, all 68 edges from pass 2 (mechanism, not luck). Probe evidence for every
+decision and all negative results (cat toxic-tails, 96k degradation, schema latency, kin,
+allcand/twostep immunity, multi-child c-field flash-perfect/gemma-partial + K-addressability)
+in DESIGN-JUSTIFICATIONS and BRAINSTORM-BRIEF-2026-08-23.md.
+
 ## 6. Operational notes
 
 - Runner scripts live in the session scratchpad (`run-one-arm.sh`, `run-snippet-arm.sh` + sed

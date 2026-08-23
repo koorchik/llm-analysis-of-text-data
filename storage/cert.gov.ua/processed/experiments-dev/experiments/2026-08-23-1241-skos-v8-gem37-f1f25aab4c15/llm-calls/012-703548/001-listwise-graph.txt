@@ -1,0 +1,103 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Атака групи UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4941)" — evidence: S1. "сового розповсюдження електронних листів з темою "Об'єднаний офіційний звіт про гуманітарну ситуацію. Україна" та вкладенням у вигляді XLS-документу "Гуманітарна катастрофа України з 24 лютого 2022 року.xls". При цьому електронні листи розсилаються зі скомпрометованих електронних адрес державних органів України.</p><p>Згаданий документ містить макрос, активація якого призведе до запуску файлу "baseupd.exe", виконання якого призведе до ураження комп'ютера шкідливою програмою Cobalt Strike Beacon.</p><p>CERT-UA вживаються заходи зі встановлення обставин" S2. "&nbsp; &nbsp; baseupd.exe 23cf0517359c014a8d25085eceb2cb25&nbsp; &nbsp; f3f43f3f4d55c0382f9045fd8093eef66074ca7d97dad066746ace47cc47319a&nbsp; &nbsp; oYUuQbXu f063766d0481194829be3c5db209bfcf&nbsp; &nbsp; df4724e21d9dea9b3e7f38b1ad905ad1922d30b6142da01c0218ed80644ca22a&nbsp; &nbsp; stage1.ps1 6cac251512ecd9f0627cf0da5d0a0ff7&nbsp; &nbsp; e390d3d9004124616a18d10dc5b9f6eeab6b01bd167fac4d783036af574a4278&nbsp; &nbsp; stage2.ps1 a3cf45b6206bedee45c45b6ccdc8be98&nbsp; &nbsp; 2ed48e578a522a4e718510572056c5cd86d11bdf7e71a52c68a55ebb823771da&nbsp; &nbsp; shellcode.x86.bin (Cobalt Strike Beacon) 3f29f5c1733b3ea1c1cfe36826e33a2a&nbsp; &nbsp; 00ae9c36c0ebce87efcd63852716ed88599d0ba8bf117ad1771a35b9c67e3402&nbsp; &nbsp; shellcode.x64.bin (Cobalt Strike Beacon) </pre><p><br></p><p><em>Мережеві:</em></p><pre class="ql-syntax" spellcheck="false">136[.]144.41.177 hXXp://136[.]144.41.177/s"
+Entities:
+E1. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E2. Інформація щодо наявності вакансій та їх укомплектування.xls
+E3. До оплати рах.ф. 74 - 2018р.js
+E4. До оплати від 11.12.18.lzh
+E5. CVE-2018-8124
+E6. PGMB New Order 18-2077.xlsx
+E7. Рахунки за выполненные работы от 11.12.2018.js
+E8. Microsoft Equation Editor
+E9. Petya
+E10. Електронний запит.exe
+E11. rfusclient.exe
+E12. spi.exe
+E13. cmd.exe
+E14. RegAsm.exe
+E15. write.exe
+E16. b.exe
+E17. VBScript
+E18. ckZ89.ExE
+E19. rutserv.exe
+E20. loader.exe
+E21. TRYxaEbX
+E22. .NET Framework
+E23. TRYxaEbX.ps1
+E24. 360Chrome Browser
+E25. TRYxaEbX_2.ps1
+E26. 7Star Browser
+E27. Orbitum Browser
+E28. Adobe Flash Player
+E29. z.ps1
+E30. installer.exe
+E31. Agent Tesla
+E32. powershell.exe
+E33. FTPGetter
+E34. shellcode.x86 (Cobalt Strike Beacon)
+E35. shellcode.x64 (Cobalt Strike Beacon)
+E36. killself.bat
+E37. Thunderbird
+E38. Windows Host Compute Service Shim
+E39. baseupd.exe
+E40. oYUuQbXu
+E41. stage1.ps1
+E42. stage2.ps1
+E43. shellcode.x86.bin
+E44. shellcode.x64.bin
+E45. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+Mentions:
+M1. "Гуманітарна катастрофа України з 24 лютого 2022 року.xls" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "baseupd.exe" (Software) — options: E11, E12, E13, E14 — ctx: S1
+M3. "oYUuQbXu" (Software) — options: E21, E22, E23, E24 — ctx: S2
+M4. "stage1.ps1" (Software) — options: E23, E29, E25, E21 — ctx: S2
+M5. "stage2.ps1" (Software) — options: E25, E23, E29, E21 — ctx: S2
+M6. "shellcode.x86.bin" (Software) — options: E34, E35, E32, E36 — ctx: S2
+M7. "shellcode.x64.bin" (Software) — options: E35, E34, E32, E36 — ctx: S2
+
+=== RESPONSE (5.8s, in 2336 / out 128 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"malicious XLS document containing macro"}
+{"m":"M2","id":"NEW","g":"executable file launched by document macro"}
+{"m":"M3","id":"NEW","g":"malicious file or payload"}
+{"m":"M4","id":"NEW","g":"PowerShell script payload"}
+{"m":"M5","id":"NEW","g":"PowerShell script payload"}
+{"m":"M6","id":"E34","g":null}
+{"m":"M7","id":"E35","g":null}

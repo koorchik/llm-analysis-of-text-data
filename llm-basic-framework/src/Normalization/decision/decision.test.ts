@@ -731,6 +731,29 @@ describe('ListwiseGraphDecision SKOS ballot', () => {
     assert.equal(office.mentionIsBroader, true);
   });
 
+  it('samples:2 unions the hierarchy halves — a tails-sample followed by a heads-sample keeps the parent', async () => {
+    const llm = fakeLlm([
+      '{"v":[{"m":"M1","id":"NEW","g":null,"p":null,"r":null}]}',
+      '{"v":[{"m":"M1","id":"NEW","g":"a Chromium-based browser","p":"E1","r":"n"}]}',
+    ]);
+    const strategy = new ListwiseGraphDecision({
+      llmClient: llm.client,
+      promptId: 'listwise-skos-v7',
+      samples: 2,
+    });
+    const [decision] = await strategy.decide([
+      request('Torch Browser', [candidate('Chromium Browser', 0.6)], {
+        category: 'Software',
+        pool: [{ canonical: 'Chromium Browser', surfaces: ['Chromium Browser'] }],
+      }),
+    ]);
+    assert.equal(llm.calls.length, 2, 'two samples requested');
+    assert.equal(decision.kind, 'mint');
+    assert.equal(decision.parentCandidate, 'Chromium Browser');
+    assert.equal(decision.broaderType, 'broaderGeneric');
+    assert.equal(decision.gloss, 'a Chromium-based browser', 'missing gloss adopted from later sample');
+  });
+
   it('a stray lvl field in the response is ignored, not applied', async () => {
     const llm = fakeLlm(['{"v":[{"m":"M1","id":"NEW","p":null,"r":null,"lvl":"g2","g":null}]}']);
     const strategy = new ListwiseGraphDecision({

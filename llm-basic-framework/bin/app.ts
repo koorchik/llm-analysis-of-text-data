@@ -92,7 +92,12 @@ const CONFIG = {
 
   // Judge evidence block (snippet ablation): head | none | anchored | per-mention. Folded into
   // the runId.
-  snippetMode: (process.env.SNIPPET_MODE as 'head' | 'none' | 'anchored' | 'per-mention') || 'head',
+  // Default per-mention since 2026-08-23 (user decision): the evidence block holds numbered
+  // windows around each judged mention instead of the document's first 600 chars — the only mode
+  // whose evidence provably contains the mentions being judged. `head`/`none`/`anchored` remain
+  // selectable for ablations (anchored measured worse than both on flash).
+  snippetMode:
+    (process.env.SNIPPET_MODE as 'head' | 'none' | 'anchored' | 'per-mention') || 'per-mention',
 
   // M6 decision stage. Unset means the built-in link-judge path — the published Ψ_link behaviour
   // the golden fixture pins — so an unset variable never silently changes what the default arm
@@ -100,7 +105,9 @@ const CONFIG = {
   // Normalized to undefined when empty: `DECISION_STRATEGY=` must behave exactly like unset, or the
   // run card would record an empty-string arm name that reads as "none" but is not `?? `-defaulted.
   decisionStrategy: process.env.DECISION_STRATEGY || undefined,
-  listwisePromptId: process.env.LISTWISE_PROMPT_ID || undefined,
+  listwisePromptId:
+    process.env.LISTWISE_PROMPT_ID ||
+    (process.env.DECOUPLE === '1' ? 'listwise-id-v1' : undefined),
   listwiseK: process.env.LISTWISE_K === undefined ? undefined : Number(process.env.LISTWISE_K),
 
   // M5 candidate generation. Unset means `string-sim` — the generator the M2.5 golden fixture pins
@@ -134,6 +141,16 @@ const CONFIG = {
   reaskCarryOrphans: process.env.REASK_CARRY === '1',
   // Reask rows as their own source-free registry-review call (the catch-up frame at doc cadence).
   reaskSplit: process.env.REASK_SPLIT === '1',
+  // Judge-call self-consistency (local judges): sample each ballot N times, union the hierarchy
+  // halves. Free in tokens locally; N=1 (default) is the single-call behaviour.
+  judgeSamples: process.env.JUDGE_SAMPLES === undefined ? 1 : Number(process.env.JUDGE_SAMPLES),
+  // Same-document re-ask: review-shaped call for this document's parentless mints, immediately
+  // after they land — the first document restructured to look like its own re-ask.
+  reaskNow: process.env.REASK_NOW === '1',
+  // v8 decoupled pipeline: pass 1 identity-only (listwise-id-*), pass 2 source-free review for
+  // all hierarchy (new mints + re-mentioned orphans + gap-swept children of new mints).
+  decouple: process.env.DECOUPLE === '1',
+  reviewPromptId: process.env.REVIEW_PROMPT_ID ?? 'listwise-skos-v7',
 
   // M5 batch flow. Off by default: turning embeddings on changes what DataNormalizer writes, and
   // the committed `normalized/` artifacts must stay byte-identical for anyone who did not ask.
@@ -243,6 +260,9 @@ async function main() {
       reaskParentless: CONFIG.reaskParentless,
       reaskCarryOrphans: CONFIG.reaskCarryOrphans,
       reaskSplit: CONFIG.reaskSplit,
+      reaskNow: CONFIG.reaskNow,
+      decouple: CONFIG.decouple,
+      reviewPromptId: CONFIG.decouple ? CONFIG.reviewPromptId : null,
       docSiblingK: CONFIG.docSiblingK,
       docSiblingMode: CONFIG.docSiblingMode,
       snippetMode: CONFIG.snippetMode,
@@ -473,6 +493,9 @@ function createDecisionStrategy(
       decisionLog,
       promptId: CONFIG.listwisePromptId,
       k: CONFIG.listwiseK,
+      // Decoupled mode: pass 1 is identity-only, and identity never flipped in any measured run —
+      // sampling belongs to the pass-2 review strategy alone.
+      samples: CONFIG.decouple ? 1 : CONFIG.judgeSamples,
     });
   }
   if (id === 'comem-select') return new ComemSelectDecision({ llmClient, decisionLog });
@@ -643,7 +666,20 @@ function createProcessors(
     reaskParentless: CONFIG.reaskParentless,
     reaskCarryOrphans: CONFIG.reaskCarryOrphans,
     reaskSplit: CONFIG.reaskSplit,
+    reaskNow: CONFIG.reaskNow,
+    decouple: CONFIG.decouple,
     decisionStrategy: createDecisionStrategy(llmClient, decisionLog),
+    ...(CONFIG.decouple
+      ? {
+          reviewStrategy: new ListwiseGraphDecision({
+            llmClient,
+            decisionLog,
+            promptId: CONFIG.reviewPromptId,
+            k: CONFIG.listwiseK,
+            samples: CONFIG.judgeSamples,
+          }),
+        }
+      : {}),
     // M5: previously hardcoded to StringSimilarityGenerator inside the normalizer, which left every
     // generator M4 shipped with no live caller.
     candidateGenerator,

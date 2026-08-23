@@ -1,0 +1,108 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "УВАГА! Спостерігається масова розсилка фішингових листів, які використовують вразливість CVE-2017-11882" — evidence: S1. "ереглядати, змінювати або видаляти дані;</li><li>створювати нові облікові записи з правами адміністратора.</li></ul><p>Після експлуатації вразливості CVE-2017-11882 на цільову систему завантажується файл major[.]exe з&nbsp;адреси hххp[:]//216.170.123.111/major[.]exe, який є шкідливим програмним забезпеченням, що" S2. "поведінку відносно до цільової системи на якій виконується.</p><h3><strong>Вразливі версії:</strong></h3><p>Дана вразливість може використовуватись в Microsoft Office 2016 та попередніх версіях, якщо не встановлено відповідні оновлення безпеки.</p><h3><strong>Рекомендації:</strong></h3><ul><li>Не відкривайте невідомі/підозрілі файли.</li><li>Використовуйте ліцензійне програмне забезпечення та постійно оновлюйте офісний пакет MS Office.</li><li>Відключити Microsoft Equation Editor в Office.</li><li>Обмежте доступ MS Office та PowerShell до мережі Інтернет.</li></ul><h3><strong>Оновлення безпеки:</strong></h3><ul><li>Microsoft Office 2007 Service Pack 3 – Security Update 4011604&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li><li>Microsoft Office 2010 Service Pack 2 (32-bit editions) – Security Update 4011618</li><li>Microsoft Office 2010 Service Pack 2 (64-bit editions) – Security Update 4011618</li><li>Microsoft Office 2013 Service Pack 1 (32-bit editions) – Security Update 3162047</li><li>Microsoft Office 2013 Service Pack 1 (64-bit editions) – Security Update 3162047</"
+Entities:
+E1. CVE-2018-8127
+E2. CVE-2017-0199
+E3. CVE-2018-8897
+E4. CVE-2018-8132
+E5. CVE-2018-8124
+E6. CVE-2018-0854
+E7. CVE-2018-8120
+E8. CVE-2018-0958
+E9. CVE-2018-8129
+E10. CVE-2018-8174
+E11. loader.exe
+E12. CCleaner.exe
+E13. cmd.exe
+E14. mshta.exe
+E15. wsuscr.exe
+E16. MCMDiction.exe
+E17. Software Restriction Policies (SRP) [aka SRP]
+E18. scandoc.exe
+E19. RegAsm.exe
+E20. USB.dll
+E21. GammaLoad.PS1
+E22. Browser.dll
+E23. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E24. Orbitum Browser
+E25. До оплати від 11.12.18.lzh
+E26. Office 2007
+E27. Smokeloader
+E28. Microsoft Word
+E29. z.ps1
+E30. Windows Server 2008
+E31. Microsoft Outlook
+E32. Microsoft Edge
+E33. Microsoft Exchange Server
+E34. Microsoft Windows
+E35. Office 2013
+E36. Office 2010
+E37. Social.dll
+E38. Microsoft Office [aka MS Office]
+E39. Office 2016
+E40. Microsoft Office Services and Web Apps
+E41. major.exe
+E42. PGMB New Order 18-2077.xlsx
+E43. Microsoft Equation Editor
+E44. Microsoft Office 2016
+E45. Microsoft Office 2013
+E46. Microsoft Office 2010
+E47. Microsoft Office 2007
+E48. CVE-2017-11882
+Mentions:
+M1. "CVE-2017-11882" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "major.exe" (Software) — options: E11, E12, E13, E14
+M3. "PGMB New Order 18-2077.xlsx" (Software) — options: E21, E22, E23, E24
+M4. "Microsoft Equation Editor" (Software) — options: E28, E31, E32, E13 — ctx: S2
+M5. "Microsoft Office 2016" (Software) — options: E39, E38, E35, E36 — ctx: S2
+M6. "Microsoft Office 2013" (Software) — options: E35, E38, E39, E36 — ctx: S2
+M7. "Microsoft Office 2010" (Software) — options: E36, E38, E26, E35 — ctx: S2
+M8. "Microsoft Office 2007" (Software) — options: E26, E38, E36, E35 — ctx: S2
+
+=== RESPONSE (4.9s, in 2072 / out 143 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"vulnerability exploited in phishing emails"}
+{"m":"M2","id":"NEW","g":"malware downloaded following vulnerability exploitation"}
+{"m":"M3","id":"NEW","g":null}
+{"m":"M4","id":"NEW","g":"component recommended to be disabled in Office"}
+{"m":"M5","id":"E39","g":null}
+{"m":"M6","id":"E35","g":null}
+{"m":"M7","id":"E36","g":null}
+{"m":"M8","id":"E26","g":null}

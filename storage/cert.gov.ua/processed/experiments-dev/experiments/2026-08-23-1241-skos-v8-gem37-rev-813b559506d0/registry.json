@@ -1,0 +1,4258 @@
+{
+  "version": 6,
+  "canonicalPolicy": "first-seen",
+  "conceptSchemes": {
+    "Software": {
+      "SPECTR": {
+        "labels": [
+          {
+            "surface": "SPECTR",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malware that steals documents, screenshots, and browser data",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "FIRMACHAGENT": {
+        "labels": [
+          {
+            "surface": "FIRMACHAGENT",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "program used to exfiltrate stolen data to C2 server",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "IDCLIPNET_x86.dll": {
+        "labels": [
+          {
+            "surface": "IDCLIPNET_x86.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "orchestrator DLL managing SPECTR plugins",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "chrome_updater.dll": {
+        "labels": [
+          {
+            "surface": "chrome_updater.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "DLL file associated with the FIRMACHAGENT tool",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "Browser.dll": {
+        "labels": [
+          {
+            "surface": "Browser.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "DLL file listed as a threat indicator",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "Files.dll": {
+        "labels": [
+          {
+            "surface": "Files.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "DLL file listed as a threat indicator",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "Screen.dll": {
+        "labels": [
+          {
+            "surface": "Screen.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "Social.dll": {
+        "labels": [
+          {
+            "surface": "Social.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "USB.dll": {
+        "labels": [
+          {
+            "surface": "USB.dll",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "PowerShell": {
+        "labels": [
+          {
+            "surface": "PowerShell",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "PowerShell (powershell.exe)",
+            "docId": 1229152,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          },
+          {
+            "surface": "powershell.exe",
+            "docId": 39934,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "scripting framework used to download malware components",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 3
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "JavaScript": {
+        "labels": [
+          {
+            "surface": "JavaScript",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "code inside HTML file launching a PowerShell script",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "AppLocker": {
+        "labels": [
+          {
+            "surface": "AppLocker",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security policy mechanism preventing unauthorized file execution",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "Software Restriction Policies (SRP)": {
+        "labels": [
+          {
+            "surface": "Software Restriction Policies (SRP)",
+            "docId": 6280422,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "SRP",
+            "docId": 6277896,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 6280422,
+          "date": "19.08.2024"
+        }
+      },
+      "YARA": {
+        "labels": [
+          {
+            "surface": "YARA",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "rule-based malware detection tool",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        }
+      },
+      "MISP": {
+        "labels": [
+          {
+            "surface": "MISP",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "threat intelligence platform for synchronizing ACLs",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        }
+      },
+      "Mikrotik": {
+        "labels": [
+          {
+            "surface": "Mikrotik",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "network security and protection system",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        }
+      },
+      "pfSense": {
+        "labels": [
+          {
+            "surface": "pfSense",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "network security and firewall platform",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        }
+      },
+      "SIEM": {
+        "labels": [
+          {
+            "surface": "SIEM",
+            "docId": 6277896,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "cyber threat hunting system",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277896,
+          "date": "28.02.2024"
+        }
+      },
+      "RemoteUtilities": {
+        "labels": [
+          {
+            "surface": "RemoteUtilities",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Remote Utilities",
+            "docId": 6277063,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "remote administration software",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "Remote Utilities - Host": {
+        "labels": [
+          {
+            "surface": "Remote Utilities - Host",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "remote control host component",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "rutserv.exe": {
+        "labels": [
+          {
+            "surface": "rutserv.exe",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file related to RemoteUtilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "install.msi": {
+        "labels": [
+          {
+            "surface": "install.msi",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "MSI installer deploying RemoteUtilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "CCleaner.zip": {
+        "labels": [
+          {
+            "surface": "CCleaner.zip",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "archive file involved in infection chain",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "CCleaner.exe": {
+        "labels": [
+          {
+            "surface": "CCleaner.exe",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file involved in infection chain",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "CCleaner.rar": {
+        "labels": [
+          {
+            "surface": "CCleaner.rar",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "archive file downloaded from web service",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "Електронний план евакуації.rar": {
+        "labels": [
+          {
+            "surface": "Електронний план евакуації.rar",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "archive file containing malicious payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "Електронний план евакуації.exe": {
+        "labels": [
+          {
+            "surface": "Електронний план евакуації.exe",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file used in attack",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "plan_dsns.gov.ua.rar": {
+        "labels": [
+          {
+            "surface": "plan_dsns.gov.ua.rar",
+            "docId": 6277285,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "archive file downloaded from web service",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277285,
+          "date": "22.01.2024"
+        }
+      },
+      "RemcosRAT": {
+        "labels": [
+          {
+            "surface": "RemcosRAT",
+            "docId": 6277063,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Remcos",
+            "docId": 3804703,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "remote management tool",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 6277063,
+          "date": "11.01.2024"
+        }
+      },
+      "QuasarRAT": {
+        "labels": [
+          {
+            "surface": "QuasarRAT",
+            "docId": 6277063,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious program launched via PowerShell",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277063,
+          "date": "11.01.2024"
+        }
+      },
+      "AutoIt": {
+        "labels": [
+          {
+            "surface": "AutoIt",
+            "docId": 6277063,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "scripting language used to run installation scripts",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6277063,
+          "date": "11.01.2024"
+        }
+      },
+      "SmartAssembly .NET": {
+        "labels": [
+          {
+            "surface": "SmartAssembly .NET",
+            "docId": 6276824,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "SmartAssembly",
+            "docId": 6276567,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": ".NET obfuscation tool",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 6276824,
+          "date": "21.12.2023"
+        }
+      },
+      "wsuscr.exe": {
+        "labels": [
+          {
+            "surface": "wsuscr.exe",
+            "docId": 6276824,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file decrypting and launching RemcosRAT",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6276824,
+          "date": "21.12.2023"
+        }
+      },
+      "scandoc.exe": {
+        "labels": [
+          {
+            "surface": "scandoc.exe",
+            "docId": 6276567,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable downloaded via SMB to decrypt and launch RemcosRAT",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 6276567,
+          "date": "30.11.2023"
+        }
+      },
+      "AgentTesla": {
+        "labels": [
+          {
+            "surface": "AgentTesla",
+            "docId": 1563322,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Agent Tesla",
+            "docId": 3028,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious program decoded and executed via PowerShell",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 1563322,
+          "date": "31.08.2022"
+        }
+      },
+      "GammaLoad.PS1": {
+        "labels": [
+          {
+            "surface": "GammaLoad.PS1",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell payload delivered by HTM droppers",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "GammaSteel.PS1": {
+        "labels": [
+          {
+            "surface": "GammaSteel.PS1",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell malware used to steal files",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "GammaSteel.NET": {
+        "labels": [
+          {
+            "surface": "GammaSteel.NET",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": ".NET malware used to steal browser credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "HarvesterX": {
+        "labels": [
+          {
+            "surface": "HarvesterX",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "previously used malware tool",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "wscript.exe": {
+        "labels": [
+          {
+            "surface": "wscript.exe",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Windows script host executable used for payload execution",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "mshta.exe": {
+        "labels": [
+          {
+            "surface": "mshta.exe",
+            "docId": 1229152,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Microsoft HTML Application host used for payload execution",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 1229152,
+          "date": "10.08.2022"
+        }
+      },
+      "ConfuserEx": {
+        "labels": [
+          {
+            "surface": "ConfuserEx",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "tool used for obfuscating .NET programs",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        }
+      },
+      "MCMDiction.exe": {
+        "labels": [
+          {
+            "surface": "MCMDiction.exe",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": ".NET program decrypted and executed from JPEG file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        }
+      },
+      "sgegkseg23mjl.exe": {
+        "labels": [
+          {
+            "surface": "sgegkseg23mjl.exe",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file created upon macro activation",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        }
+      },
+      "rundll32.exe": {
+        "labels": [
+          {
+            "surface": "rundll32.exe",
+            "docId": 861292,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Windows utility used to execute LNK file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 861292,
+          "date": "20.07.2022"
+        }
+      },
+      "Cobalt Strike Beacon": {
+        "labels": [
+          {
+            "surface": "Cobalt Strike Beacon",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious software payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "Гуманітарна катастрофа України з 24 лютого 2022 року.xls": {
+        "labels": [
+          {
+            "surface": "Гуманітарна катастрофа України з 24 лютого 2022 року.xls",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious XLS document attachment",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "baseupd.exe": {
+        "labels": [
+          {
+            "surface": "baseupd.exe",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable launched by macro in XLS document",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "oYUuQbXu": {
+        "labels": [
+          {
+            "surface": "oYUuQbXu",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "file associated with the attack",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "stage1.ps1": {
+        "labels": [
+          {
+            "surface": "stage1.ps1",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell script file associated with the attack",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "stage2.ps1": {
+        "labels": [
+          {
+            "surface": "stage2.ps1",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell script file associated with the attack",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "shellcode.x86.bin": {
+        "labels": [
+          {
+            "surface": "shellcode.x86.bin",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "32-bit shellcode payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "shellcode.x64.bin": {
+        "labels": [
+          {
+            "surface": "shellcode.x64.bin",
+            "docId": 703548,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "64-bit shellcode payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 703548,
+          "date": "11.07.2022"
+        }
+      },
+      "Інформація щодо наявності вакансій та їх укомплектування.xls": {
+        "labels": [
+          {
+            "surface": "Інформація щодо наявності вакансій та їх укомплектування.xls",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious Excel document attachment containing dropper macro",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "write.exe": {
+        "labels": [
+          {
+            "surface": "write.exe",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "dropper executable created and executed by Excel macro",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "TRYxaEbX": {
+        "labels": [
+          {
+            "surface": "TRYxaEbX",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "encrypted payload file written to ProgramData directory",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "TRYxaEbX.ps1": {
+        "labels": [
+          {
+            "surface": "TRYxaEbX.ps1",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell script decrypted and executed by dropper",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "TRYxaEbX_2.ps1": {
+        "labels": [
+          {
+            "surface": "TRYxaEbX_2.ps1",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell script associated with cyberattack",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "shellcode.x86 (Cobalt Strike Beacon)": {
+        "labels": [
+          {
+            "surface": "shellcode.x86 (Cobalt Strike Beacon)",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "x86 shellcode delivering Cobalt Strike Beacon payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "shellcode.x64 (Cobalt Strike Beacon)": {
+        "labels": [
+          {
+            "surface": "shellcode.x64 (Cobalt Strike Beacon)",
+            "docId": 619229,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "x64 shellcode delivering Cobalt Strike Beacon payload",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 619229,
+          "date": "06.07.2022"
+        }
+      },
+      "CredoMap_v2": {
+        "labels": [
+          {
+            "surface": "CredoMap_v2",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "stealer malware used by APT28",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        }
+      },
+      "UkrScanner.rar": {
+        "labels": [
+          {
+            "surface": "UkrScanner.rar",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "password-protected RAR archive attachment",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        }
+      },
+      "UkrScanner.exe (SFX)": {
+        "labels": [
+          {
+            "surface": "UkrScanner.exe (SFX)",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "SFX executable file inside archive",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        }
+      },
+      "scan.exe (CredoMap_v2)": {
+        "labels": [
+          {
+            "surface": "scan.exe (CredoMap_v2)",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file containing CredoMap_v2 stealer",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        }
+      },
+      "SQLite.Interop.dll": {
+        "labels": [
+          {
+            "surface": "SQLite.Interop.dll",
+            "docId": 40102,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "legitimate DLL file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 40102,
+          "date": "06.05.2022"
+        }
+      },
+      "Meterpreter": {
+        "labels": [
+          {
+            "surface": "Meterpreter",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malware delivered to compromised systems",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        }
+      },
+      "z.ps1": {
+        "labels": [
+          {
+            "surface": "z.ps1",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "PowerShell script contained in ISO file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        }
+      },
+      "b.exe": {
+        "labels": [
+          {
+            "surface": "b.exe",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file contained in ISO file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        }
+      },
+      "loader.exe": {
+        "labels": [
+          {
+            "surface": "loader.exe",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable file",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        }
+      },
+      "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk": {
+        "labels": [
+          {
+            "surface": "УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk",
+            "docId": 39934,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious shortcut file executing PowerShell script",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 39934,
+          "date": "28.04.2022"
+        }
+      },
+      "Електронний запит.exe": {
+        "labels": [
+          {
+            "surface": "Електронний запит.exe",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "remote access trojan executable extracted from archive",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        }
+      },
+      "installer.exe": {
+        "labels": [
+          {
+            "surface": "installer.exe",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "older version of Remote Utilities software contained in malware",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        }
+      },
+      "host_news_mod_mod.msi": {
+        "labels": [
+          {
+            "surface": "host_news_mod_mod.msi",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "MSI package extracted from malware",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        }
+      },
+      "rfusclient.exe": {
+        "labels": [
+          {
+            "surface": "rfusclient.exe",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "executable used by Remote Utilities Host",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        }
+      },
+      "killself.bat": {
+        "labels": [
+          {
+            "surface": "killself.bat",
+            "docId": 10011,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "batch file used to delete indicators of compromise",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 10011,
+          "date": "21.01.2021"
+        }
+      },
+      "RegAsm.exe": {
+        "labels": [
+          {
+            "surface": "RegAsm.exe",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "system file executed by malware",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "vaultcli.dll": {
+        "labels": [
+          {
+            "surface": "vaultcli.dll",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "library called to retrieve credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "WinSCP": {
+        "labels": [
+          {
+            "surface": "WinSCP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "targeted application for credential theft",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Google Chrome": {
+        "labels": [
+          {
+            "surface": "Google Chrome",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for stored credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Mozilla Firefox": {
+        "labels": [
+          {
+            "surface": "Mozilla Firefox",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for stored credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Microsoft Outlook": {
+        "labels": [
+          {
+            "surface": "Microsoft Outlook",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for stored credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "IceDragon": {
+        "labels": [
+          {
+            "surface": "IceDragon",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for stored credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Yandex Browser": {
+        "labels": [
+          {
+            "surface": "Yandex Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Iridium Browser": {
+        "labels": [
+          {
+            "surface": "Iridium Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Epic Privacy Browser": {
+        "labels": [
+          {
+            "surface": "Epic Privacy Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Chromium Browser": {
+        "labels": [
+          {
+            "surface": "Chromium Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "7Star Browser": {
+        "labels": [
+          {
+            "surface": "7Star Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Torch Browser": {
+        "labels": [
+          {
+            "surface": "Torch Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "ChromePlus Browser": {
+        "labels": [
+          {
+            "surface": "ChromePlus Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Kometa Browser": {
+        "labels": [
+          {
+            "surface": "Kometa Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Amigo Browser": {
+        "labels": [
+          {
+            "surface": "Amigo Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Brave Browser": {
+        "labels": [
+          {
+            "surface": "Brave Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "CentBrowser": {
+        "labels": [
+          {
+            "surface": "CentBrowser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Liebao Browser": {
+        "labels": [
+          {
+            "surface": "Liebao Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Elements Browser": {
+        "labels": [
+          {
+            "surface": "Elements Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Vivaldi Browser": {
+        "labels": [
+          {
+            "surface": "Vivaldi Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Citrio Browser": {
+        "labels": [
+          {
+            "surface": "Citrio Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "360Chrome Browser": {
+        "labels": [
+          {
+            "surface": "360Chrome Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Uran Browser": {
+        "labels": [
+          {
+            "surface": "Uran Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Chedot Browser": {
+        "labels": [
+          {
+            "surface": "Chedot Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Orbitum Browser": {
+        "labels": [
+          {
+            "surface": "Orbitum Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Sputnik Browser": {
+        "labels": [
+          {
+            "surface": "Sputnik Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Comodo Dragon Browser": {
+        "labels": [
+          {
+            "surface": "Comodo Dragon Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "CocCoc Browser": {
+        "labels": [
+          {
+            "surface": "CocCoc Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "QIP Surf Browser": {
+        "labels": [
+          {
+            "surface": "QIP Surf Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Coowon Browser": {
+        "labels": [
+          {
+            "surface": "Coowon Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Opera Browser": {
+        "labels": [
+          {
+            "surface": "Opera Browser",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Internet Explorer": {
+        "labels": [
+          {
+            "surface": "Internet Explorer",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "browser targeted for saved credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Thunderbird": {
+        "labels": [
+          {
+            "surface": "Thunderbird",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Claws Mail": {
+        "labels": [
+          {
+            "surface": "Claws Mail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Postbox Credential": {
+        "labels": [
+          {
+            "surface": "Postbox Credential",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Foxmail": {
+        "labels": [
+          {
+            "surface": "Foxmail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Opera Mail": {
+        "labels": [
+          {
+            "surface": "Opera Mail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Pocomail": {
+        "labels": [
+          {
+            "surface": "Pocomail",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Becky!": {
+        "labels": [
+          {
+            "surface": "Becky!",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "OpenVPN": {
+        "labels": [
+          {
+            "surface": "OpenVPN",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FileZilla": {
+        "labels": [
+          {
+            "surface": "FileZilla",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for stored credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Paltalk": {
+        "labels": [
+          {
+            "surface": "Paltalk",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "jDownloader": {
+        "labels": [
+          {
+            "surface": "jDownloader",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "SmartFTP": {
+        "labels": [
+          {
+            "surface": "SmartFTP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FTP Commander": {
+        "labels": [
+          {
+            "surface": "FTP Commander",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "WS_FTP": {
+        "labels": [
+          {
+            "surface": "WS_FTP",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "FTPGetter": {
+        "labels": [
+          {
+            "surface": "FTPGetter",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Trillian": {
+        "labels": [
+          {
+            "surface": "Trillian",
+            "docId": 3028,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "application targeted for credentials",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 3028,
+          "date": "07.08.2020"
+        }
+      },
+      "Microsoft Edge": {
+        "labels": [
+          {
+            "surface": "Microsoft Edge",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "web browser patched by Microsoft for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Microsoft Windows": {
+        "labels": [
+          {
+            "surface": "Microsoft Windows",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "operating system patched for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Microsoft Office": {
+        "labels": [
+          {
+            "surface": "Microsoft Office",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "MS Office",
+            "docId": 26,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "productivity software suite patched for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Microsoft Office Services and Web Apps": {
+        "labels": [
+          {
+            "surface": "Microsoft Office Services and Web Apps",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "services and web applications patched for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "ChakraCore": {
+        "labels": [
+          {
+            "surface": "ChakraCore",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "software component patched by Microsoft for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Adobe Flash Player": {
+        "labels": [
+          {
+            "surface": "Adobe Flash Player",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "software platform patched for vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      ".NET Framework": {
+        "labels": [
+          {
+            "surface": ".NET Framework",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "software development framework patched for security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Microsoft Exchange Server": {
+        "labels": [
+          {
+            "surface": "Microsoft Exchange Server",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "mail and calendaring server patched for vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Windows Host Compute Service Shim": {
+        "labels": [
+          {
+            "surface": "Windows Host Compute Service Shim",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Windows host compute service component patched for vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "VBScript": {
+        "labels": [
+          {
+            "surface": "VBScript",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Visual Basic-based scripting language used in Windows",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Win32k": {
+        "labels": [
+          {
+            "surface": "Win32k",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Windows component with a memory handling vulnerability",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Windows 7": {
+        "labels": [
+          {
+            "surface": "Windows 7",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "operating system affected by security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Windows Server 2008": {
+        "labels": [
+          {
+            "surface": "Windows Server 2008",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "server operating system affected by security vulnerabilities",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8174": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8174",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "vulnerability also known as Double Kill",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Double Kill": {
+        "labels": [
+          {
+            "surface": "Double Kill",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "alternative name for vulnerability CVE-2018-8174",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8120": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8120",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "critical vulnerability involving Win32k memory handling",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-0854": {
+        "labels": [
+          {
+            "surface": "CVE-2018-0854",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-0958": {
+        "labels": [
+          {
+            "surface": "CVE-2018-0958",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8124": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8124",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8127": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8127",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8129": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8129",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8132": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8132",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8134": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8134",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8136": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8136",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8141": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8141",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8170": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8170",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "CVE-2018-8897": {
+        "labels": [
+          {
+            "surface": "CVE-2018-8897",
+            "docId": 2724,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "security vulnerability addressed in Microsoft updates",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2724,
+          "date": "11.05.2018"
+        }
+      },
+      "Smokeloader": {
+        "labels": [
+          {
+            "surface": "Smokeloader",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious software loader",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "spi.exe": {
+        "labels": [
+          {
+            "surface": "spi.exe",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious payload executable",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "ckZ89.ExE": {
+        "labels": [
+          {
+            "surface": "ckZ89.ExE",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "downloaded executable in Temp directory",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "До оплати від 11.12.18.lzh": {
+        "labels": [
+          {
+            "surface": "До оплати від 11.12.18.lzh",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious attached archive",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "Рахунки и новые списки.lzh": {
+        "labels": [
+          {
+            "surface": "Рахунки и новые списки.lzh",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious attached archive",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "Рахунки за выполненные работы от 11.12.2018.js": {
+        "labels": [
+          {
+            "surface": "Рахунки за выполненные работы от 11.12.2018.js",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious JS script",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "До оплати рах.ф. 74 - 2018р.js": {
+        "labels": [
+          {
+            "surface": "До оплати рах.ф. 74 - 2018р.js",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malicious JS script",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "cmd.exe": {
+        "labels": [
+          {
+            "surface": "cmd.exe",
+            "docId": 2707,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "Windows command processor",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2707,
+          "date": "13.12.2018"
+        }
+      },
+      "Petya": {
+        "labels": [
+          {
+            "surface": "Petya",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "ransomware used in mass attacks in 2017",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Misha": {
+        "labels": [
+          {
+            "surface": "Misha",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "ransomware used in mass attacks in 2017",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "CVE-2017-0199": {
+        "labels": [
+          {
+            "surface": "CVE-2017-0199",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "remote code execution vulnerability",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Microsoft Word": {
+        "labels": [
+          {
+            "surface": "Microsoft Word",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "MS Word",
+            "docId": 20,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "word processing software",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Office 2007": {
+        "labels": [
+          {
+            "surface": "Office 2007",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2007",
+            "docId": 24,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "office productivity suite edition",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Office 2013": {
+        "labels": [
+          {
+            "surface": "Office 2013",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2013",
+            "docId": 24,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "office productivity suite edition",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Office 2010": {
+        "labels": [
+          {
+            "surface": "Office 2010",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2010",
+            "docId": 24,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "office productivity suite edition",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Office 2016": {
+        "labels": [
+          {
+            "surface": "Office 2016",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          },
+          {
+            "surface": "Microsoft Office 2016",
+            "docId": 24,
+            "decision": "link",
+            "confidence": null,
+            "evidence": null,
+            "addedBy": null
+          }
+        ],
+        "definition": "office productivity suite edition",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 2
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Windows Vista": {
+        "labels": [
+          {
+            "surface": "Windows Vista",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "operating system by Microsoft",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "Windows Server 2012": {
+        "labels": [
+          {
+            "surface": "Windows Server 2012",
+            "docId": 2660,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "server operating system by Microsoft",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 2660,
+          "date": "20.06.2019"
+        }
+      },
+      "CVE-2017-11882": {
+        "labels": [
+          {
+            "surface": "CVE-2017-11882",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "vulnerability exploited in phishing emails",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "major.exe": {
+        "labels": [
+          {
+            "surface": "major.exe",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "malware downloaded following vulnerability exploitation",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "PGMB New Order 18-2077.xlsx": {
+        "labels": [
+          {
+            "surface": "PGMB New Order 18-2077.xlsx",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": null,
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "Microsoft Equation Editor": {
+        "labels": [
+          {
+            "surface": "Microsoft Equation Editor",
+            "docId": 24,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "component recommended to be disabled in Office",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 24,
+          "date": "21.02.2020"
+        }
+      },
+      "MS Excel": {
+        "labels": [
+          {
+            "surface": "MS Excel",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "MS Office application",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      },
+      "MS PowerPoint": {
+        "labels": [
+          {
+            "surface": "MS PowerPoint",
+            "docId": 20,
+            "decision": "mint",
+            "addedBy": null
+          }
+        ],
+        "definition": "MS Office application",
+        "externalIds": {},
+        "categoryCounts": {
+          "Software": 1
+        },
+        "firstSeen": {
+          "doc": 20,
+          "date": "06.02.2020"
+        }
+      }
+    }
+  },
+  "broaderEdges": {
+    "Software": [
+      {
+        "narrower": "IDCLIPNET_x86.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4528116141053343,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "chrome_updater.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4254644681432862,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Browser.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.49388968004946576,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Files.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.42789322598153073,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Screen.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4749646896591931,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Social.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4295108333155816,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "USB.dll",
+        "broader": "SPECTR",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4792481221048922,
+        "docId": 6280422,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E13 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Remote Utilities - Host",
+        "broader": "RemoteUtilities",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7476081312697469,
+        "docId": 6277285,
+        "decision": "judge",
+        "evidence": "judge chose NEW above E2 (broader)",
+        "addedBy": null
+      },
+      {
+        "narrower": "rutserv.exe",
+        "broader": "Remote Utilities - Host",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5603719898779834,
+        "docId": 6277285,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E2 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "TRYxaEbX.ps1",
+        "broader": "TRYxaEbX",
+        "type": "broaderInstantial",
+        "similarityScore": 0.832248005672584,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E10 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "TRYxaEbX_2.ps1",
+        "broader": "TRYxaEbX",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7611041651332433,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E10 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "shellcode.x86 (Cobalt Strike Beacon)",
+        "broader": "Cobalt Strike Beacon",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6943350397858783,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E29 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "shellcode.x64 (Cobalt Strike Beacon)",
+        "broader": "Cobalt Strike Beacon",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6822626488381449,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E29 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "shellcode.x86.bin",
+        "broader": "shellcode.x86 (Cobalt Strike Beacon)",
+        "type": "broaderInstantial",
+        "similarityScore": 0.8359164269329533,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E35 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "shellcode.x64.bin",
+        "broader": "shellcode.x64 (Cobalt Strike Beacon)",
+        "type": "broaderInstantial",
+        "similarityScore": 0.828011002059897,
+        "docId": 619229,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E6 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "scan.exe (CredoMap_v2)",
+        "broader": "CredoMap_v2",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7235789566444044,
+        "docId": 40102,
+        "decision": "judge",
+        "evidence": "judge chose NEW above E1 (broader)",
+        "addedBy": null
+      },
+      {
+        "narrower": "rfusclient.exe",
+        "broader": "RemoteUtilities",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5560640248360652,
+        "docId": 10011,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E58 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Google Chrome",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.8761494137552966,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "IceDragon",
+        "broader": "Mozilla Firefox",
+        "type": "broaderGeneric",
+        "similarityScore": 0.5818462523112782,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E69 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Yandex Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7514787665411184,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Iridium Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7777340415795355,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Epic Privacy Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6880777091757713,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "7Star Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6863018221378469,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Torch Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7632737976318932,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "ChromePlus Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.8020761583042954,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Kometa Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7219009290182627,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Amigo Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7378227833503177,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Brave Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7774057645431113,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "CentBrowser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7282577229164039,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Liebao Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7012485614246503,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Elements Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7464338085027072,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Vivaldi Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7938428715327469,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Citrio Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7341181957920828,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "360Chrome Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7738998067171486,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Uran Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7040235987612887,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Chedot Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7715642759063113,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Orbitum Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7894151255543845,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Sputnik Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7694033308614873,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Comodo Dragon Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7120873278545218,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "CocCoc Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6898363756899147,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "QIP Surf Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6935403899887614,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Coowon Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7515166625244185,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Opera Browser",
+        "broader": "Chromium Browser",
+        "type": "broaderGeneric",
+        "similarityScore": 0.772348269186667,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E22 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Opera Mail",
+        "broader": "Opera Browser",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7203716468902355,
+        "docId": 3028,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E29 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Internet Explorer",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6760923230880399,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Edge",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7778841337696867,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Office Services and Web Apps",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7528081366054987,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E10 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "ChakraCore",
+        "broader": "Microsoft Edge",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5385139073133288,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E16 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": ".NET Framework",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6819082482107851,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Windows Host Compute Service Shim",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6524629269985794,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Win32k",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7414009337107066,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Windows 7",
+        "broader": "Microsoft Windows",
+        "type": "broaderInstantial",
+        "similarityScore": 0.7668471506493825,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Windows Server 2008",
+        "broader": "Microsoft Windows",
+        "type": "broaderInstantial",
+        "similarityScore": 0.5950730027408044,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Outlook",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.8356628729074344,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E10 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "wscript.exe",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6907572401986549,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "PowerShell",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6235174376048213,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "mshta.exe",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6298819163664796,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "AppLocker",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5462894363214167,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "vaultcli.dll",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5274960830020314,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "z.ps1",
+        "broader": "PowerShell",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6862155971365699,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E93 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "RegAsm.exe",
+        "broader": ".NET Framework",
+        "type": "broaderPartitive",
+        "similarityScore": 0.5843788459228332,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E28 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "rundll32.exe",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6110965475430957,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "write.exe",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.591190769226953,
+        "docId": 2724,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Рахунки за выполненные работы от 11.12.2018.js",
+        "broader": "JavaScript",
+        "type": "broaderGeneric",
+        "similarityScore": 0.31534541358896173,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E75 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "До оплати рах.ф. 74 - 2018р.js",
+        "broader": "JavaScript",
+        "type": "broaderGeneric",
+        "similarityScore": 0.33801094661689113,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E75 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "cmd.exe",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6713234517197488,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E67 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "GammaSteel.NET",
+        "broader": ".NET Framework",
+        "type": "broaderGeneric",
+        "similarityScore": 0.6441468588168047,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E80 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "GammaLoad.PS1",
+        "broader": "PowerShell",
+        "type": "broaderGeneric",
+        "similarityScore": 0.5414221781009555,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E74 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "GammaSteel.PS1",
+        "broader": "PowerShell",
+        "type": "broaderGeneric",
+        "similarityScore": 0.559151351137263,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E74 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "SmartAssembly .NET",
+        "broader": ".NET Framework",
+        "type": "broaderGeneric",
+        "similarityScore": 0.7386105798246566,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E80 (broaderGeneric)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Software Restriction Policies (SRP)",
+        "broader": "Microsoft Windows",
+        "type": "broaderPartitive",
+        "similarityScore": 0.4761959415406794,
+        "docId": 2707,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E67 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Word",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.8022409517242695,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E15 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Office 2007",
+        "broader": "Microsoft Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.7254760906067353,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E15 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Office 2013",
+        "broader": "Microsoft Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.7196642746879514,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E15 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Office 2010",
+        "broader": "Microsoft Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.7287797178662221,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E15 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Office 2016",
+        "broader": "Microsoft Office",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6954509298599013,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E15 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Windows Vista",
+        "broader": "Microsoft Windows",
+        "type": "broaderInstantial",
+        "similarityScore": 0.7787875312203694,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E28 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Windows Server 2012",
+        "broader": "Microsoft Windows",
+        "type": "broaderInstantial",
+        "similarityScore": 0.6026577321581188,
+        "docId": 2660,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E28 (broaderInstantial)",
+        "addedBy": null
+      },
+      {
+        "narrower": "Microsoft Equation Editor",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.6500047135320184,
+        "docId": 24,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E70 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "MS Excel",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7691012705167416,
+        "docId": 20,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      },
+      {
+        "narrower": "MS PowerPoint",
+        "broader": "Microsoft Office",
+        "type": "broaderPartitive",
+        "similarityScore": 0.7294838884431171,
+        "docId": 20,
+        "decision": "judge",
+        "evidence": "judge chose NEW under E11 (broaderPartitive)",
+        "addedBy": null
+      }
+    ]
+  },
+  "renameEdges": {},
+  "deferQueue": [],
+  "repair": {
+    "adjudicated": [],
+    "spillover": [],
+    "repairedThrough": -1
+  }
+}

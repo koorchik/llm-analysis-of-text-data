@@ -1,0 +1,104 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 28 canonicals"
+Entities:
+E1. install.msi
+E2. Remote Utilities - Host
+E3. rutserv.exe
+E4. Software Restriction Policies (SRP) [aka SRP]
+E5. Mikrotik
+E6. Електронний план евакуації.exe
+E7. AppLocker
+E8. USB.dll
+E9. Електронний план евакуації.rar
+E10. RemoteUtilities
+E11. chrome_updater.dll
+E12. Files.dll
+E13. Browser.dll
+E14. CCleaner.exe
+E15. Social.dll
+E16. Screen.dll
+E17. PowerShell
+E18. IDCLIPNET_x86.dll
+E19. CCleaner.rar
+E20. YARA
+E21. CCleaner.zip
+E22. plan_dsns.gov.ua.rar
+E23. pfSense
+E24. MISP
+E25. SIEM
+E26. JavaScript
+E27. SPECTR
+Mentions:
+M1. "RemoteUtilities" (Software) — options: E1, E2, E3, E4
+M2. "Remote Utilities - Host" (Software) — options: E10, E1, E4, E3
+M3. "rutserv.exe" (Software) — options: E8, E14, E15, E13
+M4. "install.msi" (Software) — options: E8, E15, E7, E18
+M5. "CCleaner.zip" (Software) — options: E19, E14, E8, E16
+M6. "CCleaner.exe" (Software) — options: E19, E21, E8, E3
+M7. "CCleaner.rar" (Software) — options: E21, E14, E8, E16
+M8. "Електронний план евакуації.rar" (Software) — options: E6, E22, E19, E8
+M9. "Електронний план евакуації.exe" (Software) — options: E9, E3, E14, E22
+M10. "plan_dsns.gov.ua.rar" (Software) — options: E9, E19, E6, E23
+M11. "JavaScript" (Software) — options: E8, E4, E16, E21
+M12. "PowerShell" (Software) — options: E26, E13, E8, E4
+M13. "Mikrotik" (Software) — options: E1, E24, E4, E10
+M14. "AppLocker" (Software) — options: E8, E27, E13, E4
+M15. "pfSense" (Software) — options: E4, E17, E7, E8
+M16. "SIEM" (Software) — options: E24, E27, E7, E4
+M17. "MISP" (Software) — options: E4, E5, E1, E25
+M18. "YARA" (Software) — options: E4, E19, E7, E8
+
+=== RESPONSE (10.4s, in 2195 / out 482 tok, STOP) ===
+{"v":[{"m":"M1","id":"NEW","g":"remote desktop software suite","p":"E2","r":"b"},{"m":"M2","id":"NEW","g":"host component of Remote Utilities software","p":"E10","r":"p"},{"m":"M3","id":"NEW","g":"Remote Utilities host service executable","p":"E2","r":"p"},{"m":"M4","id":"NEW","g":"Windows installer package file","p":null,"r":null},{"m":"M5","id":"NEW","g":"compressed ZIP archive of CCleaner","p":null,"r":null},{"m":"M6","id":"NEW","g":"executable binary for CCleaner utility","p":null,"r":null},{"m":"M7","id":"NEW","g":"compressed RAR archive of CCleaner","p":null,"r":null},{"m":"M8","id":"NEW","g":"malicious RAR archive lure file","p":null,"r":null},{"m":"M9","id":"NEW","g":"executable file masquerading as evacuation plan","p":null,"r":null},{"m":"M10","id":"NEW","g":"malicious archive masquerading as emergency service","p":null,"r":null},{"m":"M11","id":"NEW","g":"high-level programming language","p":null,"r":null},{"m":"M12","id":"NEW","g":"task automation and configuration management framework","p":null,"r":null},{"m":"M13","id":"NEW","g":"network equipment and software manufacturer","p":null,"r":null},{"m":"M14","id":"NEW","g":"application whitelisting technology in Windows","p":null,"r":null},{"m":"M15","id":"NEW","g":"open source firewall and router software","p":null,"r":null},{"m":"M16","id":"NEW","g":"security information and event management system","p":null,"r":null},{"m":"M17","id":"NEW","g":"open source threat intelligence platform","p":null,"r":null},{"m":"M18","id":"NEW","g":"tool for identifying and classifying malware","p":null,"r":null}]}

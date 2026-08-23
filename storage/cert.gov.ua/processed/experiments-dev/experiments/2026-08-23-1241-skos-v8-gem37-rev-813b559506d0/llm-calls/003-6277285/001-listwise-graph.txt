@@ -1,0 +1,91 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Листи нібито від Держспецзв'язку та ДСНС - атака UAC-0050 з використанням RemoteUtilities (CERT-UA#8654)" — evidence: S1. "присвячені "видаленню вірусу" і "евакуації", відовідно.</p><p>У випадку відкриття будь-якого з файлів, в т.ч., завантажених зі згаданого вебсервісу ("Електронний план евакуації.rar", "plan_dsns.gov.ua.rar", "CCleaner.rar"), в кінцевому випадку буде виконано MSI-інсталятор "install.msi", який забезпечить встановлення на ЕОМ жертви програми для віддаленого керування RemoteUtilities (конфігураційний файл програми містить 15 різних ІР-адрес командно-контрольних серверів).</p><p>Відповідно до статистики Bitbucket, починаючи з 23:00" S2. "yntax" spellcheck="false">96c5a1f7734e12ca8532ae046cd69657&nbsp; &nbsp; 44cb295694f3332b31500c7d8408e6f93bb34a56617ae6850a205ed16c2a42a8&nbsp; &nbsp; CCleaner.zip b223d29a27fc60f4c95645782a8d7699&nbsp; &nbsp; 23eda7958cd22e11d5daa39d5a82e5740512c9435a138214b98d1925520bf8e8&nbsp; &nbsp; CCleaner.exe f54fd78880d87f1021cefcdafb516ff8&nbsp; &nbsp; 06956bb4eee98f34f035af11666459b2f9fc5f7485b2cf16f6afb17bfa15a061&nbsp; &nbsp; install.msi 652c2a693b333504a3879460d0af7224&nbsp; &nbsp; 760e2fd3e57186b597d40b996811768e6c4a28ca54685e029104fcf82f68238d&nbsp; &nbsp; rutserv.exe (RemoteUtilities) 3fe53d6864dab01448b5cf85f7a2e94d&nbsp; &nbsp; f4015611de5e82e3f81a77b896af259d120f1ca956035378a3d9e51fba010669&nbsp; &nbsp; Електро" S3. "bsp; plan_dsns.gov.ua.rar 9b40a1519801020305e31e553a3e82ab&nbsp; &nbsp; 5158482849c818c270f302c1dfa06d770ed2b5056cf393d60fd56817636866da&nbsp; &nbsp; Електронний план евакуації.exe f54fd78880d87f1021cefcdafb516ff8&nbsp; &nbsp; 06956bb4eee98f34f035"
+Entities:
+E1. USB.dll
+E2. Software Restriction Policies (SRP) [aka SRP]
+E3. Mikrotik
+E4. AppLocker
+E5. Social.dll
+E6. chrome_updater.dll
+E7. Browser.dll
+E8. Screen.dll
+E9. FIRMACHAGENT
+E10. Files.dll
+E11. pfSense
+E12. PowerShell
+E13. YARA
+E14. IDCLIPNET_x86.dll
+E15. SIEM
+E16. JavaScript
+E17. Remote Utilities - Host
+E18. rutserv.exe
+E19. install.msi
+E20. CCleaner.zip
+E21. CCleaner.exe
+E22. CCleaner.rar
+E23. Електронний план евакуації.rar
+E24. Електронний план евакуації.exe
+E25. plan_dsns.gov.ua.rar
+E26. RemoteUtilities
+Mentions:
+M1. "RemoteUtilities" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "Remote Utilities - Host" (Software) — options: E1, E2, E6, E4 — ctx: S4
+M3. "rutserv.exe" (Software) — options: E1, E7, E5, E12 — ctx: S2
+M4. "install.msi" (Software) — options: E1, E5, E4, E14 — ctx: S1
+M5. "CCleaner.zip" (Software) — options: E1, E8, E7, E13 — ctx: S2
+M6. "CCleaner.exe" (Software) — options: E1, E8, E7, E13 — ctx: S2
+M7. "CCleaner.rar" (Software) — options: E1, E8, E7, E13 — ctx: S1
+M8. "Електронний план евакуації.rar" (Software) — options: E1, E13, E16, E4 — ctx: S1
+M9. "Електронний план евакуації.exe" (Software) — options: E1, E4, E16, E8 — ctx: S3
+M10. "plan_dsns.gov.ua.rar" (Software) — options: E11, E4, E2, E5 — ctx: S1
+
+=== RESPONSE (5.5s, in 2246 / out 193 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"remote administration software"}
+{"m":"M2","id":"NEW","g":"remote control host component"}
+{"m":"M3","id":"NEW","g":"executable file related to RemoteUtilities"}
+{"m":"M4","id":"NEW","g":"MSI installer deploying RemoteUtilities"}
+{"m":"M5","id":"NEW","g":"archive file involved in infection chain"}
+{"m":"M6","id":"NEW","g":"executable file involved in infection chain"}
+{"m":"M7","id":"NEW","g":"archive file downloaded from web service"}
+{"m":"M8","id":"NEW","g":"archive file containing malicious payload"}
+{"m":"M9","id":"NEW","g":"executable file used in attack"}
+{"m":"M10","id":"NEW","g":"archive file downloaded from web service"}
+

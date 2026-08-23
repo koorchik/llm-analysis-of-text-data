@@ -11,6 +11,15 @@ interface Params {
   prompts?: PromptProvider;
   k?: number;
   promptId?: string;
+  /**
+   * Judge-call self-consistency for sampled local judges: ask the same ballot `samples` times and
+   * union the hierarchy halves (identity and glosses come from the first usable sample — identity
+   * never flipped in any measured run). Motivated by gemma4:12b's bimodal ballots: a response
+   * asserts a co-mentioned family nearly completely (~26/27) or not at all, at roughly ⅓ heads,
+   * and no prompt wording moved that rate (probe 2026-08-23). Heads-samples are near-perfect
+   * precision, so the union adds recall without meaningful precision cost. Default 1 (off).
+   */
+  samples?: number;
 }
 
 interface Choice {
@@ -70,6 +79,7 @@ export class ListwiseGraphDecision implements DecisionStrategy {
   #k: number;
   #promptId: string;
   #compact: boolean;
+  #samples: number;
 
   constructor(params: Params) {
     this.#llmClient = params.llmClient;
@@ -77,8 +87,13 @@ export class ListwiseGraphDecision implements DecisionStrategy {
     this.#prompts = params.prompts ?? defaultPrompts;
     this.#k = params.k ?? 4;
     this.#promptId = params.promptId ?? 'listwise-graph-v2';
-    // The SKOS ballot speaks the compact dialect (E-numbered entities, {"v":[...]}) by design.
-    this.#compact = this.#promptId.includes('compact') || this.#promptId.includes('skos');
+    this.#samples = Math.max(1, params.samples ?? 1);
+    // The SKOS ballot speaks the compact dialect (E-numbered entities, {"v":[...]}) by design;
+    // the identity-only pass-1 prompts (listwise-id-*) render the same ballot and answer in JSONL.
+    this.#compact =
+      this.#promptId.includes('compact') ||
+      this.#promptId.includes('skos') ||
+      this.#promptId.includes('-id-');
 
     if (this.#k < 1) throw new Error(`ListwiseGraphDecision: k must be >= 1, got ${this.#k}`);
 
@@ -87,10 +102,54 @@ export class ListwiseGraphDecision implements DecisionStrategy {
       promptId: this.#promptId,
       dialect: this.#compact ? 'compact' : 'verbose',
       promptSha256: this.#prompts.get(this.#promptId).sha256,
+      samples: this.#samples,
     };
   }
 
   async decide(requests: DecisionRequest[]): Promise<Decision[]> {
+    const target = this.#samples;
+    const samples: Decision[][] = [];
+    let last: Decision[] | null = null;
+    // One spare attempt beyond `target`, spent on the first unusable response (empty content after
+    // a thinking overrun — the measured gemma failure mode), so a single dud does not consume a
+    // sample. All later duds are kept as-is: they merge as no-ops.
+    const maxAttempts = target + 1;
+    for (let attempt = 0; attempt < maxAttempts && samples.length < target; attempt++) {
+      const sample = await this.#decideOnce(requests);
+      last = sample;
+      const unusable = sample.every((decision) =>
+        ['judge call failed', 'no usable verdict returned', 'no usable choice returned', 'no candidates'].includes(
+          decision.reason ?? ''
+        )
+      );
+      if (unusable && maxAttempts - attempt - 1 >= target - samples.length) continue;
+      samples.push(sample);
+    }
+    if (samples.length === 0 && last) samples.push(last);
+
+    const merged = samples[0];
+    for (const sample of samples.slice(1)) {
+      sample.forEach((decision, index) => {
+        const base = merged[index];
+        if (base.kind !== 'mint' || decision.kind !== 'mint') return;
+        if (!base.parentCandidate && decision.parentCandidate) {
+          merged[index] = {
+            ...base,
+            parentCandidate: decision.parentCandidate,
+            broaderType: decision.broaderType,
+            ...(decision.mentionIsBroader ? { mentionIsBroader: true } : {}),
+            reason: `${base.reason} (parent from sample union)`,
+          };
+        }
+        if (!merged[index].gloss && decision.gloss) {
+          merged[index] = { ...merged[index], gloss: decision.gloss };
+        }
+      });
+    }
+    return merged;
+  }
+
+  async #decideOnce(requests: DecisionRequest[]): Promise<Decision[]> {
     const mintOf = (reason: string): Decision => ({
       kind: 'mint',
       target: null,
@@ -155,7 +214,12 @@ export class ListwiseGraphDecision implements DecisionStrategy {
         docId: first.docId,
       });
 
-      const parsed = extractAndParseJson(response.text);
+      // JSONL dialect (listwise-id-*): one verdict object per line, no wrapping array — a
+      // truncated big ballot yields every complete line instead of nothing. Collected into the
+      // compact shape so one applier serves both dialects.
+      const parsed = this.#promptId.includes('-id-')
+        ? { v: jsonlVerdicts(response.text) }
+        : extractAndParseJson(response.text);
       if (this.#compact) {
         return this.#applyCompact(parsed ?? null, askable, options, decisions, mintOf);
       }
@@ -473,6 +537,25 @@ function decisionForChoice(
     parentCandidate: parent,
     broaderType,
   };
+}
+
+/** Parse a JSONL response: every line that is a complete JSON object becomes a verdict; broken
+ *  or extraneous lines are skipped, so truncation costs a suffix rather than the whole ballot. */
+function jsonlVerdicts(text: string): CompactVerdict[] {
+  const verdicts: CompactVerdict[] = [];
+  for (const line of text.split('\n')) {
+    const trimmed = line.trim().replace(/,+$/, '');
+    if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) continue;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === 'object' && typeof parsed.m === 'string') {
+        verdicts.push(parsed as CompactVerdict);
+      }
+    } catch {
+      continue;
+    }
+  }
+  return verdicts;
 }
 
 const keyOf = (category: string, mention: string) => `${fold(category)}|${fold(mention)}`;

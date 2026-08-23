@@ -1,0 +1,100 @@
+=== REQUEST (ollama gemma4:12b-64k) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератака групи APT28 із застосуванням шкідливої програми CredoMap_v2 (CERT-UA#4622)" — evidence: S1. "обміну отримано електронний лист з темою "Кібератака", надісланий, начебто, від імені CERT-UA із вкладенням у вигляді захищеного паролем RAR-архіву "UkrScanner.rar".</span></p><p><span style="color: rgb(36, 36, 36);">Встановлено, що згаданий архів містить одноіменний SFX-файл, який, у свою чергу, містить шкідливу програму CredoMap_v2. Відмінність цієї версії стілеру від попередньої полягає у використанні протоколу HTTP для ексфільтрації даних. За допомогою HTTP POST-запитів викрад" S2. "c02548f719a63d0ffbfc42954f2b4f7c1405 UkrScanner.rar 721521273d12775eb6518c0eeaeeac8b d1839e491b34764fbd9f51895b639a97bc7d5a1ef8f57ba87545f8b3b9bc7e7a UkrScanner.exe (SFX) d3b3aa56f1056df4c32cd2bc477e513b 778eed2fb4bbce4755cdf923f3fddc16155a478b44f90dc613ed2811a8efe066 scan.exe (CredoMap_v2) 56a504a34d2cfbfc7eaa2b68e34af8ad 9309fb2a3f326d0f2cc3f2ab837cfd02e4f8cb6b923b3b2be265591fd38f4961 SQLite.Interop.dll (легітимна DLL) </pre><p><br></p><p><em>Мережеві:</em></p><pre class="ql-syntax" spellcheck="false">mariachandran@ginaengg[.]com 69[.]16.243.33 (Rece" S3. "нак потенційної загрози).</span></p><p><span style="color: rgb(36, 36, 36);">2. Для обміну інформації про кіберзагрози CERT-UA використовує платформу MISP (</span><a href="https://cert.gov.ua/article/39962)" rel="noopener noreferrer" target="_blank" style="color: rgb(91, 95, 199); background-color: rgb("
+Entities:
+E1. vaultcli.dll
+E2. Chedot Browser
+E3. Postbox Credential
+E4. IceDragon
+E5. Pocomail
+E6. MS Excel
+E7. Vivaldi Browser
+E8. CVE-2018-8120
+E9. .NET Framework
+E10. MS Office [aka Microsoft Office]
+E11. installer.exe
+E12. Uran Browser
+E13. 7Star Browser
+E14. jDownloader
+E15. loader.exe
+E16. FTPGetter
+E17. Microsoft Exchange Server
+E18. Microsoft Equation Editor
+E19. 360Chrome Browser
+E20. RegAsm.exe
+E21. major.exe [aka spi.exe]
+E22. b.exe
+E23. ckZ89.ExE
+E24. cmd.exe
+E25. rutserv.exe
+E26. rfusclient.exe
+E27. Misha [aka Petya]
+E28. Електронний запит.exe
+E29. CentBrowser
+E30. Internet Explorer
+E31. Citrio Browser
+E32. Meterpreter
+E33. Liebao Browser
+E34. WinSCP
+E35. Microsoft Windows
+E36. SmartFTP
+E37. Microsoft Edge
+E38. MS PowerPoint
+E39. VBScript
+E40. Microsoft Outlook
+E41. UkrScanner.rar
+E42. UkrScanner.exe (SFX)
+E43. scan.exe (CredoMap_v2)
+E44. SQLite.Interop.dll
+E45. MISP
+E46. CredoMap_v2
+Mentions:
+M1. "CredoMap_v2" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "UkrScanner.rar" (Software) — options: E11, E12, E13, E14 — ctx: S1
+M3. "UkrScanner.exe (SFX)" (Software) — options: E11, E20, E15, E21 — ctx: S2
+M4. "scan.exe (CredoMap_v2)" (Software) — options: E21, E20, E22, E1 — ctx: S2
+M5. "SQLite.Interop.dll" (Software) — options: E1, E10, E29, E30 — ctx: S2
+M6. "MISP" (Software) — options: E6, E27, E10, E34 — ctx: S3
+
+=== RESPONSE (66.9s, in 2060 / out 5852 tok, stop) ===
+{"m":"M1","id":"NEW","g":"a stealer program used for data exfiltration"}
+{"m":"M2","id":"NEW","g":"a password-protected RAR archive"}
+{"m":"M3","id":"NEW","g":"an SFX file containing the CredoMap_v2 malware"}
+{"m":"M4","id":"NEW","g":"the executable file of the CredoMap_v2 program"}
+{"m":"M5","id":"NEW","g":"a legitimate DLL file"}
+{"m":"M6","id":"NEW","g":"a platform for sharing cyber threat information"}

@@ -1,0 +1,75 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "АНОНС: Практичний семінар для кіберфахівців" — evidence: S1. "ду конкретної організації.</p><p>Прикладами актуальних тем, що варті розгляду, можуть бути такі (але не виключно):</p><ul><li>Використання механізмів SRP / AppLocker для зменшення вірогідності первинного ураження</li><li>Особливості проведення комп’ютерно-технічних досліджень (форензики) ЕОМ за фактом" S2. "i><li>Кіберрозвідка – інструменти та методи</li><li>Аналіз журналів веб-серверу з метою пошуку бекдорів (веб-шелів)</li><li>Створення та використання Yara-правил на прикладі пошуку ознак ураження ЕОМ шкідливими програмами</li><li>Застосування MISP для синхронізації ACL засобів захисту Mikrotik/pfSense</li><li>Вирішення питання багатофакторної автентифікації для VPN-підключень на основні програмного забезпечення з відкритим вихідним кодом</li><li>Мо" S3. "ованого доступу</li><li>Сегментація мережі, фільтрація інформаційних потоків, матриця доступу</li><li>Практичні приклади налаштування та використання SIEM для хантингу кіберзагроз</li><li>Побудова механізму моніторингу роботи мережі та інформаційних систем</li><li>Конфігурація широковживаних програмно-а"
+Entities:
+E1. Software Restriction Policies (SRP)
+E2. Social.dll
+E3. JavaScript
+E4. AppLocker
+E5. Screen.dll
+E6. Browser.dll
+E7. USB.dll
+E8. FIRMACHAGENT
+E9. SPECTR
+E10. Files.dll
+E11. chrome_updater.dll
+E12. PowerShell
+E13. IDCLIPNET_x86.dll
+E14. YARA
+E15. MISP
+E16. Mikrotik
+E17. pfSense
+E18. SIEM
+E19. SRP
+Mentions:
+M1. "SRP" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "YARA" (Software) — options: E7, E3, E4, E1 — ctx: S2
+M3. "MISP" (Software) — options: E2, E10, E4, E7 — ctx: S2
+M4. "Mikrotik" (Software) — options: E7, E9, E4, E5 — ctx: S2
+M5. "pfSense" (Software) — options: E7, E12, E4, E5 — ctx: S2
+M6. "SIEM" (Software) — options: E7, E9, E4, E5 — ctx: S3
+
+=== RESPONSE (5.5s, in 1379 / out 113 tok, STOP) ===
+{"m":"M1","id":"E1","g":null}
+{"m":"M2","id":"NEW","g":"rule-based malware detection tool"}
+{"m":"M3","id":"NEW","g":"threat intelligence platform for synchronizing ACLs"}
+{"m":"M4","id":"NEW","g":"network security and protection system"}
+{"m":"M5","id":"NEW","g":"network security and firewall platform"}
+{"m":"M6","id":"NEW","g":"cyber threat hunting system"}

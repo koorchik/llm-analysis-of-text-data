@@ -1,0 +1,109 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Кібератака UAC-0056 на державні організації України з використанням Cobalt Strike Beacon (CERT-UA#4914)" — evidence: S1. "ізованої прокуратури увійськовій та оборонній сфері. Інформація щодо наявності вакансій та їх укомплектування" та вкладенням у вигляді XLS-документу "Інформація щодо наявності вакансій та їх укомплектування.xls".</p><p>Документ містить макрос, активація якого призведе до створення на комп'ютері та запуску файлу "write.exe".</p><p>Згаданий файл виконує роль дропера, забезпечуючи створення на диску файлу "%PROGRAMDATA%\TRYxaEbX", його дешифрування (RC4) та подальший запуск PowerShell-скрипта. Крім того, EXE-файл також забезпечує власну персистентність, створюючи ключ "Check" S2. "PowerShell, забезпечить декодування та декомпресію даних в наступний PowerShell-скрипт, який, у свою чергу, забезпечить виконання шкідливої програми Cobalt Strike Beacon.</p><p>З середнім рівнем впевненості виявлену активність асоціюємо з діяльністю групи UAC-0056.</p><p><br></p><p><strong>Індикатори компрометації</st" S3. "304&nbsp; &nbsp; TRYxaEbX 1dc98fb372925fcba321b0bc8347fdcc&nbsp; &nbsp; d1e6d365a3ede77bd7f6c77523b114dd9628f7b9bafb2e458f9b19bd6ce24c71&nbsp; &nbsp; TRYxaEbX.ps1 f4217387333f65faeb7b13637c1e7c72&nbsp; &nbsp; e1cbfef74b4084023a1f02ab68b3ad3bc60561f7e988860b80ac94a91922fa86&nbsp; &nbsp; TRYxaEbX_2.ps1 26e326ba69f5258c4979902b5bd4f24e&nbsp; &nbsp; 9dec13e1b0ed9337fcbe233d5f83eff09c64a14c7f2400b9b915a685b29612ea&nbsp; &nbsp; shellcode.x86 (Cobalt Strike Beacon) a4b4047022bce6f65faffc4c6033c5d2&nbsp; &nbsp; c1e14c4d8d83281de413ccaa577621a057195df3773960274aabf855e2c7bea2&nbsp; &nbsp; shellcode.x64 (C"
+Entities:
+E1. УКАЗ ПРЕЗИДЕНТА УКРАЇНИ №151_2022.mp4.lnk
+E2. До оплати рах.ф. 74 - 2018р.js
+E3. Електронний запит.exe
+E4. До оплати від 11.12.18.lzh
+E5. Рахунки за выполненные работы от 11.12.2018.js
+E6. Comodo Dragon Browser
+E7. PGMB New Order 18-2077.xlsx
+E8. Microsoft Equation Editor
+E9. Рахунки и новые списки.lzh
+E10. Microsoft Office Services and Web Apps
+E11. rfusclient.exe
+E12. spi.exe
+E13. b.exe
+E14. RegAsm.exe
+E15. rutserv.exe
+E16. Microsoft Windows
+E17. SQLite.Interop.dll
+E18. ckZ89.ExE
+E19. cmd.exe
+E20. powershell.exe
+E21. Trillian
+E22. Thunderbird
+E23. .NET Framework
+E24. Becky!
+E25. 360Chrome Browser
+E26. Microsoft Exchange Server
+E27. installer.exe
+E28. z.ps1
+E29. UkrScanner.exe (SFX)
+E30. Remote Utilities - Host
+E31. loader.exe
+E32. scan.exe (CredoMap_v2)
+E33. CredoMap_v2
+E34. Chedot Browser
+E35. Paltalk
+E36. FTPGetter
+E37. Remote Utilities
+E38. CentBrowser
+E39. Coowon Browser
+E40. Iridium Browser
+E41. Agent Tesla
+E42. write.exe
+E43. TRYxaEbX
+E44. TRYxaEbX.ps1
+E45. TRYxaEbX_2.ps1
+E46. shellcode.x86 (Cobalt Strike Beacon)
+E47. shellcode.x64 (Cobalt Strike Beacon)
+E48. Cobalt Strike Beacon
+E49. Інформація щодо наявності вакансій та їх укомплектування.xls
+Mentions:
+M1. "Інформація щодо наявності вакансій та їх укомплектування.xls" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "write.exe" (Software) — options: E11, E12, E13, E14 — ctx: S1
+M3. "TRYxaEbX" (Software) — options: E21, E22, E18, E23 — ctx: S1
+M4. "TRYxaEbX.ps1" (Software) — options: E28, E18, E14, E21 — ctx: S3
+M5. "TRYxaEbX_2.ps1" (Software) — options: E28, E18, E14, E21 — ctx: S3
+M6. "shellcode.x86 (Cobalt Strike Beacon)" (Software) — options: E20, E30, E31, E32 — ctx: S3
+M7. "shellcode.x64 (Cobalt Strike Beacon)" (Software) — options: E20, E30, E31, E32 — ctx: S3
+M8. "Cobalt Strike Beacon" (Software) — options: E38, E10, E39, E31 — ctx: S2
+
+=== RESPONSE (7.1s, in 2347 / out 145 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"malicious Excel document containing a macro"}
+{"m":"M2","id":"NEW","g":"dropper executable"}
+{"m":"M3","id":"NEW","g":"encrypted payload file"}
+{"m":"M4","id":"NEW","g":"PowerShell script"}
+{"m":"M5","id":"NEW","g":"PowerShell script"}
+{"m":"M6","id":"NEW","g":"x86 shellcode payload"}
+{"m":"M7","id":"NEW","g":"x64 shellcode payload"}
+{"m":"M8","id":"NEW","g":"malicious program"}

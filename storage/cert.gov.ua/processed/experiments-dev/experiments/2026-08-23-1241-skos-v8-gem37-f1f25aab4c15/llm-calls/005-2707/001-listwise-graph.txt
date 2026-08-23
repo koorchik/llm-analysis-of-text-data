@@ -1,0 +1,90 @@
+=== REQUEST (gemini gemini-3.7-flash) ===
+--- sampling ---
+{"temperature":0}
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Нові хвилі масових розсилок листів з #Smokeloader" — evidence: S1. "xlsx (для прикриття), а інший – JS-скрипт, який при активації - завантажує шкідливе програмне забезпечення&nbsp;<a href="https://twitter.com/hashtag/Smokeloader?src=hash" rel="noopener noreferrer" target="_blank" style="color: rgb(0, 123, 255);">#Smokeloader</a>&nbsp;в директорію %Temp%&nbsp;, яке використову" S2. "t="_blank" style="color: rgb(0, 123, 255);">правила кібергігієни&nbsp;</a>.</li></ul><p><strong>Cхема:</strong></p><p>email attach (lzh) &gt; js &gt; cmd.exe &gt; powershell.exe &gt; (new-object system.net.webclient).downloadfile &gt;&nbsp;%Temp%ckZ89.ExE</p><p><strong>Індикатори компрометації (IOC):</strong></p><p><strong>Шкідливі домени та ІР (C2):</strong></p><p>http://chubanomania[.]icu/prima/spi.exe?rCuz&nbsp;(IP:&nbsp;93.179.69.41)</p><p><br></p><p><strong>Шкідливі файли:</strong></p><p>Payload:&nbsp;<strong>spi.exe</strong>&nbsp;(зберігається&n" S3. ""color: rgb(0, 123, 255);">https://www.virustotal.com/#/file/71e64237e53f95096710854badd1d348</a></p><p>&nbsp;</p><p>Прикріплений архів:&nbsp;<strong>До оплати від 11.12.18.lzh</strong></p><p>MD5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3d6880d23b31ce467ede70ea2bd33fa5</p><p>SHA-1&nbsp;&nbsp;&nbsp;&nbsp;2dd6e49ff82816e191e00d31ab2" S4. ""color: rgb(0, 123, 255);">https://www.virustotal.com/#/file/3d6880d23b31ce467ede70ea2bd33fa5</a></p><p>&nbsp;</p><p>Прикріплений архів:&nbsp;<strong>Рахунки и новые списки.lzh</strong></p><p>MD5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fa9beed6ac251f30e2e29c3786371381</p><p>SHA-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n"
+Entities:
+E1. Microsoft Windows
+E2. MS Excel
+E3. PGMB New Order 18-2077.xlsx
+E4. MS PowerPoint
+E5. MS Word [aka Microsoft Word]
+E6. Windows Server 2012
+E7. Microsoft Office 2016 [aka Office 2016]
+E8. Windows Server 2008
+E9. CVE-2017-0199
+E10. Microsoft Equation Editor
+E11. major.exe
+E12. CVE-2017-11882
+E13. MS Office [aka Microsoft Office]
+E14. Microsoft Office 2007 [aka Office 2007]
+E15. Microsoft Office 2010 [aka Office 2010]
+E16. Petya
+E17. Microsoft Office 2013 [aka Office 2013]
+E18. Misha
+E19. Windows Vista
+E20. spi.exe
+E21. ckZ89.ExE
+E22. До оплати від 11.12.18.lzh
+E23. Рахунки и новые списки.lzh
+E24. Рахунки за выполненные работы от 11.12.2018.js
+E25. До оплати рах.ф. 74 - 2018р.js
+E26. cmd.exe
+E27. powershell.exe
+E28. Smokeloader
+Mentions:
+M1. "Smokeloader" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "spi.exe" (Software) — options: E1, E11, E2, E9 — ctx: S2
+M3. "ckZ89.ExE" (Software) — options: E2, E11, E4, E13 — ctx: S2
+M4. "До оплати від 11.12.18.lzh" (Software) — options: E3, E12, E9, E16 — ctx: S3
+M5. "Рахунки и новые списки.lzh" (Software) — options: E3, E4, E9, E2 — ctx: S4
+M6. "Рахунки за выполненные работы от 11.12.2018.js" (Software) — options: E3, E15, E16, E8 — ctx: S5
+M7. "До оплати рах.ф. 74 - 2018р.js" (Software) — options: E3, E15, E16, E17 — ctx: S6
+M8. "cmd.exe" (Software) — options: E1, E11, E2, E9 — ctx: S2
+M9. "powershell.exe" (Software) — options: E1, E11, E4, E2 — ctx: S2
+
+=== RESPONSE (6.6s, in 2139 / out 177 tok, STOP) ===
+{"m":"M1","id":"NEW","g":"malicious software downloaded to the Temp directory"}
+{"m":"M2","id":"NEW","g":"payload executable downloaded from malicious domain"}
+{"m":"M3","id":"NEW","g":"executable file downloaded to Temp directory"}
+{"m":"M4","id":"NEW","g":"attached archive file"}
+{"m":"M5","id":"NEW","g":"attached archive file"}
+{"m":"M6","id":"NEW","g":"script file used in execution chain"}
+{"m":"M7","id":"NEW","g":"script file used in execution chain"}
+{"m":"M8","id":"NEW","g":"command line interpreter used in execution chain"}
+{"m":"M9","id":"NEW","g":"command line shell used to download payload"}
