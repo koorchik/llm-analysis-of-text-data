@@ -1,0 +1,158 @@
+=== REQUEST (ollama gemma4:31b) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 68 canonicals"
+Entities:
+E1. scan.exe (CredoMap_v2)
+E2. JavaScript
+E3. RemcosRAT [aka Remcos]
+E4. Screen.dll
+E5. PowerShell
+E6. chrome_updater.dll
+E7. AgentTesla
+E8. TRYxaEbX_2.ps1
+E9. SIEM
+E10. UkrScanner.exe (SFX)
+E11. CCleaner.rar
+E12. USB.dll
+E13. CCleaner.exe
+E14. scandoc.exe
+E15. Електронний план евакуації.rar
+E16. CCleaner.zip
+E17. plan_dsns.gov.ua.rar
+E18. QuasarRAT
+E19. UkrScanner.rar
+E20. MCMDiction.exe
+E21. PowerShell (powershell.exe)
+E22. baseupd.exe
+E23. wsuscr.exe
+E24. CredoMap_v2
+E25. Browser.dll
+E26. write.exe
+E27. Files.dll
+E28. Social.dll
+E29. IDCLIPNET_x86.dll
+E30. pfSense
+E31. Mikrotik
+E32. SRP
+E33. AppLocker
+E34. SQLite.Interop.dll
+E35. rutserv.exe
+E36. wscript.exe
+E37. ConfuserEx
+E38. AutoIt
+E39. mshta.exe
+E40. TRYxaEbX
+E41. TRYxaEbX.ps1
+E42. SmartAssembly
+E43. GammaSteel.PS1
+E44. GammaSteel.NET
+E45. SPECTR
+E46. Електронний план евакуації.exe
+E47. Інформація щодо наявності вакансій та їх укомплектування.xls
+E48. Remote Utilities [aka RemoteUtilities]
+E49. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E50. Software Restriction Policies (SRP)
+E51. Cobalt Strike Beacon
+E52. HarvesterX
+E53. shellcode.x86.bin
+E54. shellcode.x86 (Cobalt Strike Beacon)
+E55. install.msi
+E56. stage1.ps1
+E57. stage2.ps1
+E58. GammaLoad.PS1
+E59. SmartAssembly .NET
+E60. FIRMACHAGENT
+E61. shellcode.x64.bin
+E62. MISP
+Mentions:
+M1. "CredoMap_v2" (Software) — options: E1, E2, E3, E4
+M2. "UkrScanner.rar" (Software) — options: E10, E11, E12, E13
+M3. "UkrScanner.exe (SFX)" (Software) — options: E19, E14, E13, E20
+M4. "scan.exe (CredoMap_v2)" (Software) — options: E24, E14, E13, E10
+M5. "SQLite.Interop.dll" (Software) — options: E25, E26, E12, E27
+M6. "MISP" (Software) — options: E30, E31, E5, E9
+M7. "CCleaner.rar" (Software) — options: E16, E13, E19, E25
+M8. "scandoc.exe" (Software) — options: E10, E13, E1, E25
+M9. "CCleaner.zip" (Software) — options: E13, E11, E25, E19
+M10. "wsuscr.exe" (Software) — options: E12, E35, E36, E13
+M11. "USB.dll" (Software) — options: E25, E27, E4, E28
+M12. "chrome_updater.dll" (Software) — options: E25, E12, E27, E4
+M13. "Browser.dll" (Software) — options: E12, E27, E6, E4
+M14. "CCleaner.exe" (Software) — options: E16, E11, E14, E20
+M15. "wscript.exe" (Software) — options: E5, E26, E2, E13
+M16. "pfSense" (Software) — options: E5, E7, E33, E37
+M17. "baseupd.exe" (Software) — options: E25, E13, E26, E12
+M18. "oYUuQbXu" (Software) — options: E2, E40, E7, E12
+M19. "YARA" (Software) — options: E2, E18, E7, E33
+M20. "HarvesterX" (Software) — options: E33, E2, E42, E43
+M21. "Електронний план евакуації.rar" (Software) — options: E46, E17, E11, E47
+M22. "Screen.dll" (Software) — options: E25, E12, E27, E28
+M23. "MCMDiction.exe" (Software) — options: E26, E13, E50, E14
+M24. "Files.dll" (Software) — options: E25, E12, E4, E28
+M25. "ConfuserEx" (Software) — options: E2, E13, E51, E5
+M26. "mshta.exe" (Software) — options: E25, E26, E13, E27
+M27. "rundll32.exe" (Software) — options: E25, E13, E35, E27
+M28. "IDCLIPNET_x86.dll" (Software) — options: E25, E12, E53, E27
+M29. "Social.dll" (Software) — options: E25, E12, E27, E4
+M30. "install.msi" (Software) — options: E12, E56, E57, E5
+M31. "SmartAssembly .NET" (Software) — options: E42, E2, E44, E5
+M32. "AutoIt" (Software) — options: E2, E7, E5, E48
+M33. "GammaSteel.NET" (Software) — options: E2, E43, E59, E58
+M34. "PowerShell" (Software) — options: E41, E21, E8, E25
+M35. "write.exe" (Software) — options: E5, E36, E34, E13
+M36. "Mikrotik" (Software) — options: E33, E38, E62, E2
+M37. "JavaScript" (Software) — options: E5, E18, E36, E25
+M38. "SIEM" (Software) — options: E5, E45, E7, E2
+M39. "TRYxaEbX" (Software) — options: E41, E8, E2, E52
+
+=== RESPONSE (8.1s, in 3277 / out 1103 tok, stop) ===
+{"v":[{"m":"CredoMap_v2","id":"NEW","g":"software suite","p":"E1","r":"b"},{"m":"UkrScanner.rar","id":"NEW","g":"archive containing UkrScanner","p":"E19","r":"v"},{"m":"UkrScanner.exe (SFX)","id":"NEW","g":"self-extracting executable version of UkrScanner","p":"E10","r":"v"},{"m":"scan.exe (CredoMap_v2)","id":"NEW","g":"executable part of CredoMap_v2","p":"E1","r":"v"},{"m":"SQLite.Interop.dll","id":"NEW","g":"database interop library","p":null,"r":null},{"m":"MISP","id":"NEW","g":"malware information sharing platform","p":"E62","r":"b"},{"m":"CCleaner.rar","id":"NEW","g":"archive containing CCleaner","p":"E11","r":"v"},{"m":"scandoc.exe","id":"NEW","g":"scanning tool executable","p":"E14","r":"v"},{"m":"CCleaner.zip","id":"NEW","g":"zip archive containing CCleaner","p":"E16","r":"v"},{"m":"wsuscr.exe","id":"NEW","g":"windows update service executable","p":"E23","r":"v"},{"m":"USB.dll","id":"NEW","g":"usb functionality library","p":"E12","r":"v"},{"m":"chrome_updater.dll","id":"NEW","g":"chrome updater library","p":"E6","r":"v"},{"m":"Browser.dll","id":"NEW","g":"browser functionality library","p":"E25","r":"v"},{"m":"CCleaner.exe","id":"NEW","g":"CCleaner executable","p":"E13","r":"v"},{"m":"wscript.exe","id":"NEW","g":"windows script host executable","p":"E36","r":"v"},{"m":"pfSense","id":"NEW","g":"open-source firewall software","p":"E30","r":"v"},{"m":"baseupd.exe","id":"NEW","g":"base update executable","p":"E22","r":"v"},{"m":"oYUuQbXu","id":"NEW","g":"unknown software entity","p":null,"r":null},{"m":"YARA","id":"NEW","g":"tool for identifying and classifying malware","p":null,"r":null},{"m":"HarvesterX","id":"NEW","g":"malware family","p":"E52","r":"v"},{"m":"Електронний план евакуації.rar","id":"NEW","g":"archive containing evacuation plan","p":"E15","r":"v"},{"m":"Screen.dll","id":"NEW","g":"screen capture library","p":"E4","r":"v"},{"m":"MCMDiction.exe","id":"NEW","g":"dictionary tool executable","p":"E20","r":"v"},{"m":"Files.dll","id":"NEW","g":"file management library","p":"E27","r":"v"},{"m":"ConfuserEx","id":"NEW","g":".NET obfuscator","p":"E37","r":"v"},{"m":"mshta.exe","id":"NEW","g":"microsoft html application host","p":"E39","r":"v"},{"m":"rundll32.exe","id":"NEW","g":"windows utility to run dlls","p":null,"r":null},{"m":"IDCLIPNET_x86.dll","id":"NEW","g":"x86 network clip library","p":"E29","r":"v"},{"m":"Social.dll","id":"NEW","g":"social functionality library","p":"E28","r":"v"},{"m":"install.msi","id":"NEW","g":"windows installer package","p":"E55","r":"v"},{"m":"SmartAssembly .NET","id":"NEW","g":"dotnet obfuscation tool","p":"E59","r":"v"},{"m":"AutoIt","id":"NEW","g":"automation scripting language","p":"E38","r":"v"},{"m":"GammaSteel.NET","id":"NEW","g":"dotnet implementation of GammaSteel","p":"E44","r":"v"},{"m":"PowerShell","id":"NEW","g":"task automation framework","p":"E5","r":"v"},{"m":"write.exe","id":"NEW","g":"file writing executable","p":"E26","r":"v"},{"m":"Mikrotik","id":"NEW","g":"networking hardware and software","p":"E31","r":"v"},{"m":"JavaScript","id":"NEW","g":"scripting language","p":"E2","r":"v"},{"m":"SIEM","id":"NEW","g":"security information and event management","p":"E9","r":"v"},{"m":"TRYxaEbX","id":"NEW","g":"malware identifier","p":"E40","r":"v"}]}

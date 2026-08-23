@@ -1,0 +1,168 @@
+=== REQUEST (ollama gemma4:31b) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 59 canonicals"
+Entities:
+E1. Microsoft Edge
+E2. Microsoft Exchange Server
+E3. Microsoft Equation Editor
+E4. .NET Framework
+E5. Adobe Flash Player
+E6. MS Excel
+E7. Windows Vista
+E8. ChakraCore
+E9. Microsoft Windows
+E10. Internet Explorer
+E11. Microsoft Word
+E12. Microsoft Office
+E13. MS Office
+E14. Microsoft Office 2007
+E15. Microsoft Office 2010
+E16. Windows 7
+E17. Windows Server 2008
+E18. Windows Server 2012
+E19. Win32k
+E20. Microsoft Office 2013
+E21. MS Word
+E22. Microsoft Office 2016
+E23. Misha
+E24. Smokeloader
+E25. powershell.exe
+E26. cmd.exe
+E27. Microsoft Office Services and Web Apps
+E28. MS PowerPoint
+E29. Double Kill
+E30. CVE-2017-0199
+E31. Office 2007
+E32. Windows Host Compute Service Shim
+E33. CVE-2018-8170
+E34. CVE-2018-8124
+E35. CVE-2018-0854
+E36. CVE-2018-8134
+E37. CVE-2018-8120
+E38. CVE-2018-0958
+E39. CVE-2018-8141
+E40. CVE-2018-8127
+E41. CVE-2018-8129
+E42. До оплати від 11.12.18.lzh
+E43. Рахунки и новые списки.lzh
+E44. CVE-2018-8132
+E45. CVE-2018-8174
+E46. CVE-2018-8136
+E47. CVE-2017-11882
+E48. spi.exe
+E49. ckZ89.ExE
+E50. major.exe
+E51. VBScript
+E52. Office 2010
+E53. Office 2013
+E54. Office 2016
+E55. PGMB New Order 18-2077.xlsx
+E56. Petya
+E57. CVE-2018-8897
+Mentions:
+M1. "Internet Explorer" (Software) — options: E1, E2, E3, E4
+M2. "Microsoft Edge" (Software) — options: E10, E11, E12, E9
+M3. "Microsoft Windows" (Software) — options: E7, E11, E16, E1
+M4. "Microsoft Office" (Software) — options: E13, E14, E15, E11
+M5. "Microsoft Office Services and Web Apps" (Software) — options: E12, E13, E14, E15
+M6. "ChakraCore" (Software) — options: E1, E4, E10, E23
+M7. "Adobe Flash Player" (Software) — options: E10, E24, E1, E18
+M8. ".NET Framework" (Software) — options: E1, E8, E10, E21
+M9. "Microsoft Exchange Server" (Software) — options: E1, E17, E10, E3
+M10. "Windows Host Compute Service Shim" (Software) — options: E9, E17, E18, E7
+M11. "VBScript" (Software) — options: E25, E28, E4, E7
+M12. "Win32k" (Software) — options: E9, E16, E7, E17
+M13. "Windows 7" (Software) — options: E9, E7, E31, E17
+M14. "Windows Server 2008" (Software) — options: E31, E18, E7, E16
+M15. "CVE-2018-8174" (Software) — options: E33, E34, E35, E36
+M16. "Double Kill" (Software) — options: E10, E5, E42, E4
+M17. "CVE-2018-8120" (Software) — options: E34, E35, E41, E40
+M18. "CVE-2018-0854" (Software) — options: E38, E34, E37, E36
+M19. "CVE-2018-0958" (Software) — options: E35, E37, E30, E33
+M20. "CVE-2018-8124" (Software) — options: E41, E37, E35, E36
+M21. "CVE-2018-8127" (Software) — options: E34, E37, E35, E41
+M22. "CVE-2018-8129" (Software) — options: E34, E37, E35, E38
+M23. "CVE-2018-8132" (Software) — options: E46, E36, E35, E38
+M24. "CVE-2018-8134" (Software) — options: E44, E34, E35, E46
+M25. "CVE-2018-8136" (Software) — options: E44, E35, E36, E38
+M26. "CVE-2018-8141" (Software) — options: E36, E37, E35, E34
+M27. "CVE-2018-8170" (Software) — options: E45, E37, E35, E38
+M28. "CVE-2018-8897" (Software) — options: E40, E37, E35, E47
+M29. "Windows Vista" (Software) — options: E9, E16, E1, E17
+M30. "MS Excel" (Software) — options: E13, E12, E28, E21
+M31. "cmd.exe" (Software) — options: E25, E48, E49, E50
+M32. "spi.exe" (Software) — options: E26, E49, E25, E9
+M33. "MS Office" (Software) — options: E12, E52, E6, E53
+M34. "Microsoft Equation Editor" (Software) — options: E1, E2, E6, E9
+M35. "powershell.exe" (Software) — options: E26, E49, E28, E48
+M36. "major.exe" (Software) — options: E48, E49, E26, E10
+M37. "Microsoft Word" (Software) — options: E21, E1, E9, E12
+M38. "MS PowerPoint" (Software) — options: E12, E6, E25, E13
+M39. "MS Word" (Software) — options: E11, E6, E12, E13
+M40. "Office 2007" (Software) — options: E14, E52, E16, E53
+M41. "Office 2010" (Software) — options: E15, E53, E12, E54
+M42. "Misha" (Software) — options: E56, E7, E12, E1
+M43. "Petya" (Software) — options: E23, E4, E1, E5
+M44. "Windows Server 2012" (Software) — options: E16, E17, E7, E2
+M45. "Office 2013" (Software) — options: E20, E52, E54, E13
+M46. "Microsoft Office 2007" (Software) — options: E31, E15, E12, E20
+M47. "Smokeloader" (Software) — options: E10, E5, E55, E1
+M48. "ckZ89.ExE" (Software) — options: E2, E26, E50, E48
+M49. "Microsoft Office 2010" (Software) — options: E52, E20, E12, E22
+M50. "Office 2016" (Software) — options: E22, E52, E53, E13
+M51. "Microsoft Office 2016" (Software) — options: E54, E15, E12, E20
+M52. "Microsoft Office 2013" (Software) — options: E53, E15, E12, E22
+M53. "CVE-2017-11882" (Software) — options: E57, E30, E40, E44
+M54. "CVE-2017-0199" (Software) — options: E47, E41, E57, E37
+
+=== RESPONSE (6.2s, in 3840 / out 1492 tok, stop) ===
+{"v":[{"m":"Internet Explorer","id":"NEW","g":"web browser","p":"E9","r":"p"},{"m":"Microsoft Edge","id":"NEW","g":"web browser","p":"E9","r":"p"},{"m":"Microsoft Windows","id":"NEW","g":"operating system","p":null,"r":null},{"m":"Microsoft Office","id":"NEW","g":"productivity suite","p":null,"r":null},{"m":"Microsoft Office Services and Web Apps","id":"NEW","g":"cloud office services","p":"E12","r":"p"},{"m":"ChakraCore","id":"NEW","g":"JavaScript engine","p":"E9","r":"p"},{"m":"Adobe Flash Player","id":"NEW","g":"multimedia software platform","p":null,"r":null},{"m":".NET Framework","id":"NEW","g":"software framework","p":"E9","r":"p"},{"m":"Microsoft Exchange Server","id":"NEW","g":"mail and calendar server","p":"E9","r":"p"},{"m":"Windows Host Compute Service Shim","id":"NEW","g":"component of Windows host compute service","p":"E9","r":"p"},{"m":"VBScript","id":"NEW","g":"scripting language","p":"E9","r":"p"},{"m":"Win32k","id":"NEW","g":"Windows kernel subsystem","p":"E9","r":"p"},{"m":"Windows 7","id":"NEW","g":"version of Windows","p":"E9","r":"v"},{"m":"Windows Server 2008","id":"NEW","g":"server version of Windows","p":"E9","r":"v"},{"m":"CVE-2018-8174","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"Double Kill","id":"NEW","g":"malware family","p":null,"r":null},{"m":"CVE-2018-8120","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-0854","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-0958","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8124","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8127","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8129","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8132","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8134","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8136","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8141","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8170","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2018-8897","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"Windows Vista","id":"NEW","g":"version of Windows","p":"E9","r":"v"},{"m":"MS Excel","id":"NEW","g":"spreadsheet application","p":"E12","r":"p"},{"m":"cmd.exe","id":"NEW","g":"command-line interpreter","p":"E9","r":"p"},{"m":"spi.exe","id":"NEW","g":"executable file","p":null,"r":null},{"m":"MS Office","id":"NEW","g":"productivity suite","p":null,"r":null},{"m":"Microsoft Equation Editor","id":"NEW","g":"formula editor","p":"E12","r":"p"},{"m":"powershell.exe","id":"NEW","g":"task automation framework","p":"E9","r":"p"},{"m":"major.exe","id":"NEW","g":"executable file","p":null,"r":null},{"m":"Microsoft Word","id":"NEW","g":"word processor","p":"E12","r":"p"},{"m":"MS PowerPoint","id":"NEW","g":"presentation software","p":"E12","r":"p"},{"m":"MS Word","id":"NEW","g":"word processor","p":"E12","r":"p"},{"m":"Office 2007","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Office 2010","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Misha","id":"NEW","g":"malware family","p":null,"r":null},{"m":"Petya","id":"NEW","g":"ransomware family","p":null,"r":null},{"m":"Windows Server 2012","id":"NEW","g":"server version of Windows","p":"E9","r":"v"},{"m":"Office 2013","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Microsoft Office 2007","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Smokeloader","id":"NEW","g":"malware family","p":null,"r":null},{"m":"ckZ89.ExE","id":"NEW","g":"executable file","p":null,"r":null},{"m":"Microsoft Office 2010","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Office 2016","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Microsoft Office 2016","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"Microsoft Office 2013","id":"NEW","g":"version of Office","p":"E12","r":"v"},{"m":"CVE-2017-11882","id":"NEW","g":"vulnerability identifier","p":null,"r":null},{"m":"CVE-2017-0199","id":"NEW","g":"vulnerability identifier","p":null,"r":null}]}

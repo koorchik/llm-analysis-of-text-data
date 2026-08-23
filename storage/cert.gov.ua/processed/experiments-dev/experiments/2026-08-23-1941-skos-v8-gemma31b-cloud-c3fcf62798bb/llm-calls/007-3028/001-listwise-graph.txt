@@ -1,0 +1,231 @@
+=== REQUEST (ollama gemma4:31b) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Agent Tesla (шкідливе програмне забезпечення)" — evidence: S1. "еагування на комп’ютерні надзвичайні події України CERT-UA під час дослідження кіберінцидентів отримала зразки одного з найпопулярніших ШПЗ 2020 року Agent Tesla.</p><p class="ql-align-justify">Надаємо опис та аналіз зазначеного ШПЗ.</p><p class="ql-align-justify"><strong>Загальні відомості</strong></p><p clas" S2. "дковувати та збирати дані вводу з клавіатури, робити скріншоти та отримувати облікові дані, що використовуються в різних програмах системи (наприклад Google Chrome, Mozilla Firefox, Microsoft Outlook, IceDragon, FILEZILLA, тощо). З’явився Agent Tesla в 2014 році і виконував функції кейлогера та викрадача паролів. Дане ШПЗ є комерційним, ліцензію на його використання мо" S3. "йл перевіряє наявність іншого екземпляру ШПЗ Agent Tesla та завершує його роботу, якщо він присутній у системі. Далі програма запускає системний файл RegAsm.exe (https://docs.microsoft.com/en-us/dotnet/framework/tools/regasm-exe-assembly-registration-tool):</p><p class="ql-align-justify"></p><p class="ql-alig" S4. "lass="ql-align-justify">Наприклад, для отримання збережених облікових даних у браузері <em>Internet </em>Explorer використовується виклики бібліотеки vaultcli.dll</p><p class="ql-align-justify">&nbsp;&nbsp;</p><p class="ql-align-justify">Відповідно до заданого таймеру в програмному коді, здійснюються спроби отримати облікові та конфігураційні дані, зокрема, з такого програмного забезпечення (список не повний):</p><h6 class="ql-align-justify">Yandex Browser</h6><h6 class="ql-align-justify">Iridium Browse"
+Entities:
+E1. ChakraCore
+E2. Internet Explorer
+E3. MS PowerPoint
+E4. Adobe Flash Player
+E5. .NET Framework
+E6. Petya
+E7. spi.exe
+E8. Windows Vista
+E9. CVE-2017-0199
+E10. MS Excel
+E11. powershell.exe
+E12. ckZ89.ExE
+E13. cmd.exe
+E14. major.exe
+E15. Microsoft Windows
+E16. Double Kill
+E17. VBScript
+E18. До оплати від 11.12.18.lzh
+E19. Win32k
+E20. Windows 7
+E21. Misha
+E22. Windows Server 2012
+E23. Microsoft Edge
+E24. Microsoft Exchange Server
+E25. MS Office [aka Microsoft Office]
+E26. Smokeloader
+E27. Microsoft Office 2007
+E28. Microsoft Office 2010
+E29. MS Word [aka Microsoft Word]
+E30. Microsoft Office 2013
+E31. Microsoft Office 2016
+E32. Microsoft Equation Editor
+E33. Office 2010
+E34. Office 2013
+E35. Windows Server 2008
+E36. Microsoft Office Services and Web Apps
+E37. PGMB New Order 18-2077.xlsx
+E38. Windows Host Compute Service Shim
+E39. Рахунки и новые списки.lzh
+E40. Office 2007
+E41. CVE-2017-11882
+E42. CVE-2018-8897
+E43. RegAsm.exe
+E44. vaultcli.dll
+E45. WinSCP
+E46. Google Chrome
+E47. Mozilla Firefox
+E48. Microsoft Outlook
+E49. IceDragon
+E50. Yandex Browser
+E51. Iridium Browser
+E52. Epic Privacy Browser
+E53. Chromium Browser
+E54. 7Star Browser
+E55. Torch Browser
+E56. ChromePlus Browser
+E57. Kometa Browser
+E58. Amigo Browser
+E59. Brave Browser
+E60. CentBrowser
+E61. Liebao Browser
+E62. Elements Browser
+E63. Vivaldi Browser
+E64. Citrio Browser
+E65. 360Chrome Browser
+E66. Uran Browser
+E67. Chedot Browser
+E68. Orbitum Browser
+E69. Sputnik Browser
+E70. Comodo Dragon Browser
+E71. CocCoc Browser
+E72. QIP Surf Browser
+E73. Coowon Browser
+E74. Opera Browser
+E75. Thunderbird
+E76. Claws Mail
+E77. Postbox Credential
+E78. Foxmail
+E79. Opera Mail
+E80. Pocomail
+E81. Becky!
+E82. OpenVPN
+E83. FileZilla
+E84. Paltalk
+E85. jDownloader
+E86. SmartFTP
+E87. FTP Commander
+E88. WS_FTP
+E89. FTPGetter
+E90. Trillian
+E91. Agent Tesla
+Mentions:
+M1. "Agent Tesla" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "RegAsm.exe" (Software) — options: E11, E12, E13, E7 — ctx: S3
+M3. "vaultcli.dll" (Software) — options: E11, E16, E12, E17 — ctx: S4
+M4. "WinSCP" (Software) — options: E13, E19, E11, E20 — ctx: S4
+M5. "Google Chrome" (Software) — options: E2, E16, E1, E23 — ctx: S2
+M6. "Mozilla Firefox" (Software) — options: E2, E16, E23, E25 — ctx: S2
+M7. "Microsoft Outlook" (Software) — options: E25, E28, E23, E24 — ctx: S2
+M8. "IceDragon" (Software) — options: E2, E1, E32, E5 — ctx: S2
+M9. "Yandex Browser" (Software) — options: E2, E20, E22, E23 — ctx: S4
+M10. "Iridium Browser" (Software) — options: E2, E20, E22, E23 — ctx: S4
+M11. "Epic Privacy Browser" (Software) — options: E2, E1, E22, E23 — ctx: S4
+M12. "Chromium Browser" (Software) — options: E2, E1, E22, E23 — ctx: S4
+M13. "7Star Browser" (Software) — options: E2, E26, E8, E23 — ctx: S4
+M14. "Torch Browser" (Software) — options: E2, E22, E23, E24 — ctx: S4
+M15. "ChromePlus Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M16. "Kometa Browser" (Software) — options: E2, E26, E8, E23 — ctx: S4
+M17. "Amigo Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M18. "Brave Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M19. "CentBrowser" (Software) — options: E2, E20, E22, E23 — ctx: S4
+M20. "Liebao Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M21. "Elements Browser" (Software) — options: E23, E10, E22, E2 — ctx: S4
+M22. "Vivaldi Browser" (Software) — options: E2, E20, E8, E23 — ctx: S4
+M23. "Citrio Browser" (Software) — options: E2, E22, E23, E15 — ctx: S4
+M24. "360Chrome Browser" (Software) — options: E23, E26, E22, E2 — ctx: S4
+M25. "Uran Browser" (Software) — options: E23, E20, E22, E2 — ctx: S4
+M26. "Chedot Browser" (Software) — options: E23, E2, E22, E15 — ctx: S4
+M27. "Orbitum Browser" (Software) — options: E23, E20, E22, E2 — ctx: S4
+M28. "Sputnik Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M29. "Comodo Dragon Browser" (Software) — options: E2, E32, E38, E23 — ctx: S4
+M30. "CocCoc Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M31. "QIP Surf Browser" (Software) — options: E2, E26, E22, E23 — ctx: S4
+M32. "Coowon Browser" (Software) — options: E2, E20, E22, E23 — ctx: S4
+M33. "Opera Browser" (Software) — options: E2, E22, E23, E4 — ctx: S4
+M34. "Thunderbird" (Software) — options: E2, E16, E29, E23 — ctx: S4
+M35. "Claws Mail" (Software) — options: E24, E8, E14, E26 — ctx: S4
+M36. "Postbox Credential" (Software) — options: E24, E16, E3, E11 — ctx: S4
+M37. "Foxmail" (Software) — options: E24, E16, E5, E26 — ctx: S4
+M38. "Opera Mail" (Software) — options: E24, E6, E14, E26 — ctx: S4
+M39. "Pocomail" (Software) — options: E24, E16, E3, E11 — ctx: S4
+M40. "Becky!" (Software) — options: E23, E6, E5, E2 — ctx: S4
+M41. "OpenVPN" (Software) — options: E15, E6, E5, E2 — ctx: S4
+M42. "FileZilla" (Software) — options: E39, E16, E12, E40 — ctx: S2
+M43. "Paltalk" (Software) — options: E3, E6, E5, E11 — ctx: S4
+M44. "jDownloader" (Software) — options: E12, E26, E7, E4 — ctx: S4
+M45. "SmartFTP" (Software) — options: E7, E14, E26, E3 — ctx: S4
+M46. "FTP Commander" (Software) — options: E13, E26, E7, E24 — ctx: S4
+M47. "WS_FTP" (Software) — options: E17, E5, E7, E8 — ctx: S4
+M48. "FTPGetter" (Software) — options: E7, E6, E2, E26 — ctx: S4
+M49. "Trillian" (Software) — options: E1, E21, E16, E11 — ctx: S4
+
+=== RESPONSE (3.9s, in 3696 / out 796 tok, stop) ===
+{"m":"Agent Tesla","id":"NEW","g":"commercial spyware keylogger and password stealer"}
+{"m":"RegAsm.exe","id":"NEW","g":"assembly registration tool system file"}
+{"m":"vaultcli.dll","id":"NEW","g":"library used to retrieve saved credentials from Internet Explorer"}
+{"m":"WinSCP","id":"NEW","g":null}
+{"m":"Google Chrome","id":"NEW","g":null}
+{"m":"Mozilla Firefox","id":"NEW","g":null}
+{"m":"Microsoft Outlook","id":"NEW","g":null}
+{"m":"IceDragon","id":"NEW","g":null}
+{"m":"Yandex Browser","id":"NEW","g":null}
+{"m":"Iridium Browser","id":"NEW","g":null}
+{"m":"Epic Privacy Browser","id":"NEW","g":null}
+{"m":"Chromium Browser","id":"NEW","g":null}
+{"m":"7Star Browser","id":"NEW","g":null}
+{"m":"Torch Browser","id":"NEW","g":null}
+{"m":"ChromePlus Browser","id":"NEW","g":null}
+{"m":"Kometa Browser","id":"NEW","g":null}
+{"m":"Amigo Browser","id":"NEW","g":null}
+{"m":"Brave Browser","id":"NEW","g":null}
+{"m":"CentBrowser","id":"NEW","g":null}
+{"m":"Liebao Browser","id":"NEW","g":null}
+{"m":"Elements Browser","id":"NEW","g":null}
+{"m":"Vivaldi Browser","id":"NEW","g":null}
+{"m":"Citrio Browser","id":"NEW","g":null}
+{"m":"360Chrome Browser","id":"NEW","g":null}
+{"m":"Uran Browser","id":"NEW","g":null}
+{"m":"Chedot Browser","id":"NEW","g":null}
+{"m":"Orbitum Browser","id":"NEW","g":null}
+{"m":"Sputnik Browser","id":"NEW","g":null}
+{"m":"Comodo Dragon Browser","id":"NEW","g":null}
+{"m":"CocCoc Browser","id":"NEW","g":null}
+{"m":"QIP Surf Browser","id":"NEW","g":null}
+{"m":"Coowon Browser","id":"NEW","g":null}
+{"m":"Opera Browser","id":"NEW","g":null}
+{"m":"Thunderbird","id":"NEW","g":null}
+{"m":"Claws Mail","id":"NEW","g":null}
+{"m":"Postbox Credential","id":"NEW","g":null}
+{"m":"Foxmail","id":"NEW","g":null}
+{"m":"Opera Mail","id":"NEW","g":null}
+{"m":"Pocomail","id":"NEW","g":null}
+{"m":"Becky!","id":"NEW","g":null}
+{"m":"OpenVPN","id":"NEW","g":null}
+{"m":"FileZilla","id":"NEW","g":null}
+{"m":"Paltalk","id":"NEW","g":null}
+{"m":"jDownloader","id":"NEW","g":null}
+{"m":"SmartFTP","id":"NEW","g":null}
+{"m":"FTP Commander","id":"NEW","g":null}
+{"m":"WS_FTP","id":"NEW","g":null}
+{"m":"FTPGetter","id":"NEW","g":null}
+{"m":"Trillian","id":"NEW","g":null}

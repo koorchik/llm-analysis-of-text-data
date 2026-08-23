@@ -1,0 +1,189 @@
+=== REQUEST (ollama gemma4:31b) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide one thing: which entity it is. Hierarchy between entities is decided elsewhere — never answer it here.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for. A mention may carry a `ctx:` reference naming the evidence window(s) (`S1. …`) that contain it.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference.
+
+Output one raw JSON object per line (JSONL), no markdown fences, no commentary, no wrapping array, one line per mention, in order, keys exactly `m`, `id`, `g`:
+{"m":"M1","id":"E3","g":null}
+{"m":"M2","id":"NEW","g":"a 2010 release of the suite"}
+
+--- text ---
+Source: "Microsoft випустила оновлення, які усувають велику кількість вразливостей." — evidence: S1. "8f9-1f26-e811-a968-000d3a33a34d</a></p><p>Оновлення усувають вразливості в наступному програмному забезпеченні:</p><ul><li>Internet Explorer </li><li>Microsoft Edge</li><li>Microsoft Windows</li><li>Microsoft Office and Microsoft Office Services and Web Apps</li><li>ChakraCore</li><li>Adobe Flash Player</li><li>.NET Framework</li><li>Microsoft Exchange Server</li><li>Windows Host Compute Service Shim</li></ul><p>&nbsp;</p><p>Найбільш небезпечною вразливістю є CVE-2018-8174 або «Double Kill».</p><p><a href="https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8174" rel="noopener noreferrer" target="_blank" style="c" S2. "arget="_blank" style="color: rgb(0, 123, 255);">https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8174</a></p><p>Вразливість полягає в тому, що VBScript (мова програмування на основі Visual Basic, яка використовується для написання скриптів в Windows) обробляє об’єкти в пам’яті, і можливо пошкодити па" S3. "і та відкритті підозрілих файлів з електронної пошти та переходу по підозрілих посиланнях.</strong></p><p>&nbsp;</p><p>Інша критична вразливість&nbsp;CVE-2018-8120.</p><p><a href="https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8120" rel="noopener noreferrer" target="_blank" style="co" S4. "olor: rgb(0, 123, 255);">https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8120</a></p><p>Вразливість полягає у некоректній обробці компонентом Win32k об’єктів в пам’яті. Зловмисники, які успішно проексплуатують вразливість, можу"
+Entities:
+E1. Internet Explorer
+E2. Microsoft Outlook
+E3. JavaScript
+E4. Mikrotik
+E5. MISP
+E6. WinSCP
+E7. wscript.exe
+E8. Software Restriction Policies (SRP)
+E9. Browser.dll
+E10. ConfuserEx
+E11. loader.exe
+E12. PowerShell
+E13. Chedot Browser
+E14. Citrio Browser
+E15. scandoc.exe
+E16. MCMDiction.exe
+E17. IceDragon
+E18. Files.dll
+E19. Cobalt Strike Beacon
+E20. Mozilla Firefox
+E21. Postbox Credential
+E22. AppLocker
+E23. Google Chrome
+E24. Remote Utilities - Host
+E25. FIRMACHAGENT
+E26. YARA
+E27. Comodo Dragon Browser
+E28. jDownloader
+E29. plan_dsns.gov.ua.rar
+E30. CentBrowser
+E31. Agent Tesla
+E32. Uran Browser
+E33. GammaSteel.NET
+E34. SmartAssembly .NET
+E35. USB.dll
+E36. Meterpreter
+E37. IDCLIPNET_x86.dll
+E38. UkrScanner.rar
+E39. rutserv.exe
+E40. CCleaner.exe
+E41. host_news_mod_mod.msi
+E42. shellcode.x64 (Cobalt Strike Beacon)
+E43. SRP
+E44. wsuscr.exe
+E45. z.ps1
+E46. QuasarRAT
+E47. Screen.dll
+E48. TRYxaEbX.ps1
+E49. 360Chrome Browser
+E50. rundll32.exe
+E51. 7Star Browser
+E52. write.exe
+E53. Coowon Browser
+E54. Claws Mail
+E55. Yandex Browser
+E56. installer.exe
+E57. shellcode.x64.bin
+E58. CredoMap_v2
+E59. shellcode.x86.bin
+E60. stage1.ps1
+E61. FileZilla
+E62. killself.bat
+E63. vaultcli.dll
+E64. Trillian
+E65. AgentTesla
+E66. Гуманітарна катастрофа України з 24 лютого 2022 року.xls
+E67. Microsoft Windows
+E68. Microsoft Office
+E69. Microsoft Office Services and Web Apps
+E70. ChakraCore
+E71. Adobe Flash Player
+E72. .NET Framework
+E73. Microsoft Exchange Server
+E74. Windows Host Compute Service Shim
+E75. VBScript
+E76. Win32k
+E77. Windows 7
+E78. Windows Server 2008
+E79. CVE-2018-8174
+E80. Double Kill
+E81. CVE-2018-8120
+E82. CVE-2018-0854
+E83. CVE-2018-0958
+E84. CVE-2018-8124
+E85. CVE-2018-8127
+E86. CVE-2018-8129
+E87. CVE-2018-8132
+E88. CVE-2018-8134
+E89. CVE-2018-8136
+E90. CVE-2018-8141
+E91. CVE-2018-8170
+E92. CVE-2018-8897
+E93. Microsoft Edge
+Mentions:
+M1. "Microsoft Edge" (Software) — options: E1, E2, E3, E4 — ctx: S1
+M2. "Microsoft Windows" (Software) — options: E6, E2, E11, E4 — ctx: S1
+M3. "Microsoft Office" (Software) — options: E6, E2, E12, E4 — ctx: S1
+M4. "Microsoft Office Services and Web Apps" (Software) — options: E2, E19, E1, E17 — ctx: S1
+M5. "ChakraCore" (Software) — options: E3, E17, E25, E6 — ctx: S1
+M6. "Adobe Flash Player" (Software) — options: E3, E28, E29, E20 — ctx: S1
+M7. ".NET Framework" (Software) — options: E9, E33, E34, E11 — ctx: S1
+M8. "Microsoft Exchange Server" (Software) — options: E6, E2, E3, E1 — ctx: S1
+M9. "Windows Host Compute Service Shim" (Software) — options: E24, E2, E6, E41 — ctx: S1
+M10. "VBScript" (Software) — options: E3, E12, E7, E6 — ctx: S2
+M11. "Win32k" (Software) — options: E6, E9, E4, E49 — ctx: S4
+M12. "Windows 7" (Software) — options: E6, E11, E30, E15 — ctx: S5
+M13. "Windows Server 2008" (Software) — options: E6, E9, E12, E10 — ctx: S5
+M14. "CVE-2018-8174" (Software) — options: E57, E30, E49, E36 — ctx: S1
+M15. "Double Kill" (Software) — options: E12, E61, E62, E6 — ctx: S1
+M16. "CVE-2018-8120" (Software) — options: E36, E58, E49, E19 — ctx: S3
+M17. "CVE-2018-0854" (Software) — options: E36, E30, E49, E65 — ctx: S5
+M18. "CVE-2018-0958" (Software) — options: E36, E30, E49, E65 — ctx: S5
+M19. "CVE-2018-8124" (Software) — options: E57, E58, E66, E36 — ctx: S5
+M20. "CVE-2018-8127" (Software) — options: E36, E58, E49, E59 — ctx: S5
+M21. "CVE-2018-8129" (Software) — options: E36, E58, E49, E57 — ctx: S5
+M22. "CVE-2018-8132" (Software) — options: E65, E58, E49, E36 — ctx: S5
+M23. "CVE-2018-8134" (Software) — options: E36, E30, E49, E31 — ctx: S5
+M24. "CVE-2018-8136" (Software) — options: E36, E30, E49, E65 — ctx: S5
+M25. "CVE-2018-8141" (Software) — options: E36, E30, E49, E59 — ctx: S5
+M26. "CVE-2018-8170" (Software) — options: E36, E30, E49, E59 — ctx: S5
+M27. "CVE-2018-8897" (Software) — options: E59, E30, E49, E36 — ctx: S5
+
+=== RESPONSE (3.3s, in 3296 / out 650 tok, stop) ===
+{"m":"Microsoft Edge","id":"NEW","g":"web browser developed by Microsoft"}
+{"m":"Microsoft Windows","id":"NEW","g":"operating system developed by Microsoft"}
+{"m":"Microsoft Office","id":"NEW","g":"office productivity suite"}
+{"m":"Microsoft Office Services and Web Apps","id":"NEW","g":"cloud-based productivity services from Microsoft"}
+{"m":"ChakraCore","id":"NEW","g":"open-source JavaScript engine"}
+{"m":"Adobe Flash Player","id":"NEW","g":"cross-platform multimedia software"}
+{"m":".NET Framework","id":"NEW","g":"software framework developed by Microsoft"}
+{"m":"Microsoft Exchange Server","id":"NEW","g":"mail and calendar server"}
+{"m":"Windows Host Compute Service Shim","id":"NEW","g":"Windows component for managing containers"}
+{"m":"VBScript","id":"NEW","g":"scripting language based on Visual Basic"}
+{"m":"Win32k","id":"NEW","g":"Windows kernel-mode driver for graphics and windowing"}
+{"m":"Windows 7","id":"NEW","g":"version of the Windows operating system"}
+{"m":"Windows Server 2008","id":"NEW","g":"server operating system by Microsoft"}
+{"m":"CVE-2018-8174","id":"NEW","g":"vulnerability identifier for Double Kill"}
+{"m":"Double Kill","id":"NEW","g":"alias for vulnerability CVE-2018-8174"}
+{"m":"CVE-2018-8120","id":"NEW","g":"vulnerability identifier for Win32k memory corruption"}
+{"m":"CVE-2018-0854","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-0958","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8124","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8127","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8129","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8132","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8134","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8136","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8141","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8170","id":"NEW","g":"vulnerability identifier"}
+{"m":"CVE-2018-8897","id":"NEW","g":"vulnerability identifier"}

@@ -1,0 +1,170 @@
+=== REQUEST (ollama gemma4:31b) ===
+--- instructions ---
+You are an entity-resolution judge for an incremental entity registry. For every mention you decide two things: which entity it is, and how it relates to the registry's broader or narrower entities.
+
+The source lists its known entities once, as `E1…En`. Every mention names the subset of those entities that plausibly match it. Use the numbers; never write a name where a number is asked for.
+
+## 1. `id` — identity (exact match)
+
+Answer `"NEW"` when the mention refers to an entity that is none of its listed options; otherwise the option's `E` number. Only choose an existing entity when the supplied names and aliases support identity. Category, role, behavior, relationships, co-occurrence, and thematic similarity are NOT identity evidence. The order of options is retrieval score, which is not evidence.
+
+Same entity — the names differ only in written form:
+
+- a vendor, publisher, or organization prefix present in one ("Acme Foo" / "Foo");
+- spacing, punctuation, hyphenation, case ("FooBar" / "Foo Bar");
+- a parenthetical or bracketed descriptor ("foo (the loader used here)" / "foo");
+- a file extension, platform, or implementation suffix ("foo.bin" / "foo", "Foo .NET" / "Foo");
+- a generic type word stating only what kind of thing it is ("Foo tool" / "Foo");
+- an acronym beside its own expansion;
+- a transliteration or translation of the same proper name.
+
+Different entities, however related — version, edition, year or identifier differs; one is a part, component or member of the other; one is a file or artifact and the other the program that made it; the base names differ. When names are alike except for an identifier or a number, match those characters exactly and never choose an option whose identifier differs. When a name pairs a structured identifier with a descriptive label — in either order, one of them usually bracketed ("K-12 (Foo)", "Foo (K-12)") — the identifier is what the name identifies. Choose the option carrying that identifier, and treat the bare label on its own as a different, broader entity.
+
+If in doubt, answer `"NEW"`: a duplicate is repairable, a wrong merge is not.
+
+## 2. `g` — gloss
+
+For every mention you did NOT link, one short factual description — at most twelve words, grounded in the source, **not restating the name**. It is used to retrieve this entity later, never as identity evidence. Use `null` when the source says nothing descriptive.
+
+## 3. `p` and `r` — the hierarchy relation
+
+Only for mentions you answered `"NEW"`. Unlike identity, this question is answered from what the entities ARE — your general knowledge of them — not from the source text. The source does not need to state, or even hint at, the relation.
+
+Set `p` to the `E` number of the listed entity the mention stands in a genuine narrower/broader relation to. Scan the WHOLE `E1…En` list for it: the right entity may be any listed entity, including one that another mention of this document put on the list. A mention's options row is identity retrieval only — the genuinely broader entity is usually NOT in it, because a component and the system it belongs to rarely resemble each other by name. When the mention is the narrower side, prefer the **narrowest** listed entity that is genuinely broader than it. Set `r` to one of four:
+
+- `"v"` — the listed entity is the mention **with a qualifier removed**: a version, edition, year, release, platform, or packaging variant. `Foo 2010` under `Foo`, `Foo 7` under `Foo`, `Foo (64-bit)` under `Foo`. Both name the same thing at different precision, and that qualifier is the only difference.
+- `"n"` — the mention is narrower for any other reason: a named instance under its type, a model under its product line, a derivative built on the listed base.
+- `"p"` — the mention is a distinct component, member, or subdivision of the listed entity.
+- `"b"` — the reverse direction: the mention is genuinely **broader** than the listed entity — the listed entity is a version, instance, or component of the mention. `Foo` mentioned when `Foo 2010` is already listed.
+
+An identifier that names a vulnerability, advisory, exploit, or ticket (`CVE-…`, `MS…-…`, a bulletin or issue number) is NOT narrower than the product it affects: a flaw lives IN a product without being a kind, version, or part of it. For such mentions answer `null` unless the listed entity is another naming of the same flaw.
+
+Ask it of every new entity, not only the obvious ones. You have just written each mention's gloss — use it: when a gloss names the base product, engine, family, or host system the mention is built on, and that entity appears anywhere in `E1…En`, that entity is the `p`. A gloss that says "X-based" or "component of X" while `p` is `null` is a contradiction. In particular, when several mentions of this document are versions, derivatives, components, or members of one base product that appears anywhere in `E1…En`, each of them gets that `p` — a run of siblings is the commonest case, not an exception. Set both to `null` when nothing listed is narrower or broader, when the link is merely topical, or when you cannot say what the relation is — a missing edge is recoverable, a wrong one distorts every later rollup. Never point `p` at the mention itself, and never set it on a mention you linked.
+
+## Output
+
+Source context bears on identity only, and only where it explicitly establishes an alias, identifier, transliteration, abbreviation, or unambiguous co-reference. The hierarchy question never depends on the source.
+
+Output one raw JSON object, no markdown fences, no commentary, one entry per mention, in order, keys exactly in the order `m`, `id`, `g`, `p`, `r` — the gloss is written before the hierarchy answer on purpose:
+{"v":[{"m":"M1","id":"E3","g":null,"p":null,"r":null},{"m":"M2","id":"NEW","g":"a 2010 release of the suite","p":"E1","r":"v"}]}
+
+--- text ---
+Source: "registry review at 125 canonicals"
+Entities:
+E1. scan.exe (CredoMap_v2)
+E2. UkrScanner.exe (SFX)
+E3. Chedot Browser
+E4. Postbox Credential
+E5. Vivaldi Browser
+E6. IceDragon
+E7. Pocomail
+E8. Google Chrome
+E9. Chromium Browser
+E10. jDownloader
+E11. Uran Browser
+E12. WinSCP
+E13. installer.exe
+E14. 7Star Browser
+E15. Microsoft Exchange Server
+E16. loader.exe
+E17. UkrScanner.rar
+E18. RegAsm.exe
+E19. Mozilla Firefox
+E20. b.exe
+E21. ckZ89.ExE
+E22. CredoMap_v2
+E23. spi.exe
+E24. cmd.exe
+E25. major.exe
+E26. vaultcli.dll
+E27. CentBrowser
+E28. Internet Explorer
+E29. Microsoft Outlook
+E30. Citrio Browser
+E31. Meterpreter
+E32. Liebao Browser
+E33. Misha
+E34. Paltalk
+E35. Microsoft Windows
+E36. Trillian
+E37. SmartFTP
+E38. Microsoft Edge
+E39. VBScript
+E40. FTPGetter
+E41. Smokeloader
+E42. Coowon Browser
+E43. FileZilla
+E44. FTP Commander
+E45. WS_FTP
+E46. MISP
+E47. Win32k
+E48. Windows 7
+E49. OpenVPN
+E50. rutserv.exe
+E51. SQLite.Interop.dll
+E52. Double Kill
+E53. rfusclient.exe
+E54. .NET Framework
+E55. Petya
+E56. powershell.exe
+E57. Opera Browser
+E58. Foxmail
+E59. MS Office [aka Microsoft Office]
+E60. Agent Tesla
+E61. Torch Browser
+E62. Kometa Browser
+E63. Elements Browser
+E64. killself.bat
+E65. host_news_mod_mod.msi
+E66. Windows Vista
+E67. Yandex Browser
+E68. Orbitum Browser
+E69. Opera Mail
+E70. 360Chrome Browser
+E71. Brave Browser
+E72. MS Word [aka Microsoft Word]
+E73. Microsoft Office 2010
+E74. Windows Server 2008
+E75. MS Excel
+E76. Office 2010
+E77. Microsoft Office Services and Web Apps
+E78. MS PowerPoint
+E79. Office 2013
+E80. Office 2016
+E81. Thunderbird
+E82. Remote Utilities
+E83. Iridium Browser
+E84. Comodo Dragon Browser
+Mentions:
+M1. "CredoMap_v2" (Software) — options: E1, E2, E3, E4
+M2. "UkrScanner.rar" (Software) — options: E10, E2, E11, E1
+M3. "UkrScanner.exe (SFX)" (Software) — options: E17, E16, E18, E19
+M4. "scan.exe (CredoMap_v2)" (Software) — options: E2, E22, E18, E23
+M5. "SQLite.Interop.dll" (Software) — options: E12, E26, E27, E28
+M6. "MISP" (Software) — options: E12, E33, E34, E35
+M7. "jDownloader" (Software) — options: E40, E41, E16, E19
+M8. "installer.exe" (Software) — options: E16, E18, E20, E25
+M9. "WinSCP" (Software) — options: E45, E46, E47, E37
+M10. "loader.exe" (Software) — options: E10, E25, E18, E20
+M11. "vaultcli.dll" (Software) — options: E12, E51, E52, E53
+M12. "FTPGetter" (Software) — options: E44, E31, E45, E37
+M13. "spi.exe" (Software) — options: E12, E20, E18, E16
+M14. "Mozilla Firefox" (Software) — options: E57, E52, E43, E8
+M15. "Meterpreter" (Software) — options: E12, E40, E62, E28
+M16. "FileZilla" (Software) — options: E19, E52, E37, E58
+M17. "WS_FTP" (Software) — options: E37, E44, E12, E40
+M18. "FTP Commander" (Software) — options: E45, E40, E37, E7
+M19. "b.exe" (Software) — options: E16, E24, E23, E18
+M20. "Opera Browser" (Software) — options: E68, E62, E69, E5
+M21. "Електронний запит.exe" (Software) — options: E65, E18, E20, E16
+M22. "major.exe" (Software) — options: E29, E16, E18, E19
+M23. "Microsoft Windows" (Software) — options: E29, E72, E48, E12
+M24. "MS Office" (Software) — options: E29, E75, E76, E77
+M25. "Thunderbird" (Software) — options: E19, E51, E44, E29
+M26. "SmartFTP" (Software) — options: E45, E44, E46, E12
+M27. "Trillian" (Software) — options: E81, E19, E11, E33
+M28. "Adobe Flash Player" (Software) — options: E19, E41, E27, E61
+M29. "Misha" (Software) — options: E34, E29, E46, E36
+
+=== RESPONSE (5.8s, in 3031 / out 807 tok, stop) ===
+{"v":[{"m":"CredoMap_v2","id":"NEW","g":"a software tool","p":"E22","r":"v"},{"m":"UkrScanner.rar","id":"NEW","g":"an archive file containing UkrScanner","p":"E2","r":"p"},{"m":"UkrScanner.exe (SFX)","id":"NEW","g":"a self-extracting executable of UkrScanner","p":"E2","r":"v"},{"m":"scan.exe (CredoMap_v2)","id":"NEW","g":"an executable part of CredoMap_v2","p":"E22","r":"p"},{"m":"SQLite.Interop.dll","id":"NEW","g":"a SQLite interoperability library","p":"E51","r":"v"},{"m":"MISP","id":"NEW","g":"a threat intelligence platform","p":"E46","r":"v"},{"m":"jDownloader","id":"NEW","g":"a download management tool","p":"E10","r":"v"},{"m":"installer.exe","id":"NEW","g":"a generic installation executable","p":"E13","r":"v"},{"m":"WinSCP","id":"NEW","g":"a secure file transfer client","p":"E12","r":"v"},{"m":"loader.exe","id":"NEW","g":"a generic loading executable","p":"E16","r":"v"},{"m":"vaultcli.dll","id":"NEW","g":"a vault client library","p":"E26","r":"v"},{"m":"FTPGetter","id":"NEW","g":"an FTP retrieval tool","p":"E40","r":"v"},{"m":"spi.exe","id":"NEW","g":"a specific executable file","p":"E23","r":"v"},{"m":"Mozilla Firefox","id":"NEW","g":"a web browser","p":"E19","r":"v"},{"m":"Meterpreter","id":"NEW","g":"a Metasploit payload","p":"E31","r":"v"},{"m":"FileZilla","id":"NEW","g":"an FTP software","p":"E43","r":"v"},{"m":"WS_FTP","id":"NEW","g":"an FTP client","p":"E45","r":"v"},{"m":"FTP Commander","id":"NEW","g":"an FTP client","p":"E44","r":"v"},{"m":"b.exe","id":"NEW","g":"a specific executable file","p":"E20","r":"v"},{"m":"Opera Browser","id":"NEW","g":"a web browser","p":"E57","r":"v"},{"m":"Електронний запит.exe","id":"NEW","g":"an executable named Electronic Request","p":null,"r":null},{"m":"major.exe","id":"NEW","g":"a specific executable file","p":"E25","r":"v"},{"m":"Microsoft Windows","id":"NEW","g":"an operating system","p":"E35","r":"v"},{"m":"MS Office","id":"NEW","g":"a productivity software suite","p":"E59","r":"v"},{"m":"Thunderbird","id":"NEW","g":"an email client","p":"E81","r":"v"},{"m":"SmartFTP","id":"NEW","g":"an FTP client","p":"E37","r":"v"},{"m":"Trillian","id":"NEW","g":"an instant messaging client","p":"E36","r":"v"},{"m":"Adobe Flash Player","id":"NEW","g":"a multimedia software platform","p":null,"r":null},{"m":"Misha","id":"NEW","g":"a specific piece of software","p":"E33","r":"v"}]}
