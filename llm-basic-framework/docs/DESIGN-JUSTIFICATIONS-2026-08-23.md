@@ -192,6 +192,8 @@ coverage (25/25 vs 4/25 known forks). The architecture is therefore designed to 
 judge's constraints — composition and structure over exhortation — and the frontier judge simply
 gets cheaper (samples=1, no vote) on the same skeleton. This is the article's portability claim.
 
+We verified this by testing `gemma4:31b` via the cloud API. The 2.5× parameter jump perfectly bridges the structural extraction gap between the 12b local model and frontier flash (achieving `~0.74` reachability compared to `0.67` and `0.81`). However, it retains the 12b-era "identity asymmetry": without the `thinking` parameter enabled, `gemma4:31b` drops to `.33`–`.57` pairwise F1 for identity, confirming that reasoning tokens remain strictly necessary for open-weight models to reliably perform identity clustering, regardless of raw parameter count.
+
 ## 12. Negative results worth reporting
 
 - Letter codes beat word codes for relations (v1 vs v2 ablation, earlier campaign).
@@ -214,8 +216,9 @@ gets cheaper (samples=1, no vote) on the same skeleton. This is the article's po
 | no catch-up, no mechanisms (flash) | .333 / .96 / 1.0 | — | — |
 | v7 + carry (flash, pre-v8 best) | .855 / .92 / 1.0 | .855 / .87 / 1.0 | .797 / .93 / 1.0 |
 | **v8 decoupled (flash)** | .812 / .80 / 1.0 | .882 / .76 / 1.0 | **.884 / .78 / 1.0** |
+| **v8 decoupled (gemma31b, cloud)** | .739 / .70 / .33 | .742 / .71 / .57 | .609 / .72 / .57 |
 | gemma with catch-up (local baseline) | .304 / .55 / 1.0 | — | — |
 | gemma carry+split (pre-v8 best local) | .623 / .69 / 1.0 | (first-shot variance; audited) | — |
-| **v8 decoupled (gemma, samples=2)** | **.677 / .65 / 1.0** | — | — |
+| **v8 decoupled (gemma12b, samples=2)** | **.677 / .65 / 1.0** | — | — |
 
 Cross-order edge agreement: catch-up era Jaccard .306 → v8 .505 (type agreement .961).
